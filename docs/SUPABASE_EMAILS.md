@@ -3,6 +3,10 @@
 Stan: 2026-09-05. Szablon w repozytorium nie zmienia automatycznie ustawień
 hostowanego projektu Supabase. Trzeba wkleić go raz w panelu projektu.
 
+W projekcie Free utworzonym po 3 czerwca 2026 najpierw skonfiguruj własny SMTP.
+Supabase blokuje edycję szablonów nowych darmowych projektów korzystających z jego
+domyślnej wysyłki. Po zapisaniu SMTP wróć do sekcji z szablonami.
+
 ## Potwierdzenie konta
 
 1. Otwórz Supabase → Authentication → Email Templates → Confirm signup.
