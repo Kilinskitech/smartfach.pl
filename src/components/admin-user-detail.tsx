@@ -1,0 +1,186 @@
+import Link from "next/link";
+import {
+  ArrowLeft,
+  BarChart3,
+  Bot,
+  CircleDollarSign,
+  Gauge,
+  MessageCircle,
+  MessagesSquare,
+  UserRound,
+} from "lucide-react";
+import { BrandMark } from "./brand";
+
+export type AdminUserDetailSnapshot = {
+  generatedAt: string;
+  id: string;
+  name: string;
+  company: string;
+  accountType: "discover" | "launch" | "operate";
+  plan: string;
+  usedCredits: number;
+  allowance: number;
+  totalCostUsd: number;
+  totalTokens: number;
+  measuredResponses: number;
+  conversations: Array<{
+    id: string;
+    title: string;
+    mode: "discover" | "launch" | "operate";
+    updatedAt: string;
+    hasPendingDocument: boolean;
+    messages: Array<{
+      id: string;
+      role: "user" | "assistant";
+      content: string;
+      model?: string;
+      usage?: {
+        providerRequestId?: string;
+        provider?: string;
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+        reasoningTokens: number;
+        cachedTokens: number;
+        costUsd: number;
+      };
+      sources: Array<{ title: string; url: string }>;
+    }>;
+  }>;
+};
+
+const accountTypeLabels = {
+  discover: "Odkryj",
+  launch: "Uruchom",
+  operate: "Prowadź",
+} as const;
+
+function costLabel(value: number) {
+  if (value === 0) return "$0.00";
+  return `$${value < 0.01 ? value.toFixed(6) : value.toFixed(4)}`;
+}
+
+export function AdminUserDetail({
+  snapshot,
+}: {
+  snapshot: AdminUserDetailSnapshot;
+}) {
+  const messageCount = snapshot.conversations.reduce(
+    (total, conversation) => total + conversation.messages.length,
+    0,
+  );
+
+  return (
+    <div className="admin-shell">
+      <aside className="admin-sidebar">
+        <Link href="/admin" className="admin-brand">
+          <BrandMark size={39} />
+          <span>Smart<b>Fach</b><small>PANEL WŁAŚCICIELA</small></span>
+        </Link>
+        <nav aria-label="Nawigacja panelu administratora">
+          <Link href="/admin"><BarChart3 size={18} /> Przegląd</Link>
+          <Link className="selected" href={`/admin/uzytkownicy/${snapshot.id}`}><UserRound size={18} /> Profil użytkownika</Link>
+        </nav>
+        <div className="admin-sidebar-bottom">
+          <span><i /> Konto właściciela</span>
+          <Link href="/admin"><ArrowLeft size={15} /> Wróć do listy</Link>
+        </div>
+      </aside>
+
+      <main className="admin-main">
+        <Link className="admin-back-link" href="/admin"><ArrowLeft size={16} /> Wszyscy użytkownicy</Link>
+        <header className="admin-user-header">
+          <span>{snapshot.name.slice(0, 2).toUpperCase()}</span>
+          <div>
+            <p className="eyebrow">PROFIL UŻYTKOWNIKA</p>
+            <h1>{snapshot.name}</h1>
+            <p>{snapshot.company || "Konto bez nazwy firmy"} · typ konta {accountTypeLabels[snapshot.accountType]}</p>
+          </div>
+        </header>
+
+        <section className="admin-metric-grid admin-user-metrics" aria-label="Metryki użytkownika">
+          <article><span><UserRound size={20} /></span><small>TYP KONTA</small><strong className="admin-text-value">{accountTypeLabels[snapshot.accountType]}</strong><p>Zmieniany przez użytkownika w Ustawieniach</p></article>
+          <article><span><Gauge size={20} /></span><small>PLAN I ZUŻYCIE</small><strong className="admin-text-value">{snapshot.plan}</strong><p>{snapshot.usedCredits} / {snapshot.allowance} jednostek planu</p></article>
+          <article><span><MessagesSquare size={20} /></span><small>AKTYWNOŚĆ</small><strong>{snapshot.conversations.length}</strong><p>{messageCount} wiadomości we wszystkich rozmowach</p></article>
+          <article><span><CircleDollarSign size={20} /></span><small>KOSZT OPENROUTER</small><strong className="admin-cost-value">{costLabel(snapshot.totalCostUsd)}</strong><p>{snapshot.totalTokens.toLocaleString("pl-PL")} tokenów · {snapshot.measuredResponses} zmierzonych odpowiedzi</p></article>
+        </section>
+
+        <section className="admin-panel admin-quality">
+          <div className="admin-panel-heading">
+            <div><MessageCircle size={20} /><span><small>ROZMOWY UŻYTKOWNIKA</small><h2>Prompty, odpowiedzi i koszt</h2></span></div>
+          </div>
+          <div className="admin-quality-notice">
+            <Gauge size={20} />
+            <p>
+              <strong>Koszt jest przypisywany do konkretnej odpowiedzi.</strong>
+              <span>OpenRouter zwraca go razem z tokenami. Starsze rozmowy, zapisane przed włączeniem pomiaru, mogą nie mieć danych kosztowych.</span>
+            </p>
+          </div>
+
+          {snapshot.conversations.length === 0 ? (
+            <div className="admin-quality-empty">
+              <MessageCircle size={26} />
+              <h3>Ten użytkownik nie ma jeszcze rozmów</h3>
+              <p>Po wysłaniu pierwszego polecenia pojawi się tutaj pełna historia i koszt odpowiedzi.</p>
+            </div>
+          ) : (
+            <div className="admin-conversation-list">
+              {snapshot.conversations.map((conversation, index) => (
+                <details key={conversation.id} open={index === 0}>
+                  <summary>
+                    <span className="admin-conversation-icon"><MessageCircle size={18} /></span>
+                    <span className="admin-conversation-title">
+                      <strong>{conversation.title}</strong>
+                      <small>{new Date(conversation.updatedAt).toLocaleString("pl-PL")}</small>
+                    </span>
+                    <span className="admin-conversation-meta">
+                      <i>{accountTypeLabels[conversation.mode]}</i>
+                      <i>{conversation.messages.length} wiad.</i>
+                      {conversation.hasPendingDocument && <i>Szkic dokumentu</i>}
+                    </span>
+                  </summary>
+                  <div className="admin-message-list">
+                    {conversation.messages.length === 0 ? (
+                      <p className="admin-empty-thread">Rozmowa nie zawiera jeszcze wiadomości.</p>
+                    ) : conversation.messages.map((message) => (
+                      <article className={`admin-message ${message.role}`} key={message.id}>
+                        <header>
+                          <span>{message.role === "user" ? <UserRound size={15} /> : <Bot size={15} />}</span>
+                          <strong>{message.role === "user" ? "Użytkownik · prompt" : "SmartFach · odpowiedź"}</strong>
+                          {message.model && <code>{message.model}</code>}
+                        </header>
+                        <p>{message.content}</p>
+                        {message.usage && (
+                          <dl className="admin-message-usage">
+                            <div><dt>Koszt</dt><dd>{costLabel(message.usage.costUsd)}</dd></div>
+                            <div><dt>Wejście</dt><dd>{message.usage.promptTokens.toLocaleString("pl-PL")}</dd></div>
+                            <div><dt>Wyjście</dt><dd>{message.usage.completionTokens.toLocaleString("pl-PL")}</dd></div>
+                            <div><dt>Łącznie</dt><dd>{message.usage.totalTokens.toLocaleString("pl-PL")} tokenów</dd></div>
+                            {message.usage.providerRequestId && <div><dt>ID żądania</dt><dd><code>{message.usage.providerRequestId}</code></dd></div>}
+                          </dl>
+                        )}
+                        {message.sources.length > 0 && (
+                          <div className="admin-message-sources">
+                            <small>Źródła internetowe</small>
+                            {message.sources.map((source) => (
+                              <a href={source.url} key={source.url} rel="noreferrer" target="_blank">{source.title}</a>
+                            ))}
+                          </div>
+                        )}
+                      </article>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <footer className="admin-footer">
+          <span>Odczyt: {new Date(snapshot.generatedAt).toLocaleString("pl-PL")}</span>
+          <span>Koszty historyczne pozostają przypisane do odpowiedzi</span>
+        </footer>
+      </main>
+    </div>
+  );
+}
