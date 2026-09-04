@@ -40,6 +40,12 @@ export async function writeWorkspace(
     throw new RevisionConflict(
       "Dane zmieniły się w innym oknie. Odśwież widok przed zapisem.",
     );
+  if (error)
+    console.error("Supabase odrzucił zapis workspace", {
+      code: error.code,
+      message: error.message,
+      hint: error.hint,
+    });
   if (error || !Array.isArray(data) || !data[0])
     throw new Error("Nie zapisano zmian w koncie.");
   const row = data[0] as { revision: number; data: object };

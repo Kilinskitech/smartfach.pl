@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(4);
+select plan(5);
 
 insert into auth.users (
   instance_id,
@@ -55,6 +55,31 @@ insert into auth.users (
     '',
     ''
   );
+
+select lives_ok(
+  $$
+    select *
+    from public.save_workspace(
+      (
+        select id
+        from public.organizations
+        where owner_user_id = '10000000-0000-0000-0000-000000000001'
+      ),
+      '10000000-0000-0000-0000-000000000001',
+      0,
+      (
+        select data
+        from public.workspaces
+        where organization_id = (
+          select id
+          from public.organizations
+          where owner_user_id = '10000000-0000-0000-0000-000000000001'
+        )
+      )
+    )
+  $$,
+  'workspace można zapisać z kontrolą wersji'
+);
 
 set local role authenticated;
 select set_config(
