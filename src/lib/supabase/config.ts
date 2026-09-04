@@ -6,7 +6,7 @@ export function supabaseConfigured() {
 }
 
 export function supabaseAdminConfigured() {
-  return supabaseConfigured() && Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY?.trim());
+  return supabaseConfigured() && Boolean(process.env.SUPABASE_SECRET_KEY?.trim());
 }
 
 export function supabasePublicConfig() {
@@ -15,4 +15,3 @@ export function supabasePublicConfig() {
   if (!url || !key) throw new Error("Brak konfiguracji Supabase.");
   return { url, key };
 }
-

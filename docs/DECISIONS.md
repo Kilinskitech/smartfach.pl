@@ -549,3 +549,20 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   kopii zapasowej, podatków i dokumentów prawnych.
 - Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, DATABASE, TECH_STACK,
   PRICING, ROADMAP, README, RESEARCH i SETUP_SUPABASE_STRIPE.
+
+## D029 — Nowe klucze API Supabase od początku produkcji
+
+- Data: 2026-09-04. Status: wdrożone w kodzie i instrukcji konfiguracji.
+- Decyzja: frontend używa `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, a backend
+  `SUPABASE_SECRET_KEY`. Nie uruchamiamy produkcji na starszych kluczach JWT
+  `anon` i `service_role`.
+- Powód: Supabase rekomenduje klucze `sb_publishable_` i `sb_secret_` oraz planuje
+  wycofanie starszych kluczy do końca 2026 roku. Projekt nie ma jeszcze danych
+  produkcyjnych, więc jest to właściwy moment na użycie nowego standardu.
+- Bezpieczeństwo: klucz `sb_secret_` omija RLS i pozostaje wyłącznie w sekretach
+  serwerowych Vercela oraz lokalnym `.env.local`; nigdy nie otrzymuje prefiksu
+  `NEXT_PUBLIC_` ani nie trafia do repozytorium.
+- Kompromis: nazwa zmiennej jest zmianą niekompatybilną względem wcześniejszego
+  lokalnego szablonu, ale żadna aktywna integracja Supabase jeszcze jej nie używała.
+- Zaktualizowano: kod klienta administracyjnego, `.env.example`, AGENTS,
+  SETUP_SUPABASE_STRIPE i DECISIONS.

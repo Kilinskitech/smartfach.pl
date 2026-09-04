@@ -35,6 +35,8 @@ Lokalny profil oraz `.local/workspace.json` zostały usunięte; adapter plikowy 
 wyłącznie w testach regresji. Kod Stripe Checkout, 3-dniowej próby z kartą, Customer
 Portal i zweryfikowanych webhooków jest przygotowany, ale realne działanie wymaga
 projektów Supabase/Stripe, migracji i sekretów opisanych w `docs/SETUP_SUPABASE_STRIPE.md`.
+Backend Supabase używa nowego klucza `SUPABASE_SECRET_KEY`, nie wycofywanego
+legacy `service_role`.
 Adapter OpenRouter wymaga klucza, modelu i jawnego włączenia. Nie udawaj odpowiedzi
 bez konfiguracji. Zwykły użytkownik nie może zmieniać pól rozliczeniowych workspace.
 Pełne rozmowy są dostępne wyłącznie jednemu administratorowi platformy wskazanemu

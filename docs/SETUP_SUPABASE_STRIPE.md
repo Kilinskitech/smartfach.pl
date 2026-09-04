@@ -10,10 +10,13 @@ sekretów do rozmowy ani GitHub. Używaj `.env.local`, który jest ignorowany pr
    `supabase/migrations/202609040001_initial_saas.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
-5. Z Project Settings → API skopiuj do `.env.local`:
+5. Z Project Settings → API Keys skopiuj do `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`;
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`;
-   - `SUPABASE_SERVICE_ROLE_KEY` — wyłącznie po stronie serwera.
+   - `SUPABASE_SECRET_KEY` — nowy klucz `sb_secret_`, wyłącznie po stronie serwera.
+
+Nie używaj starszych kluczy JWT `anon` ani `service_role`. Supabase zapowiedział
+ich wycofanie do końca 2026 roku.
 
 Po restarcie aplikacji formularz `/logowanie` tworzy prawdziwego użytkownika,
 profil, prywatną organizację, pusty workspace i nieaktywną subskrypcję. Jeżeli
