@@ -15,8 +15,10 @@ import {
 import type { JourneyMode } from "@/domain/workspace";
 import { BrandMark } from "./brand";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountType = "discover" }: { next?: string; initialPlan?: PlanId; initialAccountType?: JourneyMode }) {
-  const [view, setView] = useState<"register" | "login">("register");
+export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountType = "discover", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PlanId; initialAccountType?: JourneyMode; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
+  const [view, setView] = useState<"register" | "login">(
+    checkoutCanceled || confirmationFailed ? "login" : "register",
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
@@ -55,6 +57,19 @@ export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountTyp
           <button className={view === "register" ? "selected" : ""} onClick={() => setView("register")}>Załóż konto</button>
           <button className={view === "login" ? "selected" : ""} onClick={() => setView("login")}>Zaloguj się</button>
         </div>
+
+        {checkoutCanceled && (
+          <p className="checkout-notice" role="status">
+            Formularz Stripe został przerwany i niczego nie pobrano. Konto już
+            istnieje — potwierdź adres z wiadomości, zaloguj się i ponownie wybierz plan.
+          </p>
+        )}
+        {confirmationFailed && (
+          <p className="form-error" role="alert">
+            Link potwierdzający jest nieprawidłowy albo wygasł. Spróbuj zalogować
+            się lub wróć do wiadomości wysłanej przez SmartFach.
+          </p>
+        )}
 
         {view === "login" ? (
           <form action={loginAction} className="auth-form">
@@ -100,9 +115,8 @@ export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountTyp
             <p className="auth-selection-note"><Check size={15} /> Zmieniasz sytuację i plan tutaj — bez przeładowania strony.</p>
             <label className="auth-consent"><input type="checkbox" name="terms" value="accepted" required /><span>Akceptuję <Link href="/regulamin" target="_blank">regulamin</Link> i <Link href="/polityka-prywatnosci" target="_blank">politykę prywatności</Link>.</span></label>
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
-            {registerState?.success && <p className="success-note" role="status"><Check size={16} />{registerState.success}</p>}
-            <button className="button button-primary auth-submit" disabled={registerPending}>Utwórz konto <ArrowRight size={18} /></button>
-            <p className="auth-trial-copy"><ShieldCheck size={15} /> Konto nie uruchamia opłaty. Kartę podasz bezpiecznie w Stripe przed rozpoczęciem próby.</p>
+            <button className="button button-primary auth-submit" disabled={registerPending}>{registerPending ? "Przekierowanie do Stripe…" : "Utwórz konto i przejdź dalej"} <ArrowRight size={18} /></button>
+            <p className="auth-trial-copy"><ShieldCheck size={15} /> Przejdziesz bezpośrednio do Stripe. Adres e-mail potwierdzisz po zapisaniu karty.</p>
           </form>
         )}
       </section>

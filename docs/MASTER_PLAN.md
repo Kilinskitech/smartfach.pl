@@ -93,6 +93,10 @@ Wartość ma wynikać z użyteczności tej historii, nie z utrudniania eksportu 
 - Kierunek komercyjny: płatny dostęp poprzedzony 3 pełnymi dniami próby. Karta jest
   wymagana przed rozpoczęciem, a brak anulowania przed końcem próby uruchamia pierwszy
   miesięczny abonament. To hipoteza konwersji do pomiaru, nie gwarancja optymalnego okresu.
+- Pierwsza rejestracja prowadzi bezpośrednio do Stripe Checkout bez oczekiwania na
+  kliknięcie linku e-mail. Potwierdzenie adresu następuje po zapisaniu karty, przed
+  wejściem do aplikacji. Do czasu potwierdzenia SmartFach ustawia techniczną blokadę
+  płatnego odnowienia; błędny adres nie może zakończyć się automatycznym obciążeniem.
 - Regularność protokołów, przewaga głosu i gotowość do płacenia nadal wymagają
   walidacji z prawdziwymi fachowcami. Szybkie generowanie kodu nie dowodzi popytu.
 

@@ -1,8 +1,14 @@
 import "server-only";
 import type Stripe from "stripe";
-import { planIdSchema, type PlanId } from "@/domain/billing";
+import {
+  emailConfirmationHoldAction,
+  planIdSchema,
+  type PlanId,
+} from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { planForStripePriceId } from "@/lib/stripe";
+import { getStripe, planForStripePriceId } from "@/lib/stripe";
+
+const emailConfirmationHoldMetadata = "smartfach_email_confirmation_hold";
 
 const timestamp = (value: number | null | undefined) =>
   typeof value === "number" ? new Date(value * 1000).toISOString() : null;
@@ -12,6 +18,63 @@ function periodEnd(subscription: Stripe.Subscription) {
     .map((item) => item.current_period_end)
     .filter((value): value is number => typeof value === "number");
   return ends.length ? timestamp(Math.max(...ends)) : null;
+}
+
+export async function reconcileEmailConfirmationHold(
+  subscription: Stripe.Subscription,
+  stripe = getStripe(),
+) {
+  const userId = subscription.metadata.user_id;
+  if (!userId) return subscription;
+
+  const admin = createAdminClient();
+  const { data, error } = await admin.auth.admin.getUserById(userId);
+  if (error || !data.user)
+    throw new Error("Nie można sprawdzić potwierdzenia adresu e-mail.");
+
+  const emailConfirmed = Boolean(data.user.email_confirmed_at);
+  const managedHold =
+    subscription.metadata[emailConfirmationHoldMetadata] === "true";
+  const action = emailConfirmationHoldAction({
+    subscriptionStatus: subscription.status,
+    emailConfirmed,
+    managedHold,
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  });
+  if (!action) return subscription;
+
+  return stripe.subscriptions.update(
+    subscription.id,
+    {
+      cancel_at_period_end: action === "apply",
+      metadata: {
+        [emailConfirmationHoldMetadata]: action === "apply" ? "true" : "false",
+      },
+    },
+    { idempotencyKey: `email-confirmation:${action}:${subscription.id}` },
+  );
+}
+
+export async function releaseEmailConfirmationHoldForUser(userId: string) {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("subscriptions")
+    .select("stripe_subscription_id")
+    .eq("owner_user_id", userId)
+    .maybeSingle();
+  if (error || !data?.stripe_subscription_id) return;
+
+  const stripe = getStripe();
+  const subscription = await stripe.subscriptions.retrieve(
+    String(data.stripe_subscription_id),
+  );
+  const reconciled = await reconcileEmailConfirmationHold(subscription, stripe);
+  if (
+    reconciled.cancel_at_period_end !== subscription.cancel_at_period_end ||
+    reconciled.metadata[emailConfirmationHoldMetadata] !==
+      subscription.metadata[emailConfirmationHoldMetadata]
+  )
+    await syncSubscription(reconciled);
 }
 
 export async function syncSubscription(

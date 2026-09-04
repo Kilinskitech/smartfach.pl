@@ -7,8 +7,10 @@ import {
   planIdSchema,
   salesEntrySchema,
 } from "@/domain/billing";
-import { applicationUrl } from "@/lib/stripe";
+import { applicationUrl, getStripe, stripeConfigured } from "@/lib/stripe";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { createSubscriptionCheckout } from "@/server/stripe-checkout";
 
 export type AuthState = { error?: string; success?: string } | undefined;
 
@@ -37,7 +39,15 @@ function message(error: unknown) {
     return "Nieprawidłowy e-mail lub hasło.";
   if (/already registered|already exists/i.test(error.message))
     return "Konto z tym adresem już istnieje. Zaloguj się.";
+  if (/rate limit|security purposes/i.test(error.message))
+    return "Wiadomość została już niedawno wysłana. Odczekaj chwilę i spróbuj ponownie.";
   return "Nie udało się połączyć z kontem. Spróbuj ponownie.";
+}
+
+function confirmationCallback() {
+  const callback = new URL("/auth/callback", applicationUrl());
+  callback.searchParams.set("next", "/app");
+  return callback.toString();
 }
 
 export async function signIn(_: AuthState, formData: FormData): Promise<AuthState> {
@@ -63,16 +73,17 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
     terms: formData.get("terms"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message };
+  if (!stripeConfigured())
+    return {
+      error: "Płatności są chwilowo niedostępne. Spróbuj ponownie za moment.",
+    };
 
   const supabase = await createClient();
-  const next = `/platnosc?plan=${parsed.data.plan}`;
-  const callback = new URL("/auth/callback", applicationUrl());
-  callback.searchParams.set("next", next);
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
-      emailRedirectTo: callback.toString(),
+      emailRedirectTo: confirmationCallback(),
       data: {
         display_name: parsed.data.displayName,
         account_type: parsed.data.accountType,
@@ -81,9 +92,82 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
     },
   });
   if (error) return { error: message(error) };
-  if (data.session) redirect(next);
-  return {
-    success:
-      "Sprawdź pocztę i potwierdź adres e-mail. Potem wybierzesz kartę i uruchomisz 3-dniową próbę.",
-  };
+  if (!data.user?.id || data.user.identities?.length === 0)
+    return { error: "Konto z tym adresem już istnieje. Zaloguj się." };
+
+  let checkoutUrl: string;
+  try {
+    const admin = createAdminClient();
+    const { data: membership, error: membershipError } = await admin
+      .from("memberships")
+      .select("organization_id")
+      .eq("user_id", data.user.id)
+      .eq("role", "owner")
+      .eq("status", "active")
+      .maybeSingle();
+    if (membershipError || !membership)
+      throw new Error("Nie utworzono organizacji użytkownika.");
+
+    const canceled = new URL("/logowanie", applicationUrl());
+    canceled.searchParams.set("typ", parsed.data.accountType);
+    canceled.searchParams.set("plan", parsed.data.plan);
+    canceled.searchParams.set("anulowano", "1");
+    const session = await createSubscriptionCheckout({
+      organizationId: String(membership.organization_id),
+      userId: data.user.id,
+      email: parsed.data.email,
+      plan: parsed.data.plan,
+      cancelPath: `${canceled.pathname}${canceled.search}`,
+      idempotencyKey: `signup-checkout:${data.user.id}:${parsed.data.plan}`,
+    });
+    checkoutUrl = session.url!;
+  } catch (checkoutError) {
+    console.error("Nie otwarto Stripe po rejestracji", {
+      userId: data.user.id,
+      message: checkoutError instanceof Error ? checkoutError.message : "unknown",
+    });
+    return {
+      error:
+        "Konto powstało, ale nie udało się otworzyć płatności. Potwierdź e-mail, zaloguj się i spróbuj ponownie.",
+    };
+  }
+  redirect(checkoutUrl);
+}
+
+export async function resendConfirmation(
+  _: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const sessionId = String(formData.get("sessionId") ?? "");
+  if (!/^cs_(?:test_|live_)?[A-Za-z0-9]+$/.test(sessionId))
+    return { error: "Nieprawidłowy identyfikator płatności." };
+
+  try {
+    const stripe = getStripe();
+    const checkout = await stripe.checkout.sessions.retrieve(sessionId);
+    const userId = checkout.metadata?.user_id;
+    if (!userId || checkout.status !== "complete")
+      return { error: "Nie znaleziono ukończonego formularza płatności." };
+
+    const admin = createAdminClient();
+    const { data, error } = await admin.auth.admin.getUserById(userId);
+    if (error || !data.user?.email)
+      return { error: "Nie znaleziono konta dla tej płatności." };
+    if (data.user.email_confirmed_at)
+      return { success: "Adres jest już potwierdzony. Możesz się zalogować." };
+
+    const supabase = await createClient();
+    const { error: resendError } = await supabase.auth.resend({
+      type: "signup",
+      email: data.user.email,
+      options: { emailRedirectTo: confirmationCallback() },
+    });
+    if (resendError) return { error: message(resendError) };
+    return { success: "Wysłaliśmy nową wiadomość. Sprawdź także folder Spam." };
+  } catch (error) {
+    console.error("Nie wysłano ponownie potwierdzenia", {
+      message: error instanceof Error ? error.message : "unknown",
+    });
+    return { error: "Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę." };
+  }
 }

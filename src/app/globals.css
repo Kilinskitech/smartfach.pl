@@ -4497,6 +4497,28 @@ svg {
 .payment-success p { margin: 0; max-width: 620px; }
 .payment-success svg { margin-inline: auto; color: #348c5c; }
 .payment-success .button { margin: 10px auto 0; }
+.payment-confirm-email { width: min(680px, 100%); }
+.activation-safety {
+  width: min(600px, 100%);
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin: 4px auto 0;
+  padding: 15px 17px;
+  border: 1px solid #d9e8df;
+  border-radius: 14px;
+  background: #edf6f0;
+  color: #315b4d;
+  font-size: 12px;
+  line-height: 1.55;
+  text-align: left;
+}
+.activation-safety svg,
+.confirmation-resend .button svg { flex: 0 0 auto; margin: 0; }
+.confirmation-resend { display: grid; justify-items: center; gap: 10px; }
+.confirmation-resend .form-error,
+.confirmation-resend .success-note { margin: 0; }
+.payment-success .text-link { color: #315b50; font-size: 12px; font-weight: 700; }
 .auth-page {
   min-height: 100svh;
   display: grid;
@@ -4535,6 +4557,8 @@ svg {
 .auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 5px; margin-bottom: 34px; border-radius: 14px; background: #eef2ed; }
 .auth-tabs button { padding: 11px; border: 0; border-radius: 10px; background: transparent; color: #61706b; font-weight: 750; cursor: pointer; }
 .auth-tabs button.selected { background: white; color: #153b38; box-shadow: 0 3px 14px rgba(17,45,42,.08); }
+.auth-card > .checkout-notice,
+.auth-card > .form-error { margin: -18px 0 24px; }
 .auth-form { display: grid; gap: 18px; }
 .auth-form h2 { margin: 4px 0 7px; font-size: 30px; letter-spacing: -.035em; }
 .auth-form > div > p:last-child { margin: 0; color: var(--muted); }

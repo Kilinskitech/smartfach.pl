@@ -27,6 +27,10 @@ i Uruchom ani prawdziwego zakupu zwiększeń limitu. Operacyjne workflow obecneg
 warsztatu odpowiadają wyłącznie fragmentowi Prowadź.
 W rejestracji pierwszy wybór asynchronicznie zawęża ofertę: Buduję od zera do
 Lite/Pro, a Mam pomysł lub firmę do Pro/Firma. Serwer ponownie sprawdza tę parę.
+Po poprawnym utworzeniu konta użytkownik jest kierowany bezpośrednio do Stripe,
+również gdy potwierdzanie e-maila w Supabase jest włączone. Po Checkout trafia na
+ekran aktywacji i dopiero wtedy potwierdza adres. Niepotwierdzony trial ma zarządzaną
+blokadę odnowienia, aby literówka w adresie nie spowodowała późniejszego obciążenia.
 
 ## Typy konta
 
@@ -104,6 +108,9 @@ Interfejs demo bez podłączonych workflow nie jest gotowym produktem do sprzeda
   przegląd prawnika/księgowego tam, gdzie jest potrzebny.
 - Checkout przed zapisaniem karty pokazuje `0 zł dzisiaj`, dokładną datę pierwszej
   opłaty, miesięczną cenę i łatwy sposób anulowania 3-dniowej próby.
+- Rejestracja nie zatrzymuje użytkownika przed Checkout komunikatem „sprawdź e-mail”.
+  Po zakupie ekran aktywacji pozwala ponownie wysłać polską wiadomość. Brak
+  potwierdzenia nie może przejść w płatne odnowienie.
 - Trial, status metody płatności i dostęp wynikają ze zweryfikowanych webhooków
   przetwarzanych po stronie serwera; ponowienie zdarzenia nie dubluje uprawnień ani opłaty.
 - Panel właściciela ma osobną autoryzację przez jedno serwerowo wskazane konto.

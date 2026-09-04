@@ -3,6 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { supabaseConfigured, supabasePublicConfig } from "./config";
 
 const protectedPrefixes = ["/app", "/platnosc", "/admin"];
+const publicProtectedExceptions = new Set(["/platnosc/sukces"]);
 
 export async function updateSession(request: NextRequest) {
   if (!supabaseConfigured()) return NextResponse.next({ request });
@@ -27,9 +28,9 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
-  const isProtected = protectedPrefixes.some((prefix) =>
-    request.nextUrl.pathname.startsWith(prefix),
-  );
+  const isProtected =
+    !publicProtectedExceptions.has(request.nextUrl.pathname) &&
+    protectedPrefixes.some((prefix) => request.nextUrl.pathname.startsWith(prefix));
 
   if (isProtected && !userId) {
     const destination = request.nextUrl.clone();
@@ -50,4 +51,3 @@ export async function updateSession(request: NextRequest) {
 
   return response;
 }
-

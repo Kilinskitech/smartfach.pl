@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   creditAllowance,
+  emailConfirmationHoldAction,
   estimateRequestCredits,
   isPlanAvailableForSalesEntry,
   normalizePlanForSalesEntry,
@@ -59,5 +60,43 @@ describe("kredyty SmartFach", () => {
     expect(salesEntryForAccountType("launch")).toBe("operate");
     expect(normalizePlanForSalesEntry("discover", "firma")).toBe("pro");
     expect(normalizePlanForSalesEntry("operate", "lite")).toBe("pro");
+  });
+
+  it("zatrzymuje odnowienie trialu do potwierdzenia e-maila", () => {
+    expect(
+      emailConfirmationHoldAction({
+        subscriptionStatus: "trialing",
+        emailConfirmed: false,
+        managedHold: false,
+        cancelAtPeriodEnd: false,
+      }),
+    ).toBe("apply");
+    expect(
+      emailConfirmationHoldAction({
+        subscriptionStatus: "trialing",
+        emailConfirmed: false,
+        managedHold: true,
+        cancelAtPeriodEnd: true,
+      }),
+    ).toBeNull();
+  });
+
+  it("usuwa tylko blokadę zarządzaną przez SmartFach", () => {
+    expect(
+      emailConfirmationHoldAction({
+        subscriptionStatus: "trialing",
+        emailConfirmed: true,
+        managedHold: true,
+        cancelAtPeriodEnd: true,
+      }),
+    ).toBe("release");
+    expect(
+      emailConfirmationHoldAction({
+        subscriptionStatus: "trialing",
+        emailConfirmed: true,
+        managedHold: false,
+        cancelAtPeriodEnd: true,
+      }),
+    ).toBeNull();
   });
 });

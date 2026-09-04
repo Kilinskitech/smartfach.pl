@@ -89,5 +89,6 @@ rozszerzony o pełny scenariusz dwóch organizacji przed płatną alfą.
 - [DECISIONS](docs/DECISIONS.md) — rejestr decyzji.
 - [RESEARCH](docs/RESEARCH.md) — źródła i pytania.
 - [SETUP_SUPABASE_STRIPE](docs/SETUP_SUPABASE_STRIPE.md) — uruchomienie kont i płatności.
+- [SUPABASE_EMAILS](docs/SUPABASE_EMAILS.md) — polski szablon i produkcyjna wysyłka e-mail.
 
 Nie wykonano push ani wdrożenia.

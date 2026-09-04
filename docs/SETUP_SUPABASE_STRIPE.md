@@ -21,7 +21,12 @@ ich wycofanie do końca 2026 roku.
 
 Po restarcie aplikacji formularz `/logowanie` tworzy prawdziwego użytkownika,
 profil, prywatną organizację, pusty workspace i nieaktywną subskrypcję. Jeżeli
-potwierdzanie e-maila jest włączone, użytkownik najpierw otwiera link z wiadomości.
+potwierdzanie e-maila jest włączone, użytkownik nie czeka na link: od razu przechodzi
+do Stripe, a adres potwierdza na ekranie po Checkout.
+
+W Authentication → Email Templates ustaw polski szablon zgodnie z
+`docs/SUPABASE_EMAILS.md`. Przed realnymi rejestracjami podłącz własny SMTP;
+domyślna wysyłka Supabase służy wyłącznie do ograniczonych testów.
 
 ## 2. Stripe w trybie testowym
 
@@ -69,6 +74,8 @@ model, dostawcę i identyfikator żądania per użytkownik.
 ## 5. Test akceptacyjny przed live
 
 - Rejestracja i potwierdzenie e-maila.
+- Bezpośrednie przejście rejestracja → Stripe bez blokującego ekranu e-mail.
+- Brak płatnego odnowienia, gdy adres nie został potwierdzony przed końcem trialu.
 - Powrót z Checkout i status `trialing`.
 - Brak dostępu do `/app` przed aktywną próbą.
 - Zapis klienta, rozmowy, wyceny i PDF po odświeżeniu.

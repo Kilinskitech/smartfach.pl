@@ -1,7 +1,10 @@
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
-import { syncSubscription } from "@/server/stripe-subscriptions";
+import {
+  reconcileEmailConfirmationHold,
+  syncSubscription,
+} from "@/server/stripe-subscriptions";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,7 +40,11 @@ export async function POST(request: Request) {
           : session.subscription?.id;
       if (subscriptionId) {
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        await syncSubscription(subscription, {
+        const protectedSubscription = await reconcileEmailConfirmationHold(
+          subscription,
+          stripe,
+        );
+        await syncSubscription(protectedSubscription, {
           organizationId: session.metadata?.organization_id,
           userId: session.metadata?.user_id,
           plan: session.metadata?.plan,
@@ -50,7 +57,11 @@ export async function POST(request: Request) {
       event.type === "customer.subscription.updated" ||
       event.type === "customer.subscription.deleted"
     ) {
-      await syncSubscription(event.data.object);
+      const protectedSubscription = await reconcileEmailConfirmationHold(
+        event.data.object,
+        stripe,
+      );
+      await syncSubscription(protectedSubscription);
     }
     await admin
       .from("stripe_events")

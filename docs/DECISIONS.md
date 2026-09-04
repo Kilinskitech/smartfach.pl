@@ -627,3 +627,28 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   pomysł lub firmę” oraz zmianę oferty przez nawigację między stronami.
 - Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, PRICING, rejestrację,
   stronę płatności, endpoint Stripe i migrację Supabase.
+
+## D032 — Checkout przed potwierdzeniem adresu, bez ryzyka automatycznego obciążenia
+
+- Data: 2026-09-05. Status: wdrożone w kodzie; wymaga testu integracyjnego Stripe
+  i wklejenia szablonu do hostowanego projektu Supabase.
+- Decyzja: po wysłaniu formularza rejestracji SmartFach tworzy konto i natychmiast
+  kieruje użytkownika do Stripe Checkout. Nie pokazuje przed płatnością ekranu
+  „sprawdź e-mail”. Adres jest potwierdzany po zapisaniu karty i przed wejściem
+  do aplikacji.
+- Ochrona klienta: do czasu potwierdzenia adresu webhook ustawia subskrypcję do
+  zakończenia wraz z trialem. Potwierdzenie usuwa wyłącznie blokadę oznaczoną jako
+  zarządzana przez SmartFach; nie cofa późniejszego anulowania wykonanego przez klienta.
+- E-mail: przygotowano polski, markowy szablon potwierdzenia i możliwość ponownego
+  wysłania wiadomości z ekranu aktywacji. Hostowany Supabase wymaga jednorazowego
+  wklejenia szablonu, a realna sprzedaż — własnego SMTP.
+- Powód: wymaganie przejścia do skrzynki między formularzem konta i Stripe tworzy
+  kosztowną przerwę w najważniejszym lejku. Jednocześnie karta przypisana do
+  błędnego adresu nie może zostać obciążona po trzech dniach bez dostępu do konta.
+- Kompromis: konto powstaje przed ukończeniem Checkout. Po anulowaniu formularza
+  użytkownik potwierdza adres i wraca do płatności po zalogowaniu; trzeba mierzyć
+  liczbę takich osieroconych rejestracji i czyścić je zgodnie z polityką retencji.
+- Odrzucono: wyłączenie potwierdzania adresów w Supabase, pobieranie opłaty bez
+  weryfikacji adresu oraz przechowywanie hasła do czasu zakończenia płatności.
+- Zaktualizowano: MASTER_PLAN, MVP_SPEC, SETUP_SUPABASE_STRIPE, rejestrację,
+  ekran sukcesu, callback Auth, webhook Stripe i testy reguły odnowienia.

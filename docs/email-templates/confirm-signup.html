@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Potwierdź adres e-mail</title>
+  </head>
+  <body style="margin:0;background:#f4f6f1;color:#173632;font-family:Arial,Helvetica,sans-serif;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">
+      Potwierdź adres e-mail i dokończ aktywację konta SmartFach.
+    </div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#f4f6f1;padding:32px 12px;">
+      <tr>
+        <td align="center">
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#ffffff;border:1px solid #dfe7e1;border-radius:22px;overflow:hidden;">
+            <tr>
+              <td style="padding:26px 30px;background:#153d39;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">
+                Smart<span style="color:#ff975b;">Fach</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:38px 30px 32px;">
+                <p style="margin:0 0 10px;color:#dd7138;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;">Ostatni krok</p>
+                <h1 style="margin:0 0 16px;color:#173632;font-size:30px;line-height:1.15;letter-spacing:-1px;">Potwierdź swój adres e-mail</h1>
+                <p style="margin:0 0 26px;color:#5f716a;font-size:16px;line-height:1.65;">
+                  Kliknij poniższy przycisk, aby potwierdzić adres i dokończyć aktywację SmartFach.
+                </p>
+                <table role="presentation" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td style="border-radius:12px;background:#ef7f42;">
+                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:15px 22px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Potwierdź adres e-mail</a>
+                    </td>
+                  </tr>
+                </table>
+                <p style="margin:28px 0 8px;color:#7b8984;font-size:12px;line-height:1.55;">
+                  Jeżeli przycisk nie działa, skopiuj ten adres do przeglądarki:
+                </p>
+                <p style="margin:0;word-break:break-all;color:#315f56;font-size:11px;line-height:1.5;">{{ .ConfirmationURL }}</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 30px;border-top:1px solid #e5ebe6;background:#fafbf8;color:#7c8984;font-size:11px;line-height:1.55;">
+                Wiadomość wysłano, ponieważ rozpoczęto tworzenie konta w SmartFach. Jeśli to nie Ty, zignoruj ją. W razie problemu napisz na kontakt@smartfach.pl.
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

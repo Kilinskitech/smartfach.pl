@@ -38,6 +38,20 @@ export const trialPolicy = {
   convertsToPaidAutomatically: true,
 } as const;
 
+export type EmailConfirmationHoldAction = "apply" | "release" | null;
+
+export function emailConfirmationHoldAction(input: {
+  subscriptionStatus: string;
+  emailConfirmed: boolean;
+  managedHold: boolean;
+  cancelAtPeriodEnd: boolean;
+}): EmailConfirmationHoldAction {
+  if (input.subscriptionStatus !== "trialing") return null;
+  if (!input.emailConfirmed)
+    return input.managedHold && input.cancelAtPeriodEnd ? null : "apply";
+  return input.managedHold ? "release" : null;
+}
+
 export const plans = {
   lite: {
     name: "Lite",
