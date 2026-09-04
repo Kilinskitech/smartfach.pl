@@ -11,7 +11,6 @@ import {
   Menu,
   MessageCircle,
   Mic,
-  Rocket,
   ShieldCheck,
   Sparkles,
   Users,
@@ -23,26 +22,30 @@ const paths = [
   {
     id: "odkryj",
     icon: Compass,
-    label: "Odkryj",
-    title: "Chcesz zacząć, ale nie masz kierunku?",
-    copy: "Znajdź kierunek, sprawdzaj go w praktyce i aktualizuj założenia na podstawie tego, co naprawdę działa.",
-    result: "Kierunek rozwijany na podstawie wyników",
+    label: "Buduję od zera",
+    title: "Chcę stworzyć biznes i pracować nad celem 10 000 zł przychodu miesięcznie",
+    copy: "SmartFach pomaga wybrać kierunek dopasowany do Twoich możliwości, zbudować ofertę, ustalić cenę i rozpocząć pozyskiwanie klientów.",
+    results: [
+      "Kierunek i model działania",
+      "Oferta, cena i plan sprzedaży",
+      "Kolejne zadania prowadzące do klientów",
+    ],
+    href: "/odkryj",
+    cta: "Zacznij budować biznes",
   },
   {
     id: "uruchom",
-    icon: Rocket,
-    label: "Uruchom",
-    title: "Masz pomysł, ale brakuje Ci planu?",
-    copy: "Testuj ofertę, poprawiaj cenę i planuj kolejne działania na podstawie odpowiedzi klientów.",
-    result: "Oferta i stale aktualizowane działania",
-  },
-  {
-    id: "prowadz",
     icon: BriefcaseBusiness,
-    label: "Prowadź i rozwijaj",
-    title: "Masz już klientów albo pracowników?",
-    copy: "Obsługuj kolejne zlecenia, zachowuj historię klientów i wykorzystuj ją przy następnej pracy.",
-    result: "Pamięć firmy rosnąca z każdym zleceniem",
+    label: "Mam pomysł lub firmę",
+    title: "Chcę zdobywać klientów i sprawniej prowadzić biznes",
+    copy: "SmartFach pomaga w marketingu, ofertach i obsłudze zleceń. Przygotowuje dokumenty, a historię pracy zachowuje przy właściwym kliencie.",
+    results: [
+      "Marketing i rozwój oferty",
+      "Wyceny, protokoły i wiadomości",
+      "Klienci, historia i praca zespołu",
+    ],
+    href: "/uruchom",
+    cta: "Rozwijaj biznes ze SmartFach",
   },
 ] as const;
 
@@ -54,10 +57,10 @@ const publicPlanDetails = {
     audience: "DLA JEDNEJ OSOBY · LŻEJSZE UŻYCIE",
     description: "Dla jednej osoby, która chce zacząć korzystać ze SmartFach i pracuje z nim od czasu do czasu.",
     features: [
-      "Typ konta dopasowany do Twojej sytuacji",
       "Jedno konto użytkownika",
       "Tekst, zdjęcia i nagrania",
-      "Zapisane dane i zatwierdzony kontekst",
+      "Budowanie kierunku, oferty i sprzedaży",
+      "Zapisane ustalenia i historia pracy",
       "Standardowy miesięczny limit",
     ],
   },
@@ -65,21 +68,21 @@ const publicPlanDetails = {
     audience: "DLA JEDNEJ OSOBY · REGULARNA PRACA",
     description: "Dla jednej osoby, która regularnie rozwija lub prowadzi firmę i potrzebuje większego zakresu pracy z asystentem.",
     features: [
-      "Typ konta dopasowany do Twojej sytuacji",
       "Wszystko z planu Lite",
       "Wyższy miesięczny limit",
       "Więcej pracy nad ofertami i marketingiem",
       "Więcej wycen, protokołów i wiadomości",
+      "Ciągłość ustaleń między kolejnymi zadaniami",
     ],
   },
   firma: {
     audience: "DLA WŁAŚCICIELA I ZESPOŁU",
     description: "Dla firmy, która chce pracować na wspólnych klientach, historii i zasadach zamiast rozdzielać wiedzę między pracowników.",
     features: [
-      "Typ konta dopasowany do firmy i zespołu",
       "Właściciel i do 3 pracowników",
       "Wspólni klienci, cennik i historia",
       "Wspólny limit zespołu",
+      "Jeden standard pracy dla całej firmy",
       "Kolejny członek: 49,99 zł / mies.",
     ],
   },
@@ -98,25 +101,25 @@ const pricingContent: Record<PricingContext, {
 }> = {
   discover: {
     kicker: "ABONAMENT DLA JEDNEJ OSOBY",
-    title: "Wybierasz intensywność pracy, nie etap swojej firmy.",
-    lead: "Lite wystarczy do lżejszej pracy, a Pro daje wyższy miesięczny limit. Typ konta dopasowujesz osobno do swojej sytuacji.",
+    title: "Wybierz, jak często chcesz pracować ze SmartFach.",
+    lead: "Lite wystarczy do lżejszego użycia, a Pro daje więcej miejsca na regularne planowanie, research i realizację kolejnych działań.",
     planIds: ["lite", "pro"],
     featuredPlan: "pro",
-    note: "Odkryj jest typem konta wybieranym na starcie. Gdy Twoja sytuacja się zmieni, ustawisz inny typ w Ustawieniach bez zmiany planu.",
+    note: "Gdy zaczniesz działać lub zdobędziesz klientów, korzystasz dalej w tym samym abonamencie — bez utraty ustaleń.",
   },
   launch: {
-    kicker: "ABONAMENT DLA JEDNEJ OSOBY",
-    title: "Wybierz tempo działania. Typ konta pozostaje skupiony na Twoim celu.",
-    lead: "Lite daje standardowy zakres, a Pro więcej miejsca na regularną pracę nad ofertą, sprzedażą i kolejnymi zadaniami.",
-    planIds: ["lite", "pro"],
+    kicker: "DLA SAMODZIELNEJ OSOBY LUB ZESPOŁU",
+    title: "Pracujesz sam? Wybierz Pro. Potrzebujesz wspólnej przestrzeni? Wybierz Firma.",
+    lead: "Pro jest dla jednej osoby rozwijającej biznes, a Firma dodaje wspólnych klientów, historię i pracę zespołu.",
+    planIds: ["pro", "firma"],
     featuredPlan: "pro",
-    note: "Uruchom jest typem konta, a nie codziennym przełącznikiem. Późniejsza zmiana w Ustawieniach zachowuje informacje i wykorzystanie limitu.",
+    note: "Jeden abonament pomaga od pierwszej oferty po codzienną pracę firmy. Nie kupujesz kolejnego produktu wraz z rozwojem.",
   },
   operate: {
-    kicker: "DLA JEDNEJ OSOBY LUB ZESPOŁU",
-    title: "Pracujesz sam? Wybierz Lite lub Pro. Masz zespół? Wybierz Firma.",
-    lead: "Typ Prowadź dopasowuje produkt do pracy z klientami. Plan określa intensywność, liczbę użytkowników i wspólną przestrzeń firmy.",
-    planIds: ["lite", "pro", "firma"],
+    kicker: "DLA SAMODZIELNEJ OSOBY LUB ZESPOŁU",
+    title: "Pracujesz sam? Wybierz Pro. Masz zespół? Wybierz Firma.",
+    lead: "Pro daje pełny zakres dla jednej osoby, a Firma dodaje wspólną przestrzeń, klientów i historię zespołu.",
+    planIds: ["pro", "firma"],
     featuredPlan: "pro",
     note: "Wariant Firma obejmuje właściciela i do 3 członków. Każde kolejne miejsce zwiększa cenę o 49,99 zł miesięcznie.",
   },
@@ -130,20 +133,25 @@ export function MarketingHeader() {
         <span>Smart<b>Fach</b></span>
       </Link>
       <nav aria-label="Główna nawigacja">
-        <Link href="/#sciezki">Jak działa</Link>
-        <Link href="/odkryj">Znajdź pomysł</Link>
-        <Link href="/uruchom">Uruchom firmę</Link>
-        <Link href="/dla-firm">Prowadź firmę</Link>
+        <Link href="/#jak-dziala">Jak to działa</Link>
+        <Link href="/odkryj">Buduję od zera</Link>
+        <Link href="/uruchom">Mam pomysł lub firmę</Link>
+        <Link href="/dla-firm">Dla zespołów</Link>
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
       </nav>
+      <Link className="marketing-login" href="/logowanie?typ=discover&plan=pro">
+        <span className="login-label-full">Zacznij 3 dni bez opłat</span>
+        <span className="login-label-short">Zacznij</span>
+        <ArrowRight size={16} />
+      </Link>
       <details className="marketing-mobile-menu">
         <summary aria-label="Otwórz menu"><Menu size={21} /></summary>
         <nav aria-label="Nawigacja telefonu">
-          <Link href="/#sciezki">Jak działa</Link>
-          <Link href="/odkryj">Znajdź pomysł</Link>
-          <Link href="/uruchom">Uruchom firmę</Link>
-          <Link href="/dla-firm">Prowadź firmę</Link>
+          <Link href="/#jak-dziala">Jak to działa</Link>
+          <Link href="/odkryj">Buduję od zera</Link>
+          <Link href="/uruchom">Mam pomysł lub firmę</Link>
+          <Link href="/dla-firm">Dla zespołów</Link>
           <Link href="/cennik">Cennik</Link>
           <Link href="/kontakt">Kontakt</Link>
         </nav>
@@ -189,22 +197,24 @@ function Paths() {
   return (
     <section className="marketing-section paths-section" id="sciezki">
       <div className="section-intro">
-        <p className="marketing-kicker">JEDEN ASYSTENT · TRZY PUNKTY STARTU</p>
-        <h2>Zacznij dokładnie tam, gdzie jesteś</h2>
-        <p>Przy uruchomieniu wybierasz typ konta dopasowany do swojej sytuacji. Nie przełączasz go podczas codziennej pracy; później możesz zmienić go w Ustawieniach.</p>
+        <p className="marketing-kicker">JEDEN ASYSTENT · OD STARTU DO ROZWOJU</p>
+        <h2>Zbuduj biznes od zera albo rozwijaj ten, który już masz.</h2>
+        <p>SmartFach nie kończy pracy na znalezieniu pomysłu. Pomaga zbudować ofertę, dotrzeć do klientów, wykonać kolejne zadania i prowadzić codzienną pracę firmy.</p>
       </div>
       <div className="path-grid">
-        {paths.map(({ id, icon: Icon, label, title, copy, result }, index) => (
+        {paths.map(({ id, icon: Icon, label, title, copy, results, href, cta }, index) => (
           <article key={id} className={`path-card path-card-${id}`}>
             <div className="path-card-top">
               <span className="path-icon"><Icon size={24} /></span>
               <i>0{index + 1}</i>
             </div>
-            <small>TYP KONTA · {label.toUpperCase()}</small>
+            <small>{label.toUpperCase()}</small>
             <h3>{title}</h3>
             <p>{copy}</p>
-            <div className="path-result"><Check size={16} /><span>{result}</span></div>
-            <Link href={id === "prowadz" ? "/dla-firm" : `/${id}`}>Zobacz tę ścieżkę <ArrowRight size={16} /></Link>
+            <ul className="path-outcomes">
+              {results.map((result) => <li key={result}><Check size={16} /><span>{result}</span></li>)}
+            </ul>
+            <Link href={href}>{cta} <ArrowRight size={16} /></Link>
           </article>
         ))}
       </div>
@@ -244,7 +254,7 @@ function PricingCard({
 
 function Pricing({ context }: { context: PricingContext }) {
   const content = pricingContent[context];
-  const href = `/logowanie?typ=${context}`;
+  const href = `/logowanie?typ=${context === "launch" ? "operate" : context}`;
   return (
     <section className="marketing-section pricing-section" id="cennik">
       <div className="section-intro">
@@ -262,14 +272,14 @@ function Pricing({ context }: { context: PricingContext }) {
           />
         ))}
       </div>
-      {context !== "operate" && (
+      {context === "discover" && (
         <p className="pricing-team-link">
-          Masz już zespół? Plan Firma pasuje do typu Prowadź. <Link href="/cennik">Zobacz pełny cennik <ArrowRight size={14} /></Link>
+          Masz już pomysł, klientów lub zespół? <Link href="/uruchom">Zobacz ofertę dla biznesu <ArrowRight size={14} /></Link>
         </p>
       )}
       <p className="pricing-context-note"><ShieldCheck size={15} /> {content.note}</p>
       <p className="trial-disclosure"><ShieldCheck size={15} /> <span><strong>3 dni bez opłat · karta wymagana.</strong> Jeśli nie anulujesz przed końcem próby, pobierzemy cenę wybranego planu za pierwszy miesiąc. Abonament odnawia się co miesiąc do rezygnacji.</span></p>
-      <p className="pricing-disclaimer">Ceny i limity pozostają hipotezą do walidacji. Stripe pokaże 0 zł dzisiaj, plan i termin pierwszego obciążenia przed zatwierdzeniem karty.</p>
+      <p className="pricing-disclaimer">Przed podpięciem karty zobaczysz 0 zł dzisiaj, wybrany plan i dokładny termin pierwszej opłaty.</p>
     </section>
   );
 }
@@ -278,23 +288,23 @@ function PricingOverview() {
   return (
     <section className="marketing-section pricing-section pricing-overview" id="cennik">
       <div className="section-intro">
-        <p className="marketing-kicker">PLAN I TYP KONTA TO DWIE RÓŻNE DECYZJE</p>
-        <h2>Plan wybierasz według intensywności i liczby osób.</h2>
-        <p>Plan określa limit i liczbę osób. Typ konta dopasowuje asystenta do Twojej sytuacji i zmienisz go później wyłącznie w Ustawieniach.</p>
+        <p className="marketing-kicker">JEDEN ABONAMENT · CAŁA DROGA</p>
+        <h2>Wybierz plan do swojego tempa pracy.</h2>
+        <p>Lite jest dla osób budujących biznes od zera, Pro pasuje do obu punktów startu, a Firma obsługuje właściciela i zespół.</p>
       </div>
       <div className="pricing-grid">
         {(Object.keys(plans) as PublicPlanId[]).map((planId) => (
           <PricingCard
             key={planId}
             planId={planId}
-            href="/logowanie?typ=operate"
+            href={planId === "firma" ? "/logowanie?typ=operate" : "/logowanie?typ=discover"}
             featured={planId === "pro"}
           />
         ))}
       </div>
-      <p className="pricing-context-note"><ShieldCheck size={15} /> Typ konta nie zmienia ceny ani terminu odnowienia. Zapisane informacje i wykorzystanie limitu zostają na koncie.</p>
+      <p className="pricing-context-note"><ShieldCheck size={15} /> Rozwijasz pomysł i firmę w tym samym abonamencie. Twoje ustalenia oraz historia zostają na koncie.</p>
       <p className="trial-disclosure"><ShieldCheck size={15} /> <span><strong>3 dni bez opłat · karta wymagana.</strong> Jeśli nie anulujesz przed końcem próby, pobierzemy cenę wybranego planu za pierwszy miesiąc. Abonament odnawia się co miesiąc do rezygnacji.</span></p>
-      <p className="pricing-disclaimer">Ceny i limity są hipotezą dla wczesnej wersji. Checkout pokaże dokładny termin pierwszego obciążenia i zasady rezygnacji.</p>
+      <p className="pricing-disclaimer">Przed podpięciem karty zobaczysz dokładny termin pierwszej opłaty i zasady rezygnacji.</p>
     </section>
   );
 }
@@ -308,16 +318,17 @@ export function MarketingHome() {
           <div className="hero-orb hero-orb-one" aria-hidden="true" />
           <div className="hero-orb hero-orb-two" aria-hidden="true" />
           <div className="hero-copy">
-            <p className="marketing-kicker hero-kicker"><Sparkles size={14} /> JEDEN ASYSTENT · CAŁY CYKL FIRMY</p>
-            <h1>Zacznij tam, gdzie jesteś. <em>Rozwijaj firmę bez zaczynania od zera.</em></h1>
-            <p className="hero-lead">Wybierz, czy szukasz kierunku, uruchamiasz pomysł czy prowadzisz firmę. SmartFach dopasuje konto do Twojej sytuacji i pokaże tylko potrzebne narzędzia.</p>
+            <p className="marketing-kicker hero-kicker"><Sparkles size={14} /> ASYSTENT AI, KTÓRY POMAGA DZIAŁAĆ</p>
+            <h1>Ustal cel 10 000 zł przychodu miesięcznie. <em>Zamieniaj go w konkretne działania.</em></h1>
+            <p className="hero-lead">SmartFach pomaga wybrać kierunek, zdobywać klientów i prowadzić codzienną pracę firmy. Pamięta ustalenia i podpowiada następny krok — nie kończy na jednorazowym planie.</p>
             <div className="hero-actions">
-              <Link className="hero-primary" href="#sciezki">Zacznij od swojego etapu <ArrowRight size={18} /></Link>
+              <Link className="hero-primary" href="/logowanie?typ=discover&plan=pro">Zacznij budować biznes <ArrowRight size={18} /></Link>
+              <Link className="hero-secondary" href="/logowanie?typ=operate&plan=pro">Mam pomysł lub firmę</Link>
             </div>
             <div className="hero-trust">
-              <span><Check size={15} /> Typ konta dopasowany na starcie</span>
-              <span><Check size={15} /> Zmiana później w Ustawieniach</span>
-              <span><Check size={15} /> Zachowane dane i historia</span>
+              <span><Check size={15} /> 3 dni bez opłat</span>
+              <span><Check size={15} /> Jedna historia i pamięć ustaleń</span>
+              <span><Check size={15} /> 10 000 zł to cel, nie gwarancja wyniku</span>
             </div>
           </div>
           <ProductPreview />
@@ -327,7 +338,7 @@ export function MarketingHome() {
           <div><span><MessageCircle size={18} /> Tekst</span><span><Mic size={18} /> Głos</span><span><ImageIcon size={18} /> Zdjęcie</span></div>
           <strong>SmartFach przygotowuje rezultat.</strong>
         </section>
-        <section className="workflow-ribbon" aria-label="Jak działa SmartFach">
+        <section className="workflow-ribbon" id="jak-dziala" aria-label="Jak działa SmartFach">
           <div><span>01</span><p><strong>Powiedz, czego potrzebujesz</strong><small>Tekstem, głosem albo zdjęciem</small></p></div>
           <i><ArrowRight size={18} /></i>
           <div><span>02</span><p><strong>SmartFach wykonuje pracę</strong><small>Wykorzystuje właściwy kontekst</small></p></div>
@@ -335,13 +346,14 @@ export function MarketingHome() {
           <div><span>03</span><p><strong>Sprawdzasz gotowy rezultat</strong><small>I przechodzisz do kolejnego zadania</small></p></div>
         </section>
         <Paths />
+        <HonestGoalPlan />
         <ContinuityLoop />
         <section className="marketing-section operations-showcase">
           <div>
             <p className="marketing-kicker">NIE KOLEJNY OGÓLNY CZAT</p>
             <h2>Nie kończy na poradzie. Pomaga wykonać pracę.</h2>
             <p>SmartFach korzysta z kontekstu Twojej firmy, przygotowuje gotowy rezultat i pozwala Ci go sprawdzić przed zapisem.</p>
-            <Link href="/dla-firm">Zobacz SmartFach dla firm <ArrowRight size={16} /></Link>
+            <Link href="/uruchom">Zobacz, jak pomaga w biznesie <ArrowRight size={16} /></Link>
           </div>
           <div className="outcome-grid">
             <article><FileText size={23} /><strong>Wycena</strong><span>Pozycje, ceny z cennika i gotowy PDF</span></article>
@@ -353,9 +365,9 @@ export function MarketingHome() {
         <PricingOverview />
         <section className="marketing-cta">
           <BrandMark size={50} />
-          <h2>Nie potrzebujesz kolejnej teorii. Potrzebujesz następnego kroku.</h2>
-          <p>Powiedz SmartFachowi, gdzie jesteś i co chcesz osiągnąć. Pomoże zamienić to w konkretną pracę.</p>
-          <Link href="/cennik">Wybierz plan i zacznij 3 dni próby <ArrowRight size={18} /></Link>
+          <h2>Nie potrzebujesz kolejnego kursu. Potrzebujesz asystenta do działania.</h2>
+          <p>Zacznij od celu, pomysłu albo zadania w firmie. SmartFach będzie pracował z Tobą dalej, gdy pojawią się prawdziwe wyniki.</p>
+          <Link href="/logowanie?typ=discover&plan=pro">Zacznij 3 dni bez opłat <ArrowRight size={18} /></Link>
         </section>
       </main>
       <MarketingFooter />
@@ -365,44 +377,44 @@ export function MarketingHome() {
 
 const landingData = {
   discover: {
-    kicker: "MASZ CHĘĆ, ALE NIE MASZ JESZCZE KIERUNKU?",
-    title: "Znajdź kierunek, sprawdzaj go i rozwijaj — krok po kroku.",
-    lead: "Ustal cel dojścia do 10 000 zł miesięcznego przychodu. Wracaj z wynikami, aktualizuj liczby i wybieraj ze SmartFach kolejne działania.",
+    kicker: "ZACZYNASZ OD ZERA?",
+    title: "Ustal cel 10 000 zł przychodu miesięcznie i zacznij działać krok po kroku.",
+    lead: "SmartFach pomoże Ci znaleźć kierunek online lub usługowy dopasowany do Twoich możliwości, policzyć drogę do celu i regularnie wybierać następne działanie.",
     cta: "Zacznij pracować nad celem",
     href: "/logowanie?typ=discover",
     icon: Compass,
     trust: "10 000 zł to cel do regularnego sprawdzania, nie gwarancja wyniku.",
-    resultLabel: "W trakcie pracy rozwijasz:",
-    items: ["Cel i kierunek działania", "Aktualizowane założenia", "Plan najbliższych zadań", "Historię decyzji i wyników"],
-    benefitTitle: "Plan nie kończy pracy. Zmienia się razem z tym, czego dowiadujesz się z rynku.",
+    resultLabel: "SmartFach pomaga Ci ustalić:",
+    items: ["Co możesz realnie sprzedawać", "Komu i za ile", "Jak dojść do celu na liczbach", "Co zrobić jako następne"],
+    benefitTitle: "To nie jest generator jednego planu. To asystent do regularnego działania.",
     benefitLead: "SmartFach zapamiętuje zatwierdzone ustalenia, dzięki czemu po każdym teście możesz podjąć kolejną decyzję bez zaczynania od zera.",
     benefits: [
       ["Aktualizuj zamiast zaczynać od nowa", "Wracaj do pomysłu po każdym teście i poprawiaj cenę, koszty, grupę klientów albo sposób dotarcia."],
       ["Decyzje oparte na wynikach", "Zapisuj, co zadziałało, co nie i czego dowiedziałeś się od klientów. Kolejny krok wykorzysta te informacje."],
-      ["Dopasuj konto, gdy sytuacja się zmieni", "Gdy kierunek jest gotowy, zmieniasz typ konta na Uruchom w Ustawieniach. Dotychczasowe rozmowy pozostają zapisane."],
+      ["Rozwijaj bez zaczynania od nowa", "Gdy pomysł zacznie działać, w tym samym abonamencie przechodzisz do ofert, klientów i codziennej pracy firmy."],
     ],
   },
   launch: {
-    kicker: "SMARTFACH URUCHOM · OD POMYSŁU DO DZIAŁANIA",
-    title: "Testuj ofertę, poprawiaj ją i planuj kolejne działania.",
-    lead: "Ustal, co sprzedajesz, komu i za ile. Wracaj z odpowiedziami klientów, aktualizuj priorytety i zawsze wiedz, co warto zrobić jako następne.",
-    cta: "Zacznij w Uruchom",
-    href: "/logowanie?typ=launch",
-    icon: Rocket,
-    trust: "Typ konta zmienisz później w Ustawieniach bez zmiany abonamentu.",
-    resultLabel: "W każdym cyklu poprawiasz:",
-    items: ["Klienta i jego problem", "Ofertę oraz cenę", "Działania sprzedażowe", "Priorytet na kolejny tydzień"],
-    benefitTitle: "Nie potrzebujesz sztywnego biznesplanu. Potrzebujesz regularnego następnego kroku.",
-    benefitLead: "SmartFach pomaga planować, wykonać działanie, zapisać wynik i dostosować kolejne zadanie do tego, co wydarzyło się naprawdę.",
+    kicker: "MASZ POMYSŁ LUB JUŻ DZIAŁASZ?",
+    title: "Zdobywaj klientów i prowadź firmę z jednym asystentem AI.",
+    lead: "Od pierwszej oferty po wyceny, protokoły, wiadomości i historię klientów. SmartFach pomaga wykonać pracę i pamięta, co było wcześniej.",
+    cta: "Zacznij rozwijać biznes",
+    href: "/logowanie?typ=operate",
+    icon: BriefcaseBusiness,
+    trust: "Jeden abonament dla pomysłu, jednoosobowej działalności i zespołu.",
+    resultLabel: "SmartFach pomaga przygotować:",
+    items: ["Ofertę i działania sprzedażowe", "Wycenę do sprawdzenia i PDF", "Protokół lub wiadomość do klienta", "Następny krok w rozwoju firmy"],
+    benefitTitle: "Od pozyskania klienta po obsługę zlecenia — bez skakania między narzędziami.",
+    benefitLead: "SmartFach łączy doradztwo biznesowe z wykonywaniem codziennych zadań firmy. Wracasz z wynikiem i od razu pracujesz nad kolejnym krokiem.",
     benefits: [
-      ["Najbliższe działania", "Planujesz to, co możesz wykonać teraz, zamiast tworzyć dokument, który po tygodniu przestaje być aktualny."],
-      ["Korekty na podstawie rynku", "Aktualizujesz ofertę, cenę i komunikację wraz z informacjami z rozmów oraz pierwszych prób sprzedaży."],
-      ["Pomoc przy wykonaniu", "Tworzysz wiadomości, oferty i treści razem z asystentem, a rezultat zapisujesz do następnego cyklu."],
+      ["Od pomysłu do pierwszej oferty", "Doprecyzuj klienta, problem, cenę i najprostszy sposób rozpoczęcia sprzedaży."],
+      ["Codzienna praca bez pustej kartki", "Przygotuj wycenę, protokół albo wiadomość krótkim poleceniem i sprawdź gotowy rezultat."],
+      ["Rozwój oparty na wynikach", "Aktualizuj ofertę, marketing i następne działania na podstawie tego, co wydarzyło się naprawdę."],
     ],
   },
   operate: {
-    kicker: "SMARTFACH · PROWADŹ I ROZWIJAJ",
-    title: "Mniej administracji. Więcej czasu na klientów i rozwój firmy.",
+    kicker: "SMARTFACH DLA ZESPOŁU",
+    title: "Jedna pamięć klientów i jeden sposób pracy całej firmy.",
     lead: "Powiedz lub napisz, co trzeba zrobić. SmartFach pomoże przygotować wycenę, protokół i wiadomość, a historię pracy zachowa przy właściwym kliencie.",
     cta: "Ułatw sobie prowadzenie firmy",
     href: "/logowanie?typ=operate",
@@ -442,7 +454,7 @@ function PathBenefits({ mode }: { mode: keyof typeof landingData }) {
   );
 }
 
-function ContinuityLoop() {
+function ContinuityLoop({ entry = "discover" }: { entry?: "discover" | "operate" }) {
   const steps = [
     ["PLANUJESZ", "Ustalasz najbliższy krok"],
     ["DZIAŁASZ", "Wykonujesz go w praktyce"],
@@ -452,7 +464,7 @@ function ContinuityLoop() {
   return (
     <section className="marketing-section continuity-section">
       <div className="section-intro">
-        <p className="marketing-kicker">PLAN JEST POCZĄTKIEM</p>
+        <p className="marketing-kicker">WARTOŚĆ CO TYDZIEŃ, NIE TYLKO NA STARCIE</p>
         <h2>SmartFach działa dalej, gdy pojawiają się prawdziwe wyniki.</h2>
         <p>Planujesz, wykonujesz kolejny krok i wracasz z tym, co wydarzyło się w praktyce. SmartFach kontynuuje na podstawie zapisanej rozmowy, aktualizuje priorytety i pomaga wybrać dalsze działanie.</p>
       </div>
@@ -467,8 +479,8 @@ function ContinuityLoop() {
       </div>
       <div className="continuity-promise">
         <ShieldCheck size={23} />
-        <p><strong>Typ konta zmienia się razem z firmą.</strong><span>Na co dzień widzisz tylko narzędzia potrzebne w swojej sytuacji. Kiedy etap działalności naprawdę się zmieni, aktualizujesz typ w Ustawieniach bez utraty danych.</span></p>
-        <Link href="/logowanie">Zacznij od swojej sytuacji <ArrowRight size={16} /></Link>
+        <p><strong>Jeden abonament rośnie razem z Tobą.</strong><span>Zaczynasz od celu lub pomysłu, a później korzystasz z ofert, klientów, wycen i historii firmy — bez utraty wcześniejszych ustaleń.</span></p>
+        <Link href={`/logowanie?typ=${entry}&plan=pro`}>Zacznij 3 dni bez opłat <ArrowRight size={16} /></Link>
       </div>
     </section>
   );
@@ -484,8 +496,8 @@ function HonestGoalPlan() {
   return (
     <section className="marketing-section honest-goal">
       <div>
-        <p className="marketing-kicker">CEL SPRAWDZANY NA LICZBACH</p>
-        <h2>Bez magicznych metod. Z celem regularnie sprawdzanym na liczbach.</h2>
+        <p className="marketing-kicker">TWÓJ CEL · KONKRETNE LICZBY</p>
+        <h2>10 000 zł miesięcznie to cel. SmartFach pomaga rozłożyć go na realne działania.</h2>
         <p>SmartFach nie obiecuje wyniku. Pomaga przeliczyć cel na ofertę, potrzebną liczbę klientów i działania, a potem aktualizować je na podstawie efektów.</p>
       </div>
       <div className="goal-steps" aria-label="Jak cel finansowy zmienia się w regularne działania">
@@ -515,8 +527,7 @@ export function PathLanding({ mode }: { mode: keyof typeof landingData }) {
             <h1>{page.title}</h1>
             <p>{page.lead}</p>
             <div className="hero-actions path-hero-actions">
-              <Link className="hero-primary" href={page.href}>Rozpocznij 3 dni próbne <ArrowRight size={18} /></Link>
-              <Link className="hero-secondary" href="#jak-pomaga">Zobacz, jak pomaga</Link>
+              <Link className="hero-primary" href={page.href}>{page.cta} <ArrowRight size={18} /></Link>
             </div>
             <small><ShieldCheck size={13} /> Karta wymagana · 0 zł przez 3 dni · możesz anulować przed pierwszą opłatą.</small>
             <small className="path-trust-note"><ShieldCheck size={13} /> {page.trust}</small>
@@ -533,7 +544,7 @@ export function PathLanding({ mode }: { mode: keyof typeof landingData }) {
         </section>
         <PathBenefits mode={mode} />
         {mode === "discover" && <HonestGoalPlan />}
-        <ContinuityLoop />
+        <ContinuityLoop entry={mode === "discover" ? "discover" : "operate"} />
         <Pricing context={mode} />
       </main>
       <MarketingFooter />
@@ -547,9 +558,9 @@ export function PricingLanding() {
       <MarketingHeader />
       <main>
         <section className="pricing-hero">
-          <p className="marketing-kicker"><Sparkles size={14} /> PLAN OKREŚLA LIMIT · TYP KONTA OKREŚLA SPOSÓB PRACY</p>
-          <h1>Wybierz intensywność pracy i liczbę osób.</h1>
-          <p>Lite i Pro są dla jednej osoby, a Firma dla zespołu. Podczas startu wybierasz jeden typ konta: Odkryj, Uruchom albo Prowadź.</p>
+          <p className="marketing-kicker"><Sparkles size={14} /> PROSTE PLANY · BEZ DODATKOWEJ OPŁATY ZA ROZWÓJ</p>
+          <h1>Jeden abonament od pomysłu po codzienną pracę firmy.</h1>
+          <p>Lite i Pro są dla jednej osoby, a Firma dla zespołu. Każdy plan obejmuje pomoc SmartFach na całej drodze.</p>
         </section>
         <PricingOverview />
       </main>
@@ -564,9 +575,9 @@ export function MarketingFooter() {
       <Link className="marketing-brand" href="/"><BrandMark size={31} /><span>Smart<b>Fach</b></span></Link>
       <p>Asystent AI od pomysłu do codziennej pracy firmy.</p>
       <div>
-        <Link href="/odkryj">Znajdź pomysł</Link>
-        <Link href="/uruchom">Uruchom firmę</Link>
-        <Link href="/dla-firm">Prowadź firmę</Link>
+        <Link href="/odkryj">Buduję od zera</Link>
+        <Link href="/uruchom">Mam pomysł lub firmę</Link>
+        <Link href="/dla-firm">Dla zespołów</Link>
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
         <Link href="/regulamin">Regulamin</Link>

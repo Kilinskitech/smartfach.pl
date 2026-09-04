@@ -1,6 +1,6 @@
 # Zakres pierwszej wersji
 
-Stan: 2026-09-04. Ten dokument definiuje docelowy zakres, nie potwierdza jego wdrożenia.
+Stan: 2026-09-05. Ten dokument definiuje docelowy zakres, nie potwierdza jego wdrożenia.
 
 ## Obecny przyrost — integracje przygotowane, jeszcze nie uruchomione produkcyjnie
 
@@ -18,17 +18,21 @@ RLS oraz kod Stripe Checkout/webhook/portal są wdrożone i czekają na zastosow
 migracji oraz sekrety usług. Odrębne etapy: uruchomienie/ewaluacja AI, członkostwa online,
 rozliczenia zwiększeń limitu, wysyłka
 i testy fizycznych telefonów.
-Typ konta Odkryj/Uruchom/Prowadź wybiera się przy rejestracji i zmienia wyłącznie
-w Ustawieniach. Istnieje wewnętrzny
+Publiczna rejestracja pokazuje dwa proste wejścia: „Buduję od zera” oraz
+„Mam pomysł lub firmę”. Wewnętrzne konteksty Odkryj/Uruchom/Prowadź pozostają
+w danych i mogą być zmieniane w Ustawieniach. Istnieje wewnętrzny
 testowy przelicznik z blokadą po wykorzystaniu limitu. Zwykły interfejs nie pokazuje
 salda; zwiększenie limitu pojawia się dopiero po jego wykorzystaniu. Nie ma jeszcze trwałych rezultatów Odkryj
 i Uruchom ani prawdziwego zakupu zwiększeń limitu. Operacyjne workflow obecnego
 warsztatu odpowiadają wyłącznie fragmentowi Prowadź.
+W rejestracji pierwszy wybór asynchronicznie zawęża ofertę: Buduję od zera do
+Lite/Pro, a Mam pomysł lub firmę do Pro/Firma. Serwer ponownie sprawdza tę parę.
 
 ## Typy konta
 
-Odkryj, Uruchom i Prowadź są typami konta, a nie codziennymi zakładkami ani krokami
-obowiązkowego onboardingu. Konto ma jeden aktywny typ. Wybór następuje przy rejestracji,
+Odkryj, Uruchom i Prowadź są wewnętrznymi typami konta, a nie trzema publicznymi
+produktami ani krokami obowiązkowego onboardingu. Konto ma jeden aktywny typ.
+Publiczna rejestracja upraszcza wybór do dwóch sytuacji, a wybór techniczny następuje przy rejestracji,
 a zmiana wyłącznie w Ustawieniach; nie resetuje planu, okresu, historii ani limitu
 i nie omija uprawnień organizacji. Publiczny landing może tylko wstępnie zaznaczyć
 typ podczas rejestracji. Nie może zmienić istniejącego konta parametrem URL.

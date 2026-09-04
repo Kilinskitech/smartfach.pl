@@ -2,25 +2,37 @@
 
 import { useState } from "react";
 import { ArrowRight, Check, CreditCard, ExternalLink, ShieldCheck } from "lucide-react";
-import { plans, type PlanId } from "@/domain/billing";
-
-const planOrder: PlanId[] = ["lite", "pro", "firma"];
+import {
+  normalizePlanForSalesEntry,
+  plans,
+  plansForSalesEntry,
+  type PlanId,
+  type SalesEntry,
+} from "@/domain/billing";
 
 export function CheckoutPlans({
   initialPlan,
+  accountType,
   currentStatus,
   configured,
   canceled,
 }: {
   initialPlan: PlanId;
+  accountType: SalesEntry;
   currentStatus?: string;
   configured: boolean;
   canceled: boolean;
 }) {
-  const [plan, setPlan] = useState(initialPlan);
+  const [plan, setPlan] = useState(() =>
+    normalizePlanForSalesEntry(accountType, initialPlan),
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const hasAccess = currentStatus === "active" || currentStatus === "trialing";
+  const planOrder = plansForSalesEntry(accountType);
+  const accountTypeLabel = accountType === "discover"
+    ? "Buduję biznes od zera"
+    : "Mam pomysł lub firmę";
 
   async function openCheckout() {
     setBusy(true);
@@ -67,15 +79,18 @@ export function CheckoutPlans({
       {canceled && <p className="checkout-notice">Płatność została przerwana. Próba nie wystartowała i niczego nie pobrano.</p>}
 
       {!hasAccess && (
-        <section className="checkout-plan-grid">
-          {planOrder.map((id) => (
-            <button key={id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
-              <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
-              <strong>{plans[id].price}<small>/ miesiąc po próbie</small></strong>
-              <p>{plans[id].description}</p>
-            </button>
-          ))}
-        </section>
+        <>
+          <p className="checkout-entry"><span>TWÓJ PUNKT STARTU</span><strong>{accountTypeLabel}</strong><small>Plan zmieniasz poniżej bez przeładowania strony.</small></p>
+          <section className="checkout-plan-grid checkout-plan-grid-two">
+            {planOrder.map((id) => (
+              <button key={id} type="button" aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
+                <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
+                <strong>{plans[id].price}<small>/ miesiąc po próbie</small></strong>
+                <p>{plans[id].description}</p>
+              </button>
+            ))}
+          </section>
+        </>
       )}
 
       <section className="checkout-summary">
@@ -95,4 +110,3 @@ export function CheckoutPlans({
     </main>
   );
 }
-

@@ -50,7 +50,7 @@ const journeyInstruction = (workspace: Workspace) => {
     return `Aktywny tryb: Odkryj. Pomagaj porównywać realne kierunki biznesowe na podstawie umiejętności, budżetu, czasu, dostępu do klientów i szybkości testu. Nie zakładaj, że użytkownik musi później zmienić tryb. ${details}`;
   if (context.mode === "launch")
     return `Aktywny tryb: Uruchom. Pomagaj doprecyzować klienta, problem, ofertę, podstawy ceny i najprostszy sposób zdobycia pierwszych rozmów sprzedażowych. Nie udawaj, że klient został zdobyty. ${details}`;
-  return `Aktywny tryb: Prowadź. Priorytetem są krótkie zadania operacyjne firmy, zwłaszcza wyceny, protokoły, wiadomości, klienci i firmowa historia. ${details}`;
+  return `Aktywny tryb: Prowadź i rozwijaj. Najpierw rozpoznaj z rozmowy, czy użytkownik ma dopiero pomysł, zdobywa pierwszych klientów czy obsługuje działającą firmę. Pomagaj doprecyzować klienta, ofertę i najbliższe działanie sprzedażowe, a przy pracy operacyjnej priorytetowo obsługuj wyceny, protokoły, wiadomości, klientów i firmową historię. Nie udawaj, że klient został zdobyty ani że działanie zostało wykonane. ${details}`;
 };
 
 const webSearchInstruction = () =>

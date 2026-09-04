@@ -2,8 +2,13 @@
 
 - Projektuj najpierw dla telefonu obsługiwanego jedną ręką w terenie.
 - Cele dotykowe co najmniej 48 × 48 CSS px, kontrast, widoczny fokus i etykiety pól.
-- Odkryj, Uruchom i Prowadź pokazuj jako trzy możliwe typy konta, nie kroki 1–3,
-  pasek postępu ani codzienne zakładki. Publiczny landing może wstępnie wybrać typ.
+- Publiczny landing i rejestracja pokazują dwie zrozumiałe sytuacje: „Buduję od
+  zera” oraz „Mam pomysł lub firmę”. Nie wymagają poznania nazw Odkryj/Uruchom/Prowadź.
+  Wewnętrzne typy pozostają kontekstem produktu, nie trzema ofertami ani krokami 1–3.
+- W rejestracji zmiana sytuacji bez przeładowania pokazuje wyłącznie dwa właściwe
+  plany: Lite/Pro dla „Buduję od zera” i Pro/Firma dla „Mam pomysł lub firmę”.
+  Niedostępny wybór wraca do wspólnego planu Pro. Nie odsyłaj po zmianę planu na
+  osobną stronę cennika.
 - Użytkownik zmienia typ wyłącznie w Ustawieniach. Zmiana zachowuje zatwierdzony
   kontekst konta, plan i wykorzystanie limitu, ale nigdy nie rozszerza
   praw do danych organizacji. Nie kopiuj automatycznie ustaleń do firmy lub cennika.
@@ -60,8 +65,8 @@
   następnego działania. Obok musi być jasne, że jest to regularny proces, nie
   jednorazowy dokument ani gwarancja wyniku. Nie używaj „pasywnego dochodu”,
   „łatwych pieniędzy”, „sprawdzonej recepty” ani nieudowodnionego „najskuteczniejszy”.
-- Wyjaśnij różnicę w jednym zdaniu: typ konta dopasowuje pomoc, a plan określa cenę,
-  miesięczny limit i liczbę użytkowników. Zmiana typu nie wymaga kolejnego zakupu.
+- Publicznie wyjaśniaj w jednym zdaniu: jeden abonament pomaga od pomysłu po
+  codzienną pracę, a plan określa miesięczny zakres użycia i liczbę użytkowników.
 - Pisz „zmienisz później w Ustawieniach bez zmiany abonamentu”, nie „przełączaj tryb”.
   Informuj, że plan, wykorzystanie limitu i zapisane dane pozostają.
 - Nie umieszczaj globalnego przełącznika Odkryj/Uruchom/Prowadź w głównej ani dolnej

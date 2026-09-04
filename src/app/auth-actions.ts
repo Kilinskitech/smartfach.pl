@@ -2,8 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { planIdSchema } from "@/domain/billing";
-import { journeyModeSchema } from "@/domain/workspace";
+import {
+  isPlanAvailableForSalesEntry,
+  planIdSchema,
+  salesEntrySchema,
+} from "@/domain/billing";
 import { applicationUrl } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,9 +19,16 @@ const credentialsSchema = z.object({
 
 const registrationSchema = credentialsSchema.extend({
   displayName: z.string().trim().min(2, "Podaj imię lub nazwę firmy.").max(160),
-  accountType: journeyModeSchema,
+  accountType: salesEntrySchema,
   plan: planIdSchema,
   terms: z.literal("accepted", "Zaakceptuj regulamin i politykę prywatności."),
+}).superRefine((input, context) => {
+  if (!isPlanAvailableForSalesEntry(input.accountType, input.plan))
+    context.addIssue({
+      code: "custom",
+      path: ["plan"],
+      message: "Wybierz plan dostępny dla swojej sytuacji.",
+    });
 });
 
 function message(error: unknown) {
@@ -77,4 +87,3 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
       "Sprawdź pocztę i potwierdź adres e-mail. Potem wybierzesz kartę i uruchomisz 3-dniową próbę.",
   };
 }
-

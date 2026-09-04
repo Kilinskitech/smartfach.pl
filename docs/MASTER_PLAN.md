@@ -1,6 +1,6 @@
 # SmartFach — MASTER PLAN
 
-Stan: 2026-09-04. Źródło: instrukcja założycielska i ustalenia w tej rozmowie.
+Stan: 2026-09-05. Źródło: instrukcja założycielska i ustalenia w tej rozmowie.
 Dokument opisuje kierunek produktu, nie listę już wdrożonych funkcji.
 
 ## Misja i zasada nadrzędna
@@ -55,6 +55,25 @@ Na potrzeby marketingu trzecia ścieżka może być opisywana jako **„Prowadź
 ale nazwa kontekstu w produkcie pozostaje krótka: **Prowadź**. Dzięki temu oferta
 obejmuje również osoby pracujące samodzielnie, a nie wyłącznie większe firmy.
 
+### Dwa wejścia w komunikacji sprzedażowej
+
+Publiczny lejek nie wymaga od klienta zrozumienia trzech wewnętrznych typów konta.
+Pokazuje tylko dwie sytuacje:
+
+- **Buduję od zera** — użytkownik chce wybrać realny kierunek, zbudować ofertę,
+  zdobywać klientów i pracować nad konkretnym celem, np. 10 000 zł miesięcznego
+  przychodu;
+- **Mam pomysł lub firmę** — użytkownik chce zdobywać klientów, dopracować ofertę
+  albo sprawniej wykonywać codzienną pracę firmy.
+
+„Prowadź” nie jest osobnym etapem marketingowego lejka. Zostaje wewnętrznym
+kontekstem potrzebnym do bezpiecznych workflow wycen, protokołów i historii firmy.
+Landing dla zespołów jest stroną segmentową planu Firma, a nie trzecim krokiem.
+Istniejący wewnętrzny typ Uruchom pozostaje kompatybilny z zapisanymi danymi, ale
+nowy publiczny wybór „Mam pomysł lub firmę” rozpoczyna w szerszym kontekście
+operacyjnym. Skuteczność takiego uproszczenia trzeba mierzyć osobno dla osób z
+samym pomysłem i dla działających firm.
+
 ## Przewaga
 
 Firmowe dane + workflow + historia + narzędzia branżowe + AI jako interfejs.
@@ -79,8 +98,9 @@ Wartość ma wynikać z użyteczności tej historii, nie z utrudniania eksportu 
 
 ## UX
 
-Aktualizacja D027: użytkownik rozpoczyna w Odkryj, Uruchom albo Prowadź;
-interfejs nie przedstawia ich jako codziennych zakładek ani kroków 1–3.
+Aktualizacja D030: publicznie użytkownik wybiera „Buduję od zera” albo
+„Mam pomysł lub firmę”. Wewnętrznie nadal istnieją konteksty Odkryj, Uruchom
+i Prowadź; interfejs nie przedstawia ich jako obowiązkowych kroków 1–3.
 Typ konta zmienia się tylko w Ustawieniach. W aktywnym typie jedno główne pole asystenta przyjmuje tekst, zdjęcie i nagranie,
 a kontekst konta przenosi wyłącznie dane, do których użytkownik nadal ma uprawnienia.
 
@@ -186,8 +206,18 @@ Zmiana typu konta w Ustawieniach mieści się w abonamencie. Nie zmienia ceny, t
 planu i nie zeruje wykorzystania limitu. Zatwierdzony
 kontekst, zapisane
 kwoty oraz historia pozostają przypisane do właściwego konta lub organizacji.
-Landing może kierować do rejestracji z wstępnie wybranym typem i planem, ale nie
+Landing może kierować do rejestracji z wstępnie wybraną sytuacją i planem, ale nie
 może zmienić tych wartości na istniejącym koncie samym parametrem adresu.
+
+W pierwszym zakupie dostępne kombinacje są ograniczone do dwóch czytelnych ofert:
+
+- „Buduję od zera”: Lite albo Pro;
+- „Mam pomysł lub firmę”: Pro albo Firma.
+
+Pro jest wspólnym planem przejściowym. Wybór sytuacji i planu odbywa się w jednym
+widoku bez przeładowania strony, a niedozwolone połączenie jest blokowane również
+po stronie serwera. To reguła prezentacji i pierwszego zakupu, nie dodatkowa opłata
+za późniejszą zmianę kontekstu konta.
 
 Każdy plan ma kontrolowany limit użycia odpowiedni do kosztu i wartości planu.
 Techniczne jednostki rozliczenia pozostają w tle: codzienny interfejs nie pokazuje

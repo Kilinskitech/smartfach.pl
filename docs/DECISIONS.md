@@ -566,3 +566,64 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   lokalnego szablonu, ale żadna aktywna integracja Supabase jeszcze jej nie używała.
 - Zaktualizowano: kod klienta administracyjnego, `.env.example`, AGENTS,
   SETUP_SUPABASE_STRIPE i DECISIONS.
+
+## D030 — Dwa wejścia sprzedażowe zamiast trzech etapów
+
+- Data: 2026-09-04. Status: przyjęta przez foundera i wdrożona w publicznej
+  komunikacji oraz rejestracji.
+- Decyzja: landing i rejestracja pokazują tylko dwie sytuacje: **„Buduję od
+  zera”** oraz **„Mam pomysł lub firmę”**. Cel 10 000 zł miesięcznego przychodu
+  jest głównym, konkretnym punktem wejścia dla pierwszej grupy, ale zawsze pozostaje
+  celem użytkownika, nie obietnicą SmartFach.
+- Pierwsze wejście sprzedaje ciągłą pracę od wyboru kierunku przez ofertę i cenę
+  po pozyskiwanie klientów, a nie jednorazowe „znalezienie pomysłu”.
+- Lejek: „Prowadź” nie jest osobnym etapem sprzedażowym. Działająca firma i osoba
+  z pomysłem korzystają ze wspólnego wejścia biznesowego; osobny landing „Dla
+  zespołów” służy prezentacji planu Firma, a nie tworzy trzeciej ścieżki.
+- Architektura: wewnętrzne wartości `discover`, `launch` i `operate` pozostają dla
+  kompatybilności danych i dopasowania AI. Nowe wejście biznesowe zapisuje
+  `operate`, ponieważ ten kontekst ma działające workflow wycen, protokołów,
+  klientów i historii; otwarty asystent obejmuje także ofertę i pozyskanie klienta.
+- Zakup: rejestracja nie pokazuje jednocześnie trzech etapów i trzech planów.
+  Użytkownik wybiera jedną z dwóch sytuacji, a plan wskazany przez CTA jest pokazany
+  w prostym podsumowaniu z możliwością powrotu do cennika.
+- Powód: dotychczas klient musiał zrozumieć wewnętrzną architekturę produktu przed
+  poznaniem wartości. Dwa wejścia skracają decyzję, wzmacniają komunikację celu
+  10 000 zł i zachowują osobną ofertę dla działających firm bez budowania trzech
+  produktów.
+- Kompromis: wspólne wejście biznesowe jest szersze i może gorzej dopasować pierwszą
+  rozmowę osobie, która ma wyłącznie pomysł. Mierzymy aktywację osobno dla obu grup;
+  jeśli Task Success Rate spadnie, dodajemy jedno pytanie diagnostyczne po pierwszej
+  wiadomości zamiast przywracać trzy etapy w marketingu.
+- Odrzucono: usunięcie kontekstu Prowadź z modelu danych, trzy równorzędne ścieżki
+  w głównym menu oraz gwarancję osiągnięcia 10 000 zł.
+- Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, PRICING,
+  publiczne landingi, metadane i rejestrację.
+
+## D031 — Dwie oferty planów zależne od punktu startu
+
+- Data: 2026-09-05. Status: decyzja foundera wdrożona w rejestracji, checkout i
+  walidacji serwerowej; skuteczność cenowa pozostaje hipotezą.
+- Decyzja: „Buduję od zera” pozwala rozpocząć z Lite albo Pro. „Mam pomysł lub
+  firmę” pozwala rozpocząć z Pro albo Firma. Pro jest wspólnym planem obu ofert.
+- UX: użytkownik zmienia sytuację i plan w tym samym widoku bez przeładowania oraz
+  bez przechodzenia do osobnego adresu cennika. Po niedozwolonej kombinacji wybór
+  wraca do Pro. Strona płatności również pokazuje tylko dwa plany pasujące do konta.
+- Kontrola: para sytuacja–plan jest sprawdzana przez akcję rejestracji, endpoint
+  tworzący Stripe Checkout oraz funkcję zakładającą nowe konto w Supabase. Parametr
+  adresu nie może wymusić Lite dla działającej firmy ani Firma dla osoby budującej
+  od zera.
+- Zakres: ograniczenie dotyczy merchandisingu i pierwszego zakupu. Nie tworzy dwóch
+  produktów, nie resetuje historii i nie wprowadza opłaty za późniejszą zmianę
+  kontekstu konta. W tym zakresie doprecyzowuje D023 i D030.
+- Powód: plan Firma nie wnosi wartości osobie bez biznesu, a Lite może zaniżać
+  oczekiwaną wartość i przychód w segmencie już pracującym nad firmą. Dwa wybory są
+  prostsze do porównania niż trzy.
+- Kompromis: brak Lite może obniżyć konwersję cenową wśród początkujących firm i
+  samodzielnych usługodawców. Mierzymy osobno rozpoczęcie checkoutu, trial → paid,
+  rezygnacje i ARPU dla obu wejść; przy słabym wyniku ponownie testujemy Lite bez
+  zmiany architektury produktu.
+- Odrzucono: trzy plany w obu wejściach, Firma w „Buduję od zera”, Lite w „Mam
+  pomysł lub firmę” oraz zmianę oferty przez nawigację między stronami.
+- Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, PRICING, rejestrację,
+  stronę płatności, endpoint Stripe i migrację Supabase.

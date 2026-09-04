@@ -24,9 +24,16 @@ Każda ścieżka korzysta z jednego asystenta SmartFach, ale prowadzi do własny
 ustrukturyzowanych kart i następnych akcji. Nie budujemy trzech osobowości AI ani
 generycznego czatu, który jedynie opowiada o pomysłach i prowadzeniu firmy.
 
+Publiczny landing i rejestracja nie pokazują tej wewnętrznej struktury jako trzech
+produktów. Klient wybiera tylko „Buduję od zera” albo „Mam pomysł lub firmę”.
+Druga opcja obejmuje zarówno pierwszą ofertę, jak i codzienną obsługę zleceń.
+Wewnętrzne rozdzielenie pozostaje po to, aby nie osłabić kontekstu AI i workflow.
+Pierwsza sytuacja pokazuje Lite/Pro, a druga Pro/Firma. Zmiana sytuacji aktualizuje
+wybór na tym samym ekranie; Pro jest wspólnym planem obu ofert.
+
 ## Pierwsza wartość
 
-Konto → wybór typu konta → Stripe Checkout → jedna wiadomość do asystenta → pytanie tylko
+Konto → wybór sytuacji i pasującego planu → Stripe Checkout → jedna wiadomość do asystenta → pytanie tylko
 o brak krytyczny → karta rezultatu → następna akcja. Pierwszą wartością jest:
 
 - w Odkryj: zapisane porównanie lub konkretny test założenia;
@@ -111,8 +118,9 @@ idempotentne. Kredyty są jednostką produktu, a nie obietnicą stałej liczby t
 
 ## Aktualny przyrost — 2026-09-04
 
-Publiczne landing page’e, rejestracja i logowanie Supabase oraz typ konta Odkryj,
-Uruchom lub Prowadź są wdrożone. Typ zmienia się wyłącznie w Ustawieniach.
+Publiczne landing page’e upraszczają komunikację do „Buduję od zera” oraz
+„Mam pomysł lub firmę”. Rejestracja i logowanie Supabase oraz wewnętrzny typ konta
+Odkryj, Uruchom lub Prowadź są wdrożone. Typ zmienia się wyłącznie w Ustawieniach.
 Odkryj i Uruchom nie mają jeszcze własnych zapisywalnych kart rezultatów, dlatego są
 szkieletem do testu rozmowy, a nie gotowym workflow. Blokada limitu działa w workspace.
 Komunikat zwiększenia jest dostępny dopiero po wykorzystaniu planu; zakup zwiększeń nie działa.

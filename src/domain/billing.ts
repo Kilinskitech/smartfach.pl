@@ -3,6 +3,35 @@ import { z } from "zod";
 export const planIdSchema = z.enum(["lite", "pro", "firma"]);
 export type PlanId = z.infer<typeof planIdSchema>;
 
+export const salesEntrySchema = z.enum(["discover", "operate"]);
+export type SalesEntry = z.infer<typeof salesEntrySchema>;
+
+export const salesEntryPlans = {
+  discover: ["lite", "pro"],
+  operate: ["pro", "firma"],
+} as const satisfies Record<SalesEntry, readonly PlanId[]>;
+
+export function salesEntryForAccountType(accountType: string): SalesEntry {
+  return accountType === "discover" ? "discover" : "operate";
+}
+
+export function plansForSalesEntry(entry: SalesEntry): readonly PlanId[] {
+  return salesEntryPlans[entry];
+}
+
+export function isPlanAvailableForSalesEntry(entry: SalesEntry, plan: PlanId) {
+  return (salesEntryPlans[entry] as readonly PlanId[]).includes(plan);
+}
+
+export function normalizePlanForSalesEntry(
+  entry: SalesEntry,
+  requestedPlan: PlanId | undefined,
+): PlanId {
+  return requestedPlan && isPlanAvailableForSalesEntry(entry, requestedPlan)
+    ? requestedPlan
+    : "pro";
+}
+
 export const trialPolicy = {
   durationDays: 3,
   paymentMethodRequired: true,

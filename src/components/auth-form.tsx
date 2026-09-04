@@ -2,26 +2,46 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { ArrowRight, Check, Compass, Eye, EyeOff, Rocket, ShieldCheck } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Check, Compass, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { signIn, signUp } from "@/app/auth-actions";
-import type { PlanId } from "@/domain/billing";
+import {
+  normalizePlanForSalesEntry,
+  plans,
+  plansForSalesEntry,
+  salesEntryForAccountType,
+  type PlanId,
+  type SalesEntry,
+} from "@/domain/billing";
 import type { JourneyMode } from "@/domain/workspace";
 import { BrandMark } from "./brand";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountType = "operate" }: { next?: string; initialPlan?: PlanId; initialAccountType?: JourneyMode }) {
+export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountType = "discover" }: { next?: string; initialPlan?: PlanId; initialAccountType?: JourneyMode }) {
   const [view, setView] = useState<"register" | "login">("register");
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
+  const initialEntry = salesEntryForAccountType(initialAccountType);
+  const [accountType, setAccountType] = useState<SalesEntry>(initialEntry);
+  const [plan, setPlan] = useState<PlanId>(() =>
+    normalizePlanForSalesEntry(initialEntry, initialPlan),
+  );
+  const availablePlans = plansForSalesEntry(accountType);
+
+  function selectAccountType(nextAccountType: SalesEntry) {
+    setAccountType(nextAccountType);
+    setPlan((currentPlan) =>
+      normalizePlanForSalesEntry(nextAccountType, currentPlan),
+    );
+  }
 
   return (
     <main className="auth-page">
       <section className="auth-story">
         <Link href="/" className="auth-brand"><BrandMark size={46} /><span>Smart<b>Fach</b></span></Link>
         <div>
-          <p className="eyebrow">TWÓJ ASYSTENT DO BIZNESU</p>
-          <h1>Od pomysłu do codziennej pracy w jednym miejscu.</h1>
-          <p>SmartFach pomaga podjąć następną decyzję, przygotować wycenę i zapisać historię klienta.</p>
+          <p className="eyebrow">JEDEN ASYSTENT · CAŁA DROGA</p>
+          <h1>Od celu 10 000 zł przychodu po codzienną pracę firmy.</h1>
+          <p>SmartFach pomaga zdecydować, co zrobić, przygotować gotowy rezultat i wrócić do pracy bez zaczynania od zera.</p>
         </div>
         <ul>
           <li><Check size={17} /> 3 pełne dni bez opłat</li>
@@ -47,12 +67,37 @@ export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountTyp
           </form>
         ) : (
           <form action={registerAction} className="auth-form">
-            <div><p className="eyebrow">ZAŁÓŻ KONTO</p><h2>Zacznij od swojej sytuacji</h2><p>Typ konta zmienisz później w Ustawieniach.</p></div>
+            <div><p className="eyebrow">ZAŁÓŻ KONTO</p><h2>Zacznij działać</h2><p>Wybierz tylko sytuację, która najlepiej opisuje Cię dzisiaj.</p></div>
             <label>Imię lub nazwa firmy<input name="displayName" autoComplete="name" required maxLength={160} /></label>
             <label>E-mail<input name="email" type="email" autoComplete="email" required /></label>
             <label>Hasło<span className="password-field"><input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required /><button type="button" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"} onClick={() => setShowPassword((value) => !value)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></span></label>
-            <fieldset className="auth-options"><legend>Co najlepiej Cię opisuje?</legend><label><input type="radio" name="accountType" value="discover" defaultChecked={initialAccountType === "discover"} /><Compass size={18} /><span><strong>Odkrywam</strong><small>Szukam kierunku na biznes</small></span></label><label><input type="radio" name="accountType" value="launch" defaultChecked={initialAccountType === "launch"} /><Rocket size={18} /><span><strong>Uruchamiam</strong><small>Mam pomysł i chcę ruszyć</small></span></label><label><input type="radio" name="accountType" value="operate" defaultChecked={initialAccountType === "operate"} /><ShieldCheck size={18} /><span><strong>Prowadzę</strong><small>Mam klientów lub zespół</small></span></label></fieldset>
-            <fieldset className="auth-options auth-plans"><legend>Plan po 3-dniowej próbie</legend><label><input type="radio" name="plan" value="lite" defaultChecked={initialPlan === "lite"} /><span><strong>Lite</strong><small>49 zł / mies.</small></span></label><label><input type="radio" name="plan" value="pro" defaultChecked={initialPlan === "pro"} /><span><strong>Pro</strong><small>99 zł / mies.</small></span></label><label><input type="radio" name="plan" value="firma" defaultChecked={initialPlan === "firma"} /><span><strong>Firma</strong><small>299 zł / mies.</small></span></label></fieldset>
+            <fieldset className="auth-options auth-entry-options">
+              <legend>Od czego zaczynasz?</legend>
+              <label>
+                <input type="radio" name="accountType" value="discover" checked={accountType === "discover"} onChange={() => selectAccountType("discover")} />
+                <Compass size={18} />
+                <span><strong>Buduję biznes od zera</strong><small>Chcę stworzyć ofertę, zdobyć klientów i pracować nad celem 10 000 zł przychodu miesięcznie.</small></span>
+              </label>
+              <label>
+                <input type="radio" name="accountType" value="operate" checked={accountType === "operate"} onChange={() => selectAccountType("operate")} />
+                <BriefcaseBusiness size={18} />
+                <span><strong>Mam pomysł lub firmę</strong><small>Chcę zdobywać klientów i sprawniej prowadzić codzienną pracę.</small></span>
+              </label>
+            </fieldset>
+            <fieldset className="auth-options auth-plan-options">
+              <legend>Wybierz plan po 3-dniowej próbie</legend>
+              {availablePlans.map((planId) => (
+                <label key={planId}>
+                  <input type="radio" name="plan" value={planId} checked={plan === planId} onChange={() => setPlan(planId)} />
+                  <span className="auth-plan-copy">
+                    <span className="auth-plan-heading"><strong>SmartFach {plans[planId].name}</strong>{planId === "pro" && <b>POLECANY</b>}</span>
+                    <em>{plans[planId].price}<small> / miesiąc</small></em>
+                    <small>{plans[planId].description}</small>
+                  </span>
+                </label>
+              ))}
+            </fieldset>
+            <p className="auth-selection-note"><Check size={15} /> Zmieniasz sytuację i plan tutaj — bez przeładowania strony.</p>
             <label className="auth-consent"><input type="checkbox" name="terms" value="accepted" required /><span>Akceptuję <Link href="/regulamin" target="_blank">regulamin</Link> i <Link href="/polityka-prywatnosci" target="_blank">politykę prywatności</Link>.</span></label>
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
             {registerState?.success && <p className="success-note" role="status"><Check size={16} />{registerState.success}</p>}

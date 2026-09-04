@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   creditAllowance,
   estimateRequestCredits,
+  isPlanAvailableForSalesEntry,
+  normalizePlanForSalesEntry,
+  plansForSalesEntry,
   remainingCredits,
+  salesEntryForAccountType,
   settleRequestCredits,
   trialPolicy,
 } from "./billing";
@@ -39,5 +43,21 @@ describe("kredyty SmartFach", () => {
         true,
       ),
     ).toBe(9);
+  });
+
+  it("pokazuje Lite i Pro przy budowie od zera", () => {
+    expect(plansForSalesEntry("discover")).toEqual(["lite", "pro"]);
+    expect(isPlanAvailableForSalesEntry("discover", "firma")).toBe(false);
+  });
+
+  it("pokazuje Pro i Firma przy pomyśle lub działającej firmie", () => {
+    expect(plansForSalesEntry("operate")).toEqual(["pro", "firma"]);
+    expect(isPlanAvailableForSalesEntry("operate", "lite")).toBe(false);
+  });
+
+  it("bezpiecznie mapuje stare typy konta i niedostępny plan na Pro", () => {
+    expect(salesEntryForAccountType("launch")).toBe("operate");
+    expect(normalizePlanForSalesEntry("discover", "firma")).toBe("pro");
+    expect(normalizePlanForSalesEntry("operate", "lite")).toBe("pro");
   });
 });

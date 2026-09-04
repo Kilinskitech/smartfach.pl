@@ -1,6 +1,6 @@
 # Ceny — hipotezy startowe
 
-Stan: 2026-09-04. Nie traktować jako opublikowanej oferty handlowej.
+Stan: 2026-09-05. Nie traktować jako opublikowanej oferty handlowej.
 
 | Plan                    | Cena miesięczna | Kierunek wartości                         |
 | ----------------------- | --------------- | ----------------------------------------- |
@@ -31,9 +31,9 @@ odpowiedniej wizyty i nie osiągnąć pierwszej wartości. Mierzymy rozpoczęcie
 podpięcie karty, pierwszą wycenę/protokół, rezygnację w próbie i trial → paid.
 Pierwszym wariantem porównawczym jest 7 dni z kartą, a nie bezterminowy darmowy plan.
 
-Odkryj, Uruchom i Prowadź są typami konta, nie osobnymi planami. Użytkownik wybiera
-jeden typ przy rejestracji i może zmienić go później wyłącznie w Ustawieniach,
-bez dodatkowego zakupu.
+Odkryj, Uruchom i Prowadź są wewnętrznymi typami konta, nie osobnymi planami.
+Publiczna rejestracja pokazuje dwie sytuacje: „Buduję od zera” oraz „Mam pomysł
+lub firmę”. Zmiana kontekstu nie wymaga dodatkowego zakupu.
 
 Plan jest przypisany do konta lub organizacji. Zmiana typu konta w Ustawieniach:
 
@@ -46,9 +46,16 @@ Plan jest przypisany do konta lub organizacji. Zmiana typu konta w Ustawieniach:
 ## Prezentacja planów na landingach
 
 Na zapleczu i publicznie pozostają trzy nazwy: Lite, Pro i Firma. „Jednoosobowa”
-oraz „z pracownikami” opisują odbiorcę, a nie kolejne plany. Odkryj i Uruchom mogą
-eksponować Lite/Pro jako najczęstszy wybór jednej osoby; Prowadź pokazuje także Firma.
-Pełny cennik zawsze przedstawia jedną linię Lite/Pro/Firma.
+oraz „z pracownikami” opisują odbiorcę, a nie kolejne plany. Wejście „Buduję od
+zera” pozwala wybrać Lite/Pro. Wejście „Mam pomysł lub firmę” oraz landing zespołowy
+pozwalają wybrać Pro/Firma. Pro jest wspólnym planem obu punktów startu. Pełny
+cennik nadal przedstawia jedną linię Lite/Pro/Firma, ale prowadzi do poprawnie
+wstępnie wybranej sytuacji.
+
+Zmiana sytuacji na ekranie rejestracji natychmiast aktualizuje dwa dostępne plany
+bez nawigowania na inny adres. Niedozwolony wybór zmienia się na Pro i jest również
+odrzucany przez serwer oraz normalizowany przy tworzeniu nowego konta w bazie.
+To hipoteza merchandisingowa do pomiaru, a nie techniczne rozdzielenie produktu.
 
 Na obecnym etapie realne różnice, które można komunikować bez nadmiarowych obietnic:
 

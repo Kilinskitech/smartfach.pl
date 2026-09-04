@@ -1,13 +1,14 @@
 # Podłączenie Supabase i Stripe
 
-Stan: 2026-09-04. Najpierw uruchom cały przepływ w trybie testowym. Nie wklejaj
+Stan: 2026-09-05. Najpierw uruchom cały przepływ w trybie testowym. Nie wklejaj
 sekretów do rozmowy ani GitHub. Używaj `.env.local`, który jest ignorowany przez Git.
 
 ## 1. Supabase
 
 1. Utwórz projekt Supabase w regionie UE.
-2. W SQL Editor uruchom całą migrację
-   `supabase/migrations/202609040001_initial_saas.sql`.
+2. W SQL Editor uruchom migracje w kolejności nazw:
+   - `supabase/migrations/202609040001_initial_saas.sql`;
+   - `supabase/migrations/202609050001_sales_entry_plans.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
 5. Z Project Settings → API Keys skopiuj do `.env.local`:
