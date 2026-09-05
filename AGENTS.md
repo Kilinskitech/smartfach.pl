@@ -39,6 +39,9 @@ Backend Supabase używa nowego klucza `SUPABASE_SECRET_KEY`, nie wycofywanego
 legacy `service_role`.
 Adapter OpenRouter wymaga klucza, modelu i jawnego włączenia. Nie udawaj odpowiedzi
 bez konfiguracji. Zwykły użytkownik nie może zmieniać pól rozliczeniowych workspace.
+Codzienna praca trafia na stałą gałąź `preview`; aplikacji i integracji nie uruchamiamy
+lokalnie. Lokalny checkout służy wyłącznie edycji kodu i kontroli statycznej. Sekrety
+aplikacji są konfigurowane wyłącznie w środowiskach Vercel Preview i Production.
 Pełne rozmowy są dostępne wyłącznie jednemu administratorowi platformy wskazanemu
 serwerowym UUID, w profilu konkretnego użytkownika; każde otwarcie zapisuje audyt.
 Nie uruchamiaj płatnej alfy przed testem RLS dwóch organizacji, webhooków Stripe,

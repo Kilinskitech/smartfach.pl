@@ -6,14 +6,14 @@ testów end-to-end przed rozpoczęciem sprzedaży.
 
 | Warstwa          | Wybór                                           | Stan                                                       |
 | ---------------- | ----------------------------------------------- | ---------------------------------------------------------- |
-| Środowisko pracy | Codex lokalnie; Cursor opcjonalny               | Dostępne                                                   |
+| Środowisko pracy | Codex + GitHub + Vercel Preview                 | Kod lokalnie, aplikacja uruchamiana wyłącznie na Vercelu   |
 | Wersje kodu      | GitHub                                          | Repozytorium połączone z Vercel; `main` wdraża Production |
 | Aplikacja        | Next.js App Router, React, TypeScript strict    | Alfa korzystająca z kont Supabase                          |
 | UI               | Tailwind; shadcn/ui przy złożonych komponentach | Tailwind w szkielecie; shadcn jeszcze niedodane            |
 | Dane             | Supabase/PostgreSQL, Auth, RLS                   | Projekt działa; migracje i zapis wymagają testu E2E        |
 | Region bazy      | Region UE                                       | Potwierdzić ustawienie przed danymi realnych klientów      |
 | Hosting          | Vercel                                          | Production działa pod `smartfach.pl`; Preview do procesu pracy |
-| AI/STT           | OpenRouter; wymienny model                       | Gemini 3.5 Flash dla lokalnej alfy; osobny STT brak        |
+| AI/STT           | OpenRouter; wymienny model                       | Gemini 3.5 Flash dla alfy Preview; osobny STT brak         |
 | Rozliczenia      | Stripe Checkout + Billing                       | Sandbox podłączany; checkout/trial/portal/webhook wymagają E2E |
 | Analityka        | PostHog EU                                      | Plan, brak integracji                                      |
 | Testy            | Vitest, lint, typy, testy przeglądarkowe        | Obliczenia, schematy, CSV, AI, zapis, ochrona API, PDF     |
@@ -23,7 +23,7 @@ workspace JSONB w Supabase jako pomostu do stopniowej normalizacji danych. Zod, 
 z fontkit i osadzonym Noto Sans (OFL) do polskich PDF. Licencja fontu w
 `public/fonts/OFL.txt`. Dane dokumentu nie opuszczają przeglądarki podczas eksportu.
 Załączniki nadal wymagają przyszłego Storage. Gemini 3.5 Flash jest wyborem
-lokalnej alfy po małym benchmarku, nie zatwierdzonym modelem produkcyjnym.
+alfy po małym benchmarku, nie zatwierdzonym modelem produkcyjnym.
 
 Node.js: 24.x. Menedżer pakietów: npm. Wersje aplikacji są zapisane w
 `package.json` i `package-lock.json`; instalacja powtarzalna przez `npm ci`.
@@ -62,9 +62,9 @@ Ustawienia regionów i umowy dostawców wymagają weryfikacji przed realnymi dan
 ## Środowiska wdrożenia
 
 Production działa z gałęzi `main`, a stała gałąź `preview` służy jako środowisko
-akceptacyjne. Podczas alfy Local, Preview i Production mogą korzystać z jednego
-hostowanego projektu Supabase oraz Stripe Sandbox. `.env.local` nie uruchamia osobnej
-bazy — przechowuje jedynie prywatną konfigurację połączenia lokalnej aplikacji.
+akceptacyjne. Nie utrzymujemy lokalnego runtime ani lokalnych sekretów aplikacji;
+folder roboczy służy do edycji i kontroli statycznej. Podczas alfy Preview i
+Production mogą korzystać z jednego hostowanego projektu Supabase oraz Stripe Sandbox.
 
 To uproszczenie obowiązuje tylko przed realnymi klientami. Przed Stripe Live i
 wprowadzeniem danych klientów trzeba rozdzielić testowy Supabase/Stripe od usług

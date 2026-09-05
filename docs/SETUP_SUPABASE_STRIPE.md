@@ -1,14 +1,13 @@
 # Podłączenie Supabase i Stripe
 
 Stan: 2026-09-06. Najpierw uruchom cały przepływ w trybie testowym. Nie wklejaj
-sekretów do rozmowy ani GitHub. Używaj `.env.local`, który jest ignorowany przez Git.
+sekretów do rozmowy ani GitHub. Konfiguruj je wyłącznie w środowiskach Vercela.
 
 ## Środowisko alfy
 
 Na etapie przed pierwszymi realnymi klientami jeden hostowany projekt Supabase i
-jeden Stripe Sandbox obsługują Local, stałą gałąź Vercel `preview` oraz Production.
-Nie uruchamiamy osobnego Supabase na komputerze. `.env.local` zawiera tylko połączenie
-lokalnej aplikacji z tym samym backendem testowym.
+jeden Stripe Sandbox obsługują stałą gałąź Vercel `preview` oraz Production.
+Nie uruchamiamy lokalnej aplikacji, lokalnego Supabase ani lokalnego Stripe.
 
 W Vercel te same testowe wartości należy przypisać do **Production i Preview**,
 z wyjątkiem wartości zależnych od adresu aplikacji oraz sekretu webhooka. Po zmianie
@@ -40,14 +39,12 @@ samą bazę dla obu aplikacji. `STRIPE_WEBHOOK_SECRET` musi jednak pozostać ust
 w obu środowiskach, ponieważ aplikacja używa go do sprawdzenia kompletności konfiguracji.
 Jeżeli dodasz osobny webhook Preview, otrzyma on własny sekret podpisu.
 
-### Dostęp Codex do chronionego Preview
+### Dostęp do chronionego Preview
 
-Vercel Standard Protection domyślnie pokazuje na Preview ekran logowania. Pozostaw
-ochronę włączoną. W Project → Settings → Deployment Protection utwórz **Protection
-Bypass for Automation**, a jego sekret zapisz lokalnie jako
-`VERCEL_AUTOMATION_BYPASS_SECRET`. Adres `https://preview.smartfach.pl` zapisz jako
-`SMARTFACH_PREVIEW_URL`. Obie wartości zostają wyłącznie w `.env.local`; pozwalają
-wykonywać testy HTTP bez ujawniania Preview publicznie i bez sterowania przeglądarką.
+Vercel Standard Protection domyślnie pokazuje na Preview ekran logowania. Dostęp
+uzyskujemy przez konto zespołu Vercel lub połączony Vercel CLI; nie przechowujemy
+sekretu obejścia w projekcie. Jeżeli zewnętrzny test automatyczny będzie później
+potrzebny, konfigurujemy Protection Bypass for Automation poza repozytorium.
 
 W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URLs:
 `https://preview.smartfach.pl/auth/callback`.
@@ -61,7 +58,8 @@ W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URL
    - `supabase/migrations/202609050002_fix_workspace_write.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
-5. Z Project Settings → API Keys skopiuj do `.env.local`:
+5. Z Project Settings → API Keys skopiuj do Vercel Environment Variables dla
+   Preview i Production:
    - `NEXT_PUBLIC_SUPABASE_URL`;
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`;
    - `SUPABASE_SECRET_KEY` — nowy klucz `sb_secret_`, wyłącznie po stronie serwera.
@@ -69,7 +67,7 @@ W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URL
 Nie używaj starszych kluczy JWT `anon` ani `service_role`. Supabase zapowiedział
 ich wycofanie do końca 2026 roku.
 
-Po restarcie aplikacji formularz `/logowanie` tworzy prawdziwego użytkownika,
+Po ponownym wdrożeniu Preview formularz `/logowanie` tworzy prawdziwego użytkownika,
 profil, prywatną organizację, pusty workspace i nieaktywną subskrypcję. Jeżeli
 potwierdzanie e-maila jest włączone, użytkownik nie czeka na link: od razu przechodzi
 do Stripe, a adres potwierdza na ekranie po Checkout.
@@ -103,10 +101,10 @@ ale nie numer karty ani CVC.
 
 ## 3. Pierwsze konto i panel właściciela
 
-1. Uruchom aplikację ponownie.
-2. Załóż konto przez `/logowanie` i ukończ Stripe Checkout kartą testową.
+1. Wdróż ponownie gałąź `preview` po ustawieniu zmiennych.
+2. Załóż konto na Preview przez `/logowanie` i ukończ Stripe Checkout kartą testową.
 3. W Supabase Auth skopiuj UUID tego użytkownika.
-4. Wklej go do `PLATFORM_ADMIN_USER_ID` i ponownie uruchom serwer.
+4. Wklej go do `PLATFORM_ADMIN_USER_ID` w Vercelu i ponownie wdróż Preview.
 5. Po zalogowaniu to konto ma dostęp do `/admin`. Inni użytkownicy są przekierowani
    do `/app` i nie otrzymują dostępu administracyjnego.
 

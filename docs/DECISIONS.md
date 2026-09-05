@@ -655,7 +655,7 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 
 ## D033 — Stałe Preview i wspólny backend wyłącznie na etapie alfy
 
-- Data: 2026-09-06. Status: przyjęta jako przejściowy proces wdrażania.
+- Data: 2026-09-06. Status: częściowo zastąpiona przez D034 w zakresie Local.
 - Decyzja: bieżąca praca trafia najpierw na stałą gałąź `preview`. Po lokalnej
   weryfikacji Vercel tworzy wdrożenie Preview; dopiero zaakceptowany stan jest
   łączony z `main` i publikowany pod `smartfach.pl`.
@@ -674,3 +674,27 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Odrzucono: codzienną pracę bezpośrednio na `main`, całkowite usunięcie `.env.local`
   oraz utrzymywanie trzech osobnych backendów jeszcze przed realnymi użytkownikami.
 - Zaktualizowano: README, TECH_STACK, SETUP_SUPABASE_STRIPE i DECISIONS.
+
+## D034 — Tylko Preview i Live, bez lokalnego runtime
+
+- Data: 2026-09-06. Status: przyjęta przez foundera i wdrożona w procesie pracy.
+- Decyzja: SmartFach ma dwa uruchomione środowiska: Vercel Preview z gałęzi
+  `preview` oraz Live z gałęzi `main`. Nie uruchamiamy aplikacji, Supabase, Stripe
+  ani AI lokalnie. Lokalny checkout jest wyłącznie kopią roboczą kodu niezbędną do
+  przygotowania commita i kontroli statycznej.
+- Sekrety: wszystkie wartości aplikacji są konfigurowane tylko w Vercelu. Projekt
+  nie utrzymuje `.env.local`; `.env.example` jest wyłącznie katalogiem nazw.
+- Wdrożenie: każda zmiana najpierw trafia na `preview`. Dopiero po sprawdzeniu
+  wdrożonego adresu jest łączona z `main` i trafia na `smartfach.pl`.
+- Etap alfy: Preview i Live mogą tymczasowo używać jednego hostowanego Supabase
+  oraz Stripe Sandbox, ponieważ nie obsługują jeszcze prawdziwych płatności i danych.
+- Bramka: przed Stripe Live lub pierwszymi realnymi klientami powstają oddzielne
+  konfiguracje testowa i produkcyjna. Bez tego test Preview mógłby zmienić dane Live.
+- Powód: dwa widoczne środowiska są prostsze dla foundera, a pełne integracje dają
+  się sprawdzać w warunkach zbliżonych do rzeczywistego hostingu.
+- Kompromis: diagnostyka jest wolniejsza, bo każda zmiana wymaga wdrożenia Preview,
+  a awaria wspólnego backendu dotyczy obu wersji. Akceptujemy to wyłącznie przed
+  realnym ruchem i stosujemy kompatybilne migracje.
+- Zastępuje D033 w zakresie lokalnego runtime, `.env.local` i Local jako środowiska.
+- Zaktualizowano: AGENTS, README, TECH_STACK, SETUP_SUPABASE_STRIPE, ROADMAP,
+  `.env.example` i DECISIONS.

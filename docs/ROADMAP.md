@@ -26,7 +26,7 @@ usług i przejścia bramek bezpieczeństwa, jakości oraz prawa.
 
 1. Utworzyć projekt Supabase w regionie UE i zastosować migrację.
 2. Utworzyć produkty oraz miesięczne ceny Stripe w trybie testowym.
-3. Uzupełnić lokalne sekrety, skonfigurować adresy Auth i webhook Stripe.
+3. Uzupełnić sekrety Preview w Vercelu, skonfigurować adresy Auth i webhook Stripe.
 4. Założyć zwykłe konto przez formularz, ustawić jego UUID jako jedynego admina.
 5. Przejść pełny scenariusz: rejestracja → karta testowa → trial → aplikacja →
    anulowanie/zmiana planu → webhook → panel.

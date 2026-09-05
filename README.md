@@ -5,7 +5,7 @@ klimatyzacja i pompy ciepła.
 
 > LLM rozumie człowieka. Kod kontroluje biznes.
 
-## Stan projektu — 2026-09-05
+## Stan projektu — 2026-09-06
 
 Kod pierwszej alfy jest połączony z GitHubem i wdrażany na Vercelu pod
 `smartfach.pl`. Hostowany Supabase oraz Stripe w trybie testowym są w trakcie
@@ -36,41 +36,24 @@ Niezaimplementowane lub niegotowe do sprzedaży:
 Stary lokalny profil i jego rozmowy zostały usunięte. `src/server/local-repository.ts`
 pozostaje tylko po to, aby nie utracić testów regresji historycznego adaptera.
 
-## Uruchomienie
+## Preview i Live
 
-Wymagany jest Node.js 24.x i npm:
-
-```sh
-npm ci
-npm run dev -- --hostname 127.0.0.1
-```
-
-Bez konfiguracji Supabase landing działa, ale `/logowanie`, `/app`, `/platnosc`
-i `/admin` nie udają prawdziwego konta. Pełna instrukcja połączenia usług:
-[SETUP_SUPABASE_STRIPE](docs/SETUP_SUPABASE_STRIPE.md).
-
-Sekrety zapisuj wyłącznie w ignorowanym przez Git `.env.local`, na podstawie
-`.env.example`. Nie wklejaj ich do rozmowy, kodu frontendu ani publicznego repozytorium.
-
-## Local, Preview i Production
-
-- **Local** — kod uruchomiony na własnym komputerze. Służy do szybkiej pracy i
-  testów przed wysłaniem zmian. Nie aktualizuje GitHuba ani `smartfach.pl`.
 - **Preview** — stała gałąź `preview` wdrażana przez Vercel pod osobnym adresem.
   Służy do sprawdzenia zmiany na telefonie i przez zespół bez zmiany `smartfach.pl`.
-- **Production** — wersja z gałęzi `main`, dostępna pod `smartfach.pl`.
+- **Live (Production)** — wersja z gałęzi `main`, dostępna pod `smartfach.pl`.
 
-Przebieg alfy: praca na gałęzi `preview` → szybki test lokalny → push → test adresu
-Preview → akceptacja → merge `preview` do `main` → automatyczne wdrożenie Production.
+Przebieg alfy: zmiana kodu → kontrola statyczna → push na `preview` → test wdrożonej
+aplikacji → akceptacja → merge `preview` do `main` → automatyczne wdrożenie Live.
 
-Na obecnym, przedprodukcyjnym etapie Local, Preview i Production mogą tymczasowo
-korzystać z jednego hostowanego projektu Supabase oraz jednego Stripe Sandbox.
-Lokalna aplikacja łączy się z nimi przez prywatny `.env.local`; nie utrzymujemy
-osobnej lokalnej bazy Supabase. Przed pierwszymi realnymi klientami lub włączeniem
-Stripe Live rozdzielamy dane testowe od produkcyjnych.
+Nie uruchamiamy lokalnej aplikacji ani lokalnych usług. Folder roboczy służy wyłącznie
+do edycji kodu i kontroli przed wysłaniem. Wszystkie sekrety znajdują się w Vercelu;
+`.env.example` jest jedynie katalogiem wymaganych nazw.
 
-Preview pozostaje chronione przez Vercel. Automatyczne testy używają prywatnego
-`VERCEL_AUTOMATION_BYPASS_SECRET` z `.env.local`; sekret nie trafia do kodu ani GitHuba.
+Na obecnym, przedprodukcyjnym etapie Preview i Live mogą tymczasowo korzystać z
+jednego hostowanego Supabase oraz Stripe Sandbox. Przed pierwszymi realnymi klientami
+lub włączeniem Stripe Live rozdzielamy dane testowe od produkcyjnych.
+
+Pełna instrukcja konfiguracji: [SETUP_SUPABASE_STRIPE](docs/SETUP_SUPABASE_STRIPE.md).
 
 Migracje Supabase nie wykonują się automatycznie wraz z wdrożeniem Vercela. Nowy
 plik z `supabase/migrations` trzeba najpierw sprawdzić na bazie testowej, a następnie
