@@ -701,10 +701,11 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 
 ## D035 — Jedna kanoniczna domena i indeksowanie wyłącznie Live
 
-- Data: 2026-09-06. Status: wdrożone na gałęzi `preview`, oczekuje na akceptację Live.
+- Data: 2026-09-06. Status: SEO wdrożone na `preview`; przekierowanie oczekuje na
+  ręczną konfigurację w Vercelu i późniejszą weryfikację.
 - Decyzja: `https://smartfach.pl` jest jedyną kanoniczną domeną publiczną.
-  `smartfachpl.vercel.app` wykonuje trwałe przekierowanie 308 na odpowiadającą
-  ścieżkę w `smartfach.pl`, z zachowaniem parametrów zapytania.
+  Trwałe przekierowanie 308 z `smartfachpl.vercel.app` jest konfigurowane przez
+  foundera bezpośrednio w Vercelu, a nie w kodzie aplikacji.
 - Indeksowanie: publiczne strony mogą być indeksowane wyłącznie, gdy Vercel buduje
   środowisko Production. Preview zwraca blokadę dla robotów i nie publikuje adresów
   w sitemapie. Prywatne ścieżki aplikacji pozostają `noindex` oraz są wyłączone
@@ -717,5 +718,4 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   więc każda późniejsza zmiana ich treści wymaga świadomego przeglądu SEO i prawnego.
 - Odrzucono: usunięcie technicznej domeny Vercela, pozostawienie dwóch kopii oraz
   włączenie indeksowania Preview.
-- Zaktualizowano: konfigurację Next.js, metadata, robots, sitemap, testy, README,
-  MVP_SPEC i DECISIONS.
+- Zaktualizowano: metadata, robots, sitemap, testy, README, MVP_SPEC i DECISIONS.

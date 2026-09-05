@@ -98,7 +98,7 @@ Interfejs demo bez podłączonych workflow nie jest gotowym produktem do sprzeda
 ## Widoczność i indeksowanie
 
 - `smartfach.pl` jest jedyną kanoniczną domeną; publiczny alias
-  `smartfachpl.vercel.app` przekierowuje trwale z zachowaniem ścieżki.
+  `smartfachpl.vercel.app` ma trwałe przekierowanie skonfigurowane w Vercelu.
 - Tylko wdrożenie Production pozwala na indeksowanie. Preview i prywatne obszary
   aplikacji mają `noindex` lub blokadę w `robots.txt`.
 - Sitemap zawiera wyłącznie publiczne adresy w domenie `smartfach.pl`.
