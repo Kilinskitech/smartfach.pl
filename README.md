@@ -5,11 +5,12 @@ klimatyzacja i pompy ciepła.
 
 > LLM rozumie człowieka. Kod kontroluje biznes.
 
-## Stan projektu — 2026-09-04
+## Stan projektu — 2026-09-05
 
-Kod pierwszej alfy ma przygotowane konta Supabase i subskrypcje Stripe, ale usługi
-nie są połączone bez własnych projektów, migracji i sekretów. To nie jest jeszcze
-gotowy produkt do kierowania płatnego ruchu.
+Kod pierwszej alfy jest połączony z GitHubem i wdrażany na Vercelu pod
+`smartfach.pl`. Hostowany Supabase oraz Stripe w trybie testowym są w trakcie
+testów integracyjnych. To nie jest jeszcze gotowy produkt do kierowania płatnego
+ruchu: przed sprzedażą trzeba przejść pełną bramkę alfy opisaną w `MVP_SPEC.md`.
 
 Zaimplementowane:
 
@@ -51,6 +52,23 @@ i `/admin` nie udają prawdziwego konta. Pełna instrukcja połączenia usług:
 Sekrety zapisuj wyłącznie w ignorowanym przez Git `.env.local`, na podstawie
 `.env.example`. Nie wklejaj ich do rozmowy, kodu frontendu ani publicznego repozytorium.
 
+## Local, Preview i Production
+
+- **Local** — kod uruchomiony na własnym komputerze. Służy do szybkiej pracy i
+  testów przed wysłaniem zmian. Nie aktualizuje GitHuba ani `smartfach.pl`.
+- **Preview** — Vercel tworzy osobny adres po wysłaniu gałęzi innej niż `main`.
+  Służy do sprawdzenia zmiany na telefonie i przez zespół bez wpływu na klientów.
+- **Production** — wersja z gałęzi `main`, dostępna pod `smartfach.pl`.
+
+Zalecany przebieg: osobna gałąź zmiany → test lokalny → push gałęzi → test adresu
+Preview → merge do `main` → automatyczne wdrożenie Production. Preview potrzebuje
+własnego zestawu zmiennych środowiskowych. Docelowo powinien korzystać z testowego
+Supabase i Stripe, a nie z danych i płatności prawdziwych klientów.
+
+Migracje Supabase nie wykonują się automatycznie wraz z wdrożeniem Vercela. Nowy
+plik z `supabase/migrations` trzeba najpierw sprawdzić na bazie testowej, a następnie
+uruchomić w produkcyjnym projekcie Supabase w kontrolowanym oknie wdrożeniowym.
+
 ## AI
 
 OpenRouter jest adapterem wymiennych modeli. Do uruchomienia potrzebne są
@@ -90,5 +108,3 @@ rozszerzony o pełny scenariusz dwóch organizacji przed płatną alfą.
 - [RESEARCH](docs/RESEARCH.md) — źródła i pytania.
 - [SETUP_SUPABASE_STRIPE](docs/SETUP_SUPABASE_STRIPE.md) — uruchomienie kont i płatności.
 - [SUPABASE_EMAILS](docs/SUPABASE_EMAILS.md) — polski szablon i produkcyjna wysyłka e-mail.
-
-Nie wykonano push ani wdrożenia.

@@ -1,18 +1,20 @@
 # Stos technologiczny
 
-Stan: 2026-09-04. Integracje są przygotowane w kodzie; projekty i sekrety nie są jeszcze skonfigurowane.
+Stan: 2026-09-05. Aplikacja jest publikowana przez Vercel pod `smartfach.pl`.
+Supabase i Stripe w trybie testowym są podłączane i wymagają jeszcze pełnych
+testów end-to-end przed rozpoczęciem sprzedaży.
 
 | Warstwa          | Wybór                                           | Stan                                                       |
 | ---------------- | ----------------------------------------------- | ---------------------------------------------------------- |
 | Środowisko pracy | Codex lokalnie; Cursor opcjonalny               | Dostępne                                                   |
-| Wersje kodu      | GitHub, prywatne repozytorium jako założenie    | Klon lokalny; zaobserwowano Public — zmienić przed wysyłką |
+| Wersje kodu      | GitHub                                          | Repozytorium połączone z Vercel; `main` wdraża Production |
 | Aplikacja        | Next.js App Router, React, TypeScript strict    | Alfa korzystająca z kont Supabase                          |
 | UI               | Tailwind; shadcn/ui przy złożonych komponentach | Tailwind w szkielecie; shadcn jeszcze niedodane            |
-| Dane             | Supabase/PostgreSQL, Auth, RLS                   | Migracja i adapter gotowe; brak skonfigurowanego projektu  |
-| Region bazy      | Frankfurt, EU Central                           | Do ustawienia przy tworzeniu projektu                      |
-| Hosting          | Vercel                                          | Plan, brak publikacji                                      |
+| Dane             | Supabase/PostgreSQL, Auth, RLS                   | Projekt działa; migracje i zapis wymagają testu E2E        |
+| Region bazy      | Region UE                                       | Potwierdzić ustawienie przed danymi realnych klientów      |
+| Hosting          | Vercel                                          | Production działa pod `smartfach.pl`; Preview do procesu pracy |
 | AI/STT           | OpenRouter; wymienny model                       | Gemini 3.5 Flash dla lokalnej alfy; osobny STT brak        |
-| Rozliczenia      | Stripe Checkout + Billing                       | Checkout/trial/portal/webhook gotowe; brak kluczy i cen    |
+| Rozliczenia      | Stripe Checkout + Billing                       | Sandbox podłączany; checkout/trial/portal/webhook wymagają E2E |
 | Analityka        | PostHog EU                                      | Plan, brak integracji                                      |
 | Testy            | Vitest, lint, typy, testy przeglądarkowe        | Obliczenia, schematy, CSV, AI, zapis, ochrona API, PDF     |
 
@@ -57,9 +59,13 @@ To nie jest pełny budżet: osobno użycie ponad limity, AI/STT, płatności, e-
 domena i narzędzia pracy. Aktualne warunki sprawdzamy ponownie przed zakupem.
 Ustawienia regionów i umowy dostawców wymagają weryfikacji przed realnymi danymi.
 
-## Uwaga przed pierwszą wysyłką
+## Środowiska wdrożenia
 
-Repozytorium `Kilinskitech/smartfach.pl` było dostępne bez logowania z oznaczeniem
-Public podczas weryfikacji 2026-08-30. Nie wysłano kodu ani dokumentacji.
-Przed push właściciel powinien ustawić Private, a dostęp należy skonfigurować
-przez bezpieczne logowanie. Nie przekazywać haseł ani tokenów w rozmowie.
+Lokalnie oraz na Vercel Preview używamy wyłącznie testowych danych i Stripe Sandbox.
+Production działa z gałęzi `main`. Przed uruchomieniem prawdziwych płatności Preview
+powinien otrzymać oddzielny Supabase i stabilny adres testowy, aby e-maile i powroty
+ze Stripe nie kierowały do `smartfach.pl`.
+
+Migracje Supabase nie są wykonywane przez sam deploy Vercela. Każdą migrację trzeba
+uruchomić i zweryfikować osobno. Nie przekazywać haseł ani tokenów w rozmowie i nie
+umieszczać ich w repozytorium.
