@@ -24,6 +24,8 @@ Zaimplementowane:
 - panel właściciela oparty na realnych kontach, statusach subskrypcji i kosztach
   OpenRouter; treść rozmów znajduje się dopiero w profilu użytkownika;
 - audyt otwarcia rozmów użytkownika przez jednego administratora platformy.
+- jedna kanoniczna domena `smartfach.pl`, przekierowanie technicznego aliasu Vercela,
+  sitemap i indeksowanie publicznych stron wyłącznie na Live.
 
 Niezaimplementowane lub niegotowe do sprzedaży:
 

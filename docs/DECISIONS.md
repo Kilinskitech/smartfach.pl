@@ -698,3 +698,24 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Zastępuje D033 w zakresie lokalnego runtime, `.env.local` i Local jako środowiska.
 - Zaktualizowano: AGENTS, README, TECH_STACK, SETUP_SUPABASE_STRIPE, ROADMAP,
   `.env.example` i DECISIONS.
+
+## D035 — Jedna kanoniczna domena i indeksowanie wyłącznie Live
+
+- Data: 2026-09-06. Status: wdrożone na gałęzi `preview`, oczekuje na akceptację Live.
+- Decyzja: `https://smartfach.pl` jest jedyną kanoniczną domeną publiczną.
+  `smartfachpl.vercel.app` wykonuje trwałe przekierowanie 308 na odpowiadającą
+  ścieżkę w `smartfach.pl`, z zachowaniem parametrów zapytania.
+- Indeksowanie: publiczne strony mogą być indeksowane wyłącznie, gdy Vercel buduje
+  środowisko Production. Preview zwraca blokadę dla robotów i nie publikuje adresów
+  w sitemapie. Prywatne ścieżki aplikacji pozostają `noindex` oraz są wyłączone
+  w `robots.txt`.
+- SEO: każda publiczna podstrona wskazuje własny canonical w `smartfach.pl`, a
+  `sitemap.xml` zawiera wyłącznie publiczne strony sprzedażowe i prawne.
+- Powód: publiczny alias Vercela nie może konkurować z domeną marki, a dotychczasowe
+  globalne `noindex` blokowało także landing i uniemożliwiało organiczne pozycjonowanie.
+- Kompromis: po publikacji Live publiczne landingi stają się dostępne dla wyszukiwarek,
+  więc każda późniejsza zmiana ich treści wymaga świadomego przeglądu SEO i prawnego.
+- Odrzucono: usunięcie technicznej domeny Vercela, pozostawienie dwóch kopii oraz
+  włączenie indeksowania Preview.
+- Zaktualizowano: konfigurację Next.js, metadata, robots, sitemap, testy, README,
+  MVP_SPEC i DECISIONS.

@@ -7,6 +7,7 @@ import { authenticatedContext, SubscriptionRequired, requireSubscription } from 
 export const metadata: Metadata = {
   title: "SmartFach — aplikacja",
   description: "Prywatna przestrzeń pracy w SmartFach.",
+  robots: { index: false, follow: false },
 };
 
 export const dynamic = "force-dynamic";

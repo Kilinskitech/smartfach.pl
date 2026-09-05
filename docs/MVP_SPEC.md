@@ -79,7 +79,7 @@ Produkt nie obiecuje dochodu, klienta ani wyniku w określonym terminie.
 
 ## Kolejność realizacji
 
-1. Dokumentacja, landing i lokalny ekran aplikacji, testowalna podstawa obliczeń.
+1. Dokumentacja, landing i ekran aplikacji na Preview, testowalna podstawa obliczeń.
 2. Konto, organizacja/logowanie, RLS, jeden wybrany typ konta oraz prosty cennik i klienci.
 3. Pełna wycena tekstowa na własnych stawkach z PDF i historią.
 4. Uruchomienie i ewaluacja otwartego czatu, zdjęć i nagrań na prawdziwych modelach;
@@ -94,6 +94,14 @@ Produkt nie obiecuje dochodu, klienta ani wyniku w określonym terminie.
 
 Nie jest to harmonogram w dniach. Kolejne etapy zależą od jakości i wyników testów.
 Interfejs demo bez podłączonych workflow nie jest gotowym produktem do sprzedaży.
+
+## Widoczność i indeksowanie
+
+- `smartfach.pl` jest jedyną kanoniczną domeną; publiczny alias
+  `smartfachpl.vercel.app` przekierowuje trwale z zachowaniem ścieżki.
+- Tylko wdrożenie Production pozwala na indeksowanie. Preview i prywatne obszary
+  aplikacji mają `noindex` lub blokadę w `robots.txt`.
+- Sitemap zawiera wyłącznie publiczne adresy w domenie `smartfach.pl`.
 
 ## Bramka płatnej alfy
 
