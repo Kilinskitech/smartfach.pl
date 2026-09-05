@@ -8,7 +8,8 @@ sekretów do rozmowy ani GitHub. Używaj `.env.local`, który jest ignorowany pr
 1. Utwórz projekt Supabase w regionie UE.
 2. W SQL Editor uruchom migracje w kolejności nazw:
    - `supabase/migrations/202609040001_initial_saas.sql`;
-   - `supabase/migrations/202609050001_sales_entry_plans.sql`.
+   - `supabase/migrations/202609050001_sales_entry_plans.sql`;
+   - `supabase/migrations/202609050002_fix_workspace_write.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
 5. Z Project Settings → API Keys skopiuj do `.env.local`:

@@ -4,6 +4,7 @@ import {
   BarChart3,
   BriefcaseBusiness,
   Check,
+  ChevronDown,
   ClipboardCheck,
   Compass,
   FileText,
@@ -122,6 +123,160 @@ const pricingContent: Record<PricingContext, {
     planIds: ["pro", "firma"],
     featuredPlan: "pro",
     note: "Wariant Firma obejmuje właściciela i do 3 członków. Każde kolejne miejsce zwiększa cenę o 49,99 zł miesięcznie.",
+  },
+};
+
+type FaqContext = "home" | keyof typeof landingData | "pricing";
+type FaqItem = readonly [question: string, answer: string];
+
+const trialFaq: FaqItem = [
+  "Jak działają 3 dni bez opłat?",
+  "Przy rozpoczęciu podajesz kartę, ale dzisiaj płacisz 0 zł. Jeśli anulujesz przed końcem trzeciego dnia, pierwsza miesięczna opłata nie zostanie pobrana. Bez anulowania wybrany plan rozpocznie się automatycznie.",
+];
+
+const faqContent: Record<
+  FaqContext,
+  { kicker: string; title: string; lead: string; items: readonly FaqItem[] }
+> = {
+  home: {
+    kicker: "NAJWAŻNIEJSZE ODPOWIEDZI",
+    title: "Zanim zaczniesz ze SmartFach.",
+    lead: "Krótko i bez drobnego druku: czym jest produkt, skąd bierze dane i jak działa okres próbny.",
+    items: [
+      [
+        "Czy SmartFach to po prostu kolejny czat AI?",
+        "Nie. Rozmawiasz naturalnie, ale SmartFach wykorzystuje zapisany kontekst Twojego działania, klientów i cennika oraz przygotowuje konkretne rezultaty: plan działania, wycenę, protokół albo wiadomość. Dokument zawsze możesz sprawdzić przed zapisaniem.",
+      ],
+      [
+        "Czy muszę wiedzieć, od czego zacząć?",
+        "Nie musisz znać funkcji aplikacji ani pisać rozbudowanego polecenia. Wybierasz, czy budujesz od zera, czy masz już pomysł lub firmę, a potem opisujesz swoją sytuację jednym zdaniem. SmartFach dopyta tylko o informacje potrzebne do następnego działania.",
+      ],
+      [
+        "Czy AI może wymyślić cenę w mojej wycenie?",
+        "Nie. Cena pochodzi z Twojej wiadomości albo cennika firmy. Jeśli jej brakuje lub pozycja jest niejednoznaczna, SmartFach poprosi o potwierdzenie. Sumy i VAT oblicza kod, a nie model AI.",
+      ],
+      [
+        "Czy mogę korzystać ze SmartFach na telefonie?",
+        "Tak. SmartFach działa w przeglądarce telefonu i nie wymaga pobierania ze sklepu. Możesz pisać, dodać zdjęcie albo nagranie, a zapisane rozmowy i dokumenty pozostają na Twoim koncie.",
+      ],
+      trialFaq,
+      [
+        "Czy SmartFach gwarantuje 10 000 zł przychodu?",
+        "Nie. To może być Twój cel, który SmartFach pomaga przeliczyć na ofertę, potrzebną liczbę klientów i kolejne działania. Wynik zależy od wykonania planu, jakości oferty i rynku.",
+      ],
+    ],
+  },
+  discover: {
+    kicker: "PYTANIA PRZED STARTEM",
+    title: "Budowanie biznesu bez kupowania kolejnego kursu.",
+    lead: "SmartFach ma pomagać Ci regularnie podejmować decyzje i działać, a nie sprzedać jednorazowy dokument.",
+    items: [
+      [
+        "Czy dostanę przypadkową listę pomysłów na biznes?",
+        "Nie taki jest cel. SmartFach najpierw bierze pod uwagę Twoje umiejętności, czas, budżet i sposób pracy, a później pomaga porównać ograniczoną liczbę kierunków oraz wybrać najprostszy test rynkowy.",
+      ],
+      [
+        "Czy to jest kurs albo generator biznesplanu?",
+        "Nie. Pracujesz w rozmowie nad aktualnym problemem, wykonujesz ustalone działanie i wracasz z wynikiem. SmartFach pamięta zapisane ustalenia, dzięki czemu możesz poprawiać ofertę i kolejne kroki bez zaczynania od początku.",
+      ],
+      [
+        "Co oznacza cel 10 000 zł miesięcznie?",
+        "To cel do policzenia, a nie obietnica wyniku. SmartFach pomaga przełożyć go na cenę, koszty, liczbę potrzebnych klientów i zadania sprzedażowe, które możesz rzeczywiście wykonać.",
+      ],
+      [
+        "Co, jeśli mam już wybrany pomysł?",
+        "Możesz od razu przejść do dopracowania klienta, oferty, ceny i sposobu zdobycia pierwszych klientów. Nie musisz zakładać nowego konta ani kupować osobnego produktu.",
+      ],
+      [
+        "Czym różni się Lite od Pro?",
+        "Oba plany są dla jednej osoby i obejmują ten sam sposób pracy. Lite jest przeznaczony do lżejszego użycia, a Pro daje wyższy miesięczny limit do regularnej pracy nad researchem, ofertą i sprzedażą.",
+      ],
+      trialFaq,
+    ],
+  },
+  launch: {
+    kicker: "PYTANIA O PRACĘ Z FIRMĄ",
+    title: "Od pomysłu po codzienną obsługę klientów.",
+    lead: "Zaczynasz od tego, co jest potrzebne dzisiaj. Pamięć firmy może rosnąć razem z kolejnymi zadaniami.",
+    items: [
+      [
+        "Czy SmartFach jest dla pomysłu, czy dopiero dla działającej firmy?",
+        "Dla obu sytuacji. Możesz dopracować pierwszą ofertę i sposób zdobywania klientów albo od razu pracować nad wycenami, protokołami, wiadomościami i historią istniejących klientów.",
+      ],
+      [
+        "Czy muszę najpierw uzupełnić wszystkich klientów i cały cennik?",
+        "Nie. Możesz rozpocząć od jednej wiadomości i podać potrzebne dane w trakcie pracy. Klient oraz zatwierdzony dokument trafią do historii, a cennik możesz rozbudowywać stopniowo.",
+      ],
+      [
+        "Czy naprawdę przygotuję wycenę jednym zdaniem?",
+        "SmartFach może zamienić krótkie polecenie w szkic wyceny. Jeśli zna klienta i pozycje z Twojego cennika, wykorzysta ten kontekst. Brakujące ceny lub niejasne dane pozostawi do potwierdzenia zamiast je zgadywać.",
+      ],
+      [
+        "Czy SmartFach pomaga również w marketingu?",
+        "Tak. Możesz pracować nad grupą klientów, ofertą, treścią reklamy, sposobem dotarcia i kolejnym testem sprzedażowym, a później wracać z wynikami i aktualizować dalsze działania.",
+      ],
+      [
+        "Czy wcześniejsze ustalenia i historia klientów zostają na koncie?",
+        "Tak. Zapisane rozmowy, zatwierdzone dokumenty, klienci i cennik tworzą kontekst kolejnych zadań. Zmiana sposobu pracy w ustawieniach nie wymaga tworzenia nowego konta.",
+      ],
+      trialFaq,
+    ],
+  },
+  operate: {
+    kicker: "PYTANIA WŁAŚCICIELA FIRMY",
+    title: "Jedno miejsce dla pracy właściciela i historii firmy.",
+    lead: "Najważniejsze zasady przed wyborem planu dla siebie lub zespołu.",
+    items: [
+      [
+        "Czy SmartFach nadaje się również dla jednoosobowej firmy?",
+        "Tak. Plan Pro jest przeznaczony dla jednej osoby, która regularnie prowadzi biznes. Plan Firma jest kierunkiem dla właściciela potrzebującego wspólnej przestrzeni zespołu.",
+      ],
+      [
+        "Czy pracownicy otrzymują już osobne konta?",
+        "Jeszcze nie w obecnym przyroście produktu. Właściciel może prowadzić listę zespołu, ale osobne loginy, zaproszenia i egzekwowanie uprawnień muszą przejść testy bezpieczeństwa przed uruchomieniem. Nie kupuj planu Firma wyłącznie z myślą o osobnych kontach pracowników.",
+      ],
+      [
+        "Czy AI może samodzielnie zapisać lub wysłać dokument?",
+        "Nie. SmartFach przygotowuje szkic, a użytkownik sprawdza go przed trwałym zapisem i pobraniem PDF. Model nie powinien wykonywać w imieniu firmy nieodwracalnych działań bez potwierdzenia.",
+      ],
+      [
+        "Skąd SmartFach bierze ceny do wyceny?",
+        "Z cennika firmy albo z kwoty podanej przez użytkownika. Internet może pomóc w researchu, ale znaleziona stawka rynkowa nie trafia automatycznie do dokumentu jako cena Twojej firmy.",
+      ],
+      [
+        "Czy historia klienta aktualizuje się po wykonanej pracy?",
+        "Po sprawdzeniu i zapisaniu protokołu lub wyceny dokument zostaje przypisany do właściwego klienta. Dzięki temu przy kolejnej wizycie możesz wrócić do wcześniejszych prac i ustaleń.",
+      ],
+      trialFaq,
+    ],
+  },
+  pricing: {
+    kicker: "CENNIK BEZ NIESPODZIANEK",
+    title: "Najczęstsze pytania o plany i płatności.",
+    lead: "Wybierasz jeden miesięczny abonament. Sposób korzystania może zmieniać się razem z Twoją sytuacją.",
+    items: [
+      [
+        "Który plan wybrać?",
+        "Lite jest dla jednej osoby korzystającej lżej. Pro jest dla jednej osoby pracującej regularnie nad rozwojem lub obsługą firmy. Firma jest kierunkiem dla właściciela i zespołu, ale osobne konta pracowników nie są jeszcze dostępne w obecnym przyroście.",
+      ],
+      [
+        "Czy zmiana z budowania biznesu na prowadzenie firmy kosztuje dodatkowo?",
+        "Nie. Typ pracy możesz zmienić w ustawieniach w ramach tego samego abonamentu. Historia, zapisane ustalenia i wykorzystanie miesięcznego limitu pozostają na koncie.",
+      ],
+      trialFaq,
+      [
+        "Kiedy zostanie pobrana pierwsza opłata?",
+        "Stripe pokaże dokładną datę przed zatwierdzeniem karty. Pierwsza opłata zostanie podjęta po zakończeniu 3-dniowej próby, o ile wcześniej nie anulujesz subskrypcji.",
+      ],
+      [
+        "Jak anulować abonament?",
+        "Subskrypcją zarządzasz przez bezpieczny portal płatniczy dostępny z ustawień konta. Anulowanie przed końcem próby zapobiega pierwszej miesięcznej opłacie.",
+      ],
+      [
+        "Czy dane karty trafiają do SmartFach?",
+        "Nie. Formularz płatności obsługuje Stripe. SmartFach otrzymuje status płatności i subskrypcji, ale nie przechowuje pełnego numeru karty ani kodu CVC.",
+      ],
+    ],
   },
 };
 
@@ -309,6 +464,38 @@ function PricingOverview() {
   );
 }
 
+function FAQSection({ context }: { context: FaqContext }) {
+  const content = faqContent[context];
+  return (
+    <section className="marketing-section faq-section" id="faq">
+      <div className="faq-intro">
+        <p className="marketing-kicker">{content.kicker}</p>
+        <h2>{content.title}</h2>
+        <p>{content.lead}</p>
+        <div className="faq-contact">
+          <MessageCircle size={20} />
+          <p>
+            <strong>Masz inne pytanie?</strong>
+            <span>Napisz do nas, zanim podepniesz kartę.</span>
+          </p>
+          <Link href="/kontakt">Kontakt <ArrowRight size={14} /></Link>
+        </div>
+      </div>
+      <div className="faq-list">
+        {content.items.map(([question, answer], index) => (
+          <details key={question} open={index === 0}>
+            <summary>
+              <span>{question}</span>
+              <ChevronDown size={19} aria-hidden="true" />
+            </summary>
+            <p>{answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function MarketingHome() {
   return (
     <div className="marketing-site">
@@ -363,6 +550,7 @@ export function MarketingHome() {
           </div>
         </section>
         <PricingOverview />
+        <FAQSection context="home" />
         <section className="marketing-cta">
           <BrandMark size={50} />
           <h2>Nie potrzebujesz kolejnego kursu. Potrzebujesz asystenta do działania.</h2>
@@ -546,6 +734,7 @@ export function PathLanding({ mode }: { mode: keyof typeof landingData }) {
         {mode === "discover" && <HonestGoalPlan />}
         <ContinuityLoop entry={mode === "discover" ? "discover" : "operate"} />
         <Pricing context={mode} />
+        <FAQSection context={mode} />
       </main>
       <MarketingFooter />
     </div>
@@ -563,6 +752,7 @@ export function PricingLanding() {
           <p>Lite i Pro są dla jednej osoby, a Firma dla zespołu. Każdy plan obejmuje pomoc SmartFach na całej drodze.</p>
         </section>
         <PricingOverview />
+        <FAQSection context="pricing" />
       </main>
       <MarketingFooter />
     </div>

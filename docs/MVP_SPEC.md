@@ -25,6 +25,10 @@ testowy przelicznik z blokadą po wykorzystaniu limitu. Zwykły interfejs nie po
 salda; zwiększenie limitu pojawia się dopiero po jego wykorzystaniu. Nie ma jeszcze trwałych rezultatów Odkryj
 i Uruchom ani prawdziwego zakupu zwiększeń limitu. Operacyjne workflow obecnego
 warsztatu odpowiadają wyłącznie fragmentowi Prowadź.
+Główne landingi mają kontekstowe FAQ odpowiadające na obiekcje dotyczące sposobu
+działania, pochodzenia cen, celu 10 000 zł, planów oraz 3-dniowej próby. FAQ nie
+przedstawia osobnych kont pracowników ani niegotowych rozliczeń zwiększeń limitu
+jako dostępnych funkcji.
 W rejestracji pierwszy wybór asynchronicznie zawęża ofertę: Buduję od zera do
 Lite/Pro, a Mam pomysł lub firmę do Pro/Firma. Serwer ponownie sprawdza tę parę.
 Po poprawnym utworzeniu konta użytkownik jest kierowany bezpośrednio do Stripe,
