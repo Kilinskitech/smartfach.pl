@@ -15,6 +15,43 @@ z wyjątkiem wartości zależnych od adresu aplikacji oraz sekretu webhooka. Po 
 zmiennych trzeba wykonać nowe wdrożenie. Przed Stripe Live lub danymi realnych klientów
 jest obowiązkowa osobna baza testowa i osobny zestaw kluczy produkcyjnych.
 
+Zalecany stały adres Preview to `https://preview.smartfach.pl`, przypisany w Vercel
+do gałęzi `preview`. Dzięki temu callback Supabase i powrót ze Stripe nie zmieniają
+adresu po każdym wdrożeniu.
+
+### Zmienne w Vercel
+
+Te same testowe wartości przypisz do **Production i Preview**:
+
+- `NEXT_PUBLIC_SUPABASE_URL`;
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`;
+- `SUPABASE_SECRET_KEY`;
+- `PLATFORM_ADMIN_USER_ID`;
+- `STRIPE_SECRET_KEY` i trzy `STRIPE_PRICE_*`;
+- wszystkie zmienne `OPENROUTER_*` oraz `SMARTFACH_ENABLE_AI`.
+
+Wartość zależna od środowiska:
+
+- Production: `NEXT_PUBLIC_APP_URL=https://smartfach.pl`;
+- Preview: `NEXT_PUBLIC_APP_URL=https://preview.smartfach.pl`.
+
+Na wspólnym Stripe Sandbox produkcyjny webhook może tymczasowo synchronizować tę
+samą bazę dla obu aplikacji. `STRIPE_WEBHOOK_SECRET` musi jednak pozostać ustawiony
+w obu środowiskach, ponieważ aplikacja używa go do sprawdzenia kompletności konfiguracji.
+Jeżeli dodasz osobny webhook Preview, otrzyma on własny sekret podpisu.
+
+### Dostęp Codex do chronionego Preview
+
+Vercel Standard Protection domyślnie pokazuje na Preview ekran logowania. Pozostaw
+ochronę włączoną. W Project → Settings → Deployment Protection utwórz **Protection
+Bypass for Automation**, a jego sekret zapisz lokalnie jako
+`VERCEL_AUTOMATION_BYPASS_SECRET`. Adres `https://preview.smartfach.pl` zapisz jako
+`SMARTFACH_PREVIEW_URL`. Obie wartości zostają wyłącznie w `.env.local`; pozwalają
+wykonywać testy HTTP bez ujawniania Preview publicznie i bez sterowania przeglądarką.
+
+W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URLs:
+`https://preview.smartfach.pl/auth/callback`.
+
 ## 1. Supabase
 
 1. Utwórz projekt Supabase w regionie UE.

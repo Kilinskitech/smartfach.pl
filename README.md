@@ -69,6 +69,9 @@ Lokalna aplikacja łączy się z nimi przez prywatny `.env.local`; nie utrzymuje
 osobnej lokalnej bazy Supabase. Przed pierwszymi realnymi klientami lub włączeniem
 Stripe Live rozdzielamy dane testowe od produkcyjnych.
 
+Preview pozostaje chronione przez Vercel. Automatyczne testy używają prywatnego
+`VERCEL_AUTOMATION_BYPASS_SECRET` z `.env.local`; sekret nie trafia do kodu ani GitHuba.
+
 Migracje Supabase nie wykonują się automatycznie wraz z wdrożeniem Vercela. Nowy
 plik z `supabase/migrations` trzeba najpierw sprawdzić na bazie testowej, a następnie
 uruchomić w produkcyjnym projekcie Supabase w kontrolowanym oknie wdrożeniowym.
