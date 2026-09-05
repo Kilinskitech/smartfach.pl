@@ -652,3 +652,25 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   weryfikacji adresu oraz przechowywanie hasła do czasu zakończenia płatności.
 - Zaktualizowano: MASTER_PLAN, MVP_SPEC, SETUP_SUPABASE_STRIPE, rejestrację,
   ekran sukcesu, callback Auth, webhook Stripe i testy reguły odnowienia.
+
+## D033 — Stałe Preview i wspólny backend wyłącznie na etapie alfy
+
+- Data: 2026-09-06. Status: przyjęta jako przejściowy proces wdrażania.
+- Decyzja: bieżąca praca trafia najpierw na stałą gałąź `preview`. Po lokalnej
+  weryfikacji Vercel tworzy wdrożenie Preview; dopiero zaakceptowany stan jest
+  łączony z `main` i publikowany pod `smartfach.pl`.
+- Środowisko alfy: przed pierwszymi realnymi klientami Local, Preview i Production
+  mogą korzystać z jednego hostowanego Supabase oraz Stripe Sandbox. `.env.local`
+  pozostaje prywatną konfiguracją połączenia, a nie osobną lokalną bazą danych.
+- Granica: wspólne środowisko nie może pozostać po uruchomieniu Stripe Live lub
+  zapisaniu danych realnych klientów. Przed tym momentem tworzymy oddzielny backend
+  testowy dla Local/Preview i produkcyjny dla `main`.
+- Powód: founder i Codex mogą testować pełny przepływ na wdrożonym adresie bez
+  ręcznego odtwarzania wszystkich usług lokalnie, a `smartfach.pl` nie zmienia się
+  przed akceptacją.
+- Kompromis: migracja lub test na wspólnej bazie może wpłynąć także na obecną wersję
+  Production. Do czasu rozdzielenia środowisk dopuszczamy wyłącznie kompatybilne
+  migracje i nie kierujemy płatnego ruchu na aplikację.
+- Odrzucono: codzienną pracę bezpośrednio na `main`, całkowite usunięcie `.env.local`
+  oraz utrzymywanie trzech osobnych backendów jeszcze przed realnymi użytkownikami.
+- Zaktualizowano: README, TECH_STACK, SETUP_SUPABASE_STRIPE i DECISIONS.

@@ -61,10 +61,14 @@ Ustawienia regionów i umowy dostawców wymagają weryfikacji przed realnymi dan
 
 ## Środowiska wdrożenia
 
-Lokalnie oraz na Vercel Preview używamy wyłącznie testowych danych i Stripe Sandbox.
-Production działa z gałęzi `main`. Przed uruchomieniem prawdziwych płatności Preview
-powinien otrzymać oddzielny Supabase i stabilny adres testowy, aby e-maile i powroty
-ze Stripe nie kierowały do `smartfach.pl`.
+Production działa z gałęzi `main`, a stała gałąź `preview` służy jako środowisko
+akceptacyjne. Podczas alfy Local, Preview i Production mogą korzystać z jednego
+hostowanego projektu Supabase oraz Stripe Sandbox. `.env.local` nie uruchamia osobnej
+bazy — przechowuje jedynie prywatną konfigurację połączenia lokalnej aplikacji.
+
+To uproszczenie obowiązuje tylko przed realnymi klientami. Przed Stripe Live i
+wprowadzeniem danych klientów trzeba rozdzielić testowy Supabase/Stripe od usług
+produkcyjnych oraz nadać Preview stabilny adres dla callbacków i webhooka.
 
 Migracje Supabase nie są wykonywane przez sam deploy Vercela. Każdą migrację trzeba
 uruchomić i zweryfikować osobno. Nie przekazywać haseł ani tokenów w rozmowie i nie

@@ -56,14 +56,18 @@ Sekrety zapisuj wyłącznie w ignorowanym przez Git `.env.local`, na podstawie
 
 - **Local** — kod uruchomiony na własnym komputerze. Służy do szybkiej pracy i
   testów przed wysłaniem zmian. Nie aktualizuje GitHuba ani `smartfach.pl`.
-- **Preview** — Vercel tworzy osobny adres po wysłaniu gałęzi innej niż `main`.
-  Służy do sprawdzenia zmiany na telefonie i przez zespół bez wpływu na klientów.
+- **Preview** — stała gałąź `preview` wdrażana przez Vercel pod osobnym adresem.
+  Służy do sprawdzenia zmiany na telefonie i przez zespół bez zmiany `smartfach.pl`.
 - **Production** — wersja z gałęzi `main`, dostępna pod `smartfach.pl`.
 
-Zalecany przebieg: osobna gałąź zmiany → test lokalny → push gałęzi → test adresu
-Preview → merge do `main` → automatyczne wdrożenie Production. Preview potrzebuje
-własnego zestawu zmiennych środowiskowych. Docelowo powinien korzystać z testowego
-Supabase i Stripe, a nie z danych i płatności prawdziwych klientów.
+Przebieg alfy: praca na gałęzi `preview` → szybki test lokalny → push → test adresu
+Preview → akceptacja → merge `preview` do `main` → automatyczne wdrożenie Production.
+
+Na obecnym, przedprodukcyjnym etapie Local, Preview i Production mogą tymczasowo
+korzystać z jednego hostowanego projektu Supabase oraz jednego Stripe Sandbox.
+Lokalna aplikacja łączy się z nimi przez prywatny `.env.local`; nie utrzymujemy
+osobnej lokalnej bazy Supabase. Przed pierwszymi realnymi klientami lub włączeniem
+Stripe Live rozdzielamy dane testowe od produkcyjnych.
 
 Migracje Supabase nie wykonują się automatycznie wraz z wdrożeniem Vercela. Nowy
 plik z `supabase/migrations` trzeba najpierw sprawdzić na bazie testowej, a następnie

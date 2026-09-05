@@ -1,7 +1,19 @@
 # Podłączenie Supabase i Stripe
 
-Stan: 2026-09-05. Najpierw uruchom cały przepływ w trybie testowym. Nie wklejaj
+Stan: 2026-09-06. Najpierw uruchom cały przepływ w trybie testowym. Nie wklejaj
 sekretów do rozmowy ani GitHub. Używaj `.env.local`, który jest ignorowany przez Git.
+
+## Środowisko alfy
+
+Na etapie przed pierwszymi realnymi klientami jeden hostowany projekt Supabase i
+jeden Stripe Sandbox obsługują Local, stałą gałąź Vercel `preview` oraz Production.
+Nie uruchamiamy osobnego Supabase na komputerze. `.env.local` zawiera tylko połączenie
+lokalnej aplikacji z tym samym backendem testowym.
+
+W Vercel te same testowe wartości należy przypisać do **Production i Preview**,
+z wyjątkiem wartości zależnych od adresu aplikacji oraz sekretu webhooka. Po zmianie
+zmiennych trzeba wykonać nowe wdrożenie. Przed Stripe Live lub danymi realnych klientów
+jest obowiązkowa osobna baza testowa i osobny zestaw kluczy produkcyjnych.
 
 ## 1. Supabase
 
