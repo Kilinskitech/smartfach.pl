@@ -513,6 +513,7 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   zapisuje zdarzenie audytowe.
 - Uprawnienia: na obecnym etapie istnieje jeden administrator platformy wskazany
   serwerowym `PLATFORM_ADMIN_USER_ID`; nie budujemy modułu ról administracyjnych.
+
 - Koszt AI: zapisujemy zwrócone przez OpenRouter usage, koszt USD, tokeny, model,
   dostawcę i identyfikator żądania dla konkretnego użytkownika. Agregat klucza
   dostawcy służy później do uzgadniania, nie zastępuje danych per odpowiedź.
@@ -719,3 +720,18 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Odrzucono: usunięcie technicznej domeny Vercela, pozostawienie dwóch kopii oraz
   włączenie indeksowania Preview.
 - Zaktualizowano: metadata, robots, sitemap, testy, README, MVP_SPEC i DECISIONS.
+
+## D036 — Konto administratora poza lejkiem płatniczym
+
+- Data: 2026-09-06. Status: wdrożone w kodzie na Preview.
+- Konto właściciela platformy jest identyfikowane przez chroniony UUID, z
+  możliwością użycia skonfigurowanego adresu e-mail.
+- Wejście administratora do `/app` i `/platnosc` przekierowuje do `/admin`;
+  konto nie jest liczone jako klient i nie wymaga abonamentu.
+- Anulowanie abonamentu działa z końcem okresu i można je cofnąć. Trwałe
+  usunięcie konta wymaga ponownego wpisania adresu e-mail, najpierw anuluje
+  Stripe, a następnie usuwa dane firmy. Konto właściciela zespołu nie może być
+  usunięte, dopóki organizacja ma innych aktywnych członków.
+- Każda operacja administracyjna tworzy wpis audytowy.
+- Odrzucono bezpośrednie usuwanie rekordów z panelu Supabase: groziłoby ono
+  pozostawieniem aktywnej subskrypcji Stripe lub osieroconych danych.

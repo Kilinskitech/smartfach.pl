@@ -8,6 +8,7 @@ import {
   salesEntrySchema,
 } from "@/domain/billing";
 import { applicationUrl, getStripe, stripeConfigured } from "@/lib/stripe";
+import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
@@ -60,6 +61,14 @@ export async function signIn(_: AuthState, formData: FormData): Promise<AuthStat
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: message(error) };
+
+  if (
+    isPlatformAdminIdentity({
+      userId: data.user?.id,
+      email: data.user?.email,
+    })
+  )
+    redirect("/admin");
 
   if (data.user?.id) {
     try {

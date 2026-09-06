@@ -6,22 +6,26 @@ import { workspaceSchema } from "@/domain/workspace";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { stripeConfigured } from "@/lib/stripe";
 import { supabaseAdminConfigured } from "@/lib/supabase/config";
-import { createClient } from "@/lib/supabase/server";
-import { platformAdminId } from "@/server/auth";
+import { requirePlatformAdmin } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel właściciela — SmartFach", robots: { index: false, follow: false } };
 
-export default async function Page() {
-  if (!supabaseAdminConfigured() || !platformAdminId()) notFound();
-  const supabase = await createClient();
-  const { data: claims } = await supabase.auth.getClaims();
-  if (claims?.claims?.sub !== platformAdminId()) notFound();
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ usunieto?: string }>;
+}) {
+  if (!supabaseAdminConfigured()) notFound();
+  const platformAdmin = await requirePlatformAdmin().catch(() => notFound());
 
   const admin = createAdminClient();
   const { data: authData, error: authError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
   if (authError) throw new Error("Nie można wczytać użytkowników.");
-  const userIds = authData.users.map((user) => user.id);
+  const customerUsers = authData.users.filter(
+    (user) => user.id !== platformAdmin.userId,
+  );
+  const userIds = customerUsers.map((user) => user.id);
   const [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult] = await Promise.all([
     userIds.length ? admin.from("user_profiles").select("user_id, display_name, account_type").in("user_id", userIds) : Promise.resolve({ data: [] }),
     userIds.length ? admin.from("memberships").select("user_id, organization_id, role, status").in("user_id", userIds).eq("status", "active") : Promise.resolve({ data: [] }),
@@ -43,7 +47,7 @@ export default async function Page() {
     usage.set(id, current);
   }
 
-  const users = authData.users.map((authUser) => {
+  const users = customerUsers.map((authUser) => {
     const profile = profiles.get(authUser.id);
     const membership = memberships.get(authUser.id);
     const organizationId = membership ? String(membership.organization_id) : "";
@@ -98,6 +102,15 @@ export default async function Page() {
     },
     users,
   };
-  return <AdminDashboard snapshot={snapshot} />;
+  const params = await searchParams;
+  return (
+    <AdminDashboard
+      notice={
+        params.usunieto === "1"
+          ? "Konto użytkownika, dane firmy i subskrypcja zostały usunięte."
+          : undefined
+      }
+      snapshot={snapshot}
+    />
+  );
 }
-

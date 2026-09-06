@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { supabaseConfigured, supabasePublicConfig } from "./config";
 
 const protectedPrefixes = ["/app", "/platnosc", "/admin"];
@@ -28,6 +29,12 @@ export async function updateSession(request: NextRequest) {
 
   const { data } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  const userEmail =
+    typeof data?.claims?.email === "string" ? data.claims.email : null;
+  const isPlatformAdmin = isPlatformAdminIdentity({
+    userId,
+    email: userEmail,
+  });
   const isProtected =
     !publicProtectedExceptions.has(request.nextUrl.pathname) &&
     protectedPrefixes.some((prefix) => request.nextUrl.pathname.startsWith(prefix));
@@ -40,13 +47,24 @@ export async function updateSession(request: NextRequest) {
   }
 
   if (request.nextUrl.pathname.startsWith("/admin") && userId) {
-    const allowedId = process.env.PLATFORM_ADMIN_USER_ID?.trim();
-    if (!allowedId || userId !== allowedId) {
+    if (!isPlatformAdmin) {
       const destination = request.nextUrl.clone();
       destination.pathname = "/app";
       destination.search = "";
       return NextResponse.redirect(destination);
     }
+  }
+
+  if (
+    userId &&
+    isPlatformAdmin &&
+    (request.nextUrl.pathname === "/app" ||
+      request.nextUrl.pathname.startsWith("/platnosc"))
+  ) {
+    const destination = request.nextUrl.clone();
+    destination.pathname = "/admin";
+    destination.search = "";
+    return NextResponse.redirect(destination);
   }
 
   return response;

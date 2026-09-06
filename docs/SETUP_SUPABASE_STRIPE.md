@@ -26,6 +26,8 @@ Te same testowe wartości przypisz do **Production i Preview**:
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`;
 - `SUPABASE_SECRET_KEY`;
 - `PLATFORM_ADMIN_USER_ID`;
+- `PLATFORM_ADMIN_EMAIL` — opcjonalny adres administratora; UUID pozostaje
+  zalecanym identyfikatorem;
 - `STRIPE_SECRET_KEY` i trzy `STRIPE_PRICE_*`;
 - wszystkie zmienne `OPENROUTER_*` oraz `SMARTFACH_ENABLE_AI`.
 
@@ -105,6 +107,8 @@ ale nie numer karty ani CVC.
 2. Załóż konto na Preview przez `/logowanie` i ukończ Stripe Checkout kartą testową.
 3. W Supabase Auth skopiuj UUID tego użytkownika.
 4. Wklej go do `PLATFORM_ADMIN_USER_ID` w Vercelu i ponownie wdróż Preview.
+   Alternatywnie ustaw `PLATFORM_ADMIN_EMAIL`; dla bezpieczeństwa produkcyjnego
+   preferowany jest jednak niezmienny UUID użytkownika.
 5. Po zalogowaniu to konto ma dostęp do `/admin`. Inni użytkownicy są przekierowani
    do `/app` i nie otrzymują dostępu administracyjnego.
 

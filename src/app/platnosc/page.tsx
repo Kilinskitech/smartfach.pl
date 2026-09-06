@@ -6,6 +6,7 @@ import {
   salesEntryForAccountType,
 } from "@/domain/billing";
 import { CheckoutPlans } from "@/components/checkout-plans";
+import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { stripeConfigured } from "@/lib/stripe";
 import { supabaseConfigured } from "@/lib/supabase/config";
 import { authenticatedContext } from "@/server/auth";
@@ -16,6 +17,10 @@ export const metadata: Metadata = { title: "Plan i płatność — SmartFach", r
 export default async function Page({ searchParams }: { searchParams: Promise<{ plan?: string; anulowano?: string }> }) {
   if (!supabaseConfigured()) redirect("/logowanie");
   const context = await authenticatedContext();
+  if (
+    isPlatformAdminIdentity({ userId: context.userId, email: context.email })
+  )
+    redirect("/admin");
   const [{ data }, { data: profile }] = await Promise.all([
     context.supabase
       .from("subscriptions")

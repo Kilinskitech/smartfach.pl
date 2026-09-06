@@ -51,7 +51,8 @@ tryb i pozostają dostępne po powrocie; wspólne dane firmy nie są duplikowane
 
 RLS ogranicza profil do właściciela, a organizacje, workspace, subskrypcje i zużycie
 do aktywnych członków. Service role pozostaje wyłącznie na serwerze dla webhooków
-i panelu jednego administratora wskazanego przez `PLATFORM_ADMIN_USER_ID`.
+i panelu jednego administratora wskazanego przez `PLATFORM_ADMIN_USER_ID`
+(zalecany, niezmienny UUID) albo `PLATFORM_ADMIN_EMAIL`.
 
 ## Kolejne encje MVP
 

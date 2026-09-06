@@ -1,5 +1,6 @@
 import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { createClient } from "@/lib/supabase/server";
 
 export class AuthenticationRequired extends Error {}
@@ -9,6 +10,8 @@ export async function authenticatedContext() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  const email =
+    typeof data?.claims?.email === "string" ? data.claims.email : null;
   if (error || !userId) throw new AuthenticationRequired("Zaloguj się ponownie.");
 
   const { data: membership, error: membershipError } = await supabase
@@ -25,6 +28,7 @@ export async function authenticatedContext() {
   return {
     supabase,
     userId,
+    email,
     organizationId: String(membership.organization_id),
     organizationRole: String(membership.role),
   };
@@ -45,7 +49,17 @@ export async function requireSubscription(
   return data;
 }
 
-export function platformAdminId() {
-  return process.env.PLATFORM_ADMIN_USER_ID?.trim() ?? "";
+export async function requirePlatformAdmin() {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getClaims();
+  const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
+  const email =
+    typeof data?.claims?.email === "string" ? data.claims.email : null;
+  if (
+    error ||
+    !userId ||
+    !isPlatformAdminIdentity({ userId, email })
+  )
+    throw new AuthenticationRequired("Brak dostępu do panelu administratora.");
+  return { supabase, userId, email };
 }
-

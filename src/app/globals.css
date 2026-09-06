@@ -4048,6 +4048,19 @@ svg {
 .admin-quality {
   margin-top: 12px;
 }
+.admin-operation-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 0;
+  padding: 13px 15px;
+  border: 1px solid #bfd8c4;
+  border-radius: 12px;
+  background: #edf7ef;
+  color: #32603f;
+  font-size: 12px;
+  font-weight: 700;
+}
 .admin-quality-notice {
   display: flex;
   align-items: flex-start;
@@ -4294,6 +4307,118 @@ svg {
   font-size: 12px;
   text-align: center;
 }
+.admin-account-actions {
+  margin-top: 12px;
+}
+.admin-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 19px;
+}
+.admin-action-grid > article {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-content: start;
+  gap: 11px 13px;
+  padding: 18px;
+  border: 1px solid #dce4de;
+  border-radius: 14px;
+  background: #fbfcfa;
+}
+.admin-action-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  grid-row: span 2;
+  border-radius: 11px;
+  background: #edf3ec;
+  color: #567261;
+}
+.admin-action-icon.danger {
+  background: #faece9;
+  color: #a43f34;
+}
+.admin-action-grid h3 {
+  margin: 1px 0 0;
+  color: var(--ink);
+  font-size: 15px;
+}
+.admin-action-grid article > div > p {
+  margin: 6px 0 0;
+  color: #718078;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.admin-action-grid article > form,
+.admin-action-grid article > button,
+.admin-action-grid article > .admin-action-muted,
+.admin-action-grid article > .admin-action-success,
+.admin-action-grid article > .form-error {
+  grid-column: 1 / -1;
+}
+.admin-action-grid article > form > .button,
+.admin-action-grid article > .button {
+  width: 100%;
+  justify-content: center;
+}
+.admin-cancel-button {
+  border-color: #e4c8a9;
+  background: #fff5e8;
+  color: #895b2b;
+}
+.admin-cancel-button:hover {
+  background: #f9ead6;
+}
+.admin-action-muted,
+.admin-action-success {
+  margin: 0;
+  padding: 11px 12px;
+  border-radius: 9px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.admin-action-muted {
+  background: #f0f2f0;
+  color: #748078;
+}
+.admin-action-success {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #edf7ef;
+  color: #32603f;
+  font-weight: 700;
+}
+.admin-danger-zone {
+  border-color: #ebd2ce !important;
+  background: #fffafa !important;
+}
+.admin-delete-form {
+  display: grid;
+  gap: 12px;
+}
+.admin-delete-form label {
+  display: grid;
+  gap: 7px;
+  color: #6f5f5b;
+  font-size: 11px;
+}
+.admin-delete-form input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #ddc8c4;
+  border-radius: 9px;
+  background: white;
+  color: var(--ink);
+}
+.admin-delete-form > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
 .admin-privacy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) minmax(260px, .7fr);
@@ -4364,6 +4489,9 @@ svg {
     grid-template-columns: 1fr 1fr;
   }
   .admin-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-action-grid {
     grid-template-columns: 1fr;
   }
   .admin-privacy {
@@ -4453,6 +4581,9 @@ svg {
   }
   .admin-message-usage {
     grid-template-columns: 1fr 1fr;
+  }
+  .admin-delete-form > div {
+    grid-template-columns: 1fr;
   }
   .admin-privacy,
   .admin-privacy ul {

@@ -57,6 +57,13 @@ export async function POST(request: Request) {
       event.type === "customer.subscription.updated" ||
       event.type === "customer.subscription.deleted"
     ) {
+      if (event.data.object.metadata.smartfach_account_deleted === "true") {
+        await admin
+          .from("stripe_events")
+          .update({ processed_at: new Date().toISOString() })
+          .eq("event_id", event.id);
+        return Response.json({ received: true });
+      }
       const protectedSubscription = await reconcileEmailConfirmationHold(
         event.data.object,
         stripe,

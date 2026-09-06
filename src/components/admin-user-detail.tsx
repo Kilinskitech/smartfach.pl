@@ -10,10 +10,12 @@ import {
   UserRound,
 } from "lucide-react";
 import { BrandMark } from "./brand";
+import { AdminUserActions } from "./admin-user-actions";
 
 export type AdminUserDetailSnapshot = {
   generatedAt: string;
   id: string;
+  email: string;
   name: string;
   company: string;
   accountType: "discover" | "launch" | "operate";
@@ -23,6 +25,11 @@ export type AdminUserDetailSnapshot = {
   totalCostUsd: number;
   totalTokens: number;
   measuredResponses: number;
+  subscriptionStatus: string;
+  cancelAtPeriodEnd: boolean;
+  subscriptionEndsAt: string | null;
+  stripeConnected: boolean;
+  deleteBlockedReason?: string;
   conversations: Array<{
     id: string;
     title: string;
@@ -94,7 +101,7 @@ export function AdminUserDetail({
           <div>
             <p className="eyebrow">PROFIL UŻYTKOWNIKA</p>
             <h1>{snapshot.name}</h1>
-            <p>{snapshot.company || "Konto bez nazwy firmy"} · typ konta {accountTypeLabels[snapshot.accountType]}</p>
+            <p>{snapshot.email} · {snapshot.company || "Konto bez nazwy firmy"} · typ konta {accountTypeLabels[snapshot.accountType]}</p>
           </div>
         </header>
 
@@ -175,6 +182,16 @@ export function AdminUserDetail({
             </div>
           )}
         </section>
+
+        <AdminUserActions
+          cancelAtPeriodEnd={snapshot.cancelAtPeriodEnd}
+          deleteBlockedReason={snapshot.deleteBlockedReason}
+          email={snapshot.email}
+          stripeConnected={snapshot.stripeConnected}
+          subscriptionEndsAt={snapshot.subscriptionEndsAt}
+          subscriptionStatus={snapshot.subscriptionStatus}
+          userId={snapshot.id}
+        />
 
         <footer className="admin-footer">
           <span>Odczyt: {new Date(snapshot.generatedAt).toLocaleString("pl-PL")}</span>
