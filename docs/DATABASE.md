@@ -1,131 +1,95 @@
 # Model danych SmartFach
 
-Stan: 2026-09-04. Pierwsza migracja znajduje się w `supabase/migrations`.
-Do uruchomienia wymaga projektu Supabase i zastosowania migracji.
+Stan: 2026-09-06. Runtime korzysta z hostowanego Supabase. Migracje znajdują się
+w `supabase/migrations` i nie wykonują się automatycznie z wdrożeniem Vercela.
 
-Poniższa lista rozróżnia wdrożoną podstawę od kolejnych encji MVP.
+## Wdrożona podstawa
 
-## Adapter lokalny — wyłączony z runtime
+- `user_profiles`: nazwa użytkownika i techniczne pole zgodności `account_type`.
+  Pole ma jedyną dopuszczalną wartość `builder`, nie jest wybierane przez użytkownika
+  i może zostać usunięte po aktualizacji wszystkich środowisk.
+- `organizations`: prywatny kontener danych tworzony automatycznie dla konta.
+- `memberships`: powiązanie właściciela z kontenerem. Obecnie jedno konto ma jednego
+  właściciela; tabela nie oznacza dostępności planu zespołowego.
+- `workspaces`: zweryfikowany JSONB z numerem rewizji. Aktywna aplikacja korzysta
+  z profilu `journey`, rozmów i agregatu limitu. Historyczne puste pola firmowe są
+  zachowane czasowo, aby migracja nie usuwała danych.
+- `subscriptions`: plan Lite albo Pro, status, trial, identyfikatory Stripe i termin
+  okresu. Pełny numer karty i CVC nie trafiają do SmartFach.
+- `stripe_events`: idempotencja webhooków Stripe.
+- `usage_events`: użytkownik, organizacja, rozmowa, model, tokeny, koszt USD oraz
+  identyfikator żądania zwrócony przez OpenRouter.
+- `admin_audit_events`: audyt wejścia administratora do rozmów konkretnego konta.
 
-`src/server/local-repository.ts` pozostaje wyłącznie dla testów historycznego adaptera.
-Plik `.local/workspace.json` wraz ze starymi rozmowami został usunięty, a runtime
-aplikacji korzysta z Supabase.
-Encje: firma, klienci, cennik, dokumenty, rozmowy i ostatni szkic. UI nie przechowuje
-kartoteki w localStorage. Schematy są w `src/domain/workspace.ts`.
+RLS ogranicza profil do właściciela, a organizację, workspace, subskrypcję i zużycie
+do aktywnego członkostwa. Klucz serwisowy jest używany wyłącznie po stronie serwera.
+Administrator platformy jest wskazany przez `PLATFORM_ADMIN_USER_ID`, awaryjnie przez
+`PLATFORM_ADMIN_EMAIL`.
 
-Zapis walidowany po obu stronach, numer rewizji zapobiega nadpisaniu starszą kartą,
-kolejka w jednym procesie, tymczasowy plik i atomowa podmiana. Plik z błędem odczytu
-nie jest zerowany. Uprawnienia pliku 0600. To nie szyfrowanie ani izolacja użytkowników
-tego komputera. Nie uruchamiać wielu instancji serwera na tym samym pliku.
+## Aktywny workspace
 
-API działa tylko w development na adresie loopback, sprawdza rzeczywisty Host,
-Origin przy zapisie i Sec-Fetch-Site; blokuje production. Maksymalnie 2 MB danych,
-500 klientów, 1000 pozycji, 500 dokumentów, 30 rozmów po 60 wiadomości.
-Klient z dokumentami nie może zostać usunięty. Usunięcie wpisu wymaga potwierdzenia.
-Ceny na dokumencie są kopią — późniejsza zmiana/usunięcie cennika ich nie zmienia.
-Dane firmy na PDF są aktualne w chwili eksportu; brak niezmiennych wersji i audytu PDF.
+`journey` przechowuje wyłącznie zatwierdzone preferencje:
 
-Eksport JSON działa; przywracanie kopii przez UI nie jest wdrożone. Ręczne formularze
-niezapisane przed odświeżeniem mogą zostać utracone. Ten pomost nie jest już
-źródłem danych uruchomionej aplikacji.
-Przechowuje wybrany tryb `journey` oraz testowy agregat `billing` (plan, zużycie,
-dokupiona pula i początek okresu). Nie zawiera zapisywalnych rezultatów Odkryj/Uruchom,
-kont ani księgi kredytowej. Agregat lokalny nie jest projektem modelu płatności.
-`billing` znajduje się ponad `journey`, dlatego zmiana trybu nie może modyfikować
-planu, początku okresu, wykorzystania ani dodatkowej puli. Rozmowy zachowują własny
-tryb i pozostają dostępne po powrocie; wspólne dane firmy nie są duplikowane per tryb.
+- `focus`: bieżąca usługa lub kierunek;
+- `goal`: cel użytkownika;
+- `workStyle`: `remote`, `local`, `hybrid` albo `open`;
+- `weeklyHours`: dostępny czas;
+- `experience`: doświadczenie i umiejętności;
+- `constraints`: ograniczenia oraz rzeczy, których użytkownik nie chce robić.
 
-## Wdrożona podstawa Supabase
+`conversations` przechowuje tytuł, datę aktualizacji i maksymalnie 60 wiadomości.
+Rozmowa nie ma typu ani trybu. Odpowiedź może zawierać źródła oraz metadane kosztu,
+ale nazwa modelu nie jest pokazywana zwykłemu użytkownikowi.
 
-- `user_profiles`: nazwa i jeden aktywny typ konta.
-- `organizations` i `memberships`: prywatna organizacja tworzona dla nowego konta;
-  podstawa pod późniejszy zespół.
-- `workspaces`: obecny zweryfikowany model produktu jako JSONB organizacji, z rewizją
-  i atomowym `save_workspace`. Pozwala migrować do relacyjnych tabel etapami.
-- `subscriptions`: plan, status, trial, Stripe Customer/Subscription, termin okresu
-  i informacja o metodzie płatności bez numeru karty.
-- `stripe_events`: idempotencja webhooków.
-- `usage_events`: użytkownik, organizacja, rozmowa, model, identyfikator żądania,
-  tokeny i koszt USD zwrócony przez OpenRouter.
-- `admin_audit_events`: każde otwarcie rozmów konkretnego użytkownika przez foundera.
+`billing` w workspace jest pomocniczym widokiem planu i wykorzystania. Źródłem
+prawdy o uprawnieniu do aplikacji jest `subscriptions` synchronizowane przez
+zweryfikowane webhooki Stripe. Użytkownik nie może zmniejszyć zużycia ani zmienić
+planu przez zwykły zapis workspace.
 
-RLS ogranicza profil do właściciela, a organizacje, workspace, subskrypcje i zużycie
-do aktywnych członków. Service role pozostaje wyłącznie na serwerze dla webhooków
-i panelu jednego administratora wskazanego przez `PLATFORM_ADMIN_USER_ID`
-(zalecany, niezmienny UUID) albo `PLATFORM_ADMIN_EMAIL`.
+## Migracja jednego profilu
 
-## Kolejne encje MVP
+`202609060003_single_builder_profile.sql`:
 
-- `user_profiles`: kontekst należący do konta, preferencje i wybrane kierunki;
-  bez kopiowania danych klientów z organizacji.
-- `explorations`: zapisane porównania, założenia, ryzyka i testy Odkryj. Mogą
-  pozostawać aktywne równolegle z Uruchom/Prowadź; status nie jest poziomem dostępu.
-- `launch_projects`: konkretny pomysł/usługa, klient docelowy, oferta i następne
-  działania Uruchom; opcjonalne, jawne powiązanie z organizacją.
-- `organizations`: firma, dane dokumentów, ustawienia.
-- `memberships`: użytkownik, organizacja, rola i status; właściciel także jest członkiem.
-- `clients`: kartoteka przypisana do organizacji.
-- `price_items`: pozycja, kategoria, jednostka, cena sprzedaży, opcjonalny koszt,
-  waluta i jawne zasady podatkowe. Brak kosztu to NULL, a nie 0.
-- `quotes` i `quote_items`: klient, status, wersja, waluta, kopia cen i reguł,
-  obliczone wartości, twórca i daty. Zmiana cennika nie modyfikuje historii.
-- `visit_reports`: prace, pomiary podane przez użytkownika, szkic/akceptacja, klient.
-- `attachments`: organizacja, powiązany dokument, prywatna ścieżka pliku,
-  typ/rozmiar, właściciel i retencja.
-- `conversations` i `messages`: jawny zakres `account` albo `organization`, autor,
-  ścieżka i treść/odwołania do narzędzi. Rekord ma dokładnie jednego właściciela
-  zakresu i nie nadaje praw do danych z drugiego zakresu.
-- `subscriptions`: plan, status, `trial_started_at`, `trial_ends_at`, data anulowania,
-  koniec bieżącego okresu, uprawnienia i identyfikatory klienta/subskrypcji u dostawcy.
-- `payment_method_summaries`: identyfikator metody u dostawcy, marka i ostatnie cztery
-  cyfry do bezpiecznej informacji w UI; nigdy pełny numer karty ani CVC.
-- `usage_events`: typ funkcji, licznik i koszt; bez niepotrzebnych danych osobowych.
-- `credit_wallets`: saldo widoczne dla konta lub organizacji i wersja zasad naliczania.
-- `credit_grants`: przyznane pule z typem `plan` albo `purchased`, okresem, saldem
-  i jawną datą ważności, jeżeli została ustalona.
-- `credit_ledger`: niezmienny zapis przyznania, rezerwacji, obciążenia, zwolnienia
-  lub korekty; powiązanie z operacją i unikalnym kluczem idempotencji.
-- `billing_events`: unikalny identyfikator zdarzenia dostawcy, typ, status przetwarzania
-  i bezpieczny skrót danych potrzebny do wykrywania konfliktów; bez sekretów.
-- `audit_events`: istotne operacje, aktor, obiekt, czas; bez sekretów.
-- rozszerzenie audytu o istotne operacje inne niż podgląd rozmów; bez sekretów.
+1. zmienia wszystkie profile na stałą wartość `builder`;
+2. ogranicza plany do Lite/Pro i mapuje ewentualny historyczny plan na Pro;
+3. usuwa `journey.mode` i `conversation.mode` z zapisanych workspace;
+4. tworzy nowe konta bez typu wybieranego z formularza;
+5. zachowuje sygnaturę `save_workspace`, aby starsze wdrożenie nie utraciło zapisu.
+
+Migracja nie usuwa kont, rozmów ani subskrypcji.
+
+## Następne encje dopiero po walidacji
+
+Jeżeli test potwierdzi użycie abonamentowe, JSONB powinien być stopniowo zastąpiony
+przez małe, mierzalne encje:
+
+- `business_profiles`: zatwierdzona usługa, odbiorca, problem i aktualna propozycja;
+- `offers`: kolejne wersje zakresu, ceny testowej, CTA i statusu;
+- `experiments`: kanał, działanie, termin, oczekiwany sygnał oraz rzeczywisty wynik;
+- `activity_events`: rozpoczęcie profilu, rekomendacja, oferta, działanie i powrót;
+- `usage_ledger`: rezerwacja, rozliczenie i zwolnienie limitu z kluczem idempotencji.
+
+Nie tworzymy tych tabel tylko dlatego, że są łatwe do zbudowania. Pierwszeństwo ma
+instrumentacja lejka i potwierdzenie, że użytkownik wraca z wynikiem działania.
 
 ## Niezmienniki
 
-- Encje osobiste Odkryj/Uruchom należą do konta i nie stają się danymi firmy
-  bez jawnej, autoryzowanej operacji użytkownika.
-- Każda encja biznesowa należy do organizacji. Kontrola również w RLS.
-- Powiązania dziecko–rodzic muszą należeć do tej samej organizacji; same UUID
-  i zwykła relacja FK bez ograniczenia organizacji nie wystarczą.
-- Prywatne pliki, krótkotrwałe podpisane adresy; uprawnienia weryfikowane przy wydaniu URL.
-- Kwoty w kontrolowanych jednostkach, waluta jawna; ustalona skala ilości i zaokrągleń.
-- Unikalność członkostw i kluczy idempotencji; transakcje dla dokumentów i pozycji.
-- Sesja nie wybiera dowolnego `organization_id` bez kontroli członkostwa.
-- Klucz administracyjny bazy wyłącznie po stronie serwera; nie jest skrótem do ominięcia uprawnień.
-- Typ konta jest ustawieniem profilu, a nie rolą ani planem. Zmienia się wyłącznie
-  w Ustawieniach, a nie przez codzienną nawigację lub parametr URL.
-- Kontekst osobisty może zostać powiązany z organizacją wyłącznie jawną operacją;
-  przełączenie do Odkryj lub Uruchom nie obchodzi RLS danych Prowadź.
-- Obciążenie kredytów jest transakcyjne i idempotentne. Ponowienie tej samej operacji
-  zwraca poprzedni wynik, a nie kolejny debit. Najpierw obciążana jest pula planowa,
-  potem dokupiona; historia nie jest przepisywana przy odnowieniu.
-- Hipoteza niekumulowania oznacza wygaśnięcie starego grantu planowego i utworzenie
-  nowego, nie kasowanie wpisów księgi. Zasada musi być konfigurowalna do czasu decyzji.
-- Zdarzenie płatnicze dostawcy i klucz idempotencji zakupu są unikalne. Dostęp lub
-  saldo nie rosną drugi raz po ponowionym webhooku.
-- Status próby, podpięcia metody płatności i abonamentu wynika wyłącznie ze
-  zweryfikowanych zdarzeń Stripe przetwarzanych po stronie serwera, nie z deklaracji przeglądarki.
-- Zwykły panel platformy odczytuje zagregowane metadane, koszty i błędy. Pełne prompty
-  i odpowiedzi są dostępne wyłącznie w profilu konkretnego użytkownika dla jednego
-  konta foundera. Każde otwarcie rozmów tworzy wpis audytowy; dostęp
-  do załączników wymaga dodatkowego uprawnienia. Zakres, retencja i podstawa prawna
-  muszą być zatwierdzone przed użyciem realnych danych.
+- Żaden parametr URL ani dane z przeglądarki nie wybierają typu konta.
+- Plan może mieć wyłącznie wartość Lite albo Pro.
+- Sesja nie może wybrać dowolnego `organization_id` bez kontroli członkostwa.
+- Ponowienie tego samego webhooka lub rozliczenia AI nie tworzy drugiego skutku.
+- Status trialu i subskrypcji pochodzi ze Stripe, nie z deklaracji klienta.
+- Pełne rozmowy są dostępne administratorowi wyłącznie w profilu konkretnego
+  użytkownika, a każde otwarcie zostawia ślad audytowy.
+- Dane z obrazu, dokumentu i internetu są niezaufanym wejściem i nie rozszerzają
+  uprawnień użytkownika ani modelu.
 
-## Testy przed użyciem realnych danych
+## Testy przed ruchem płatnym
 
-Próby odczytu/zapisu/aktualizacji/usunięcia danych innej firmy, podszycie się pod
-organizację, obcy klient w wycenie, usunięty członek, dostęp do załącznika przez
-znany adres, podwójne zapisy po retry, eksport/usuwanie danych i odtworzenie backupu.
-Osobno: próba odczytu kontekstu innego konta, dostęp do danych firmy przez Odkryj,
-podwójne obciążenie kredytów, kolejność puli planowej i dokupionej, odnowienie bez
-kumulacji, błąd po rezerwacji oraz wielokrotnie dostarczony webhook zakupu.
+- dwa konta nie mogą odczytać ani zapisać workspace drugiego konta;
+- konflikt rewizji nie może nadpisać nowszych danych;
+- rejestracja tworzy dokładnie jeden profil, kontener, członkostwo i subskrypcję;
+- zapis po migracji usuwa stare pola trybu i nie traci rozmów;
+- Checkout Lite/Pro, trial, anulowanie i ponowiony webhook zachowują poprawny stan;
+- usunięcie konta koordynuje Stripe i Supabase;
+- eksport, retencja, backup i odtworzenie są sprawdzone przed danymi realnych osób.

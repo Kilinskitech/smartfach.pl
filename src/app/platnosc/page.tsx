@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
-  normalizePlanForSalesEntry,
+  normalizePublicPlan,
   planIdSchema,
-  salesEntryForAccountType,
 } from "@/domain/billing";
 import { CheckoutPlans } from "@/components/checkout-plans";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
@@ -21,25 +20,16 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ p
     isPlatformAdminIdentity({ userId: context.userId, email: context.email })
   )
     redirect("/admin");
-  const [{ data }, { data: profile }] = await Promise.all([
-    context.supabase
-      .from("subscriptions")
-      .select("status, plan")
-      .eq("organization_id", context.organizationId)
-      .maybeSingle(),
-    context.supabase
-      .from("user_profiles")
-      .select("account_type")
-      .eq("user_id", context.userId)
-      .maybeSingle(),
-  ]);
+  const { data } = await context.supabase
+    .from("subscriptions")
+    .select("status, plan")
+    .eq("organization_id", context.organizationId)
+    .maybeSingle();
   const params = await searchParams;
   const requested = planIdSchema.safeParse(params.plan);
   const stored = planIdSchema.safeParse(data?.plan);
-  const accountType = salesEntryForAccountType(String(profile?.account_type ?? "operate"));
-  const initialPlan = normalizePlanForSalesEntry(
-    accountType,
+  const initialPlan = normalizePublicPlan(
     requested.success ? requested.data : stored.success ? stored.data : undefined,
   );
-  return <CheckoutPlans initialPlan={initialPlan} accountType={accountType} currentStatus={data?.status ? String(data.status) : undefined} configured={stripeConfigured()} canceled={params.anulowano === "1"} />;
+  return <CheckoutPlans initialPlan={initialPlan} currentStatus={data?.status ? String(data.status) : undefined} configured={stripeConfigured()} canceled={params.anulowano === "1"} />;
 }

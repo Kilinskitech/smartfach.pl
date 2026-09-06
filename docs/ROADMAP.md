@@ -22,6 +22,36 @@ Stan: 2026-09-06.
 6. Po 30–50 płatnych próbach zdecydować: zawężać segment, rozwijać czy wrócić do
    mocniejszego workflow branżowego.
 
+## Kolejność wykonania
+
+### Tydzień 1 — mierzalny produkt
+
+- zakończyć test Preview: konto, Checkout, trial, rozmowa, zapis, portal i usunięcie;
+- wdrożyć zdarzenia lejka od wejścia na landing do powrotu z wynikiem działania;
+- dodać jedną trwałą kartę „Usługa / oferta / następny test”, bez kolejnych modułów;
+- przygotować 15 scenariuszy jakości AI i mierzyć ukończenie zadania oraz koszt.
+
+### Tydzień 2 — test ręczny
+
+- pozyskać 10 osób pasujących do segmentu bez płatnego skalowania;
+- obserwować pierwszą sesję i skontaktować się po 24 godzinach;
+- poprawić wyłącznie bariery blokujące rekomendację, ofertę lub pierwsze działanie;
+- zebrać prawdziwe słowa użytkowników do reklam i FAQ, bez fikcyjnych opinii.
+
+### Tydzień 3–4 — mały test reklam
+
+- uruchomić jeden landing i 3–5 kreacji z różnymi problemami wejściowymi;
+- ograniczyć pierwszy budżet do kwoty, której wynik pozwala zakończyć eksperyment;
+- nie skalować na podstawie kliknięć: oceniać Checkout, aktywację, działanie i D7;
+- zwiększać budżet dopiero po osiągnięciu z góry ustalonych progów jakości.
+
+### Dni 31–90 — decyzja, nie katalog funkcji
+
+- zawęzić komunikację do najlepiej aktywującego segmentu i przypadku użycia;
+- poprawić onboarding oraz pętlę „działanie → wynik → następny krok”;
+- policzyć CAC, koszt AI, trial → paid, D30 i zwroty;
+- po 30–50 pełnych prób podjąć decyzję: skalowanie, pivot do węższej niszy albo stop.
+
 ## Dopiero po sygnale popytu
 
 - trwałe karty: rekomendowana usługa, oferta, eksperyment i wynik;

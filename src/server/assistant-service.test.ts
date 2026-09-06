@@ -397,7 +397,6 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     const data = fixtureWorkspace();
     data.conversations.push({
       id: "conversation-memory",
-      mode: "operate",
       title: "Rozmowa z klientem",
       updatedAt: "2026-09-01T10:00:00Z",
       messages: [

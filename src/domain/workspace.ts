@@ -174,18 +174,15 @@ export const pendingDocumentSchema = z
     report: pendingReportSchema.nullable(),
   })
   .refine((value) => Boolean(value.quote) !== Boolean(value.report));
-export const journeyModeSchema = z.enum(["discover", "launch", "operate"]);
 export const workStyleSchema = z.enum(["remote", "local", "hybrid", "open"]);
 export const conversationSchema = z.object({
   id,
   title: name,
   updatedAt: z.string().datetime(),
-  mode: journeyModeSchema.default("operate"),
   messages: z.array(messageSchema).max(60),
   pendingDocument: pendingDocumentSchema.optional(),
 });
 export const journeySchema = z.object({
-  mode: journeyModeSchema,
   focus: z.string().max(160),
   goal: z.string().max(500),
   workStyle: workStyleSchema.default("open"),
@@ -204,7 +201,6 @@ export const workspaceSchema = z
     documents: z.array(documentSchema).max(500),
     conversations: z.array(conversationSchema).max(30),
     journey: journeySchema.default({
-      mode: "operate",
       focus: "",
       goal: "",
       workStyle: "open",
@@ -259,7 +255,6 @@ export type ChatMessage = z.infer<typeof messageSchema>;
 export type AiUsage = z.infer<typeof aiUsageSchema>;
 export type WebSource = NonNullable<ChatMessage["sources"]>[number];
 export type Workspace = z.infer<typeof workspaceSchema>;
-export type JourneyMode = z.infer<typeof journeyModeSchema>;
 export type WorkStyle = z.infer<typeof workStyleSchema>;
 export type { Billing };
 export const emptyWorkspace: Workspace = {
@@ -272,7 +267,6 @@ export const emptyWorkspace: Workspace = {
   documents: [],
   conversations: [],
   journey: {
-    mode: "operate",
     focus: "",
     goal: "",
     workStyle: "open",
@@ -287,15 +281,6 @@ export const emptyWorkspace: Workspace = {
     periodStartedAt: "2026-09-01T00:00:00.000Z",
   },
 };
-export function switchJourneyMode(
-  workspace: Workspace,
-  mode: JourneyMode,
-): Workspace {
-  return {
-    ...workspace,
-    journey: { ...workspace.journey, mode },
-  };
-}
 export function switchBillingPlan(
   workspace: Workspace,
   plan: PlanId,

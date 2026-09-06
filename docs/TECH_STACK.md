@@ -1,6 +1,6 @@
 # Stos technologiczny
 
-Stan: 2026-09-05. Aplikacja jest publikowana przez Vercel pod `smartfach.pl`.
+Stan: 2026-09-06. Aplikacja jest publikowana przez Vercel pod `smartfach.pl`.
 Supabase i Stripe w trybie testowym są podłączane i wymagają jeszcze pełnych
 testów end-to-end przed rozpoczęciem sprzedaży.
 
@@ -44,8 +44,10 @@ Nie cache'uj prywatnych odpowiedzi API bez jawnego modelu bezpieczeństwa.
 
 Rozważone frameworki: Next.js, Nuxt, SvelteKit. Wybór Next.js ujednolica React,
 TypeScript, publiczne strony i część serwerową. To wybór dla projektu, nie ranking absolutny.
-PostgreSQL pasuje do relacji firma–członkowie–klienci–dokumenty. Firebase i własny
-backend są alternatywami, ale nie wprowadzamy ich równolegle.
+PostgreSQL pasuje do relacji konto–subskrypcja–rozmowy–zdarzenia–wyniki. Techniczna
+organizacja nadal wyznacza granicę RLS jednego użytkownika i nie jest typem konta
+widocznym w produkcie. Firebase i własny backend są alternatywami, ale nie
+wprowadzamy ich równolegle.
 
 Next.js można hostować poza Vercel. PostgreSQL ułatwia przeniesienie danych,
 ale Auth/Storage Supabase i Stripe Billing nadal tworzą zależności integracyjne.

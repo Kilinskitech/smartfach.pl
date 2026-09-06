@@ -4,20 +4,17 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { signIn, signUp } from "@/app/auth-actions";
-import { plans, type PlanId } from "@/domain/billing";
+import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
+export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
   const [view, setView] = useState<"register" | "login">(
     checkoutCanceled || confirmationFailed ? "login" : "register",
   );
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
-  const [plan, setPlan] = useState<PlanId>(() =>
-    initialPlan === "lite" ? "lite" : "pro",
-  );
-  const availablePlans = ["lite", "pro"] as const;
+  const [plan, setPlan] = useState<PublicPlanId>(initialPlan);
 
   return (
     <main className="auth-page">
@@ -69,10 +66,9 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
             <label>Jak mamy się do Ciebie zwracać?<input name="displayName" autoComplete="name" required maxLength={160} /></label>
             <label>E-mail<input name="email" type="email" autoComplete="email" required /></label>
             <label>Hasło<span className="password-field"><input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required /><button type="button" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"} onClick={() => setShowPassword((value) => !value)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></span></label>
-            <input type="hidden" name="accountType" value="discover" />
             <fieldset className="auth-options auth-plan-options">
               <legend>Wybierz plan po 3-dniowej próbie</legend>
-              {availablePlans.map((planId) => (
+              {publicPlanIds.map((planId) => (
                 <label key={planId}>
                   <input type="radio" name="plan" value={planId} checked={plan === planId} onChange={() => setPlan(planId)} />
                   <span className="auth-plan-copy">

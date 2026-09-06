@@ -1,35 +1,16 @@
 import { z } from "zod";
 
-export const planIdSchema = z.enum(["lite", "pro", "firma"]);
+export const planIdSchema = z.enum(["lite", "pro"]);
 export type PlanId = z.infer<typeof planIdSchema>;
 
-export const salesEntrySchema = z.enum(["discover", "operate"]);
-export type SalesEntry = z.infer<typeof salesEntrySchema>;
+export const publicPlanIdSchema = planIdSchema;
+export type PublicPlanId = PlanId;
+export const publicPlanIds = publicPlanIdSchema.options;
 
-export const salesEntryPlans = {
-  discover: ["lite", "pro"],
-  operate: ["lite", "pro"],
-} as const satisfies Record<SalesEntry, readonly PlanId[]>;
-
-export function salesEntryForAccountType(accountType: string): SalesEntry {
-  return accountType === "discover" ? "discover" : "operate";
-}
-
-export function plansForSalesEntry(entry: SalesEntry): readonly PlanId[] {
-  return salesEntryPlans[entry];
-}
-
-export function isPlanAvailableForSalesEntry(entry: SalesEntry, plan: PlanId) {
-  return (salesEntryPlans[entry] as readonly PlanId[]).includes(plan);
-}
-
-export function normalizePlanForSalesEntry(
-  entry: SalesEntry,
-  requestedPlan: PlanId | undefined,
-): PlanId {
-  return requestedPlan && isPlanAvailableForSalesEntry(entry, requestedPlan)
-    ? requestedPlan
-    : "pro";
+export function normalizePublicPlan(
+  requestedPlan: PublicPlanId | undefined,
+): PublicPlanId {
+  return requestedPlan ?? "pro";
 }
 
 export const trialPolicy = {
@@ -64,12 +45,6 @@ export const plans = {
     price: "99 zł",
     monthlyCredits: 500,
     description: "Regularne budowanie oferty, sprzedaży i przychodu.",
-  },
-  firma: {
-    name: "Firma",
-    price: "299 zł",
-    monthlyCredits: 1_600,
-    description: "Wspólna pula dla właściciela i pierwszych trzech członków.",
   },
 } as const satisfies Record<
   PlanId,

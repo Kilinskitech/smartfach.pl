@@ -48,8 +48,8 @@ Asystent:
 - księgowość, inwestycje, porady prawne i regulowane usługi zawodowe;
 - „dochód pasywny”, trading, MLM i automatyczny biznes bez pracy.
 
-Kod historycznych modułów firmowych pozostaje dla kompatybilności, ale nowe konto
-nie dostaje do nich publicznego wejścia.
+Historyczne pola modułów firmowych pozostają czasowo w danych dla kompatybilności,
+ale główna aplikacja nie pokazuje ich nowym ani obecnym kontom.
 
 ## Bramka przed ruchem płatnym
 

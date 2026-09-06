@@ -234,8 +234,8 @@ export function PrivacyPage() {
           przez formularz danych wrażliwych ani danych klientów.
         </p>
         <p>
-          Konto i sesję obsługuje Supabase. W bazie przechowujemy profil, organizację,
-          klientów, cennik, dokumenty, rozmowy, zużycie i dane potrzebne do działania
+          Konto i sesję obsługuje Supabase. W bazie przechowujemy profil, prywatną
+          przestrzeń konta, rozmowy, preferencje, zużycie i dane potrzebne do działania
           planu. Stripe obsługuje metodę płatności i subskrypcję; SmartFach nie zapisuje
           pełnego numeru karty ani CVC. Treść polecenia i załączniki mogą być przekazane
           przez OpenRouter do wybranego dostawcy modelu AI.

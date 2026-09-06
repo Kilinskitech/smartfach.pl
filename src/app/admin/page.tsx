@@ -27,7 +27,7 @@ export default async function Page({
   );
   const userIds = customerUsers.map((user) => user.id);
   const [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult] = await Promise.all([
-    userIds.length ? admin.from("user_profiles").select("user_id, display_name, account_type").in("user_id", userIds) : Promise.resolve({ data: [] }),
+    userIds.length ? admin.from("user_profiles").select("user_id, display_name").in("user_id", userIds) : Promise.resolve({ data: [] }),
     userIds.length ? admin.from("memberships").select("user_id, organization_id, role, status").in("user_id", userIds).eq("status", "active") : Promise.resolve({ data: [] }),
     admin.from("subscriptions").select("organization_id, plan, status, payment_method_attached"),
     admin.from("workspaces").select("organization_id, revision, data"),
@@ -67,12 +67,10 @@ export default async function Page({
           topUpCredits: 0,
           periodStartedAt: new Date().toISOString(),
         };
-    const accountType = profile?.account_type;
     return {
       id: authUser.id,
       name: String(profile?.display_name ?? authUser.user_metadata?.display_name ?? ""),
       email: authUser.email ?? "Brak adresu e-mail",
-      accountType: accountType === "discover" || accountType === "launch" ? accountType : "operate" as const,
       plan: plans[billing.plan].name,
       status: String(subscription?.status ?? "incomplete"),
       paymentMethodAttached: Boolean(subscription?.payment_method_attached),

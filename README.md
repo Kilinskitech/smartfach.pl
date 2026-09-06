@@ -1,9 +1,10 @@
 # SmartFach
 
-Asystent AI od pomysłu do codziennej pracy firmy — operacyjnie najpierw HVAC,
-klimatyzacja i pompy ciepła.
+Osobisty asystent AI, który pomaga dopasować prostą usługę do warunków
+użytkownika, zbudować ofertę i wykonywać kolejne działania prowadzące do
+pierwszych klientów.
 
-> LLM rozumie człowieka. Kod kontroluje biznes.
+> Nie potrzebujesz idealnego pomysłu. Potrzebujesz pierwszego klienta.
 
 ## Stan projektu — 2026-09-06
 
@@ -15,11 +16,11 @@ ruchu: przed sprzedażą trzeba przejść pełną bramkę alfy opisaną w `MVP_S
 Zaimplementowane:
 
 - publiczne landingi, cennik, kontakt, regulamin i polityka prywatności;
-- rejestracja i logowanie przez Supabase, profil, organizacja i jeden typ konta;
+- rejestracja i logowanie przez Supabase oraz jeden spójny profil użytkownika;
 - prywatny workspace organizacji z RLS, walidacją i kontrolą rewizji;
-- jeden asystent tekst/zdjęcie/nagranie, rozmowy i pamięć klientów;
-- klienci, cennik/CSV, wyceny, protokoły, historia i PDF;
-- Stripe Checkout dla Lite/Pro/Firma, karta przed 3-dniową próbą, Customer Portal
+- jeden asystent tekst/zdjęcie/nagranie, historia rozmów i trwałe preferencje;
+- dopasowanie sposobu pracy, celu, czasu, doświadczenia i ograniczeń;
+- Stripe Checkout dla Lite/Pro, karta przed 3-dniową próbą, Customer Portal
   i podpisane, idempotentne webhooki;
 - panel właściciela oparty na realnych kontach, statusach subskrypcji i kosztach
   OpenRouter; treść rozmów znajduje się dopiero w profilu użytkownika;
@@ -29,7 +30,6 @@ Zaimplementowane:
 
 Niezaimplementowane lub niegotowe do sprzedaży:
 
-- zaproszenia i loginy członków zespołu oraz egzekwowanie ich uprawnień;
 - jednorazowy zakup zwiększenia limitu i transakcyjna księga zużycia;
 - bezpieczny magazyn zdjęć/nagrań, XLSX, automatyczna wysyłka dokumentów i pełny offline;
 - produkcyjna konfiguracja e-maili, backupów, monitoringu oraz rozliczeń podatkowych;
@@ -72,7 +72,7 @@ Wyszukiwanie internetowe może być dostępne modelowi przez
 `OPENROUTER_WEB_SEARCH=true`. Wynik z internetu jest odpowiedzią pomocniczą, a nie
 automatycznym źródłem ceny w dokumencie firmy. Model nie został jeszcze zatwierdzony
 produkcyjnie; trzeba mierzyć Task Success Rate na polskich nagraniach i realnych
-scenariuszach HVAC.
+scenariuszach wyboru usługi, tworzenia oferty i pierwszego kontaktu z rynkiem.
 
 ## Weryfikacja
 

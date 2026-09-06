@@ -1,9 +1,5 @@
 import { z } from "zod";
-import {
-  isPlanAvailableForSalesEntry,
-  planIdSchema,
-  salesEntryForAccountType,
-} from "@/domain/billing";
+import { publicPlanIdSchema } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { authenticatedContext } from "@/server/auth";
 import { limitedJson } from "@/server/request-body";
@@ -13,7 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const requestSchema = z.object({
-  plan: planIdSchema,
+  plan: publicPlanIdSchema,
   idempotencyKey: z.uuid(),
 });
 
@@ -25,23 +21,6 @@ export async function POST(request: Request) {
       return Response.json(
         { error: "Tylko właściciel konta może zmienić abonament." },
         { status: 403 },
-      );
-
-    const { data: profile, error: profileError } = await context.supabase
-      .from("user_profiles")
-      .select("account_type")
-      .eq("user_id", context.userId)
-      .maybeSingle();
-    if (profileError || !profile)
-      return Response.json(
-        { error: "Nie udało się odczytać punktu startu konta." },
-        { status: 400 },
-      );
-    const accountType = salesEntryForAccountType(String(profile.account_type));
-    if (!isPlanAvailableForSalesEntry(accountType, input.plan))
-      return Response.json(
-        { error: "Ten plan nie jest dostępny dla wybranego punktu startu." },
-        { status: 400 },
       );
 
     const { data: userData, error: userError } = await context.supabase.auth.getUser();

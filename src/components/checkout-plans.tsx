@@ -3,34 +3,27 @@
 import { useState } from "react";
 import { ArrowRight, Check, CreditCard, ExternalLink, ShieldCheck } from "lucide-react";
 import {
-  normalizePlanForSalesEntry,
+  normalizePublicPlan,
   plans,
-  plansForSalesEntry,
-  type PlanId,
-  type SalesEntry,
+  publicPlanIds,
+  type PublicPlanId,
 } from "@/domain/billing";
 
 export function CheckoutPlans({
   initialPlan,
-  accountType,
   currentStatus,
   configured,
   canceled,
 }: {
-  initialPlan: PlanId;
-  accountType: SalesEntry;
+  initialPlan: PublicPlanId;
   currentStatus?: string;
   configured: boolean;
   canceled: boolean;
 }) {
-  const [plan, setPlan] = useState(() =>
-    normalizePlanForSalesEntry(accountType, initialPlan),
-  );
+  const [plan, setPlan] = useState(() => normalizePublicPlan(initialPlan));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const hasAccess = currentStatus === "active" || currentStatus === "trialing";
-  const planOrder = plansForSalesEntry(accountType);
-  const accountTypeLabel = "Buduję własny przychód";
 
   async function openCheckout() {
     setBusy(true);
@@ -78,9 +71,9 @@ export function CheckoutPlans({
 
       {!hasAccess && (
         <>
-          <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>{accountTypeLabel}</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
+          <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>Buduj własny przychód</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
           <section className="checkout-plan-grid checkout-plan-grid-two">
-            {planOrder.map((id) => (
+            {publicPlanIds.map((id) => (
               <button key={id} type="button" aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
                 <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
                 <strong>{plans[id].price}<small>/ miesiąc po próbie</small></strong>

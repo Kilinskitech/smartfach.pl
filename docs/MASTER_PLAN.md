@@ -99,10 +99,10 @@ Na pustym koncie zamiast generycznego czatu pokazuje trzy proste wybory i natych
 układa pierwszy krok. Ustawienia przechowują styl pracy, czas tygodniowo,
 doświadczenie, ograniczenia, cel i bieżący fokus.
 
-Wewnętrzne workflow firm terenowych — klienci, cennik, wyceny, protokoły i zespół —
-pozostają w kodzie dla kompatybilności, ale nie są częścią publicznej oferty ani
-nowego onboardingu. Ich dalszy rozwój trafia do Parking Lot do czasu potwierdzenia
-nowej tezy produktu.
+Historyczne schematy workflow firm terenowych pozostają czasowo w modelu workspace,
+aby nie usuwać danych. Nie mają wejścia w głównej aplikacji, rejestracji ani
+płatnościach. Ich dalszy rozwój trafia do Parking Lot do czasu potwierdzenia nowej
+tezy produktu.
 
 ## Ceny
 
@@ -111,8 +111,8 @@ nowej tezy produktu.
 - 3 pełne dni próby, karta wymagana, potem automatyczne miesięczne odnowienie;
 - użytkownik może anulować przed pierwszym obciążeniem.
 
-Plan Firma i dodatkowe miejsca nie są publicznie sprzedawane. Istniejące rekordy
-i integracje pozostają kompatybilne, ale nie mogą pojawiać się w nowym lejku.
+Plan Firma i dodatkowe miejsca zostały usunięte z bieżącego runtime oraz nowego
+lejka. Ewentualne starsze rekordy są podczas migracji normalizowane do Pro.
 Po wykorzystaniu limitu można zaproponować zwiększenie użycia lub zmianę planu;
 codzienny interfejs nie używa słowa „kredyty”. Materialne zasady limitu muszą być
 jasne przed płatnością.

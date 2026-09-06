@@ -24,8 +24,8 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 ## Kontekst użytkownika
 
 Prompt otrzymuje zatwierdzone preferencje: zdalnie/lokalnie, czas tygodniowo,
-doświadczenie, ograniczenia, cel i bieżący fokus. Starszy typ konta może istnieć
-w danych, lecz nowe konta używają jednego kontekstu budowania własnego przychodu.
+doświadczenie, ograniczenia, cel i bieżący fokus. Typ konta ani tryb rozmowy nie są
+częścią kontekstu; wszystkie konta używają jednego procesu budowania przychodu.
 
 Asystent ma:
 

@@ -20,7 +20,7 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
   const { data: authData, error: authError } = await admin.auth.admin.getUserById(parsedId.data);
   if (authError || !authData.user) notFound();
   const [profileResult, membershipResult, usageResult] = await Promise.all([
-    admin.from("user_profiles").select("display_name, account_type").eq("user_id", parsedId.data).maybeSingle(),
+    admin.from("user_profiles").select("display_name").eq("user_id", parsedId.data).maybeSingle(),
     admin.from("memberships").select("organization_id").eq("user_id", parsedId.data).eq("status", "active").order("created_at", { ascending: true }).limit(1).maybeSingle(),
     admin.from("usage_events").select("cost_usd, total_tokens").eq("user_id", parsedId.data),
   ]);
@@ -37,15 +37,12 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     revision: Number(workspaceResult.data?.revision),
   });
   const usageRows = usageResult.data ?? [];
-  const accountType = profileResult.data?.account_type;
-  const normalizedType = accountType === "discover" || accountType === "launch" ? accountType : "operate";
   const snapshot: AdminUserDetailSnapshot = {
     generatedAt: new Date().toISOString(),
     id: parsedId.data,
     email: authData.user.email ?? "Brak adresu e-mail",
     name: String(profileResult.data?.display_name ?? authData.user.user_metadata?.display_name ?? authData.user.email ?? "Użytkownik"),
     company: String(organizationResult.data?.name ?? workspace.company.name),
-    accountType: normalizedType,
     plan: `Plan ${plans[workspace.billing.plan].name}`,
     usedCredits: workspace.billing.usedCredits,
     allowance: creditAllowance(workspace.billing),
@@ -69,7 +66,6 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     conversations: workspace.conversations.toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt)).map((conversation) => ({
       id: conversation.id,
       title: conversation.title,
-      mode: conversation.mode,
       updatedAt: conversation.updatedAt,
       hasPendingDocument: Boolean(conversation.pendingDocument),
       messages: conversation.messages.map((message) => ({

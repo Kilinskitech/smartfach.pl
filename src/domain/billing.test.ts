@@ -3,11 +3,10 @@ import {
   creditAllowance,
   emailConfirmationHoldAction,
   estimateRequestCredits,
-  isPlanAvailableForSalesEntry,
-  normalizePlanForSalesEntry,
-  plansForSalesEntry,
+  normalizePublicPlan,
+  publicPlanIdSchema,
+  publicPlanIds,
   remainingCredits,
-  salesEntryForAccountType,
   settleRequestCredits,
   trialPolicy,
 } from "./billing";
@@ -46,20 +45,12 @@ describe("kredyty SmartFach", () => {
     ).toBe(9);
   });
 
-  it("pokazuje Lite i Pro przy budowie od zera", () => {
-    expect(plansForSalesEntry("discover")).toEqual(["lite", "pro"]);
-    expect(isPlanAvailableForSalesEntry("discover", "firma")).toBe(false);
-  });
-
-  it("nie sprzedaje publicznie planu Firma", () => {
-    expect(plansForSalesEntry("operate")).toEqual(["lite", "pro"]);
-    expect(isPlanAvailableForSalesEntry("operate", "firma")).toBe(false);
-  });
-
-  it("bezpiecznie mapuje stare typy konta i niedostępny plan na Pro", () => {
-    expect(salesEntryForAccountType("launch")).toBe("operate");
-    expect(normalizePlanForSalesEntry("discover", "firma")).toBe("pro");
-    expect(normalizePlanForSalesEntry("operate", "firma")).toBe("pro");
+  it("sprzedaje publicznie wyłącznie Lite i Pro", () => {
+    expect(publicPlanIds).toEqual(["lite", "pro"]);
+    expect(publicPlanIdSchema.safeParse("lite").success).toBe(true);
+    expect(publicPlanIdSchema.safeParse("pro").success).toBe(true);
+    expect(publicPlanIdSchema.safeParse("firma").success).toBe(false);
+    expect(normalizePublicPlan(undefined)).toBe("pro");
   });
 
   it("zatrzymuje odnowienie trialu do potwierdzenia e-maila", () => {

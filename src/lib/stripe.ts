@@ -7,8 +7,7 @@ export function stripeConfigured() {
     process.env.STRIPE_SECRET_KEY?.trim() &&
       process.env.STRIPE_WEBHOOK_SECRET?.trim() &&
       process.env.STRIPE_PRICE_LITE?.trim() &&
-      process.env.STRIPE_PRICE_PRO?.trim() &&
-      process.env.STRIPE_PRICE_FIRMA?.trim(),
+      process.env.STRIPE_PRICE_PRO?.trim(),
   );
 }
 
@@ -22,7 +21,6 @@ export function stripePriceId(plan: PlanId) {
   const ids: Record<PlanId, string | undefined> = {
     lite: process.env.STRIPE_PRICE_LITE,
     pro: process.env.STRIPE_PRICE_PRO,
-    firma: process.env.STRIPE_PRICE_FIRMA,
   };
   const id = ids[plan]?.trim();
   if (!id) throw new Error(`Plan ${plan} nie ma ceny Stripe.`);
@@ -34,7 +32,6 @@ export function planForStripePriceId(priceId: string | undefined) {
   const matches: Array<[PlanId, string | undefined]> = [
     ["lite", process.env.STRIPE_PRICE_LITE],
     ["pro", process.env.STRIPE_PRICE_PRO],
-    ["firma", process.env.STRIPE_PRICE_FIRMA],
   ];
   return matches.find(([, configured]) => configured?.trim() === priceId)?.[0];
 }

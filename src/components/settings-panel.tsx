@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import {
-  Building2,
   Check,
   CreditCard,
   Download,
@@ -12,9 +11,7 @@ import {
   Target,
 } from "lucide-react";
 import {
-  companySchema,
   journeySchema,
-  type Company,
   type Workspace,
 } from "@/domain/workspace";
 
@@ -22,39 +19,16 @@ export function SettingsPanel({
   data,
   available,
   webSearch,
-  onSave,
   onSaveJourney,
 }: {
   data: Workspace;
   available: boolean | null;
   webSearch: boolean;
-  onSave: (company: Company) => Promise<void>;
   onSaveJourney: (journey: Workspace["journey"]) => Promise<void>;
 }) {
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState(""),
-    [saved, setSaved] = useState(false);
   const [journeyBusy, setJourneyBusy] = useState(false);
   const [journeySaved, setJourneySaved] = useState(false);
   const [journeyError, setJourneyError] = useState("");
-  const input = (
-    name: keyof Company,
-    label: string,
-    type = "text",
-    maxLength = 500,
-  ) => (
-    <div className="field">
-      <label htmlFor={"company-" + name}>{label}</label>
-      <input
-        id={"company-" + name}
-        name={name}
-        type={type}
-        maxLength={maxLength}
-        defaultValue={data.company[name]}
-        required={name === "name"}
-      />
-    </div>
-  );
   function exportData() {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -71,7 +45,7 @@ export function SettingsPanel({
   }
   return (
     <div className="settings-grid">
-      <section className="settings-card account-type-settings">
+      <section className="settings-card journey-profile-settings">
         <div className="card-heading">
           <SlidersHorizontal size={21} />
           <div>
@@ -86,7 +60,6 @@ export function SettingsPanel({
             event.preventDefault();
             const form = new FormData(event.currentTarget);
             const parsed = journeySchema.safeParse({
-              mode: data.journey.mode,
               workStyle: form.get("workStyle"),
               weeklyHours: form.get("weeklyHours"),
               experience: form.get("experience"),
@@ -131,65 +104,6 @@ export function SettingsPanel({
           <button className="button button-primary" disabled={journeyBusy}><Target size={18} />{journeyBusy ? "Zapisywanie…" : "Zapisz moje warunki"}</button>
         </form>
       </section>
-      <section className="settings-card">
-        <div className="card-heading">
-          <Building2 size={21} />
-          <div>
-            <h3>Dane do ofert i dokumentów</h3>
-            <p>Opcjonalne na początku. Uzupełnij je, gdy będą potrzebne.</p>
-          </div>
-        </div>
-        <form
-          className="settings-form"
-          onChange={() => setSaved(false)}
-          onSubmit={async (event) => {
-            event.preventDefault();
-            const form = new FormData(event.currentTarget);
-            const parsed = companySchema.safeParse(
-              Object.fromEntries(form.entries()),
-            );
-            if (!parsed.success) {
-              setError("Sprawdź nazwę firmy i adres e-mail.");
-              return;
-            }
-            setBusy(true);
-            setError("");
-            try {
-              await onSave(parsed.data);
-              setSaved(true);
-            } catch (error) {
-              setError(
-                error instanceof Error ? error.message : "Nie zapisano danych.",
-              );
-            } finally {
-              setBusy(false);
-            }
-          }}
-        >
-          {input("name", "Nazwa firmy", "text", 160)}
-          {input("address", "Adres firmy")}
-          <div className="two-fields">
-            {input("taxId", "NIP · opcjonalnie", "text", 30)}
-            {input("phone", "Telefon", "tel", 40)}
-          </div>
-          {input("email", "E-mail", "email", 160)}
-          {error && (
-            <p className="form-error" role="alert">
-              {error}
-            </p>
-          )}
-          {saved && (
-            <p className="success-note" role="status">
-              <Check size={16} />
-              Zapisano dane firmy na Twoim koncie.
-            </p>
-          )}
-          <button className="button button-primary" disabled={busy}>
-            <Check size={18} />
-            {busy ? "Zapisywanie…" : "Zapisz dane firmy"}
-          </button>
-        </form>
-      </section>
       <div className="settings-side">
         <section className="settings-card">
           <div className="card-heading">
@@ -213,7 +127,7 @@ export function SettingsPanel({
           <p className="form-hint">
             Przy rozmowie do usługi AI trafia treść wiadomości, zapisane
             preferencje, dodane zdjęcie lub głosówka oraz kontekst potrzebny do
-            wykonania zadania. Dane kontaktowe i notatki klientów nie są wysyłane.
+            wykonania zadania.
           </p>
           <p className="form-hint">
             Nie wklejaj klucza do czatu ani do danych firmy. Włączenie API

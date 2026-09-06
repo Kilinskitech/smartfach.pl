@@ -766,3 +766,26 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   modułów firmowych przed wynikiem eksperymentu.
 - Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, AI_ARCHITECTURE,
   PRICING, ROADMAP, landingi, cennik, rejestrację, ustawienia i prompt asystenta.
+
+## D038 — Jeden profil użytkownika również w danych i płatnościach
+
+- Data: 2026-09-07. Status: wdrożone w kodzie i wspólnym testowym Supabase;
+  oczekuje na wdrożenie gałęzi Preview oraz test akceptacyjny.
+- Decyzja: użytkownik nie wybiera typu konta podczas rejestracji, w URL, ustawieniach,
+  rozmowie ani panelu administratora. Wszystkie konta korzystają z jednego procesu
+  budowania własnego przychodu.
+- Dane: techniczna kolumna `account_type` pozostaje przejściowo wyłącznie po to, aby
+  starsze wdrożenie nie przestało działać. Ma jedyną wartość `builder`. Pola
+  `journey.mode` i `conversation.mode` są usuwane z istniejących workspace bez
+  usuwania rozmów.
+- Płatności: jedynymi planami runtime i bazy są Lite oraz Pro. Ewentualny historyczny
+  plan Firma jest normalizowany do Pro; cena Stripe i termin wymagają ręcznej kontroli
+  przed użyciem Stripe Live.
+- Aplikacja: główna nawigacja zawiera Asystenta, rozmowy i Ustawienia. Moduły firmy
+  nie mają aktywnego wejścia; ich historyczne schematy pozostają czasowo w danych.
+- Powód: ukrycie dawnych etykiet nie wystarczało — rozgałęzienia nadal wpływały na
+  onboarding, checkout, pamięć rozmów, panel administratora i walidację zapisu.
+- Kompromis: organizacja i część pól workspace pozostają jako techniczna granica RLS
+  i warstwa zgodności. Usuwamy je dopiero po migracji obu środowisk i eksporcie kopii.
+- Zastępuje D023, D030 i D031 w zakresie typów kont oraz D037 w zakresie technicznego
+  utrzymywania planu Firma w runtime. Historyczne uzasadnienia pozostają w rejestrze.

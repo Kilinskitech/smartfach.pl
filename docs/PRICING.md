@@ -7,9 +7,10 @@ Stan: 2026-09-06. Ceny są hipotezą do walidacji.
 | Lite | 49 zł | Spokojny start i podstawowy zakres użycia |
 | Pro | 99 zł | Regularna praca nad ofertą, sprzedażą i przychodem |
 
-Plan Firma 299 zł i dodatkowe miejsca 49,99 zł nie są częścią publicznej oferty.
-Pozostają kompatybilne technicznie dla wcześniejszych danych, ale nie pojawiają się
-na landingach, w cenniku ani rejestracji.
+Plan Firma 299 zł i dodatkowe miejsca 49,99 zł nie są częścią bieżącego produktu.
+Nie występują w runtime, checkoutach ani nowych ograniczeniach bazy. Starszy zapis
+planu Firma, jeżeli istnieje, jest migrowany do Pro bez zmiany terminu subskrypcji;
+ewentualną różnicę płatności trzeba obsłużyć ręcznie przed Stripe Live.
 
 ## Próba
 

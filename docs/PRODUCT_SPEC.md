@@ -4,9 +4,9 @@ Stan: 2026-09-06.
 
 ## Jeden publiczny produkt
 
-Użytkownik nie wybiera etapu biznesu ani branży. Wybiera Lite lub Pro, a SmartFach
-poznaje jego sytuację w aplikacji. Stare typy kont pozostają wyłącznie warstwą
-kompatybilności danych.
+Użytkownik nie wybiera etapu biznesu, typu konta ani branży. Wybiera Lite lub Pro,
+a SmartFach poznaje jego sytuację w aplikacji. Techniczna kolumna zgodności w bazie
+ma jedną stałą wartość i nie wpływa na funkcje ani dostęp.
 
 ## Profil startowy
 

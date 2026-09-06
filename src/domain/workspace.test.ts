@@ -4,7 +4,6 @@ import {
   newQuote,
   newReport,
   switchBillingPlan,
-  switchJourneyMode,
   workspaceSchema,
   reportSchema,
   draftSchema,
@@ -79,7 +78,6 @@ describe("warsztat bez danych przykładowych", () => {
       id: "conversation-qa",
       title: "Wycena",
       updatedAt: "2026-08-31T10:00:00Z",
-      mode: "operate",
       messages: [],
       pendingDocument: { id: "pending-qa", quote: newQuote(), report: null },
     });
@@ -95,7 +93,6 @@ describe("warsztat bez danych przykładowych", () => {
       id: "conversation-cost",
       title: "Koszt AI",
       updatedAt: "2026-09-04T10:00:00Z",
-      mode: "discover",
       messages: [
         {
           id: "assistant-cost",
@@ -123,7 +120,7 @@ describe("warsztat bez danych przykładowych", () => {
         ?.providerRequestId,
     ).toBe("gen-workspace-123");
   });
-  it("uzupełnia starsze dane o tryb i lokalny licznik kredytów", () => {
+  it("usuwa stare pola trybu i uzupełnia profil oraz lokalny limit", () => {
     const legacy = {
       version: 1,
       revision: 0,
@@ -136,16 +133,22 @@ describe("warsztat bez danych przykładowych", () => {
           id: "old-conversation",
           title: "Stara rozmowa",
           updatedAt: "2026-08-31T10:00:00.000Z",
+          mode: "operate",
           messages: [],
         },
       ],
+      journey: {
+        mode: "discover",
+        focus: "Usługa testowa",
+        goal: "Pierwszy klient",
+      },
     };
     const migrated = workspaceSchema.parse(legacy);
-    expect(migrated.journey.mode).toBe("operate");
     expect(migrated.journey.workStyle).toBe("open");
     expect(migrated.billing.plan).toBe("lite");
     expect(migrated.team).toEqual([]);
-    expect(migrated.conversations[0]?.mode).toBe("operate");
+    expect(migrated.journey).not.toHaveProperty("mode");
+    expect(migrated.conversations[0]).not.toHaveProperty("mode");
   });
   it("przechowuje członków zespołu i odrzuca powtórzony identyfikator", () => {
     const data = structuredClone(emptyWorkspace);
@@ -159,35 +162,6 @@ describe("warsztat bez danych przykładowych", () => {
     expect(workspaceSchema.parse(data).team).toHaveLength(1);
     data.team.push({ ...data.team[0]! });
     expect(workspaceSchema.safeParse(data).success).toBe(false);
-  });
-  it("zmienia tryb bez resetowania planu, limitu i zapisanych danych", () => {
-    const data = fixtureWorkspace();
-    data.journey = {
-      mode: "discover",
-      focus: "Serwis klimatyzacji",
-      goal: "Pierwszych pięciu klientów",
-      workStyle: "local",
-      weeklyHours: "10 godzin",
-      experience: "Prace instalacyjne",
-      constraints: "Bez zimnych telefonów",
-    };
-    data.billing.usedCredits = 37;
-    data.billing.topUpCredits = 100;
-    const switched = switchJourneyMode(data, "launch");
-    expect(switched.journey).toEqual({
-      mode: "launch",
-      focus: "Serwis klimatyzacji",
-      goal: "Pierwszych pięciu klientów",
-      workStyle: "local",
-      weeklyHours: "10 godzin",
-      experience: "Prace instalacyjne",
-      constraints: "Bez zimnych telefonów",
-    });
-    expect(switched.billing).toEqual(data.billing);
-    expect(switched.clients).toBe(data.clients);
-    expect(switched.catalog).toBe(data.catalog);
-    expect(switched.documents).toBe(data.documents);
-    expect(switched.conversations).toBe(data.conversations);
   });
   it("zmienia plan bez resetowania wykorzystania limitu i okresu", () => {
     const data = fixtureWorkspace();

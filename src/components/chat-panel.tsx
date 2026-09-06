@@ -2,8 +2,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import {
   ArrowUp,
-  FileText,
-  ClipboardCheck,
   Sparkles,
   ArrowRight,
   LoaderCircle,
@@ -19,8 +17,7 @@ import {
   Ban,
 } from "lucide-react";
 import { BrandMark } from "./brand";
-import type { Conversation, Workspace, VisitReport } from "@/domain/workspace";
-import type { QuoteDraft } from "@/domain/quotes/draft";
+import type { Conversation, Workspace } from "@/domain/workspace";
 import type { AssistantAttachment, AssistantResult } from "@/domain/assistant";
 import { estimateRequestCredits, remainingCredits } from "@/domain/billing";
 
@@ -54,8 +51,6 @@ type Props = {
     conversation: Conversation,
     creditsUsed?: number,
   ) => Promise<void>;
-  onNewQuote: (draft?: QuoteDraft, id?: string) => void;
-  onNewReport: (report?: VisitReport, id?: string) => void;
   onSettings: () => void;
   onBusy: (busy: boolean) => void;
   onOpenBilling: () => void;
@@ -68,8 +63,6 @@ export function ChatPanel({
   checking,
   checkConnection,
   onSaveConversation,
-  onNewQuote,
-  onNewReport,
   onSettings,
   onBusy,
   onOpenBilling,
@@ -87,7 +80,6 @@ export function ChatPanel({
   const mediaStream = useRef<MediaStream | null>(null);
   const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const messages = conversation?.messages ?? [];
-  const activeProposal = conversation?.pendingDocument;
   const creditsLeft = remainingCredits(data.billing);
   const requestCost = estimateRequestCredits(attachments);
   const creditExhausted = creditsLeft < requestCost;
@@ -132,19 +124,6 @@ export function ChatPanel({
     startTask(
       `Chcę zbudować własny przychód. ${workStyle}, ${situation} i ${boundary}. Zacznij od maksymalnie 3 najważniejszych pytań o moją sytuację. Potem pomóż mi wybrać realną usługę, którą mogę przetestować bez długiego przygotowania.`,
     );
-  }
-  function clientMemory(name: string, clientId?: string) {
-    const known = clientId
-      ? data.clients.find((client) => client.id === clientId)
-      : undefined;
-    if (known) return "Klient z pamięci firmy: " + known.name;
-    if (name.trim())
-      return (
-        "Nowy klient: " +
-        name.trim() +
-        ". Karta powstanie dopiero po zapisie dokumentu."
-      );
-    return "Brakuje klienta — uzupełnisz go przed zapisem.";
   }
   async function addImage(file: File | undefined) {
     if (!file) return;
@@ -347,19 +326,10 @@ export function ChatPanel({
       if (typeof result.reply !== "string")
         throw new Error("Odpowiedź nie została poprawnie odczytana.");
       const id = conversation?.id ?? crypto.randomUUID();
-      const pendingDocument =
-        result.quote || result.report
-          ? {
-              id: crypto.randomUUID(),
-              quote: result.quote,
-              report: result.report,
-            }
-          : conversation?.pendingDocument;
       const updated: Conversation = {
         id,
         title: conversation?.title ?? text.slice(0, 70),
         updatedAt: new Date().toISOString(),
-        mode: conversation?.mode ?? data.journey.mode,
         messages: [
           ...messages,
           {
@@ -385,7 +355,6 @@ export function ChatPanel({
             sources: result.sources?.length ? result.sources : undefined,
           },
         ],
-        pendingDocument,
       };
       await onSaveConversation(updated, result.creditsUsed ?? requestCost);
       setInput("");
@@ -500,63 +469,6 @@ export function ChatPanel({
               </div>
             </article>
           ))}
-          {activeProposal?.quote && (
-            <div className="proposal-card">
-              <span className="proposal-icon">
-                <FileText size={23} />
-              </span>
-              <div>
-                <span>Szkic wyceny · do sprawdzenia</span>
-                <strong>{activeProposal.quote.subject || "Nowa wycena"}</strong>
-                <p className="proposal-memory">
-                  {clientMemory(
-                    activeProposal.quote.client,
-                    activeProposal.quote.clientId,
-                  )}
-                </p>
-                <p>
-                  Sprawdź ceny i wybierz VAT. Nic nie zapisze się bez
-                  potwierdzenia.
-                </p>
-                <button
-                  onClick={() =>
-                    onNewQuote(activeProposal.quote!, activeProposal.id)
-                  }
-                >
-                  Sprawdź i zapisz
-                  <ArrowRight size={17} />
-                </button>
-              </div>
-            </div>
-          )}
-          {activeProposal?.report && (
-            <div className="proposal-card">
-              <span className="proposal-icon">
-                <ClipboardCheck size={23} />
-              </span>
-              <div>
-                <span>Szkic protokołu · do sprawdzenia</span>
-                <strong>
-                  {activeProposal.report.subject || "Protokół wizyty"}
-                </strong>
-                <p className="proposal-memory">
-                  {clientMemory(
-                    activeProposal.report.client,
-                    activeProposal.report.clientId,
-                  )}
-                </p>
-                <p>Sprawdź czynności i pomiary przed zapisem.</p>
-                <button
-                  onClick={() =>
-                    onNewReport(activeProposal.report!, activeProposal.id)
-                  }
-                >
-                  Sprawdź i zapisz
-                  <ArrowRight size={17} />
-                </button>
-              </div>
-            </div>
-          )}
           <div ref={lastMessage} />
         </div>
       )}
@@ -716,11 +628,6 @@ export function ChatPanel({
                 <RefreshCw size={14} />
                 {checking ? "Sprawdzanie…" : "Sprawdź połączenie"}
               </button>
-            </div>
-            <div className="manual-fallback">
-              <span>Tryb awaryjny</span>
-              <button onClick={() => onNewQuote()}>Wycena ręczna</button>
-              <button onClick={() => onNewReport()}>Protokół ręcznie</button>
             </div>
           </>
         )}

@@ -2,11 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import {
-  isPlanAvailableForSalesEntry,
-  planIdSchema,
-  salesEntrySchema,
-} from "@/domain/billing";
+import { publicPlanIdSchema } from "@/domain/billing";
 import { applicationUrl, getStripe, stripeConfigured } from "@/lib/stripe";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -22,17 +18,9 @@ const credentialsSchema = z.object({
 });
 
 const registrationSchema = credentialsSchema.extend({
-  displayName: z.string().trim().min(2, "Podaj imię lub nazwę firmy.").max(160),
-  accountType: salesEntrySchema,
-  plan: planIdSchema,
+  displayName: z.string().trim().min(2, "Podaj imię lub nazwę.").max(160),
+  plan: publicPlanIdSchema,
   terms: z.literal("accepted", "Zaakceptuj regulamin i politykę prywatności."),
-}).superRefine((input, context) => {
-  if (!isPlanAvailableForSalesEntry(input.accountType, input.plan))
-    context.addIssue({
-      code: "custom",
-      path: ["plan"],
-      message: "Wybierz plan dostępny dla swojej sytuacji.",
-    });
 });
 
 function message(error: unknown) {
@@ -90,7 +78,6 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
     email: formData.get("email"),
     password: formData.get("password"),
     displayName: formData.get("displayName"),
-    accountType: formData.get("accountType"),
     plan: formData.get("plan"),
     terms: formData.get("terms"),
   });
@@ -108,7 +95,6 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
       emailRedirectTo: confirmationCallback(),
       data: {
         display_name: parsed.data.displayName,
-        account_type: parsed.data.accountType,
         plan: parsed.data.plan,
       },
     },
@@ -131,7 +117,6 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
       throw new Error("Nie utworzono organizacji użytkownika.");
 
     const canceled = new URL("/logowanie", applicationUrl());
-    canceled.searchParams.set("typ", parsed.data.accountType);
     canceled.searchParams.set("plan", parsed.data.plan);
     canceled.searchParams.set("anulowano", "1");
     const session = await createSubscriptionCheckout({

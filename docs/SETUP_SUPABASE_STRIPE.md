@@ -28,7 +28,7 @@ Te same testowe wartości przypisz do **Production i Preview**:
 - `PLATFORM_ADMIN_USER_ID`;
 - `PLATFORM_ADMIN_EMAIL` — opcjonalny adres administratora; UUID pozostaje
   zalecanym identyfikatorem;
-- `STRIPE_SECRET_KEY` i trzy `STRIPE_PRICE_*`;
+- `STRIPE_SECRET_KEY`, `STRIPE_PRICE_LITE` i `STRIPE_PRICE_PRO`;
 - wszystkie zmienne `OPENROUTER_*` oraz `SMARTFACH_ENABLE_AI`.
 
 Wartość zależna od środowiska:
@@ -57,7 +57,8 @@ W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URL
 2. W SQL Editor uruchom migracje w kolejności nazw:
    - `supabase/migrations/202609040001_initial_saas.sql`;
    - `supabase/migrations/202609050001_sales_entry_plans.sql`;
-   - `supabase/migrations/202609050002_fix_workspace_write.sql`.
+   - `supabase/migrations/202609050002_fix_workspace_write.sql`;
+   - `supabase/migrations/202609060003_single_builder_profile.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
 5. Z Project Settings → API Keys skopiuj do Vercel Environment Variables dla
@@ -80,13 +81,13 @@ domyślna wysyłka Supabase służy wyłącznie do ograniczonych testów.
 
 ## 2. Stripe w trybie testowym
 
-1. Utwórz trzy produkty lub trzy miesięczne ceny recurring:
-   Lite 49 zł, Pro 99 zł i Firma 299 zł.
-2. Wklej identyfikatory `price_...` do `STRIPE_PRICE_LITE`, `STRIPE_PRICE_PRO`
-   i `STRIPE_PRICE_FIRMA`.
+1. Utwórz dwa produkty lub dwie miesięczne ceny recurring:
+   Lite 49 zł i Pro 99 zł.
+2. Wklej identyfikatory `price_...` do `STRIPE_PRICE_LITE` i
+   `STRIPE_PRICE_PRO`. Nie używaj identyfikatorów `prod_...`.
 3. Wklej testowy secret key do `STRIPE_SECRET_KEY`.
 4. W Customer Portal włącz anulowanie subskrypcji. Zmianę planu włącz tylko dla
-   tych samych trzech miesięcznych cen.
+   tych samych dwóch miesięcznych cen.
 5. Utwórz endpoint webhooka:
    `NEXT_PUBLIC_APP_URL/api/stripe/webhook`.
 6. Subskrybuj zdarzenia:
@@ -130,7 +131,7 @@ model, dostawcę i identyfikator żądania per użytkownik.
 - Brak płatnego odnowienia, gdy adres nie został potwierdzony przed końcem trialu.
 - Powrót z Checkout i status `trialing`.
 - Brak dostępu do `/app` przed aktywną próbą.
-- Zapis klienta, rozmowy, wyceny i PDF po odświeżeniu.
+- Zapis profilu i rozmowy po odświeżeniu.
 - Anulowanie oraz zmiana planu w portalu i poprawna synchronizacja webhooka.
 - Ponowne wysłanie tego samego webhooka bez podwójnego skutku.
 - Dwa konta w dwóch organizacjach: brak odczytu i zapisu danych drugiego konta.
@@ -140,7 +141,7 @@ model, dostawcę i identyfikator żądania per użytkownik.
 ## 6. Czego ten etap jeszcze nie uruchamia
 
 - Dokupowania dodatkowego limitu.
-- Loginów i zaproszeń pracowników.
+- Kont pracowników i planu Firma.
 - Automatycznego fakturowania zgodnego z polskimi obowiązkami.
 - Produkcyjnej retencji, backupów i bezpiecznego magazynu załączników.
 

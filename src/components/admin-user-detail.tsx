@@ -18,7 +18,6 @@ export type AdminUserDetailSnapshot = {
   email: string;
   name: string;
   company: string;
-  accountType: "discover" | "launch" | "operate";
   plan: string;
   usedCredits: number;
   allowance: number;
@@ -33,7 +32,6 @@ export type AdminUserDetailSnapshot = {
   conversations: Array<{
     id: string;
     title: string;
-    mode: "discover" | "launch" | "operate";
     updatedAt: string;
     hasPendingDocument: boolean;
     messages: Array<{
@@ -55,12 +53,6 @@ export type AdminUserDetailSnapshot = {
     }>;
   }>;
 };
-
-const accountTypeLabels = {
-  discover: "Odkryj",
-  launch: "Uruchom",
-  operate: "Prowadź",
-} as const;
 
 function costLabel(value: number) {
   if (value === 0) return "$0.00";
@@ -101,12 +93,12 @@ export function AdminUserDetail({
           <div>
             <p className="eyebrow">PROFIL UŻYTKOWNIKA</p>
             <h1>{snapshot.name}</h1>
-            <p>{snapshot.email} · {snapshot.company || "Konto bez nazwy firmy"} · typ konta {accountTypeLabels[snapshot.accountType]}</p>
+            <p>{snapshot.email} · {snapshot.company || "Konto bez dodatkowych danych"}</p>
           </div>
         </header>
 
         <section className="admin-metric-grid admin-user-metrics" aria-label="Metryki użytkownika">
-          <article><span><UserRound size={20} /></span><small>TYP KONTA</small><strong className="admin-text-value">{accountTypeLabels[snapshot.accountType]}</strong><p>Zmieniany przez użytkownika w Ustawieniach</p></article>
+          <article><span><UserRound size={20} /></span><small>PROFIL</small><strong className="admin-text-value">Własny przychód</strong><p>Jeden spójny sposób pracy dla każdego użytkownika</p></article>
           <article><span><Gauge size={20} /></span><small>PLAN I ZUŻYCIE</small><strong className="admin-text-value">{snapshot.plan}</strong><p>{snapshot.usedCredits} / {snapshot.allowance} jednostek planu</p></article>
           <article><span><MessagesSquare size={20} /></span><small>AKTYWNOŚĆ</small><strong>{snapshot.conversations.length}</strong><p>{messageCount} wiadomości we wszystkich rozmowach</p></article>
           <article><span><CircleDollarSign size={20} /></span><small>KOSZT OPENROUTER</small><strong className="admin-cost-value">{costLabel(snapshot.totalCostUsd)}</strong><p>{snapshot.totalTokens.toLocaleString("pl-PL")} tokenów · {snapshot.measuredResponses} zmierzonych odpowiedzi</p></article>
@@ -141,7 +133,6 @@ export function AdminUserDetail({
                       <small>{new Date(conversation.updatedAt).toLocaleString("pl-PL")}</small>
                     </span>
                     <span className="admin-conversation-meta">
-                      <i>{accountTypeLabels[conversation.mode]}</i>
                       <i>{conversation.messages.length} wiad.</i>
                       {conversation.hasPendingDocument && <i>Szkic dokumentu</i>}
                     </span>
