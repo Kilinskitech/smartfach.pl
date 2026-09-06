@@ -11,6 +11,7 @@ import { applicationUrl, getStripe, stripeConfigured } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
+import { releaseEmailConfirmationHoldForUser } from "@/server/stripe-subscriptions";
 
 export type AuthState = { error?: string; success?: string } | undefined;
 
@@ -57,8 +58,20 @@ export async function signIn(_: AuthState, formData: FormData): Promise<AuthStat
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message };
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword(parsed.data);
+  const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: message(error) };
+
+  if (data.user?.id) {
+    try {
+      await releaseEmailConfirmationHoldForUser(data.user.id);
+    } catch (holdError) {
+      console.error("Nie zwolniono blokady odnowienia po zalogowaniu", {
+        userId: data.user.id,
+        message: holdError instanceof Error ? holdError.message : "unknown",
+      });
+    }
+  }
+
   const requested = String(formData.get("next") ?? "");
   redirect(requested.startsWith("/platnosc") ? requested : "/app");
 }
