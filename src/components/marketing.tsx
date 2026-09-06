@@ -8,6 +8,7 @@ import {
   Image as ImageIcon,
   Laptop,
   ListChecks,
+  LogIn,
   MapPin,
   Menu,
   MessageCircle,
@@ -127,7 +128,8 @@ export function MarketingHeader() {
         <Link href="/kontakt">Kontakt</Link>
       </nav>
       <Link className="marketing-account-login" href="/logowanie">
-        Zaloguj się
+        <LogIn size={15} aria-hidden="true" />
+        <span>Zaloguj się</span>
       </Link>
       <Link className="marketing-login" href="/logowanie?plan=pro">
         <span className="login-label-full">Zacznij 3 dni bez opłat</span>
@@ -137,12 +139,13 @@ export function MarketingHeader() {
       <details className="marketing-mobile-menu">
         <summary aria-label="Otwórz menu"><Menu size={21} /></summary>
         <nav aria-label="Nawigacja telefonu">
+          <span className="mobile-menu-title">MENU</span>
           <Link href="/#jak-dziala">Jak to działa</Link>
           <Link href="/#dla-ciebie">Dla Ciebie</Link>
           <Link href="/#co-dostajesz">Co dostajesz</Link>
           <Link href="/cennik">Cennik</Link>
           <Link href="/kontakt">Kontakt</Link>
-          <Link className="mobile-menu-login" href="/logowanie">Mam już konto — zaloguj się</Link>
+          <Link className="mobile-menu-login" href="/logowanie"><LogIn size={16} /> Mam już konto — zaloguj się</Link>
           <Link className="mobile-menu-start" href="/logowanie?plan=pro">Zacznij 3 dni bez opłat <ArrowRight size={15} /></Link>
         </nav>
       </details>
