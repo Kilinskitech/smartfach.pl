@@ -3,7 +3,7 @@ import { ContactPage } from "@/components/public-pages";
 
 export const metadata: Metadata = {
   title: "Kontakt — SmartFach",
-  description: "Skontaktuj się ze SmartFach w sprawie testów, planu dla firmy lub pomocy technicznej.",
+  description: "Skontaktuj się ze SmartFach w sprawie startu, wyboru planu lub pomocy technicznej.",
   alternates: { canonical: "/kontakt" },
 };
 

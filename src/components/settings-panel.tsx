@@ -1,65 +1,42 @@
 "use client";
 import { useState } from "react";
 import {
-  BriefcaseBusiness,
   Building2,
   Check,
-  Compass,
   CreditCard,
   Download,
   ShieldCheck,
   KeyRound,
-  ArrowRight,
-  Rocket,
   LogOut,
+  SlidersHorizontal,
+  Target,
 } from "lucide-react";
 import {
   companySchema,
+  journeySchema,
   type Company,
-  type JourneyMode,
   type Workspace,
 } from "@/domain/workspace";
-
-const accountTypes = [
-  {
-    id: "discover",
-    label: "Odkryj",
-    description: "Szukam kierunku lub pomysłu na biznes",
-    icon: Compass,
-  },
-  {
-    id: "launch",
-    label: "Uruchom",
-    description: "Mam pomysł i chcę zdobyć pierwszych klientów",
-    icon: Rocket,
-  },
-  {
-    id: "operate",
-    label: "Prowadź",
-    description: "Mam klientów lub zespół i obsługuję zlecenia",
-    icon: BriefcaseBusiness,
-  },
-] as const;
 
 export function SettingsPanel({
   data,
   available,
   webSearch,
   onSave,
-  onChangeAccountType,
+  onSaveJourney,
 }: {
   data: Workspace;
   available: boolean | null;
   webSearch: boolean;
   onSave: (company: Company) => Promise<void>;
-  onChangeAccountType: (mode: JourneyMode) => Promise<void>;
+  onSaveJourney: (journey: Workspace["journey"]) => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [saved, setSaved] = useState(false);
-  const [accountTypeBusy, setAccountTypeBusy] = useState(false);
-  const [accountTypeNotice, setAccountTypeNotice] = useState("");
-  const [accountTypeError, setAccountTypeError] = useState("");
+  const [journeyBusy, setJourneyBusy] = useState(false);
+  const [journeySaved, setJourneySaved] = useState(false);
+  const [journeyError, setJourneyError] = useState("");
   const input = (
     name: keyof Company,
     label: string,
@@ -96,56 +73,70 @@ export function SettingsPanel({
     <div className="settings-grid">
       <section className="settings-card account-type-settings">
         <div className="card-heading">
-          <Compass size={21} />
+          <SlidersHorizontal size={21} />
           <div>
-            <h3>Typ konta</h3>
-            <p>Dopasowuje asystenta i funkcje do obecnej sytuacji.</p>
+            <h3>Jak chcesz działać</h3>
+            <p>Te informacje pomagają odrzucić pomysły, które do Ciebie nie pasują.</p>
           </div>
         </div>
-        <div className="account-type-grid" role="group" aria-label="Typ konta SmartFach">
-          {accountTypes.map(({ id, label, description, icon: Icon }) => (
-            <button
-              key={id}
-              className={data.journey.mode === id ? "selected" : ""}
-              aria-pressed={data.journey.mode === id}
-              disabled={accountTypeBusy}
-              onClick={async () => {
-                if (data.journey.mode === id) return;
-                setAccountTypeBusy(true);
-                setAccountTypeNotice("");
-                setAccountTypeError("");
-                try {
-                  await onChangeAccountType(id);
-                  setAccountTypeNotice(`Typ konta zmieniono na ${label}.`);
-                } catch (error) {
-                  setAccountTypeError(
-                    error instanceof Error ? error.message : "Nie zmieniono typu konta.",
-                  );
-                } finally {
-                  setAccountTypeBusy(false);
-                }
-              }}
-            >
-              <span><Icon size={20} /></span>
-              <strong>{label}</strong>
-              <small>{description}</small>
-              {data.journey.mode === id && <Check size={17} />}
-            </button>
-          ))}
-        </div>
-        <p className="form-hint account-type-note">
-          Typ konta nie jest przełącznikiem codziennej pracy. Zmieniasz go tutaj,
-          kiedy zmienia się etap Twojej działalności. Plan, limit i zapisane dane pozostają bez zmian.
-        </p>
-        {accountTypeNotice && <p className="success-note" role="status"><Check size={16} />{accountTypeNotice}</p>}
-        {accountTypeError && <p className="form-error" role="alert">{accountTypeError}</p>}
+        <form
+          className="settings-form journey-settings-form"
+          onChange={() => setJourneySaved(false)}
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            const parsed = journeySchema.safeParse({
+              mode: data.journey.mode,
+              workStyle: form.get("workStyle"),
+              weeklyHours: form.get("weeklyHours"),
+              experience: form.get("experience"),
+              constraints: form.get("constraints"),
+              focus: form.get("focus"),
+              goal: form.get("goal"),
+            });
+            if (!parsed.success) {
+              setJourneyError("Sprawdź wpisane informacje.");
+              return;
+            }
+            setJourneyBusy(true);
+            setJourneyError("");
+            try {
+              await onSaveJourney(parsed.data);
+              setJourneySaved(true);
+            } catch (error) {
+              setJourneyError(error instanceof Error ? error.message : "Nie zapisano preferencji.");
+            } finally {
+              setJourneyBusy(false);
+            }
+          }}
+        >
+          <div className="field">
+            <label htmlFor="journey-work-style">Gdzie wolisz pracować?</label>
+            <select id="journey-work-style" name="workStyle" defaultValue={data.journey.workStyle}>
+              <option value="open">Jeszcze nie wiem / bez znaczenia</option>
+              <option value="remote">Zdalnie</option>
+              <option value="local">Lokalnie</option>
+              <option value="hybrid">Częściowo zdalnie i lokalnie</option>
+            </select>
+          </div>
+          <div className="two-fields">
+            <div className="field"><label htmlFor="journey-hours">Ile czasu masz tygodniowo?</label><input id="journey-hours" name="weeklyHours" defaultValue={data.journey.weeklyHours} maxLength={80} placeholder="np. 6 godzin" /></div>
+            <div className="field"><label htmlFor="journey-goal">Jaki przychód jest Twoim celem?</label><input id="journey-goal" name="goal" defaultValue={data.journey.goal} maxLength={500} placeholder="np. pierwsze 2 000 zł miesięcznie" /></div>
+          </div>
+          <div className="field"><label htmlFor="journey-experience">Co już umiesz lub robiłeś wcześniej?</label><textarea id="journey-experience" name="experience" defaultValue={data.journey.experience} maxLength={1200} rows={3} placeholder="Nie muszą to być zawodowe umiejętności." /></div>
+          <div className="field"><label htmlFor="journey-constraints">Czego nie chcesz robić albo co Cię ogranicza?</label><textarea id="journey-constraints" name="constraints" defaultValue={data.journey.constraints} maxLength={1200} rows={3} placeholder="np. bez rozmów telefonicznych, bez pokazywania twarzy, mały budżet" /></div>
+          <div className="field"><label htmlFor="journey-focus">Nad czym obecnie pracujesz?</label><input id="journey-focus" name="focus" defaultValue={data.journey.focus} maxLength={160} placeholder="Możesz zostawić puste, jeśli dopiero szukasz kierunku" /></div>
+          {journeyError && <p className="form-error" role="alert">{journeyError}</p>}
+          {journeySaved && <p className="success-note" role="status"><Check size={16} />SmartFach będzie korzystał z tych informacji.</p>}
+          <button className="button button-primary" disabled={journeyBusy}><Target size={18} />{journeyBusy ? "Zapisywanie…" : "Zapisz moje warunki"}</button>
+        </form>
       </section>
       <section className="settings-card">
         <div className="card-heading">
           <Building2 size={21} />
           <div>
-            <h3>Dane Twojej firmy</h3>
-            <p>Pojawią się na pobieranych dokumentach.</p>
+            <h3>Dane do ofert i dokumentów</h3>
+            <p>Opcjonalne na początku. Uzupełnij je, gdy będą potrzebne.</p>
           </div>
         </div>
         <form
@@ -211,8 +202,8 @@ export function SettingsPanel({
             </div>
           </div>
           <p>
-            SmartFach odpowiada na pytania oraz przygotowuje szkice wycen,
-            protokołów i wiadomości do klientów.
+            SmartFach uwzględnia Twoje warunki, pomaga sprawdzać kierunki,
+            budować ofertę, szukać sposobów dotarcia i przygotowywać wiadomości.
           </p>
           <p className="form-hint">
             {webSearch
@@ -220,10 +211,9 @@ export function SettingsPanel({
               : "Wyszukiwanie internetowe jest wyłączone w konfiguracji serwera."}
           </p>
           <p className="form-hint">
-            Przy rozmowie do usługi AI trafia treść wiadomości, dodane zdjęcie
-            lub głosówka, nazwa firmy, same nazwy klientów, maksymalnie 100
-            pozycji cennika oraz historia jednoznacznie wskazanego klienta.
-            Dane kontaktowe i notatki klienta nie są wysyłane.
+            Przy rozmowie do usługi AI trafia treść wiadomości, zapisane
+            preferencje, dodane zdjęcie lub głosówka oraz kontekst potrzebny do
+            wykonania zadania. Dane kontaktowe i notatki klientów nie są wysyłane.
           </p>
           <p className="form-hint">
             Nie wklejaj klucza do czatu ani do danych firmy. Włączenie API
@@ -240,7 +230,7 @@ export function SettingsPanel({
             </div>
           </div>
           <p>
-            Dane są przypisane do Twojej organizacji i chronione sesją konta.
+            Dane są przypisane do Twojego konta i chronione prywatną sesją.
             Pobierz kopię, jeśli chcesz zachować własny eksport poza SmartFach.
           </p>
           <button
@@ -251,15 +241,16 @@ export function SettingsPanel({
             Pobierz kopię danych
           </button>
           <p className="form-hint">
-            Kopia zawiera dane klientów i dokumenty. Przechowuj ją w bezpiecznym
-            miejscu. Przywracanie kopii z aplikacji nie jest jeszcze dostępne.
+            Kopia zawiera zapisane ustawienia, rozmowy i pozostałe dane konta.
+            Przechowuj ją w bezpiecznym miejscu. Przywracanie kopii z aplikacji
+            nie jest jeszcze dostępne.
           </p>
         </section>
         <div className="next-stage">
-          <ArrowRight size={19} />
+          <Check size={19} />
           <span>
-            Podstawowe konto i płatności są podłączone. Zaproszenia pracowników
-            wymagają jeszcze uruchomienia przed sprzedażą planu Firma.
+            Preferencje możesz zmieniać w dowolnym momencie. SmartFach użyje
+            najnowszych informacji przy kolejnych odpowiedziach.
           </span>
         </div>
         <div className="account-actions">

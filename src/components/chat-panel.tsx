@@ -4,7 +4,6 @@ import {
   ArrowUp,
   FileText,
   ClipboardCheck,
-  MessageCircle,
   Sparkles,
   ArrowRight,
   LoaderCircle,
@@ -14,10 +13,10 @@ import {
   Square,
   X,
   AudioLines,
-  TrendingUp,
   Compass,
-  Rocket,
-  Target,
+  Laptop,
+  MapPin,
+  Ban,
 } from "lucide-react";
 import { BrandMark } from "./brand";
 import type { Conversation, Workspace, VisitReport } from "@/domain/workspace";
@@ -92,6 +91,13 @@ export function ChatPanel({
   const creditsLeft = remainingCredits(data.billing);
   const requestCost = estimateRequestCredits(attachments);
   const creditExhausted = creditsLeft < requestCost;
+  const [startStyle, setStartStyle] = useState<"remote" | "local" | "open">(
+    data.journey.workStyle === "remote" || data.journey.workStyle === "local"
+      ? data.journey.workStyle
+      : "open",
+  );
+  const [startSituation, setStartSituation] = useState<"unknown" | "idea" | "skills">("unknown");
+  const [startBoundary, setStartBoundary] = useState<"none" | "phone" | "camera" | "budget">("none");
   useEffect(
     () => () => {
       if (recordingTimer.current) clearInterval(recordingTimer.current);
@@ -105,6 +111,27 @@ export function ChatPanel({
       textarea.current?.focus();
       textarea.current?.setSelectionRange(text.length, text.length);
     });
+  }
+  function preparePersonalStart() {
+    const workStyle = {
+      remote: "chcę pracować zdalnie",
+      local: "wolę działać lokalnie",
+      open: "jestem otwarty na pracę zdalną albo lokalną",
+    }[startStyle];
+    const situation = {
+      unknown: "nie wiem jeszcze, co mogę sprzedawać",
+      idea: "mam już wstępny pomysł, ale chcę go sprawdzić",
+      skills: "chcę zacząć od tego, co już umiem",
+    }[startSituation];
+    const boundary = {
+      none: "nie mam jeszcze dodatkowych ograniczeń",
+      phone: "nie chcę prowadzić sprzedaży telefonicznej",
+      camera: "nie chcę pokazywać twarzy ani nagrywać filmów",
+      budget: "chcę zacząć z bardzo małym budżetem",
+    }[startBoundary];
+    startTask(
+      `Chcę zbudować własny przychód. ${workStyle}, ${situation} i ${boundary}. Zacznij od maksymalnie 3 najważniejszych pytań o moją sytuację. Potem pomóż mi wybrać realną usługę, którą mogę przetestować bez długiego przygotowania.`,
+    );
   }
   function clientMemory(name: string, clientId?: string) {
     const known = clientId
@@ -401,76 +428,42 @@ export function ChatPanel({
               <Sparkles size={13} />
             </span>
           </div>
-          {data.journey.mode === "discover" ? (
-            <>
-              <p className="eyebrow">OD CELU DO KOLEJNYCH DZIAŁAŃ</p>
-              <h2>Rozwijaj kierunek na podstawie tego, co działa</h2>
+          <>
+              <p className="eyebrow">ZACZNIJMY OD CIEBIE</p>
+              <h2>Jak chcesz budować swój przychód?</h2>
               <p className="welcome-copy">
-                Ustal cel, wykonaj test i wróć z wynikiem. Kolejne decyzje
-                wykorzystają zapisany kontekst — nie zaczynasz od zera.
+                Nie musisz mieć pomysłu ani wyjątkowych umiejętności. Wybierz
+                najbliższe odpowiedzi, a SmartFach zada potrzebne pytania.
               </p>
-              <div className="chat-shortcuts">
-                <button onClick={() => startTask("Pomóż mi znaleźć pomysł na biznes. Zacznij od pytań o moją sytuację.")}>
-                  <Compass size={18} /> Znajdź kierunek
-                </button>
-                <button onClick={() => startTask("Pomóż mi sprawdzić ten pomysł na biznes: ")}>
-                  <Target size={18} /> Sprawdź mój pomysł
-                </button>
-                <button onClick={() => startTask("Ułóż najmniejszy test rynku dla pomysłu: ")}>
-                  <Rocket size={18} /> Zaplanuj test rynku
-                </button>
-                <button onClick={() => startTask("Porównaj dla mnie te kierunki biznesowe: ")}>
-                  <TrendingUp size={18} /> Porównaj możliwości
-                </button>
+              <div className="start-profile" aria-label="Szybki start SmartFach">
+                <fieldset>
+                  <legend>Gdzie chcesz pracować?</legend>
+                  <div>
+                    <button className={startStyle === "remote" ? "selected" : ""} onClick={() => setStartStyle("remote")}><Laptop size={17} /> Zdalnie</button>
+                    <button className={startStyle === "local" ? "selected" : ""} onClick={() => setStartStyle("local")}><MapPin size={17} /> Lokalnie</button>
+                    <button className={startStyle === "open" ? "selected" : ""} onClick={() => setStartStyle("open")}><Compass size={17} /> Bez znaczenia</button>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Od czego zaczynasz?</legend>
+                  <div>
+                    <button className={startSituation === "unknown" ? "selected" : ""} onClick={() => setStartSituation("unknown")}>Nie wiem, co sprzedawać</button>
+                    <button className={startSituation === "skills" ? "selected" : ""} onClick={() => setStartSituation("skills")}>Mam umiejętności</button>
+                    <button className={startSituation === "idea" ? "selected" : ""} onClick={() => setStartSituation("idea")}>Mam pomysł</button>
+                  </div>
+                </fieldset>
+                <fieldset>
+                  <legend>Czego chcesz uniknąć?</legend>
+                  <div>
+                    <button className={startBoundary === "phone" ? "selected" : ""} onClick={() => setStartBoundary("phone")}><Ban size={16} /> Telefonów</button>
+                    <button className={startBoundary === "camera" ? "selected" : ""} onClick={() => setStartBoundary("camera")}><Ban size={16} /> Pokazywania twarzy</button>
+                    <button className={startBoundary === "budget" ? "selected" : ""} onClick={() => setStartBoundary("budget")}><Ban size={16} /> Dużych wydatków</button>
+                    <button className={startBoundary === "none" ? "selected" : ""} onClick={() => setStartBoundary("none")}>Jeszcze nie wiem</button>
+                  </div>
+                </fieldset>
+                <button className="start-profile-submit" onClick={preparePersonalStart}>Ułóż mój pierwszy krok <ArrowRight size={17} /></button>
               </div>
-            </>
-          ) : data.journey.mode === "launch" ? (
-            <>
-              <p className="eyebrow">OD POMYSŁU DO REGULARNEGO DZIAŁANIA</p>
-              <h2>Testuj ofertę i planuj następny krok</h2>
-              <p className="welcome-copy">
-                Ustal, co sprzedajesz, wykonaj działanie i wróć z odpowiedzią
-                rynku. SmartFach pomoże dostosować kolejne zadanie.
-              </p>
-              <div className="chat-shortcuts">
-                <button onClick={() => startTask("Pomóż mi zbudować prostą ofertę dla biznesu: ")}>
-                  <Rocket size={18} /> Zbuduj ofertę
-                </button>
-                <button onClick={() => startTask("Pomóż mi określić pierwszego klienta dla: ")}>
-                  <Target size={18} /> Określ klienta
-                </button>
-                <button onClick={() => startTask("Ułóż plan zdobycia pierwszych 10 rozmów sprzedażowych dla: ")}>
-                  <TrendingUp size={18} /> Znajdź pierwsze rozmowy
-                </button>
-                <button onClick={() => startTask("Pomóż mi ustalić podstawy cennika dla: ")}>
-                  <FileText size={18} /> Ustal podstawy ceny
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="eyebrow">TWÓJ ASYSTENT DO PRACY</p>
-              <h2>Powiedz, co trzeba zrobić</h2>
-              <p className="welcome-copy">
-                Jedna wiadomość wystarczy. SmartFach przygotuje rezultat, a Ty
-                tylko go sprawdzisz.
-              </p>
-              <div className="chat-shortcuts">
-                <button onClick={() => startTask("Przygotuj wycenę: ")}>
-                  <FileText size={18} /> Stwórz wycenę
-                </button>
-                <button onClick={() => startTask("Przygotuj protokół z wizyty: ")}>
-                  <ClipboardCheck size={18} /> Stwórz protokół z wizyty
-                </button>
-                <button onClick={() => startTask("Stwórz wiadomość do klienta: ")}>
-                  <MessageCircle size={18} /> Stwórz wiadomość do klienta
-                </button>
-                <button onClick={() => startTask("Pomóż mi w marketingu lub rozwoju firmy: ")}>
-                  <TrendingUp size={18} /> Marketing i rozwój firmy
-                </button>
-              </div>
-            </>
-          )}
+          </>
         </div>
       ) : (
         <div className="chat-messages" aria-label="Historia rozmowy">

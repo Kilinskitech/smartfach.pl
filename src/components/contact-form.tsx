@@ -53,7 +53,7 @@ export function ContactForm() {
         <select id="contact-subject" name="subject" defaultValue="Pytanie o SmartFach">
           <option>Pytanie o SmartFach</option>
           <option>Chcę przetestować SmartFach</option>
-          <option>Plan dla firmy</option>
+          <option>Pomoc w wyborze planu</option>
           <option>Pomoc techniczna</option>
           <option>Inna sprawa</option>
         </select>

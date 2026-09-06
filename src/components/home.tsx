@@ -40,13 +40,11 @@ import {
   documentTitle,
   newQuote,
   newReport,
-  switchJourneyMode,
   type Client,
   type PriceItem,
   type WorkDocument,
   type VisitReport,
   type Conversation,
-  type JourneyMode,
   type TeamMember,
 } from "@/domain/workspace";
 import { plans } from "@/domain/billing";
@@ -98,19 +96,19 @@ const titles: Record<View, string> = {
 const journeyOptions = [
   {
     id: "discover",
-    label: "Odkryj",
-    description: "Sprawdzaj i rozwijaj kierunek",
+    label: "Buduję przychód",
+    description: "Wybieraj usługę i zdobywaj klientów",
     icon: Compass,
   },
   {
     id: "launch",
-    label: "Uruchom",
-    description: "Zamieniaj pomysł w działania",
+    label: "Rozwijam ofertę",
+    description: "Zamieniaj pomysł w sprzedaż",
     icon: Rocket,
   },
   {
     id: "operate",
-    label: "Prowadź",
+    label: "Prowadzę firmę",
     description: "Obsługuj i rozwijaj firmę",
     icon: BriefcaseBusiness,
   },
@@ -474,18 +472,11 @@ export function Home() {
       : view === "team"
         ? () => openTeamMember()
         : () => openPrice();
-  async function changeAccountType(mode: JourneyMode) {
-    if (!data || mode === data.journey.mode) return;
-    const latestConversation = data.conversations
-      .filter((conversation) => conversation.mode === mode)
-      .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
-    await commit((current) => switchJourneyMode(current, mode));
-    setConversationId(latestConversation?.id ?? null);
-    setChatInstance((value) => value + 1);
-  }
-
+  const productData = data
+    ? { ...data, journey: { ...data.journey, mode: "discover" as const } }
+    : undefined;
   const activeAccountType = data
-    ? journeyOptions.find((option) => option.id === data.journey.mode)
+    ? journeyOptions.find((option) => option.id === "discover")
     : undefined;
   const ActiveAccountTypeIcon = activeAccountType?.icon;
 
@@ -503,13 +494,13 @@ export function Home() {
           <BrandMark size={40} />
           <span>
             Smart<b>Fach</b>
-            <small>TWÓJ ASYSTENT W TERENIE</small>
+            <small>TWÓJ ASYSTENT DO DZIAŁANIA</small>
           </span>
         </button>
         {activeAccountType && ActiveAccountTypeIcon && (
           <button className="account-type-summary" onClick={() => navigate("settings")}>
             <ActiveAccountTypeIcon size={18} />
-            <span><small>TYP KONTA</small><strong>{activeAccountType.label}</strong></span>
+            <span><small>TWÓJ KIERUNEK</small><strong>{activeAccountType.label}</strong></span>
             <Settings size={15} />
           </button>
         )}
@@ -539,41 +530,10 @@ export function Home() {
             </button>
           ))}
         </nav>
-        {data?.journey.mode === "operate" && (
-        <><p className="nav-label memory-label">PAMIĘĆ FIRMY</p>
-        <nav aria-label="Pamięć firmy">
-          {navItems.slice(1).map(({ id, label, icon: Icon }) => (
-            <button
-              className={view === id ? "selected" : ""}
-              aria-current={view === id ? "page" : undefined}
-              onClick={() => navigate(id)}
-              key={id}
-            >
-              <Icon size={19} />
-              <span>{label}</span>
-              {id === "quotes" &&
-                !!data?.documents.some((doc) => doc.kind === "quote") && (
-                  <small>
-                    {data.documents.filter((doc) => doc.kind === "quote").length}
-                  </small>
-                )}
-              {id === "reports" &&
-                !!data?.documents.some((doc) => doc.kind === "report") && (
-                  <small>
-                    {data.documents.filter((doc) => doc.kind === "report").length}
-                  </small>
-                )}
-            </button>
-          ))}
-        </nav></>
-        )}
-        {!!data?.conversations.some(
-          (conversation) => conversation.mode === data.journey.mode,
-        ) && (
+        {!!data?.conversations.length && (
           <div className="recent-conversations">
             <p className="nav-label">ROZMOWY</p>
             {data.conversations
-              .filter((conversation) => conversation.mode === data.journey.mode)
               .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
               .map((conversation) => (
                 <button
@@ -603,7 +563,7 @@ export function Home() {
               <Building2 size={19} />
             </span>
             <span>
-              {data?.company.name || "Twoja firma"}
+              {data?.company.name || "Twoje konto"}
               <small>{data ? `Plan ${plans[data.billing.plan].name} · ustawienia i dane` : "Ustawienia i dane"}</small>
             </span>
             <Settings size={17} />
@@ -631,9 +591,7 @@ export function Home() {
             </span>
             {view === "chat" && (
               <>
-                {!!data?.conversations.some(
-                  (conversation) => conversation.mode === data.journey.mode,
-                ) && (
+                {!!data?.conversations.length && (
                   <button
                     className="mobile-conversations"
                     disabled={chatBusy}
@@ -702,7 +660,7 @@ export function Home() {
               <div hidden={view !== "chat"} className="chat-view">
                 <ChatPanel
                   key={chatInstance}
-                  data={data}
+                  data={productData!}
                   conversation={activeConversation}
                   available={available}
                   webSearch={webSearch}
@@ -722,7 +680,7 @@ export function Home() {
                     <div>
                       <p className="eyebrow">
                         {view === "settings"
-                          ? "TWÓJ WARSZTAT"
+                          ? "TWOJE USTAWIENIA"
                           : view === "team"
                             ? "PLAN FIRMA"
                           : "WSZYSTKO NA SWOIM MIEJSCU"}
@@ -739,7 +697,7 @@ export function Home() {
                               ? "Osoby pracujące w firmie, ich stanowiska i miejsca w planie."
                             : view === "catalog"
                               ? "Twoje usługi, materiały i stawki. Bez zgadywania cen."
-                              : "Dane firmy, typ konta, płatność i prywatny eksport."}
+                              : "Twoje preferencje, dane, płatność i prywatny eksport."}
                       </p>
                     </div>
                     {view !== "settings" &&
@@ -1112,19 +1070,20 @@ export function Home() {
                     )}
                   {view === "settings" && (
                     <SettingsPanel
-                      data={data}
+                      data={productData!}
                       available={available}
                       webSearch={webSearch}
                       onSave={async (company) => {
                         await commit((current) => ({ ...current, company }));
                       }}
-                      onChangeAccountType={changeAccountType}
+                      onSaveJourney={async (journey) => {
+                        await commit((current) => ({ ...current, journey }));
+                      }}
                     />
                   )}
                   <p className="module-footnote">
                     <ShieldCheck size={14} />
-                    Dane są przypisane do Twojej organizacji. Zaproszenia i logowanie
-                    pracowników pozostają jeszcze do wdrożenia.
+                    Dane są przypisane do Twojego konta i chronione prywatną sesją.
                   </p>
                 </section>
               )}
@@ -1133,20 +1092,7 @@ export function Home() {
         </main>
       </div>
       <nav className="mobile-navigation" aria-label="Nawigacja telefonu">
-        {data?.journey.mode === "operate"
-          ? navItems.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                className={view === id ? "selected" : ""}
-                aria-current={view === id ? "page" : undefined}
-                onClick={() => navigate(id)}
-              >
-                <Icon size={21} />
-                <span>{label}</span>
-              </button>
-            ))
-          : (
-            <>
+        <>
               <button
                 className={view === "chat" ? "selected" : ""}
                 aria-current={view === "chat" ? "page" : undefined}
@@ -1163,8 +1109,7 @@ export function Home() {
                 <Settings size={21} />
                 <span>Ustawienia</span>
               </button>
-            </>
-          )}
+        </>
       </nav>
       {data && modal?.type === "billing" && (
         <BillingDialog billing={data.billing} onClose={() => setModal(null)} />
@@ -1366,7 +1311,6 @@ export function Home() {
               <ChevronRight size={17} />
             </button>
             {data.conversations
-              .filter((conversation) => conversation.mode === data.journey.mode)
               .toSorted((a, b) => b.updatedAt.localeCompare(a.updatedAt))
               .map((conversation) => (
                 <button

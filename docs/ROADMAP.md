@@ -1,61 +1,47 @@
-# Roadmapa
+# SmartFach — roadmapa
 
-Stan: 2026-09-04. Kod integracji jest przygotowany; płatna alfa wymaga konfiguracji
-usług i przejścia bramek bezpieczeństwa, jakości oraz prawa.
+Stan: 2026-09-06.
 
-## Zrealizowane
+## Teraz — Preview
 
-- Nowoczesne landingi dla trzech sytuacji użytkownika i jedna linia planów
-  Lite 49 zł, Pro 99 zł, Firma 299 zł.
-- Jeden typ konta: Odkryj, Uruchom albo Prowadź. Wybór przy rejestracji, zmiana
-  wyłącznie w Ustawieniach, bez zmiany abonamentu i bez sterowania parametrem URL.
-- Chat-first: tekst, zdjęcie i nagranie, rozmowy w lewym panelu, krótkie akcje,
-  pamięć klientów, szkice wycen i protokołów.
-- Klienci, cennik/CSV, wyceny z deterministycznym obliczeniem, protokoły, historia,
-  PDF i lista zespołu bez fikcyjnych loginów.
-- Supabase Auth, profil, organizacja, członkostwo, prywatny workspace JSONB, RLS,
-  kontrola rewizji i migracja tworząca puste konto bez przykładowych danych.
-- Stripe Checkout z kartą i 3-dniową próbą, Customer Portal, synchronizacja planu
-  oraz idempotentne webhooki.
-- Panel jednego administratora: prawdziwe konta, triale, aktywne subskrypcje,
-  podpięcie metody płatności i koszt OpenRouter. Rozmowy są dopiero w profilu
-  użytkownika; otwarcie zapisuje audyt.
-- Stary lokalny profil, rozmowy i plik danych zostały usunięte z runtime.
+- Jeden landing pod pierwszą sprzedawalną usługę i klienta.
+- Plany Lite/Pro, uproszczona rejestracja i Stripe Sandbox.
+- Profil startowy z preferencjami i ograniczeniami.
+- Jeden asystent z tekstem, zdjęciem, nagraniem i historią.
+- Zaktualizowane instrukcje AI oraz trwałe ustawienia użytkownika.
+- Panel administratora, koszt OpenRouter, statusy kont i płatności.
+- Testy statyczne, automatyczne i pełny przebieg na stałym Preview.
 
-## Następny krok — uruchomienie środowiska testowego
+## Następny eksperyment
 
-1. Utworzyć projekt Supabase w regionie UE i zastosować migrację.
-2. Utworzyć produkty oraz miesięczne ceny Stripe w trybie testowym.
-3. Uzupełnić sekrety Preview w Vercelu, skonfigurować adresy Auth i webhook Stripe.
-4. Założyć zwykłe konto przez formularz, ustawić jego UUID jako jedynego admina.
-5. Przejść pełny scenariusz: rejestracja → karta testowa → trial → aplikacja →
-   anulowanie/zmiana planu → webhook → panel.
-6. Uruchomić negatywny test dwóch organizacji i sprawdzić brak dostępu krzyżowego.
+1. Sprawdzić rejestrację, trial, aktywację, anulowanie i ponowne logowanie.
+2. Przetestować 10–20 realnych scenariuszy użytkowników o różnych ograniczeniach.
+3. Uruchomić 3–5 kreacji reklamowych prowadzących do jednego landingu.
+4. Mierzyć profil → rekomendacja → oferta → wykonane działanie → powrót z wynikiem.
+5. Przeprowadzić rozmowy z osobami, które kupiły, porzuciły Checkout i anulowały.
+6. Po 30–50 płatnych próbach zdecydować: zawężać segment, rozwijać czy wrócić do
+   mocniejszego workflow branżowego.
 
-Instrukcja: `docs/SETUP_SUPABASE_STRIPE.md`.
+## Dopiero po sygnale popytu
 
-## Bramka przed pierwszym realnym użytkownikiem
+- trwałe karty: rekomendowana usługa, oferta, eksperyment i wynik;
+- tygodniowy rytm działań i widoczny postęp;
+- szablony wiadomości dopasowane do wybranego kanału;
+- lepsza pamięć zatwierdzonych założeń, bez wysyłania całej historii do modelu;
+- transakcyjna księga limitów i prawdziwe zwiększenie użycia;
+- analityka lejka od reklamy do pierwszego działania i powrotu.
 
-- Backup Supabase i sprawdzona próba odtworzenia.
-- Retencja danych, eksport/usunięcie konta i kontrola załączników.
-- MFA lub równoważna ochrona konta administratora oraz przegląd audytów.
-- Monitoring błędów webhooków, płatności i kosztu AI; limity wydatków dostawcy.
-- Produkcyjna konfiguracja e-maili oraz przypomnienie przed pierwszą opłatą.
-- Testy fizycznego telefonu: Facebook browser, mikrofon, zdjęcie, PDF, słaby zasięg.
-- Przegląd regulaminu, prywatności, VAT/cen brutto-netto i dokumentów sprzedaży.
-- Informacja przed rejestracją o analizie pełnej treści rozmów przez właściciela.
+## Bramka Live
 
-## Następnie
-
-- Transakcyjna księga użycia i jednorazowe zwiększenia limitu; dopiero wtedy realny
-  przycisk zakupu dodatkowego limitu.
-- Zaproszenia członków, osobne loginy i uprawnienia planu Firma.
-- Trwałe karty wyników Odkryj i Uruchom oraz świadome przekazywanie zatwierdzonych
-  danych do kontekstu firmy.
-- Storage załączników, import XLSX i kontrolowana wysyłka dokumentów.
-- Ewaluacja modeli na realnych zadaniach i koszt jednego ukończonego zadania.
+- osobne Supabase i Stripe dla Preview i Live;
+- produkcyjny SMTP, webhooki, monitoring, backup i odtworzenie;
+- fizyczne testy telefonu i przeglądarki Facebooka;
+- prawny przegląd regulaminu, prywatności, reklam i dostępu administracyjnego;
+- potwierdzona ekonomia trialu oraz limitów;
+- brak błędów krytycznych w izolacji kont, płatnościach i usuwaniu danych.
 
 ## Parking Lot
 
-Magazyn, księgowość, rozbudowany CRM i kalendarz, GPS, duży RAG, katalog wszystkich
-urządzeń, pełna diagnostyka, wiele branż naraz i generyczny generator biznesu.
+Plan Firma, pracownicy, HVAC, klienci firmy, cennik, wyceny, protokoły, CRM,
+magazyn, księgowość, kalendarz, GPS, duży RAG, marketplace, gotowe leady i
+rozbudowana automatyzacja wieloagentowa.

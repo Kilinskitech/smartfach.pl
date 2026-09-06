@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { MarketingHome } from "@/components/marketing";
 
 export const metadata: Metadata = {
-  title: "SmartFach — asystent AI od pomysłu po prowadzenie firmy",
+  title: "SmartFach — od Twoich warunków do pierwszego klienta",
   description:
-    "Ustal cel 10 000 zł miesięcznie, wybieraj kolejne działania, zdobywaj klientów i prowadź firmę z jednym asystentem AI.",
+    "Wybierz zdalny lub lokalny sposób pracy, zbuduj sprzedawalną usługę i zdobywaj klientów z osobistym asystentem AI.",
   alternates: { canonical: "/" },
 };
 

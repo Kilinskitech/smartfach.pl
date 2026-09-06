@@ -175,6 +175,7 @@ export const pendingDocumentSchema = z
   })
   .refine((value) => Boolean(value.quote) !== Boolean(value.report));
 export const journeyModeSchema = z.enum(["discover", "launch", "operate"]);
+export const workStyleSchema = z.enum(["remote", "local", "hybrid", "open"]);
 export const conversationSchema = z.object({
   id,
   title: name,
@@ -187,6 +188,10 @@ export const journeySchema = z.object({
   mode: journeyModeSchema,
   focus: z.string().max(160),
   goal: z.string().max(500),
+  workStyle: workStyleSchema.default("open"),
+  weeklyHours: z.string().max(80).default(""),
+  experience: z.string().max(1200).default(""),
+  constraints: z.string().max(1200).default(""),
 });
 export const workspaceSchema = z
   .object({
@@ -198,7 +203,15 @@ export const workspaceSchema = z
     team: z.array(teamMemberSchema).max(50).default([]),
     documents: z.array(documentSchema).max(500),
     conversations: z.array(conversationSchema).max(30),
-    journey: journeySchema.default({ mode: "operate", focus: "", goal: "" }),
+    journey: journeySchema.default({
+      mode: "operate",
+      focus: "",
+      goal: "",
+      workStyle: "open",
+      weeklyHours: "",
+      experience: "",
+      constraints: "",
+    }),
     billing: billingSchema.default({
       plan: "lite",
       usedCredits: 0,
@@ -247,6 +260,7 @@ export type AiUsage = z.infer<typeof aiUsageSchema>;
 export type WebSource = NonNullable<ChatMessage["sources"]>[number];
 export type Workspace = z.infer<typeof workspaceSchema>;
 export type JourneyMode = z.infer<typeof journeyModeSchema>;
+export type WorkStyle = z.infer<typeof workStyleSchema>;
 export type { Billing };
 export const emptyWorkspace: Workspace = {
   version: 1,
@@ -257,7 +271,15 @@ export const emptyWorkspace: Workspace = {
   team: [],
   documents: [],
   conversations: [],
-  journey: { mode: "operate", focus: "", goal: "" },
+  journey: {
+    mode: "operate",
+    focus: "",
+    goal: "",
+    workStyle: "open",
+    weeklyHours: "",
+    experience: "",
+    constraints: "",
+  },
   billing: {
     plan: "lite",
     usedCredits: 0,

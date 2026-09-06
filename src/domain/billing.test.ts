@@ -51,15 +51,15 @@ describe("kredyty SmartFach", () => {
     expect(isPlanAvailableForSalesEntry("discover", "firma")).toBe(false);
   });
 
-  it("pokazuje Pro i Firma przy pomyśle lub działającej firmie", () => {
-    expect(plansForSalesEntry("operate")).toEqual(["pro", "firma"]);
-    expect(isPlanAvailableForSalesEntry("operate", "lite")).toBe(false);
+  it("nie sprzedaje publicznie planu Firma", () => {
+    expect(plansForSalesEntry("operate")).toEqual(["lite", "pro"]);
+    expect(isPlanAvailableForSalesEntry("operate", "firma")).toBe(false);
   });
 
   it("bezpiecznie mapuje stare typy konta i niedostępny plan na Pro", () => {
     expect(salesEntryForAccountType("launch")).toBe("operate");
     expect(normalizePlanForSalesEntry("discover", "firma")).toBe("pro");
-    expect(normalizePlanForSalesEntry("operate", "lite")).toBe("pro");
+    expect(normalizePlanForSalesEntry("operate", "firma")).toBe("pro");
   });
 
   it("zatrzymuje odnowienie trialu do potwierdzenia e-maila", () => {

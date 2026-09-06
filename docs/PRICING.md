@@ -1,132 +1,47 @@
-# Ceny — hipotezy startowe
+# SmartFach — ceny i limity
 
-Stan: 2026-09-05. Nie traktować jako opublikowanej oferty handlowej.
+Stan: 2026-09-06. Ceny są hipotezą do walidacji.
 
-| Plan                    | Cena miesięczna | Kierunek wartości                         |
-| ----------------------- | --------------- | ----------------------------------------- |
-| Lite                    | 49 zł           | Jeden fachowiec, niższe limity AI         |
-| Pro                     | 99 zł           | Jeden fachowiec, wyższe limity AI         |
-| Firma                   | 299 zł          | Wspólne dane, członkowie i kontrola firmy |
-| Dodatkowy członek Firma | 49,99 zł        | Rozbudowa zespołu                         |
+| Plan | Cena miesięczna | Dla kogo |
+| --- | ---: | --- |
+| Lite | 49 zł | Spokojny start i podstawowy zakres użycia |
+| Pro | 99 zł | Regularna praca nad ofertą, sprzedażą i przychodem |
 
-Hipoteza liczby miejsc Firma: właściciel + 3 pracowników. To przykład z pierwotnej
-instrukcji — wymaga ostatecznego potwierdzenia przed konfiguracją rozliczeń.
+Plan Firma 299 zł i dodatkowe miejsca 49,99 zł nie są częścią publicznej oferty.
+Pozostają kompatybilne technicznie dla wcześniejszych danych, ale nie pojawiają się
+na landingach, w cenniku ani rejestracji.
 
-## Okres próbny — wdrożony w kodzie, czeka na konfigurację Stripe
+## Próba
 
-- 3 pełne dni bez opłat, liczone po stronie systemu płatności;
-- metoda płatności jest wymagana w Stripe Checkout przed rozpoczęciem próby;
-- przed potwierdzeniem użytkownik widzi: `0 zł dzisiaj`, dokładną datę końca próby,
-  miesięczną cenę wybranego planu i jasną informację o możliwości anulowania;
-- bez anulowania przed końcem próby system podejmuje pierwszą opłatę i rozpoczyna
-  miesięczne odnowienia;
-- anulowanie podczas próby pozostawia dostęp do jej końca i zapobiega pierwszej opłacie;
-- jedna próba przypada na uprawnione konto lub organizację; SmartFach nie przechowuje
-  pełnych danych karty ani CVC;
-- wymagane są wiadomość startowa, łatwy dostęp do anulowania oraz przypomnienie
-  przed pierwszą opłatą.
+- 3 pełne dni, karta wymagana;
+- 0 zł przy rozpoczęciu;
+- po próbie miesięczne odnowienie wybranego planu;
+- anulowanie przed końcem zapobiega pierwszej opłacie;
+- Checkout pokazuje dokładną datę obciążenia i cenę po próbie;
+- błędny lub niepotwierdzony adres nie może zakończyć się automatycznym obciążeniem.
 
-Trzy dni są hipotezą biznesową o wysokim ryzyku: fachowiec może nie mieć w tym czasie
-odpowiedniej wizyty i nie osiągnąć pierwszej wartości. Mierzymy rozpoczęcie checkoutu,
-podpięcie karty, pierwszą wycenę/protokół, rezygnację w próbie i trial → paid.
-Pierwszym wariantem porównawczym jest 7 dni z kartą, a nie bezterminowy darmowy plan.
+Trzy dni są hipotezą. Porównaniem jest 7 dni z kartą, jeśli dane pokażą, że
+użytkownicy nie zdążają uzyskać wartości.
 
-Odkryj, Uruchom i Prowadź są wewnętrznymi typami konta, nie osobnymi planami.
-Publiczna rejestracja pokazuje dwie sytuacje: „Buduję od zera” oraz „Mam pomysł
-lub firmę”. Zmiana kontekstu nie wymaga dodatkowego zakupu.
+## Różnica Lite i Pro
 
-Plan jest przypisany do konta lub organizacji. Zmiana typu konta w Ustawieniach:
+Na obecnym etapie plany różnią się głównie miesięcznym zakresem użycia. Nie
+twierdzimy, że Pro ma „lepsze” lub dokładniejsze AI. Dokładne limity należy ustalić
+na podstawie kosztu jednej skutecznej sesji, a nie samej liczby wiadomości.
 
-- nie tworzy dodatkowej płatności;
-- nie zmienia ceny ani daty odnowienia;
-- nie resetuje ani nie zwiększa miesięcznego limitu;
-- nie usuwa zatwierdzonych informacji, kwot, historii ani rozmów;
-- nie rozszerza praw użytkownika do danych organizacji.
+## Zwiększenie użycia
 
-## Prezentacja planów na landingach
+Interfejs codzienny nie pokazuje salda „kredytów”. Po wykorzystaniu planu użytkownik
+może zwiększyć miesięczny zakres albo przejść na Pro. Zasady, cena, ważność i zwroty
+muszą być ustalone przed uruchomieniem zakupu. Każda płatność i każde obciążenie
+limitu wymagają idempotentnej księgi.
 
-Na zapleczu i publicznie pozostają trzy nazwy: Lite, Pro i Firma. „Jednoosobowa”
-oraz „z pracownikami” opisują odbiorcę, a nie kolejne plany. Wejście „Buduję od
-zera” pozwala wybrać Lite/Pro. Wejście „Mam pomysł lub firmę” oraz landing zespołowy
-pozwalają wybrać Pro/Firma. Pro jest wspólnym planem obu punktów startu. Pełny
-cennik nadal przedstawia jedną linię Lite/Pro/Firma, ale prowadzi do poprawnie
-wstępnie wybranej sytuacji.
+## Pomiar
 
-Zmiana sytuacji na ekranie rejestracji natychmiast aktualizuje dwa dostępne plany
-bez nawigowania na inny adres. Niedozwolony wybór zmienia się na Pro i jest również
-odrzucany przez serwer oraz normalizowany przy tworzeniu nowego konta w bazie.
-To hipoteza merchandisingowa do pomiaru, a nie techniczne rozdzielenie produktu.
+Testujemy landing → Checkout, trial → paid, aktywację, działania użytkownika,
+D7/D30, churn, zwroty, chargebacki, koszt AI, ARPU i CAC. Ceny zmieniamy dopiero,
+gdy te dane pokażą problem lub większą gotowość do płacenia.
 
-Na obecnym etapie realne różnice, które można komunikować bez nadmiarowych obietnic:
-
-- Lite: jedna osoba i niższy limit planu, wspólny dla trybów;
-- Pro: jedna osoba i wyższy limit planu, wspólny dla trybów;
-- Firma: właściciel + 3 członków, wspólna przestrzeń danych i limit zespołu;
-- dodatkowy członek Firma: 49,99 zł według niezwalidowanej hipotezy.
-
-Nie przypisuj Pro „dokładniejszego AI” ani osobnych funkcji bez decyzji produktowej
-i implementacji. Funkcji zespołowych nie wolno sprzedawać jako dostępnych, dopóki
-zarządzanie kontami i izolacja danych nie przejdą bramki alfy.
-
-## Limity użycia
-
-Przyjęty kierunek modelu limitów:
-
-- techniczny przelicznik działa w tle i nie jest pokazywany w zwykłym interfejsie;
-- każdy plan zawiera miesięczny limit użycia odpowiedni do planu;
-- zużycie we wszystkich trzech ścieżkach obciąża właściwą pulę uprawnionego
-  konta lub organizacji; szczegółowa granica puli Firma pozostaje otwarta;
-- kredyty dokupione są rejestrowane oddzielnie i zużywane dopiero po wyczerpaniu
-  bieżącej puli miesięcznej;
-- zakup i obciążenie wymagają kluczy idempotencji oraz audytowalnej księgi operacji.
-
-**Aktualna hipoteza, nie zamknięta decyzja:** niewykorzystana część puli zawartej
-w planie wygasa przy odnowieniu i nie kumuluje się. Ważność kredytów dokupionych,
-sposób rozliczenia anulowania i zwroty wymagają osobnej decyzji.
-
-Podstawowy abonament używa Stripe Checkout, serwerowych kluczy idempotencji i
-zweryfikowanych webhooków. Jednorazowego zakupu zwiększeń limitu nie udostępniamy,
-dopóki nie ma transakcyjnej księgi grantów i obciążeń.
-
-### Wewnętrzna hipoteza lokalnego prototypu
-
-| Plan  | Miesięczna pula testowa |
-| ----- | ----------------------- |
-| Lite  | 150 kredytów            |
-| Pro   | 500 kredytów            |
-| Firma | 1600 kredytów           |
-
-Hipotetyczne pakiety pojawiają się wyłącznie po wykorzystaniu planu. Wewnętrznie odpowiadają
-100 jednostkom za 19,99 zł, 300 za 49,99 zł oraz 1000 za 129,99 zł. Przycisk zakupu
-pozostaje celowo nieaktywny. Przelicznik prototypu:
-odpowiedź tekstowa 1, zdjęcie +2, nagranie +4, wykorzystane wyszukiwanie internetowe +2.
-Są to liczby do badania z użytkownikami i porównania z rzeczywistym kosztem dostawcy,
-nie zatwierdzona publiczna oferta. Limit lokalny blokuje następne żądanie po wyczerpaniu,
-ale nie zastępuje przyszłej transakcyjnej księgi serwerowej.
-
-## Otwarte decyzje — nie implementuj opłat na domysłach
-
-- Czy ceny są netto czy brutto, zasady podatkowe i sposób przedstawienia ich klientowi.
-- Zatwierdzenie lub zmiana testowych pul, cen pakietów i przelicznika operacji;
-  pula Firma wspólna czy dodatkowe limity na osobę.
-- Kiedy zaczyna się naliczanie dodatkowego miejsca: zaproszenie czy aktywacja.
-- Przeliczenie opłat w środku miesiąca, usuwanie członka, anulowanie i zaległe płatności.
-- Zwroty, podatki, dokument sprzedaży i sposób rozliczania usług w Polsce.
-- Różnica Lite/Pro poza limitem, jeżeli dane pokażą taką potrzebę.
-- Czy i na jakich zasadach kredyty są zwracane po błędzie lub anulowaniu operacji.
-
-Propozycja, nie decyzja: rozliczać dodatkowe aktywne miejsca, nie same oczekujące
-zaproszenia; odejście członka nie usuwa historii firmy. Wymaga akceptacji foundera.
-
-## Ekonomia i pomiar
-
-Mierz przychód bez podatków należnych, koszty AI/STT, infrastruktury, obsługi
-płatności i wsparcia. Nie utożsamiaj liczby wiadomości z kosztem użycia.
-Zmiana ceny wymaga danych: aktywacja, konwersja, churn, ARPU, CAC, koszt i willingness to pay.
-Firma nie jest pakietem kilku Pro taniej — wspólne zasady i historia muszą dawać dodatkową wartość.
-
-Stripe wymaga osobnego sprawdzenia metod obsługujących automatyczne odnowienia;
-nie zakładaj, że każda metoda płatności jednorazowej obsługuje subskrypcje.
-Kredyt produktu nie jest tokenem modelu ani jednostką pieniężną. Przed publikacją
-trzeba opisać, ile kredytów pobierają typowe operacje i jak zmiana kosztu dostawcy
-wpływa na ten przelicznik.
+Przed sprzedażą Live trzeba zatwierdzić prezentację cen brutto/netto, VAT,
+dokumenty sprzedaży, metody odnawialne i zasady zwrotów dla polskich konsumentów
+oraz przedsiębiorców.

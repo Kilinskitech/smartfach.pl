@@ -7246,3 +7246,302 @@ button.team-card:hover {
     transition: none;
   }
 }
+
+/* SmartFach Builder — jedna obietnica: od własnych warunków do pierwszego klienta. */
+.builder-hero .hero-copy h1 {
+  max-width: 760px;
+}
+.builder-hero .hero-lead {
+  max-width: 680px;
+}
+.start-result-card strong {
+  max-width: 300px;
+}
+.fit-section,
+.action-system,
+.outcomes-section {
+  padding-top: 95px;
+}
+.fit-section .section-intro,
+.action-system .section-intro,
+.outcomes-section .outcomes-copy {
+  max-width: 790px;
+}
+.fit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.fit-grid article {
+  min-height: 245px;
+  padding: 27px;
+  border: 1px solid #dce4de;
+  border-radius: 21px;
+  background: linear-gradient(150deg, #fff 52%, #eff5ee);
+  box-shadow: 0 16px 48px #18372b09;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+.fit-grid article:nth-child(2),
+.fit-grid article:nth-child(4) {
+  background: linear-gradient(150deg, #fff 52%, #fff1e7);
+}
+.fit-grid article:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 24px 58px #18372b13;
+}
+.fit-grid article > span {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 25px;
+  border-radius: 13px;
+  background: #e7f0e6;
+  color: #426653;
+}
+.fit-grid article:nth-child(2n) > span {
+  background: #fff0e4;
+  color: #965f3b;
+}
+.fit-grid small {
+  color: #8a6a52;
+  font-size: 8px;
+  font-weight: 760;
+  letter-spacing: 1.1px;
+}
+.fit-grid h3 {
+  max-width: 460px;
+  margin: 10px 0 9px;
+  color: #213c35;
+  font-size: clamp(20px, 2.4vw, 27px);
+  line-height: 1.18;
+  letter-spacing: -.8px;
+}
+.fit-grid p {
+  margin: 0;
+  color: #65766e;
+  font-size: 11px;
+  line-height: 1.7;
+}
+.action-steps {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 11px;
+}
+.action-steps > div {
+  position: relative;
+  min-height: 150px;
+  padding: 20px;
+  border: 1px solid #dce4de;
+  border-radius: 17px;
+  background: #ffffffd6;
+}
+.action-steps > div > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 27px;
+  border-radius: 10px;
+  background: #e6efe5;
+  color: #4a6957;
+  font-size: 8px;
+  font-weight: 800;
+}
+.action-steps p,
+.action-steps small,
+.action-steps strong {
+  display: block;
+  margin: 0;
+}
+.action-steps small {
+  color: #94613f;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: .9px;
+}
+.action-steps strong {
+  margin-top: 8px;
+  color: #2d473f;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.action-steps > div > svg {
+  position: absolute;
+  right: -15px;
+  top: calc(50% - 8px);
+  z-index: 2;
+  color: #9aa8a0;
+}
+.outcomes-section {
+  display: grid;
+  grid-template-columns: .72fr 1.28fr;
+  align-items: center;
+  gap: clamp(42px, 7vw, 90px);
+  padding: clamp(45px, 6vw, 75px);
+  border-radius: 28px;
+  background: linear-gradient(125deg, #102d36, #173d42);
+  color: white;
+  box-shadow: 0 25px 68px #17372b18;
+}
+.outcomes-copy .marketing-kicker {
+  color: #ffc9a4;
+}
+.outcomes-copy h2 {
+  margin: 0;
+  color: white;
+  font-size: clamp(32px, 4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -1.8px;
+}
+.outcomes-copy > p:not(.marketing-kicker) {
+  margin: 20px 0 24px;
+  color: #c2d0d3;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.outcomes-copy > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #ffc095;
+  font-size: 11px;
+  font-weight: 720;
+}
+.builder-outcome-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.builder-outcome-grid article {
+  min-height: 145px;
+}
+.builder-goal {
+  margin-top: 26px;
+}
+.builder-loop {
+  padding-bottom: 45px;
+}
+.builder-cta .marketing-kicker {
+  position: relative;
+  z-index: 1;
+  margin: 8px 0 12px;
+  color: #ffc9a4;
+}
+
+.start-profile {
+  width: min(100%, 680px);
+  margin: 24px auto 0;
+  display: grid;
+  gap: 12px;
+  text-align: left;
+}
+.start-profile fieldset {
+  margin: 0;
+  padding: 13px;
+  border: 1px solid #dbe4de;
+  border-radius: 13px;
+  background: #ffffffc7;
+}
+.start-profile legend {
+  padding: 0 5px;
+  color: #5c6f66;
+  font-size: 9px;
+  font-weight: 720;
+}
+.start-profile fieldset > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.start-profile fieldset button {
+  min-height: 38px;
+  padding: 8px 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #dce4df;
+  border-radius: 9px;
+  background: white;
+  color: #526970;
+  font-size: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.start-profile fieldset button:hover,
+.start-profile fieldset button.selected {
+  border-color: #e5a67f;
+  background: #fff3e9;
+  color: #744c33;
+}
+.start-profile-submit {
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 11px;
+  background: #173f38;
+  color: white;
+  font-size: 12px;
+  font-weight: 720;
+  cursor: pointer;
+  box-shadow: 0 12px 28px #173f3822;
+}
+.journey-settings-form {
+  margin-top: 22px;
+}
+.journey-settings-form textarea,
+.journey-settings-form select {
+  font-family: inherit;
+}
+
+@media (max-width: 900px) {
+  .action-steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .action-steps > div:nth-child(2) > svg {
+    display: none;
+  }
+  .outcomes-section {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 700px) {
+  .fit-section,
+  .action-system {
+    padding-top: 65px;
+  }
+  .fit-grid,
+  .action-steps,
+  .builder-outcome-grid {
+    grid-template-columns: 1fr;
+  }
+  .fit-grid article {
+    min-height: 0;
+    padding: 22px;
+  }
+  .action-steps > div {
+    min-height: 125px;
+  }
+  .action-steps > div > svg {
+    display: none;
+  }
+  .outcomes-section {
+    width: calc(100% - 20px);
+    padding: 45px 21px;
+    border-radius: 24px;
+  }
+  .start-profile fieldset > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .start-profile fieldset button {
+    min-height: 44px;
+  }
+}
+@media (max-width: 480px) {
+  .start-profile fieldset > div {
+    grid-template-columns: 1fr;
+  }
+}

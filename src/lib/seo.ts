@@ -2,9 +2,6 @@ export const productionOrigin = "https://smartfach.pl";
 
 export const publicPaths = [
   "/",
-  "/odkryj",
-  "/uruchom",
-  "/dla-firm",
   "/cennik",
   "/kontakt",
   "/regulamin",

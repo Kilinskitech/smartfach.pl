@@ -8,7 +8,7 @@ export type SalesEntry = z.infer<typeof salesEntrySchema>;
 
 export const salesEntryPlans = {
   discover: ["lite", "pro"],
-  operate: ["pro", "firma"],
+  operate: ["lite", "pro"],
 } as const satisfies Record<SalesEntry, readonly PlanId[]>;
 
 export function salesEntryForAccountType(accountType: string): SalesEntry {
@@ -57,13 +57,13 @@ export const plans = {
     name: "Lite",
     price: "49 zł",
     monthlyCredits: 150,
-    description: "Dla jednej osoby, która chce zacząć i działać regularnie.",
+    description: "Spokojny start i najważniejsze działania w miesiącu.",
   },
   pro: {
     name: "Pro",
     price: "99 zł",
     monthlyCredits: 500,
-    description: "Dla osoby intensywnie rozwijającej lub prowadzącej biznes.",
+    description: "Regularne budowanie oferty, sprzedaży i przychodu.",
   },
   firma: {
     name: "Firma",

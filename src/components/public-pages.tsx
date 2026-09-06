@@ -13,10 +13,10 @@ export function ContactPage() {
         <section className="public-info-hero contact-hero">
           <div>
             <p className="marketing-kicker"><Mail size={14} /> KONTAKT</p>
-            <h1>Porozmawiajmy o tym, jak pracujesz.</h1>
+            <h1>Porozmawiajmy o Twoim starcie.</h1>
             <p>
-              Masz pytanie, chcesz przetestować SmartFach albo szukasz planu dla
-              zespołu? Napisz krótko, na jakim etapie jesteś.
+              Masz pytanie, nie wiesz, który plan wybrać albo chcesz sprawdzić,
+              czy SmartFach pasuje do Twojej sytuacji? Napisz krótko.
             </p>
           </div>
           <aside className="contact-card">
@@ -38,8 +38,8 @@ export function ContactPage() {
             <p className="marketing-kicker">NAPISZ DO NAS</p>
             <h2>Jedna wiadomość wystarczy.</h2>
             <p>
-              Im konkretniej opiszesz swoją firmę lub pomysł, tym konkretniej
-              odpowiemy. Zwykle wystarczy branża, liczba osób i największy problem.
+              Napisz, czy wolisz działać zdalnie czy lokalnie, co już umiesz i
+              czego chcesz uniknąć. Jeśli masz pomysł, możesz dodać go od razu.
             </p>
           </div>
           <ContactForm />
@@ -68,7 +68,7 @@ function LegalPage({
             <p className="marketing-kicker"><ShieldCheck size={14} /> DOKUMENTY I ZASADY</p>
             <h1>{title}</h1>
             <p>{lead}</p>
-            <small>Ostatnia aktualizacja: 4 września 2026 r.</small>
+            <small>Ostatnia aktualizacja: 6 września 2026 r.</small>
           </div>
         </section>
         <article className="legal-document">{children}</article>
@@ -116,16 +116,15 @@ export function TermsPage() {
       <section>
         <h2>2. Zakres usługi</h2>
         <p>
-          SmartFach jest narzędziem wspierającym planowanie oraz codzienną pracę
-          firmy. Konto może obejmować asystenta AI, wyceny, protokoły, kartotekę
-          klientów, cennik i inne funkcje wskazane w wybranym planie. SmartFach
-          nie jest systemem księgowym ani zastępstwem fachowej oceny użytkownika.
+          SmartFach jest narzędziem wspierającym wybór kierunku usługowego,
+          budowanie oferty, planowanie sprzedaży oraz wykonywanie kolejnych
+          działań. Konto może obejmować asystenta AI, historię rozmów, zapisane
+          preferencje i inne funkcje wskazane w wybranym planie.
         </p>
         <p>
-          Plan Firma nie obejmuje jeszcze aktywnych zaproszeń i osobnych loginów
-          pracowników, dopóki funkcja nie zostanie jawnie udostępniona na koncie.
-          Samo utworzenie konta nie uruchamia okresu próbnego — następuje to dopiero
-          po zakończeniu Stripe Checkout i podaniu wymaganej metody płatności.
+          SmartFach nie jest gwarancją przychodu, doradcą finansowym, prawnym ani
+          księgowym. Samo utworzenie konta nie uruchamia okresu próbnego — następuje
+          to dopiero po zakończeniu Stripe Checkout i podaniu wymaganej metody płatności.
         </p>
       </section>
 

@@ -142,6 +142,7 @@ describe("warsztat bez danych przykładowych", () => {
     };
     const migrated = workspaceSchema.parse(legacy);
     expect(migrated.journey.mode).toBe("operate");
+    expect(migrated.journey.workStyle).toBe("open");
     expect(migrated.billing.plan).toBe("lite");
     expect(migrated.team).toEqual([]);
     expect(migrated.conversations[0]?.mode).toBe("operate");
@@ -165,6 +166,10 @@ describe("warsztat bez danych przykładowych", () => {
       mode: "discover",
       focus: "Serwis klimatyzacji",
       goal: "Pierwszych pięciu klientów",
+      workStyle: "local",
+      weeklyHours: "10 godzin",
+      experience: "Prace instalacyjne",
+      constraints: "Bez zimnych telefonów",
     };
     data.billing.usedCredits = 37;
     data.billing.topUpCredits = 100;
@@ -173,6 +178,10 @@ describe("warsztat bez danych przykładowych", () => {
       mode: "launch",
       focus: "Serwis klimatyzacji",
       goal: "Pierwszych pięciu klientów",
+      workStyle: "local",
+      weeklyHours: "10 godzin",
+      experience: "Prace instalacyjne",
+      constraints: "Bez zimnych telefonów",
     });
     expect(switched.billing).toEqual(data.billing);
     expect(switched.clients).toBe(data.clients);

@@ -30,9 +30,7 @@ export function CheckoutPlans({
   const [error, setError] = useState("");
   const hasAccess = currentStatus === "active" || currentStatus === "trialing";
   const planOrder = plansForSalesEntry(accountType);
-  const accountTypeLabel = accountType === "discover"
-    ? "Buduję biznes od zera"
-    : "Mam pomysł lub firmę";
+  const accountTypeLabel = "Buduję własny przychód";
 
   async function openCheckout() {
     setBusy(true);
@@ -80,7 +78,7 @@ export function CheckoutPlans({
 
       {!hasAccess && (
         <>
-          <p className="checkout-entry"><span>TWÓJ PUNKT STARTU</span><strong>{accountTypeLabel}</strong><small>Plan zmieniasz poniżej bez przeładowania strony.</small></p>
+          <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>{accountTypeLabel}</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
           <section className="checkout-plan-grid checkout-plan-grid-two">
             {planOrder.map((id) => (
               <button key={id} type="button" aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>

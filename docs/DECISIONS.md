@@ -735,3 +735,34 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Każda operacja administracyjna tworzy wpis audytowy.
 - Odrzucono bezpośrednie usuwanie rekordów z panelu Supabase: groziłoby ono
   pozostawieniem aktywnej subskrypcji Stripe lub osieroconych danych.
+
+## D037 — Jeden produkt do budowania przychodu z usługi
+
+- Data: 2026-09-06. Status: wdrożone w kodzie na gałęzi Preview; wymaga walidacji
+  z realnymi użytkownikami przed publikacją Live.
+- Decyzja: publiczny SmartFach rezygnuje z trzech etapów Odkryj/Uruchom/Prowadź
+  i segmentu Firma. Pomaga jednej osobie dopasować prostą usługę do jej warunków,
+  zbudować ofertę oraz wykonywać kolejne działania prowadzące do pierwszych klientów.
+- Personalizacja: produkt od początku pyta o pracę zdalną/lokalną, czas, budżet,
+  doświadczenie, umiejętności i rzeczy, których użytkownik nie chce robić. Brak
+  sprecyzowanych umiejętności nie blokuje procesu, ale wymagane kompetencje i nauka
+  muszą być komunikowane uczciwie.
+- Oferta: publicznie dostępne są tylko Lite 49 zł i Pro 99 zł. Plan Firma oraz
+  moduły klientów, cennika, wycen, protokołów i zespołu pozostają w kodzie dla
+  kompatybilności, ale ich rozwój trafia do Parking Lot i nie jest sprzedawany.
+- Komunikacja: główna obietnica dotyczy pierwszej sprzedawalnej usługi i klienta,
+  a 10 000 zł miesięcznego przychodu jest celem do przeliczenia na działania, nie
+  gwarancją wyniku ani terminu. Nie używamy obietnic łatwego/pasywnego dochodu,
+  fikcyjnych dowodów, ukrytych warunków ani agresywnej sprzedaży opartej na oszustwie.
+- Wartość abonamentu: SmartFach nie kończy pracy na wygenerowaniu planu. Pętla to
+  działanie, wynik, aktualizacja oferty lub kanału i kolejne działanie.
+- Powód: jeden problem i jedno wejście powinny zmniejszyć tarcie komunikacyjne,
+  przyspieszyć test reklam oraz pozwolić pozyskać użytkownika przed założeniem firmy.
+- Kompromis: produkt traci część wyróżnika branżowego HVAC i mocniej konkuruje ze
+  zwykłym AI, kursami i mentorami. Jeśli nie pokaże retencji opartej na wykonanych
+  działaniach, wracamy do węższego workflow zamiast budować generycznego coacha.
+- Odrzucono: równoległą sprzedaż osobom bez pomysłu, fachowcom i zespołom; dalsze
+  eksponowanie planu Firma; obietnice gwarantowanego zarobku; usunięcie gotowych
+  modułów firmowych przed wynikiem eksperymentu.
+- Zaktualizowano: MASTER_PLAN, MVP_SPEC, PRODUCT_SPEC, UX_RULES, AI_ARCHITECTURE,
+  PRICING, ROADMAP, landingi, cennik, rejestrację, ustawienia i prompt asystenta.

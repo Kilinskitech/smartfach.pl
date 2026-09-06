@@ -249,6 +249,38 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(JSON.stringify(warning.mock.calls)).not.toContain(raw);
     warning.mockRestore();
   });
+  it("nie myli oferty usługi z formalną wyceną", async () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const result = await callAssistant(
+      {
+        clientId: null,
+        messages: [
+          {
+            role: "user",
+            content: "Pomóż mi zbudować ofertę zdalnej obróbki zdjęć.",
+          },
+        ],
+      },
+      fixtureWorkspace(),
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValue(
+          Response.json(
+            provider("Zacznij od pakietu 10 zdjęć dla małych sklepów internetowych."),
+          ),
+        ),
+    );
+    expect(result).toMatchObject({
+      reply: "Zacznij od pakietu 10 zdjęć dla małych sklepów internetowych.",
+      quote: null,
+      report: null,
+    });
+    expect(warning).toHaveBeenCalledOnce();
+    expect(String(warning.mock.calls[0]?.[0])).toContain(
+      '"expectedDocument":false',
+    );
+    warning.mockRestore();
+  });
   it("odzyskuje ukończoną odpowiedź z JSON-u uciętego później", async () => {
     const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     const result = await callAssistant(

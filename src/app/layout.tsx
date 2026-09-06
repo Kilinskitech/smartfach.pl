@@ -5,9 +5,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(productionOrigin),
-  title: "SmartFach — asystent do budowania i prowadzenia biznesu",
+  title: "SmartFach — asystent do budowania własnego przychodu",
   description:
-    "SmartFach pomaga odkryć kierunek, uruchomić biznes i prowadzić codzienną pracę firmy.",
+    "SmartFach pomaga dopasować usługę do Twoich warunków, przygotować ofertę i przejść do pierwszych działań sprzedażowych.",
   applicationName: "SmartFach",
   robots: isProductionDeployment()
     ? { index: true, follow: true }

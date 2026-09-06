@@ -2,48 +2,31 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { ArrowRight, BriefcaseBusiness, Check, Compass, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { signIn, signUp } from "@/app/auth-actions";
-import {
-  normalizePlanForSalesEntry,
-  plans,
-  plansForSalesEntry,
-  salesEntryForAccountType,
-  type PlanId,
-  type SalesEntry,
-} from "@/domain/billing";
-import type { JourneyMode } from "@/domain/workspace";
+import { plans, type PlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountType = "discover", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PlanId; initialAccountType?: JourneyMode; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
+export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
   const [view, setView] = useState<"register" | "login">(
     checkoutCanceled || confirmationFailed ? "login" : "register",
   );
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
-  const initialEntry = salesEntryForAccountType(initialAccountType);
-  const [accountType, setAccountType] = useState<SalesEntry>(initialEntry);
   const [plan, setPlan] = useState<PlanId>(() =>
-    normalizePlanForSalesEntry(initialEntry, initialPlan),
+    initialPlan === "lite" ? "lite" : "pro",
   );
-  const availablePlans = plansForSalesEntry(accountType);
-
-  function selectAccountType(nextAccountType: SalesEntry) {
-    setAccountType(nextAccountType);
-    setPlan((currentPlan) =>
-      normalizePlanForSalesEntry(nextAccountType, currentPlan),
-    );
-  }
+  const availablePlans = ["lite", "pro"] as const;
 
   return (
     <main className="auth-page">
       <section className="auth-story">
         <Link href="/" className="auth-brand"><BrandMark size={46} /><span>Smart<b>Fach</b></span></Link>
         <div>
-          <p className="eyebrow">JEDEN ASYSTENT · CAŁA DROGA</p>
-          <h1>Od celu 10 000 zł przychodu po codzienną pracę firmy.</h1>
-          <p>SmartFach pomaga zdecydować, co zrobić, przygotować gotowy rezultat i wrócić do pracy bez zaczynania od zera.</p>
+          <p className="eyebrow">NIE KOLEJNY KURS · ASYSTENT DO DZIAŁANIA</p>
+          <h1>Od Twoich warunków do pierwszej sprzedawalnej usługi.</h1>
+          <p>Wolisz pracować zdalnie albo lokalnie? Nie wiesz, co możesz sprzedawać? SmartFach dopasuje kierunek, pomoże zbudować ofertę i wskaże następne działanie.</p>
         </div>
         <ul>
           <li><Check size={17} /> 3 pełne dni bez opłat</li>
@@ -82,23 +65,11 @@ export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountTyp
           </form>
         ) : (
           <form action={registerAction} className="auth-form">
-            <div><p className="eyebrow">ZAŁÓŻ KONTO</p><h2>Zacznij działać</h2><p>Wybierz tylko sytuację, która najlepiej opisuje Cię dzisiaj.</p></div>
-            <label>Imię lub nazwa firmy<input name="displayName" autoComplete="name" required maxLength={160} /></label>
+            <div><p className="eyebrow">ZAŁÓŻ KONTO</p><h2>Zacznij od siebie</h2><p>Nie musisz mieć pomysłu. Po wejściu SmartFach zapyta o sposób pracy, możliwości i rzeczy, których chcesz uniknąć.</p></div>
+            <label>Jak mamy się do Ciebie zwracać?<input name="displayName" autoComplete="name" required maxLength={160} /></label>
             <label>E-mail<input name="email" type="email" autoComplete="email" required /></label>
             <label>Hasło<span className="password-field"><input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" minLength={8} required /><button type="button" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"} onClick={() => setShowPassword((value) => !value)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></span></label>
-            <fieldset className="auth-options auth-entry-options">
-              <legend>Od czego zaczynasz?</legend>
-              <label>
-                <input type="radio" name="accountType" value="discover" checked={accountType === "discover"} onChange={() => selectAccountType("discover")} />
-                <Compass size={18} />
-                <span><strong>Buduję biznes od zera</strong><small>Chcę stworzyć ofertę, zdobyć klientów i pracować nad celem 10 000 zł przychodu miesięcznie.</small></span>
-              </label>
-              <label>
-                <input type="radio" name="accountType" value="operate" checked={accountType === "operate"} onChange={() => selectAccountType("operate")} />
-                <BriefcaseBusiness size={18} />
-                <span><strong>Mam pomysł lub firmę</strong><small>Chcę zdobywać klientów i sprawniej prowadzić codzienną pracę.</small></span>
-              </label>
-            </fieldset>
+            <input type="hidden" name="accountType" value="discover" />
             <fieldset className="auth-options auth-plan-options">
               <legend>Wybierz plan po 3-dniowej próbie</legend>
               {availablePlans.map((planId) => (
@@ -112,7 +83,7 @@ export function AuthForm({ next = "/app", initialPlan = "pro", initialAccountTyp
                 </label>
               ))}
             </fieldset>
-            <p className="auth-selection-note"><Check size={15} /> Zmieniasz sytuację i plan tutaj — bez przeładowania strony.</p>
+            <p className="auth-selection-note"><Check size={15} /> Oba plany prowadzą przez ten sam proces. Pro ma większy miesięczny limit.</p>
             <label className="auth-consent"><input type="checkbox" name="terms" value="accepted" required /><span>Akceptuję <Link href="/regulamin" target="_blank">regulamin</Link> i <Link href="/polityka-prywatnosci" target="_blank">politykę prywatności</Link>.</span></label>
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
             <button className="button button-primary auth-submit" disabled={registerPending}>{registerPending ? "Przekierowanie do Stripe…" : "Utwórz konto i przejdź dalej"} <ArrowRight size={18} /></button>
