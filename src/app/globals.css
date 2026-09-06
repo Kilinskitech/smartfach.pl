@@ -2643,7 +2643,8 @@ svg {
   width: min(1180px, calc(100% - 48px));
   min-height: 82px;
   margin: auto;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   gap: 28px;
 }
@@ -2660,7 +2661,7 @@ svg {
 .marketing-header nav {
   display: flex;
   gap: 25px;
-  margin-left: auto;
+  margin-left: 0;
   color: #52656c;
   font-size: 12px;
 }
@@ -2691,24 +2692,31 @@ svg {
   display: flex;
   align-items: center;
   gap: 7px;
+  justify-self: end;
 }
 .marketing-account-login {
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 0 10px;
-  border-radius: 9px;
-  color: #3f565d;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid #dfe6e0;
+  border-radius: 50%;
+  background: #f7f9f6;
+  color: #29463b;
   font-size: 11px;
   font-weight: 650;
   white-space: nowrap;
 }
 .marketing-account-login:hover {
+  border-color: #cbd8ce;
   background: #eef3ed;
   color: #203b32;
 }
-.marketing-account-login > svg {
+.marketing-account-login > span {
   display: none;
 }
 .marketing-hero {
@@ -5524,6 +5532,7 @@ svg {
 }
 .marketing-header nav {
   gap: 6px;
+  justify-self: center;
 }
 .marketing-header nav a {
   padding: 0 12px;
@@ -6723,6 +6732,7 @@ svg {
 }
 @media (max-width: 950px) {
   .marketing-header {
+    display: flex;
     min-height: 64px;
     padding: 7px 8px 7px 13px;
     gap: 8px;
@@ -6731,6 +6741,8 @@ svg {
     margin-left: auto;
   }
   .marketing-account-login {
+    width: auto;
+    min-width: 0;
     min-height: 44px;
     margin-left: 0;
     padding: 0 13px;
@@ -6740,8 +6752,8 @@ svg {
     color: #29463b;
     box-shadow: inset 0 1px #fff;
   }
-  .marketing-account-login > svg {
-    display: block;
+  .marketing-account-login > span {
+    display: inline;
   }
   .marketing-account-login:hover {
     border-color: #cbd8ce;

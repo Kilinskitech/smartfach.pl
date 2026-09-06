@@ -17,6 +17,7 @@ import {
   ShieldCheck,
   Sparkles,
   Target,
+  UserRound,
   WalletCards,
 } from "lucide-react";
 import { BrandMark } from "./brand";
@@ -126,13 +127,13 @@ export function MarketingHeader() {
         <Link href="/cennik">Cennik</Link>
       </nav>
       <div className="marketing-header-actions">
-        <Link className="marketing-account-login" href="/logowanie">
-          <LogIn size={15} aria-hidden="true" />
-          <span>Zaloguj się</span>
-        </Link>
         <Link className="marketing-login" href="/logowanie?plan=pro">
-          <span>Wypróbuj 3 dni</span>
+          <span>Wypróbuj 3 dni bez opłat</span>
           <ArrowRight size={16} />
+        </Link>
+        <Link className="marketing-account-login" href="/logowanie" aria-label="Zaloguj się" title="Zaloguj się">
+          <UserRound size={18} aria-hidden="true" />
+          <span>Zaloguj się</span>
         </Link>
         <details className="marketing-mobile-menu">
           <summary aria-label="Otwórz menu"><Menu size={21} /></summary>
