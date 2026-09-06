@@ -126,6 +126,9 @@ export function MarketingHeader() {
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
       </nav>
+      <Link className="marketing-account-login" href="/logowanie">
+        Zaloguj się
+      </Link>
       <Link className="marketing-login" href="/logowanie?plan=pro">
         <span className="login-label-full">Zacznij 3 dni bez opłat</span>
         <span className="login-label-short">Zacznij</span>
@@ -139,6 +142,8 @@ export function MarketingHeader() {
           <Link href="/#co-dostajesz">Co dostajesz</Link>
           <Link href="/cennik">Cennik</Link>
           <Link href="/kontakt">Kontakt</Link>
+          <Link className="mobile-menu-login" href="/logowanie">Mam już konto — zaloguj się</Link>
+          <Link className="mobile-menu-start" href="/logowanie?plan=pro">Zacznij 3 dni bez opłat <ArrowRight size={15} /></Link>
         </nav>
       </details>
     </header>
