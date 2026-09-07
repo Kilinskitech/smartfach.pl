@@ -9,11 +9,10 @@
 
 ## Zakres
 
-- Początek: HVAC, klimatyzacja i pompy ciepła. Mobile-first, instalowalna aplikacja webowa.
-- Obecny start: multimodalny asystent jako jedyne główne miejsce pracy; pamięć firmy w tle (D011/D012).
-- Hak: krótkie polecenie → wycena → PDF. Retencja: protokół wizyty i historia klienta.
-- Otwarty asystent należy do MVP; nie wolno zredukować produktu wyłącznie do formularza wyceny.
-- Magazyn, księgowość, kalendarz ekip, GPS, pełna diagnostyka i duży RAG: Parking Lot.
+- Obecny produkt: jedna osoba buduje pierwszą sprzedawalną usługę i przychód.
+- Główne miejsce pracy: multimodalny asystent z trwałymi preferencjami i rozmowami.
+- Pętla retencji: działanie → wynik → korekta oferty lub kanału → kolejne działanie.
+- HVAC, firmy, pracownicy, klienci, cennik, formalne wyceny i protokoły: Parking Lot.
 
 ## Zasady techniczne
 
@@ -31,8 +30,8 @@
 ## Aktualny etap
 
 Runtime korzysta z Supabase Auth, organizacji, RLS i prywatnego workspace JSONB.
-Lokalny profil oraz `.local/workspace.json` zostały usunięte; adapter plikowy pozostał
-wyłącznie w testach regresji. Kod Stripe Checkout, 3-dniowej próby z kartą, Customer
+Lokalny profil, `.local/workspace.json` i adapter plikowy zostały usunięte.
+Kod Stripe Checkout, 3-dniowej próby z kartą, Customer
 Portal i zweryfikowanych webhooków jest przygotowany, ale realne działanie wymaga
 projektów Supabase/Stripe, migracji i sekretów opisanych w `docs/SETUP_SUPABASE_STRIPE.md`.
 Backend Supabase używa nowego klucza `SUPABASE_SECRET_KEY`, nie wycofywanego
@@ -46,7 +45,6 @@ Pełne rozmowy są dostępne wyłącznie jednemu administratorowi platformy wska
 serwerowym UUID, w profilu konkretnego użytkownika; każde otwarcie zapisuje audyt.
 Nie uruchamiaj płatnej alfy przed testem RLS dwóch organizacji, webhooków Stripe,
 odtwarzania kopii i przeglądem prawnym/podatkowym.
-Kalkulator nie obsługuje kosztów własnych, marż, rabatów, zwolnień ani mieszanego VAT.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

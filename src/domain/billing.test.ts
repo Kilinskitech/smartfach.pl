@@ -1,14 +1,18 @@
 import { describe, expect, it } from "vitest";
 import {
   creditAllowance,
+  creditPackById,
   emailConfirmationHoldAction,
   estimateRequestCredits,
   normalizePublicPlan,
   publicPlanIdSchema,
   publicPlanIds,
   remainingCredits,
+  remainingTopUpCredits,
+  rollBillingPeriod,
   settleRequestCredits,
   trialPolicy,
+  monthlyUsagePercentage,
 } from "./billing";
 
 const billing = {
@@ -27,8 +31,10 @@ describe("kredyty SmartFach", () => {
     });
   });
   it("łączy pulę planu z dokupionymi kredytami", () => {
-    expect(creditAllowance(billing)).toBe(170);
-    expect(remainingCredits(billing)).toBe(130);
+    expect(creditAllowance(billing)).toBe(245);
+    expect(remainingCredits(billing)).toBe(205);
+    expect(monthlyUsagePercentage(billing)).toBe(18);
+    expect(remainingTopUpCredits(billing)).toBe(20);
   });
 
   it("nie pokazuje ujemnego salda", () => {
@@ -43,6 +49,45 @@ describe("kredyty SmartFach", () => {
         true,
       ),
     ).toBe(9);
+    expect(settleRequestCredits([], false, 0.053)).toBe(6);
+    expect(settleRequestCredits([], false, 0)).toBe(1);
+  });
+
+  it("ma trzy serwerowo wycenione pakiety dodatkowego limitu", () => {
+    expect(creditPackById("mini")).toMatchObject({
+      credits: 150,
+      unitAmountGrosze: 1_999,
+    });
+    expect(creditPackById("max")).toMatchObject({
+      credits: 1_100,
+      unitAmountGrosze: 12_999,
+    });
+  });
+
+  it("zużywa dodatkowy limit dopiero po miesięcznym", () => {
+    expect(
+      remainingTopUpCredits({
+        ...billing,
+        usedCredits: 230,
+      }),
+    ).toBe(15);
+    expect(
+      monthlyUsagePercentage({ ...billing, usedCredits: 999 }),
+    ).toBe(100);
+  });
+
+  it("odnawia miesięczny limit bez przywracania zużytego zwiększenia", () => {
+    expect(
+      rollBillingPeriod(
+        { ...billing, usedCredits: 230 },
+        "2026-10-01T00:00:00.000Z",
+      ),
+    ).toEqual({
+      ...billing,
+      usedCredits: 0,
+      topUpCredits: 15,
+      periodStartedAt: "2026-10-01T00:00:00.000Z",
+    });
   });
 
   it("sprzedaje publicznie wyłącznie Lite i Pro", () => {

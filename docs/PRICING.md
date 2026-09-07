@@ -1,6 +1,6 @@
 # SmartFach — ceny i limity
 
-Stan: 2026-09-06. Ceny są hipotezą do walidacji.
+Stan: 2026-09-07. Ceny są hipotezą do walidacji.
 
 | Plan | Cena miesięczna | Dla kogo |
 | --- | ---: | --- |
@@ -33,9 +33,33 @@ na podstawie kosztu jednej skutecznej sesji, a nie samej liczby wiadomości.
 ## Zwiększenie użycia
 
 Interfejs codzienny nie pokazuje salda „kredytów”. Po wykorzystaniu planu użytkownik
-może zwiększyć miesięczny zakres albo przejść na Pro. Zasady, cena, ważność i zwroty
-muszą być ustalone przed uruchomieniem zakupu. Każda płatność i każde obciążenie
-limitu wymagają idempotentnej księgi.
+widzi procent miesięcznego limitu i może zwiększyć zakres albo przejść na Pro.
+Jednorazowe zwiększenia nie zmieniają abonamentu i pozostają do wykorzystania:
+
+| Zwiększenie | Cena brutto — hipoteza | Wewnętrzny budżet kosztu AI |
+| --- | ---: | ---: |
+| Małe | 19,99 zł | 1,50 USD |
+| Większe | 49,99 zł | 4,00 USD |
+| Intensywne | 129,99 zł | 11,00 USD |
+
+W runtime jedna wewnętrzna jednostka odpowiada jednemu centowi zmierzonego kosztu
+OpenRouter. Użytkownik nie widzi jednostek ani dolarów, ponieważ koszt jednego
+zadania zależy od modelu, długości, obrazu, głosu i wyszukiwania. Gdy dostawca nie
+zwróci kosztu, działa zachowawcza wycena zastępcza. Płatności i obciążenia limitu
+mają osobne klucze idempotencji.
+
+## Budżet kosztu AI
+
+- Lite: 2,25 USD na okres, około 8,36 zł przy kursie 3,7145 zł/USD;
+- Pro: 5,50 USD na okres, około 20,43 zł przy tym samym kursie;
+- cel początkowy: koszt AI około 15–25% ceny brutto abonamentu;
+- alarm: 30%; powyżej tego progu trzeba zmienić model, limit lub cenę.
+
+Budżet 10 USD w Lite i 20 USD w Pro został odrzucony. Przy cenach brutto, VAT 23%,
+prowizji Stripe 1,5% + 1 zł i kursie NBP z 2026-09-04 pozostawiałby około 0,96 zł
+oraz 3,71 zł przed hostingiem, wsparciem, zwrotami i podatkiem dochodowym. Również
+sprzedanie za 19,99 zł limitu kosztującego 12 zł jest zbyt ciasne: po VAT i Stripe
+pozostałoby około 2,95 zł przed innymi kosztami.
 
 ## Pomiar
 

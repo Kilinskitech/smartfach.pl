@@ -1,8 +1,6 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import {
   callAssistant,
-  inferClientFromConversation,
-  inferClientFromText,
   aiConfigured,
   publicAiConfiguration,
 } from "./assistant-service";
@@ -28,55 +26,6 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
-  it("rozpoznaje jednoznaczne nazwisko, ale nie zgaduje przy dwóch osobach", () => {
-    const data = fixtureWorkspace();
-    expect(inferClientFromText("Co robiliśmy u Żółć?", data)?.id).toBe(
-      fixtureClient.id,
-    );
-    data.clients.push({
-      ...fixtureClient,
-      id: "second-client",
-      name: "Anna Żółć",
-    });
-    expect(inferClientFromText("Co robiliśmy u Żółć?", data)).toBeUndefined();
-    expect(inferClientFromText("Co robiliśmy u Łukasza Żółć?", data)?.id).toBe(
-      fixtureClient.id,
-    );
-    expect(
-      inferClientFromText("Napisz wiadomość do klienta", fixtureWorkspace()),
-    ).toBeUndefined();
-  });
-  it("pamięta klienta z wcześniejszej wiadomości w tej samej rozmowie", () => {
-    const data = fixtureWorkspace();
-    expect(
-      inferClientFromConversation(
-        [
-          { role: "user", content: "Sprawdź historię Łukasza Żółć." },
-          { role: "assistant", content: "Znalazłem klienta." },
-          { role: "user", content: "A co robiliśmy u niego ostatnio?" },
-        ],
-        data,
-      )?.id,
-    ).toBe(fixtureClient.id);
-  });
-  it("nie wraca do starego klienta po nowej, niejednoznacznej wzmiance", () => {
-    const data = fixtureWorkspace();
-    data.clients.push({
-      ...fixtureClient,
-      id: "second-client",
-      name: "Anna Żółć",
-    });
-    expect(
-      inferClientFromConversation(
-        [
-          { role: "user", content: "Sprawdź historię Łukasza Żółć." },
-          { role: "assistant", content: "Znalazłem klienta." },
-          { role: "user", content: "A teraz przygotuj protokół dla Żółć." },
-        ],
-        data,
-      ),
-    ).toBeUndefined();
-  });
   it("wymaga świadomego włączenia, klucza i modelu", async () => {
     vi.stubEnv("SMARTFACH_ENABLE_AI", "false");
     const fetcher = vi.fn();
@@ -311,10 +260,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     });
     warning.mockRestore();
   });
-  it("nie zamienia błędnego tekstu w wycenę ani protokół", async () => {
+  it("nie tworzy ukrytej karty wyceny z odpowiedzi tekstowej", async () => {
     const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
-    await expect(
-      callAssistant(
+    const result = await callAssistant(
         {
           clientId: null,
           messages: [
@@ -325,9 +273,39 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
         vi
           .fn<typeof fetch>()
           .mockResolvedValue(Response.json(provider("Gotowa wycena: 999 zł"))),
-      ),
-    ).rejects.toThrow("tekstem zamiast poprawnego szkicu");
+      );
+    expect(result).toMatchObject({
+      reply: "Gotowa wycena: 999 zł",
+      quote: null,
+      report: null,
+    });
     warning.mockRestore();
+  });
+  it("odrzuca dawną kartę dokumentu i zachowuje widoczną odpowiedź", async () => {
+    const result = await callAssistant(
+      input,
+      fixtureWorkspace(),
+      vi.fn<typeof fetch>().mockResolvedValue(
+        Response.json(
+          provider(
+            JSON.stringify({
+              reply: "Najpierw ustal zakres i koszt wykonania usługi.",
+              quote: {
+                clientName: "Test",
+                subject: "Stary dokument",
+                items: [],
+              },
+              report: null,
+            }),
+          ),
+        ),
+      ),
+    );
+    expect(result).toMatchObject({
+      reply: "Najpierw ustal zakres i koszt wykonania usługi.",
+      quote: null,
+      report: null,
+    });
   });
   it("pozwala jawnie wyłączyć dodatkowy koszt wyszukiwania", async () => {
     vi.stubEnv("OPENROUTER_WEB_SEARCH", "false");
@@ -374,7 +352,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       input_audio: { data: "ZWZnaA==", format: "webm" },
     });
   });
-  it("dołącza historię tylko dla jednoznacznie wspomnianego klienta", async () => {
+  it("nie wysyła dawnych danych firmowych do modelu", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
       .mockResolvedValue(Response.json(provider()));
@@ -391,9 +369,10 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       fetcher,
     );
     const body = String(fetcher.mock.calls[0]?.[1]?.body);
-    expect(body).toContain("Przegląd i wymiana części");
+    expect(body).not.toContain("Przegląd i wymiana części");
+    expect(body).not.toContain(fixtureClient.name);
   });
-  it("odnajduje klienta w zapisanej części długiej rozmowy", async () => {
+  it("nie dołącza dawnych dokumentów nawet przy zapisanej rozmowie", async () => {
     const data = fixtureWorkspace();
     data.conversations.push({
       id: "conversation-memory",
@@ -426,7 +405,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       data,
       fetcher,
     );
-    expect(String(fetcher.mock.calls[0]?.[1]?.body)).toContain(
+    expect(String(fetcher.mock.calls[0]?.[1]?.body)).not.toContain(
       "Przegląd i wymiana części",
     );
   });

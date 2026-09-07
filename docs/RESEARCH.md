@@ -1,6 +1,6 @@
 # Research i otwarte pytania
 
-Stan odniesienia: 2026-09-01. Źródła są punktem wyjścia, nie audytem prawnym
+Stan odniesienia: 2026-09-07. Źródła są punktem wyjścia, nie audytem prawnym
 ani dowodem jakości w polskim HVAC. Parametry zależne od czasu sprawdzamy ponownie
 przy integracji i zakupie. Nie przypisujemy benchmarków, których nie przeprowadzono.
 
@@ -19,6 +19,7 @@ przy integracji i zakupie. Nie przypisujemy benchmarków, których nie przeprowa
 - [Stripe — trial w Checkout](https://docs.stripe.com/payments/checkout/free-trials)
 - [Stripe — Customer Portal](https://docs.stripe.com/customer-management/integrate-customer-portal)
 - [Stripe — webhooki subskrypcji](https://docs.stripe.com/billing/subscriptions/webhooks)
+- [Stripe — ceny w Polsce](https://stripe.com/en-pl/pricing)
 - [OpenAI — structured outputs](https://developers.openai.com/api/docs/guides/structured-outputs)
 - [OpenAI — przetwarzanie danych](https://developers.openai.com/api/docs/guides/your-data)
 - [OpenAI GPT-Transcribe](https://developers.openai.com/api/docs/models/gpt-transcribe)
@@ -29,6 +30,8 @@ przy integracji i zakupie. Nie przypisujemy benchmarków, których nie przeprowa
 - [OpenRouter — Web Search Server Tool](https://openrouter.ai/docs/guides/features/server-tools/web-search)
 - [OpenRouter — Response Healing](https://openrouter.ai/docs/guides/features/plugins/response-healing)
 - [OpenRouter — rozliczanie usage](https://openrouter.ai/docs/cookbook/administration/usage-accounting)
+- [NBP — tabela A kursów średnich](https://nbp.pl/statystyka-i-sprawozdawczosc/kursy/tabela-a/)
+- [Ministerstwo Finansów — stawki VAT](https://podatki.gov.pl/podatki-firmowe/vat/stawki-i-limity)
 - [OpenRouter — atrybucja użytkownika](https://openrouter.ai/docs/cookbook/get-started/enterprise-quickstart)
 - [Gemini 3.5 Flash w OpenRouter](https://openrouter.ai/google/gemini-3.5-flash)
 - [Gemini 3.5 Flash Lite w OpenRouter](https://openrouter.ai/google/gemini-3.5-flash-lite)

@@ -37,13 +37,13 @@ export const plans = {
   lite: {
     name: "Lite",
     price: "49 zł",
-    monthlyCredits: 150,
+    monthlyCredits: 225,
     description: "Spokojny start i najważniejsze działania w miesiącu.",
   },
   pro: {
     name: "Pro",
     price: "99 zł",
-    monthlyCredits: 500,
+    monthlyCredits: 550,
     description: "Regularne budowanie oferty, sprzedaży i przychodu.",
   },
 } as const satisfies Record<
@@ -57,10 +57,32 @@ export const plans = {
 >;
 
 export const creditPacks = [
-  { id: "mini", credits: 100, price: "19,99 zł" },
-  { id: "plus", credits: 300, price: "49,99 zł" },
-  { id: "max", credits: 1_000, price: "129,99 zł" },
+  {
+    id: "mini",
+    credits: 150,
+    price: "19,99 zł",
+    unitAmountGrosze: 1_999,
+  },
+  {
+    id: "plus",
+    credits: 400,
+    price: "49,99 zł",
+    unitAmountGrosze: 4_999,
+  },
+  {
+    id: "max",
+    credits: 1_100,
+    price: "129,99 zł",
+    unitAmountGrosze: 12_999,
+  },
 ] as const;
+
+export const creditPackIdSchema = z.enum(["mini", "plus", "max"]);
+export type CreditPackId = z.infer<typeof creditPackIdSchema>;
+
+export function creditPackById(id: CreditPackId) {
+  return creditPacks.find((pack) => pack.id === id)!;
+}
 
 export const billingSchema = z.object({
   plan: planIdSchema,
@@ -79,6 +101,32 @@ export function remainingCredits(billing: Billing) {
   return Math.max(0, creditAllowance(billing) - billing.usedCredits);
 }
 
+export function monthlyUsagePercentage(billing: Billing) {
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round((billing.usedCredits / plans[billing.plan].monthlyCredits) * 100),
+    ),
+  );
+}
+
+export function remainingTopUpCredits(billing: Billing) {
+  const monthlyCredits = plans[billing.plan].monthlyCredits;
+  const usedTopUpCredits = Math.max(0, billing.usedCredits - monthlyCredits);
+  return Math.max(0, billing.topUpCredits - usedTopUpCredits);
+}
+
+export function rollBillingPeriod(billing: Billing, periodStartedAt: string) {
+  if (billing.periodStartedAt === periodStartedAt) return billing;
+  return {
+    ...billing,
+    usedCredits: 0,
+    topUpCredits: remainingTopUpCredits(billing),
+    periodStartedAt,
+  };
+}
+
 export function estimateRequestCredits(
   attachments: ReadonlyArray<{ kind: "image" | "audio" }> = [],
 ) {
@@ -91,6 +139,13 @@ export function estimateRequestCredits(
 export function settleRequestCredits(
   attachments: ReadonlyArray<{ kind: "image" | "audio" }> = [],
   usedWebSearch = false,
+  measuredCostUsd?: number,
 ) {
+  if (
+    typeof measuredCostUsd === "number" &&
+    Number.isFinite(measuredCostUsd) &&
+    measuredCostUsd >= 0
+  )
+    return Math.max(1, Math.ceil(measuredCostUsd * 100));
   return estimateRequestCredits(attachments) + (usedWebSearch ? 2 : 0);
 }

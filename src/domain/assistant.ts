@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { parseMoneyCents, parseQuantityHundredths } from "./quotes/calculate";
+import type { Billing } from "./billing";
 import {
   newReport,
   type AiUsage,
@@ -72,6 +73,7 @@ export const assistantAttachmentSchema = z
 export type AssistantAttachment = z.infer<typeof assistantAttachmentSchema>;
 export const assistantRequestSchema = z
   .object({
+    idempotencyKey: z.uuid().optional(),
     messages: z
       .array(
         z
@@ -289,6 +291,8 @@ export function materializeAssistant(
 export type AssistantResult = ReturnType<typeof materializeAssistant> & {
   sources: WebSource[];
   creditsUsed: number;
+  billing: Billing;
+  workspaceRevision: number;
   model: string;
   usage?: AiUsage;
 };

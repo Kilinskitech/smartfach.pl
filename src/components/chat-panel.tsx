@@ -49,7 +49,8 @@ type Props = {
   checkConnection: () => void;
   onSaveConversation: (
     conversation: Conversation,
-    creditsUsed?: number,
+    billing: Workspace["billing"],
+    workspaceRevision: number,
   ) => Promise<void>;
   onSettings: () => void;
   onBusy: (busy: boolean) => void;
@@ -300,6 +301,7 @@ export function ChatPanel({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          idempotencyKey: crypto.randomUUID(),
           messages: [
             ...messages
               .slice(-11)
@@ -356,7 +358,11 @@ export function ChatPanel({
           },
         ],
       };
-      await onSaveConversation(updated, result.creditsUsed ?? requestCost);
+      await onSaveConversation(
+        updated,
+        result.billing,
+        result.workspaceRevision,
+      );
       setInput("");
       setAttachments([]);
       requestAnimationFrame(() =>

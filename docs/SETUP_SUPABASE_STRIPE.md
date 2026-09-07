@@ -58,7 +58,8 @@ W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URL
    - `supabase/migrations/202609040001_initial_saas.sql`;
    - `supabase/migrations/202609050001_sales_entry_plans.sql`;
    - `supabase/migrations/202609050002_fix_workspace_write.sql`;
-   - `supabase/migrations/202609060003_single_builder_profile.sql`.
+   - `supabase/migrations/202609060003_single_builder_profile.sql`;
+   - `supabase/migrations/20260907120000_usage_top_ups.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
 5. Z Project Settings → API Keys skopiuj do Vercel Environment Variables dla
@@ -92,6 +93,7 @@ domyślna wysyłka Supabase służy wyłącznie do ograniczonych testów.
    `NEXT_PUBLIC_APP_URL/api/stripe/webhook`.
 6. Subskrybuj zdarzenia:
    - `checkout.session.completed`;
+   - `checkout.session.async_payment_succeeded`;
    - `customer.subscription.created`;
    - `customer.subscription.updated`;
    - `customer.subscription.deleted`.
@@ -134,13 +136,15 @@ model, dostawcę i identyfikator żądania per użytkownik.
 - Zapis profilu i rozmowy po odświeżeniu.
 - Anulowanie oraz zmiana planu w portalu i poprawna synchronizacja webhooka.
 - Ponowne wysłanie tego samego webhooka bez podwójnego skutku.
+- Zakup każdego zwiększenia limitu, anulowanie Checkout i idempotentny powrót.
+- Odnowienie subskrypcji resetuje miesięczne użycie bez przywracania zużytego
+  zwiększenia.
 - Dwa konta w dwóch organizacjach: brak odczytu i zapisu danych drugiego konta.
 - Administrator widzi rozmowę tylko w profilu użytkownika; audyt zapisuje otwarcie.
 - Alerty dla błędów webhooka i przekroczeń kosztu AI.
 
 ## 6. Czego ten etap jeszcze nie uruchamia
 
-- Dokupowania dodatkowego limitu.
 - Kont pracowników i planu Firma.
 - Automatycznego fakturowania zgodnego z polskimi obowiązkami.
 - Produkcyjnej retencji, backupów i bezpiecznego magazynu załączników.

@@ -1,8 +1,10 @@
 import "server-only";
 import type Stripe from "stripe";
 import {
+  billingSchema,
   emailConfirmationHoldAction,
   planIdSchema,
+  rollBillingPeriod,
   type PlanId,
 } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -18,6 +20,13 @@ function periodEnd(subscription: Stripe.Subscription) {
     .map((item) => item.current_period_end)
     .filter((value): value is number => typeof value === "number");
   return ends.length ? timestamp(Math.max(...ends)) : null;
+}
+
+function periodStart(subscription: Stripe.Subscription) {
+  const starts = subscription.items.data
+    .map((item) => item.current_period_start)
+    .filter((value): value is number => typeof value === "number");
+  return starts.length ? timestamp(Math.min(...starts)) : null;
 }
 
 export async function reconcileEmailConfirmationHold(
@@ -111,7 +120,7 @@ export async function syncSubscription(
 
   const { data: existingSubscription } = await admin
     .from("subscriptions")
-    .select("payment_method_attached")
+    .select("payment_method_attached, current_period_started_at")
     .eq("organization_id", organizationId)
     .maybeSingle();
   const customerId =
@@ -123,6 +132,7 @@ export async function syncSubscription(
       checkout?.paymentMethodAttached ||
       existingSubscription?.payment_method_attached,
   );
+  const nextPeriodStart = periodStart(subscription);
   const { error } = await admin.from("subscriptions").upsert(
     {
       organization_id: organizationId,
@@ -133,6 +143,7 @@ export async function syncSubscription(
       stripe_subscription_id: subscription.id,
       trial_started_at: timestamp(subscription.trial_start),
       trial_ends_at: timestamp(subscription.trial_end),
+      current_period_started_at: nextPeriodStart,
       current_period_ends_at: periodEnd(subscription),
       cancel_at_period_end: subscription.cancel_at_period_end,
       payment_method_attached: paymentMethodAttached,
@@ -153,12 +164,26 @@ export async function syncSubscription(
       workspace.billing && typeof workspace.billing === "object"
         ? (workspace.billing as Record<string, unknown>)
         : {};
-    if (billing.plan === plan) return;
+    const periodChanged = Boolean(
+      nextPeriodStart &&
+        String(existingSubscription?.current_period_started_at ?? "") !==
+          nextPeriodStart,
+    );
+    const planChanged = billing.plan !== plan;
+    if (!planChanged && !periodChanged) return;
+    const currentBilling = billingSchema.parse(billing);
+    const rolledBilling =
+      periodChanged && nextPeriodStart
+        ? rollBillingPeriod(currentBilling, nextPeriodStart)
+        : currentBilling;
     const expectedRevision = Number(workspaceRow.revision);
     const nextData = {
       ...workspace,
       revision: expectedRevision,
-      billing: { ...billing, plan },
+      billing: {
+        ...rolledBilling,
+        plan,
+      },
     };
     const { error: workspaceError } = await admin.rpc("save_workspace", {
       target_organization_id: organizationId,

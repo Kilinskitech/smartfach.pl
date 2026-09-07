@@ -19,6 +19,8 @@ w `supabase/migrations` i nie wykonują się automatycznie z wdrożeniem Vercela
 - `stripe_events`: idempotencja webhooków Stripe.
 - `usage_events`: użytkownik, organizacja, rozmowa, model, tokeny, koszt USD oraz
   identyfikator żądania zwrócony przez OpenRouter.
+- `usage_credit_charges`: niezmienna, idempotentna księga naliczeń limitu przez API AI.
+- `usage_top_ups`: idempotentna księga opłaconych jednorazowych zwiększeń limitu.
 - `admin_audit_events`: audyt wejścia administratora do rozmów konkretnego konta.
 
 RLS ogranicza profil do właściciela, a organizację, workspace, subskrypcję i zużycie
@@ -41,10 +43,13 @@ Administrator platformy jest wskazany przez `PLATFORM_ADMIN_USER_ID`, awaryjnie 
 Rozmowa nie ma typu ani trybu. Odpowiedź może zawierać źródła oraz metadane kosztu,
 ale nazwa modelu nie jest pokazywana zwykłemu użytkownikowi.
 
-`billing` w workspace jest pomocniczym widokiem planu i wykorzystania. Źródłem
+`billing` w workspace jest pomocniczym widokiem planu i wykorzystania. Zmieniają go
+wyłącznie serwerowe funkcje rozliczenia AI, zwiększenia limitu i synchronizacji
+nowego okresu Stripe. Źródłem
 prawdy o uprawnieniu do aplikacji jest `subscriptions` synchronizowane przez
-zweryfikowane webhooki Stripe. Użytkownik nie może zmniejszyć zużycia ani zmienić
-planu przez zwykły zapis workspace.
+zweryfikowane webhooki Stripe. Użytkownik nie może zmienić żadnego pola
+rozliczeniowego przez zwykły zapis workspace. Przy odnowieniu okresu zużycie planu
+wraca do zera, ale wykorzystana część dokupionego limitu nie odradza się.
 
 ## Migracja jednego profilu
 
@@ -67,7 +72,7 @@ przez małe, mierzalne encje:
 - `offers`: kolejne wersje zakresu, ceny testowej, CTA i statusu;
 - `experiments`: kanał, działanie, termin, oczekiwany sygnał oraz rzeczywisty wynik;
 - `activity_events`: rozpoczęcie profilu, rekomendacja, oferta, działanie i powrót;
-- `usage_ledger`: rezerwacja, rozliczenie i zwolnienie limitu z kluczem idempotencji.
+- pełna rezerwacja limitu przed kosztownym wywołaniem i rozliczenie różnicy po nim.
 
 Nie tworzymy tych tabel tylko dlatego, że są łatwe do zbudowania. Pierwszeństwo ma
 instrumentacja lejka i potwierdzenie, że użytkownik wraca z wynikiem działania.
@@ -91,5 +96,7 @@ instrumentacja lejka i potwierdzenie, że użytkownik wraca z wynikiem działani
 - rejestracja tworzy dokładnie jeden profil, kontener, członkostwo i subskrypcję;
 - zapis po migracji usuwa stare pola trybu i nie traci rozmów;
 - Checkout Lite/Pro, trial, anulowanie i ponowiony webhook zachowują poprawny stan;
+- zakup zwiększenia, asynchroniczna płatność i ponowiony webhook nie dopisują limitu
+  drugi raz;
 - usunięcie konta koordynuje Stripe i Supabase;
 - eksport, retencja, backup i odtworzenie są sprawdzone przed danymi realnych osób.

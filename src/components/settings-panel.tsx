@@ -4,12 +4,18 @@ import {
   Check,
   CreditCard,
   Download,
+  Gauge,
   ShieldCheck,
   KeyRound,
   LogOut,
   SlidersHorizontal,
   Target,
 } from "lucide-react";
+import {
+  monthlyUsagePercentage,
+  plans,
+  remainingTopUpCredits,
+} from "@/domain/billing";
 import {
   journeySchema,
   type Workspace,
@@ -19,16 +25,21 @@ export function SettingsPanel({
   data,
   available,
   webSearch,
+  onOpenBilling,
   onSaveJourney,
 }: {
   data: Workspace;
   available: boolean | null;
   webSearch: boolean;
+  onOpenBilling: () => void;
   onSaveJourney: (journey: Workspace["journey"]) => Promise<void>;
 }) {
   const [journeyBusy, setJourneyBusy] = useState(false);
   const [journeySaved, setJourneySaved] = useState(false);
   const [journeyError, setJourneyError] = useState("");
+  const usagePercentage = monthlyUsagePercentage(data.billing);
+  const plan = plans[data.billing.plan];
+  const hasExtraLimit = remainingTopUpCredits(data.billing) > 0;
   function exportData() {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -105,6 +116,25 @@ export function SettingsPanel({
         </form>
       </section>
       <div className="settings-side">
+        <section className="settings-card settings-usage-card">
+          <div className="card-heading">
+            <Gauge size={21} />
+            <div>
+              <h3>Plan {plan.name} i wykorzystanie</h3>
+              <p>{usagePercentage}% miesięcznego limitu wykorzystane</p>
+            </div>
+          </div>
+          <div className="settings-usage-value">
+            <strong>{usagePercentage}%</strong>
+            <span>{hasExtraLimit ? "Dodatkowy zapas jest aktywny" : "Limit odnowi się w kolejnym okresie"}</span>
+          </div>
+          <div className="settings-usage-progress" aria-hidden="true">
+            <span style={{ width: `${usagePercentage}%` }} />
+          </div>
+          <button className="button button-primary" onClick={onOpenBilling}>
+            <CreditCard size={17} /> Zwiększ limit
+          </button>
+        </section>
         <section className="settings-card">
           <div className="card-heading">
             <KeyRound size={21} />

@@ -18,6 +18,10 @@ import {
   remainingCredits,
   settleRequestCredits,
 } from "@/domain/billing";
+import {
+  UsageLimitExceeded,
+  chargeWorkspaceUsage,
+} from "@/server/usage-billing";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,10 +34,17 @@ function errorResponse(error: unknown) {
       ? 401
       : error instanceof SubscriptionRequired
         ? 402
+        : error instanceof UsageLimitExceeded
+          ? 402
         : 502;
   return Response.json(
     {
-      code: status === 402 ? "billing_required" : undefined,
+      code:
+        error instanceof UsageLimitExceeded
+          ? "credit_limit"
+          : status === 402
+            ? "billing_required"
+            : undefined,
       error:
         error instanceof Error && error.name !== "TimeoutError"
           ? error.message
@@ -140,13 +151,26 @@ export async function POST(request: Request) {
         });
     }
 
+    const creditsUsed = settleRequestCredits(
+      input.attachments,
+      result.sources.length > 0,
+      result.usage?.costUsd,
+    );
+    const charged = await chargeWorkspaceUsage({
+      organizationId: context.organizationId,
+      userId: context.userId,
+      idempotencyKey: input.idempotencyKey ?? crypto.randomUUID(),
+      credits: creditsUsed,
+      plan: workspace.billing.plan,
+      providerRequestId: result.usage?.providerRequestId,
+    });
+
     return Response.json(
       {
         ...result,
-        creditsUsed: settleRequestCredits(
-          input.attachments,
-          result.sources.length > 0,
-        ),
+        creditsUsed,
+        billing: charged.billing,
+        workspaceRevision: charged.revision,
       },
       { headers: { "Cache-Control": "no-store" } },
     );

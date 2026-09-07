@@ -10,6 +10,7 @@ Stan: 2026-09-06.
 - Jeden asystent z tekstem, zdjęciem, nagraniem i historią.
 - Zaktualizowane instrukcje AI oraz trwałe ustawienia użytkownika.
 - Panel administratora, koszt OpenRouter, statusy kont i płatności.
+- Procent wykorzystania i jednorazowe zwiększenie limitu przez Stripe.
 - Testy statyczne, automatyczne i pełny przebieg na stałym Preview.
 
 ## Następny eksperyment
@@ -58,7 +59,6 @@ Stan: 2026-09-06.
 - tygodniowy rytm działań i widoczny postęp;
 - szablony wiadomości dopasowane do wybranego kanału;
 - lepsza pamięć zatwierdzonych założeń, bez wysyłania całej historii do modelu;
-- transakcyjna księga limitów i prawdziwe zwiększenie użycia;
 - analityka lejka od reklamy do pierwszego działania i powrotu.
 
 ## Bramka Live
@@ -68,6 +68,7 @@ Stan: 2026-09-06.
 - fizyczne testy telefonu i przeglądarki Facebooka;
 - prawny przegląd regulaminu, prywatności, reklam i dostępu administracyjnego;
 - potwierdzona ekonomia trialu oraz limitów;
+- test zakupu każdego zwiększenia i odnowienia miesięcznego limitu;
 - brak błędów krytycznych w izolacji kont, płatnościach i usuwaniu danych.
 
 ## Parking Lot

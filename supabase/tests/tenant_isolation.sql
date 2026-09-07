@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(5);
+select plan(9);
 
 insert into auth.users (
   instance_id,
@@ -81,6 +81,36 @@ select lives_ok(
   'workspace można zapisać z kontrolą wersji'
 );
 
+select lives_ok(
+  $$
+    select *
+    from public.charge_usage_credits(
+      (select id from public.organizations where owner_user_id = '10000000-0000-0000-0000-000000000001'),
+      '10000000-0000-0000-0000-000000000001',
+      '30000000-0000-0000-0000-000000000003',
+      2,
+      225,
+      'test-provider-request'
+    )
+  $$,
+  'serwer nalicza użycie z kluczem idempotencji'
+);
+
+select lives_ok(
+  $$
+    select public.grant_usage_top_up(
+      (select id from public.organizations where owner_user_id = '10000000-0000-0000-0000-000000000001'),
+      '10000000-0000-0000-0000-000000000001',
+      'cs_test_SmartFachTopUp123',
+      'mini',
+      150,
+      1999,
+      'pln'
+    )
+  $$,
+  'serwer dopisuje opłacone zwiększenie limitu'
+);
+
 set local role authenticated;
 select set_config(
   'request.jwt.claims',
@@ -104,6 +134,18 @@ select is(
   (select count(*) from public.subscriptions),
   1::bigint,
   'użytkownik A widzi tylko własną subskrypcję'
+);
+
+select is(
+  (select count(*) from public.usage_credit_charges),
+  1::bigint,
+  'użytkownik A widzi tylko własne naliczenia limitu'
+);
+
+select is(
+  (select count(*) from public.usage_top_ups),
+  1::bigint,
+  'użytkownik A widzi tylko własne zwiększenia limitu'
 );
 
 select is(

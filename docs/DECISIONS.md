@@ -789,3 +789,25 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   i warstwa zgodności. Usuwamy je dopiero po migracji obu środowisk i eksporcie kopii.
 - Zastępuje D023, D030 i D031 w zakresie typów kont oraz D037 w zakresie technicznego
   utrzymywania planu Firma w runtime. Historyczne uzasadnienia pozostają w rejestrze.
+
+## D039 — Limit oparty na koszcie i płatne zwiększenia
+
+- Data: 2026-09-07. Status: wdrożone w kodzie na gałęzi Preview; migracja wspólnego
+  Supabase i pełny test Stripe oczekują na wykonanie.
+- Decyzja: użytkownik widzi procent miesięcznego limitu, a nie tokeny modelu, dolary
+  ani techniczne kredyty. Naliczanie odbywa się po stronie serwera na podstawie
+  zmierzonego kosztu OpenRouter; przeglądarka nie może samodzielnie zwiększać ani
+  zmniejszać użycia.
+- Budżet: Lite otrzymuje wewnętrzny budżet 2,25 USD, Pro 5,50 USD. Odrzucono 10/20 USD,
+  ponieważ przy cenach 49/99 zł brutto zjadałoby to niemal cały przychód po VAT i Stripe.
+- Zwiększenia: 19,99 zł / 1,50 USD, 49,99 zł / 4 USD i 129,99 zł / 11 USD wewnętrznego
+  budżetu. Są jednorazowe, nie zmieniają abonamentu i niewykorzystana część przechodzi
+  na kolejny okres.
+- Bezpieczeństwo: Checkout ma serwerowo ustaloną kwotę i pakiet, a księgi zakupów i
+  użycia mają unikalne klucze idempotencji. Webhook i strona powrotu weryfikują status,
+  właściciela, walutę oraz kwotę przed dopisaniem limitu.
+- Odnowienie: początek okresu pochodzi ze Stripe. Miesięczny limit wraca do zera,
+  lecz wykorzystana część płatnego zwiększenia nie jest przywracana.
+- Kompromis: jedna jednostka odpowiada 0,01 USD i zaokrągla koszt w górę; jest to
+  prostsze i bezpieczniejsze dla alfy niż obietnica konkretnej liczby wiadomości.
+  Progi muszą zostać skalibrowane na 30–50 realnych płatnych kontach.

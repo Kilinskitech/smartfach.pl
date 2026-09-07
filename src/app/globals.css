@@ -2272,6 +2272,45 @@ svg {
   line-height: 1.8;
   color: var(--muted);
 }
+.settings-usage-card {
+  background: linear-gradient(145deg, #f8fbf7, #fffaf6);
+}
+.settings-usage-value {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+.settings-usage-value strong {
+  color: var(--navy);
+  font-size: 32px;
+  letter-spacing: -1px;
+}
+.settings-usage-value span {
+  max-width: 180px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: right;
+}
+.settings-usage-progress {
+  height: 7px;
+  margin-bottom: 17px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #dfe7df;
+}
+.settings-usage-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+.settings-usage-card .button {
+  width: 100%;
+  justify-content: center;
+}
 .config-note {
   font-size: 11px;
   line-height: 2;
@@ -5308,20 +5347,6 @@ svg {
     scroll-behavior: auto !important;
     animation: none !important;
   }
-}
-/* Jawne usuwanie pojedynczego wpisu z potwierdzeniem. */
-.delete-action {
-  margin-top: 22px;
-  padding-top: 16px;
-  border-top: 1px solid #e1e6e5;
-  font-size: 13px;
-  color: #5d6b72;
-}
-.delete-action > div {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 12px;
 }
 .danger-link {
   color: #a43f34 !important;

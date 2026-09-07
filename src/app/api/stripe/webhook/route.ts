@@ -5,6 +5,7 @@ import {
   reconcileEmailConfirmationHold,
   syncSubscription,
 } from "@/server/stripe-subscriptions";
+import { grantUsageTopUpFromSession } from "@/server/stripe-top-ups";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -34,11 +35,16 @@ export async function POST(request: Request) {
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
-      const subscriptionId =
-        typeof session.subscription === "string"
-          ? session.subscription
-          : session.subscription?.id;
-      if (subscriptionId) {
+      if (session.metadata?.purchase_type === "usage_top_up") {
+        if (session.payment_status === "paid")
+          await grantUsageTopUpFromSession(session);
+      } else {
+        const subscriptionId =
+          typeof session.subscription === "string"
+            ? session.subscription
+            : session.subscription?.id;
+        if (!subscriptionId)
+          throw new Error("Checkout abonamentu nie zawiera subskrypcji.");
         const subscription = await stripe.subscriptions.retrieve(subscriptionId);
         const protectedSubscription = await reconcileEmailConfirmationHold(
           subscription,
@@ -51,6 +57,11 @@ export async function POST(request: Request) {
           paymentMethodAttached: true,
         });
       }
+    }
+    if (event.type === "checkout.session.async_payment_succeeded") {
+      const session = event.data.object;
+      if (session.metadata?.purchase_type === "usage_top_up")
+        await grantUsageTopUpFromSession(session);
     }
     if (
       event.type === "customer.subscription.created" ||

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import {
   ChevronRight,
+  Gauge,
   LoaderCircle,
   MessageCircle,
   Plus,
@@ -17,7 +18,7 @@ import { ChatPanel } from "./chat-panel";
 import { Dialog } from "./dialog";
 import { SettingsPanel } from "./settings-panel";
 import { useWorkspace } from "./use-workspace";
-import { plans } from "@/domain/billing";
+import { monthlyUsagePercentage, plans } from "@/domain/billing";
 import type { Conversation } from "@/domain/workspace";
 
 type View = "chat" | "settings";
@@ -88,10 +89,12 @@ export function Home() {
 
   async function saveConversation(
     conversation: Conversation,
-    creditsUsed = 0,
+    billing: NonNullable<typeof data>["billing"],
+    workspaceRevision: number,
   ) {
     await commit((current) => ({
       ...current,
+      revision: workspaceRevision,
       conversations: current.conversations.some(
         (item) => item.id === conversation.id,
       )
@@ -100,8 +103,7 @@ export function Home() {
           )
         : [...current.conversations, conversation],
       billing: {
-        ...current.billing,
-        usedCredits: current.billing.usedCredits + creditsUsed,
+        ...billing,
       },
     }));
     setConversationId(conversation.id);
@@ -226,6 +228,16 @@ export function Home() {
             <h1>{view === "chat" ? "Asystent" : "Ustawienia"}</h1>
           </div>
           <div className="topbar-actions">
+            {data && (
+              <button
+                className="topbar-credits"
+                onClick={() => setModal("billing")}
+                aria-label={`Wykorzystano ${monthlyUsagePercentage(data.billing)}% miesięcznego limitu`}
+              >
+                <Gauge size={16} />
+                <span>{monthlyUsagePercentage(data.billing)}%</span>
+              </button>
+            )}
             <span className="local-badge">
               <span />
               {saving ? "Zapisuję…" : "Zapisano"}
@@ -317,6 +329,7 @@ export function Home() {
                 data={data}
                 available={available}
                 webSearch={webSearch}
+                onOpenBilling={() => setModal("billing")}
                 onSaveJourney={async (journey) => {
                   await commit((current) => ({ ...current, journey }));
                 }}

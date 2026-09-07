@@ -47,7 +47,7 @@ export async function PUT(request: Request) {
       next.billing.plan !== current.billing.plan ||
       next.billing.topUpCredits !== current.billing.topUpCredits ||
       next.billing.periodStartedAt !== current.billing.periodStartedAt ||
-      next.billing.usedCredits < current.billing.usedCredits
+      next.billing.usedCredits !== current.billing.usedCredits
     )
       return Response.json(
         { error: "Pola rozliczeniowe może zmienić wyłącznie system płatności." },
