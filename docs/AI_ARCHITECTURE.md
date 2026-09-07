@@ -30,8 +30,10 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
   żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
 - GPT-5 Nano otrzymuje `max_completion_tokens`, wymagane przez jego trasę Azure;
-  Gemini otrzymuje `max_tokens`. Wspólny parametr wraz z `require_parameters`
-  wcześniej wykluczał GPT-5 Nano i nie może zostać ponownie użyty.
+  Gemini otrzymuje `max_tokens`. Nie wymuszamy `require_parameters`: w połączeniu
+  z ZDR i narzędziem internetowym filtr usuwał wszystkie dostępne trasy GPT-5 Nano.
+  Nadal wymagamy ścisłego JSON Schema w żądaniu i niezależnie walidujemy wynik na
+  serwerze. ZDR oraz blokada dostawców przetwarzających dane pozostają włączone.
 
 ## Kontekst użytkownika
 

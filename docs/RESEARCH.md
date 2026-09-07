@@ -87,7 +87,11 @@ Next.js. Nie aktualizować samych głównych wersji z pominięciem testów zgodn
 ## OpenRouter i multimodalność — 2026-09-01
 
 - OpenRouter ujednolica tekst, obrazy, audio i pliki, ale kompatybilność jest zależna
-  od modelu i endpointu. `require_parameters` ma blokować trasę bez Structured Outputs.
+  od modelu i endpointu. `require_parameters` blokuje trasę, jeśli dostawca nie
+  deklaruje obsługi każdego parametru żądania. W SmartFach nie wymuszamy tego filtra,
+  ponieważ przy ZDR i narzędziu internetowym usuwał wszystkie trasy GPT-5 Nano.
+  Structured Outputs pozostaje preferencją routingu, a wynik przechodzi ścisłą
+  walidację aplikacji.
 - Startowa hipoteza `google/gemini-3.5-flash`: tekst, obraz, audio, PDF, tools i JSON Schema.
   Nie jest wyborem produkcyjnym ani dowodem skuteczności na polskich nagraniach HVAC.
 - OpenRouter deklaruje brak zapisu promptów/odpowiedzi domyślnie, lecz dane przechodzą

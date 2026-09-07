@@ -341,7 +341,6 @@ export async function callAssistant(
             }
           : {}),
         provider: {
-          require_parameters: true,
           data_collection: "deny",
           zdr: process.env.OPENROUTER_REQUIRE_ZDR !== "false",
         },

@@ -90,7 +90,6 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     ]);
     expect(request.max_tool_calls).toBe(1);
     expect(request.provider).toEqual({
-      require_parameters: true,
       data_collection: "deny",
       zdr: true,
     });
