@@ -833,3 +833,25 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Bramka Live: przed publikacją mierzymy poprawność JSON, jakość polskiego,
   konkretność rekomendacji, zdjęcia, wyszukiwanie, opóźnienie i koszt na stałym
   zestawie scenariuszy. Pojedyncza poprawna rozmowa nie zatwierdza modelu.
+
+## D041 — GPT-5 Nano z automatycznym fallbackiem Gemini Flash Latest
+
+- Data: 2026-09-07. Status: wdrożone w kodzie; oczekuje na test Preview.
+- Decyzja: `openai/gpt-5-nano` jest głównym modelem SmartFach, a
+  `~google/gemini-flash-latest` automatycznym fallbackiem obsługiwanym przez tablicę
+  `models` OpenRouter. Wybór jest wersjonowany w kodzie i niewidoczny dla klienta.
+- Format: oba modele korzystają z tego samego ścisłego JSON Schema, minimalnego
+  rozumowania, ukrytego toku rozumowania, `response-healing`, obrazów i narzędzia
+  internetowego. Odpowiedź nadal przechodzi niezależną walidację serwera.
+- Pomiar: zapisujemy model faktycznie zwrócony przez OpenRouter, nie nazwę modelu
+  głównego. Dzięki temu koszt i jakość fallbacku dają się oddzielnie analizować.
+- Koszt internetu: jedno żądanie może wykonać najwyżej jedno wyszukanie i pobrać
+  maksymalnie trzy wyniki. Wyszukiwanie nie jest uruchamiane przy każdej wiadomości.
+- Powód: GPT-5 Nano łączy niski koszt ze Structured Outputs, obrazami oraz kilkoma
+  trasami dostawców. Gemini zabezpiecza błędy i limity bez ponownego kliknięcia przez
+  użytkownika. Qwen wywołał realny błąd 429 i miał tylko jednego dostawcę.
+- Kompromis: alias Gemini może przejść na nowszy i droższy model bez wdrożenia kodu.
+  Ponieważ jest używany tylko awaryjnie, akceptujemy to pod warunkiem alertu kosztu
+  i ponownego testu po zmianie modelu wskazywanego przez alias.
+- Zastępuje D040 wyłącznie w zakresie wyboru modelu; decyzja o pozostawieniu tekstu
+  i zdjęć bez głosu pozostaje aktualna.

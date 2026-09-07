@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import {
+  aiModels,
   callAssistant,
   aiConfigured,
+  fallbackAiModel,
+  primaryAiModel,
   publicAiConfiguration,
 } from "./assistant-service";
 import { fixtureClient, fixtureWorkspace } from "../test/fixtures";
@@ -14,19 +17,23 @@ const payload = {
   quote: null,
   report: null,
 };
-const provider = (text = JSON.stringify(payload), annotations?: unknown[]) => ({
+const provider = (
+  text = JSON.stringify(payload),
+  annotations?: unknown[],
+  model = primaryAiModel,
+) => ({
+  model,
   choices: [{ message: { content: text, refusal: null, annotations } }],
 });
 beforeEach(() => {
   vi.stubEnv("OPENROUTER_API_KEY", "test-key-never-real");
-  vi.stubEnv("OPENROUTER_MODEL", "google/test-model");
   vi.stubEnv("OPENROUTER_REQUIRE_ZDR", "true");
   vi.stubEnv("OPENROUTER_WEB_SEARCH", "true");
   vi.stubEnv("SMARTFACH_ENABLE_AI", "true");
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
-  it("wymaga świadomego włączenia, klucza i modelu", async () => {
+  it("wymaga świadomego włączenia i klucza", async () => {
     vi.stubEnv("SMARTFACH_ENABLE_AI", "false");
     const fetcher = vi.fn();
     expect(aiConfigured()).toBe(false);
@@ -50,7 +57,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       .mockResolvedValue(Response.json(provider()));
     expect(await callAssistant(input, data, fetcher)).toEqual({
       ...payload,
-      model: "google/test-model",
+      model: primaryAiModel,
       sources: [],
     });
     expect(fetcher.mock.calls[0]?.[0]).toBe(
@@ -58,6 +65,8 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     );
     const body = String(fetcher.mock.calls[0]?.[1]?.body);
     const request = JSON.parse(body);
+    expect(request.models).toEqual([...aiModels]);
+    expect(request.model).toBeUndefined();
     expect(request.response_format.json_schema.strict).toBe(true);
     expect(request.max_tokens).toBe(5000);
     expect(request.reasoning).toEqual({ effort: "minimal", exclude: true });
@@ -66,12 +75,14 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       {
         type: "openrouter:web_search",
         parameters: {
+          max_uses: 1,
           max_results: 3,
-          max_total_results: 5,
+          max_total_results: 3,
           search_context_size: "low",
         },
       },
     ]);
+    expect(request.max_tool_calls).toBe(1);
     expect(request.provider).toEqual({
       require_parameters: true,
       data_collection: "deny",
@@ -80,14 +91,16 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");
   });
-  it("używa trybu JSON obsługiwanego przez Qwen3.7 Flash", async () => {
-    vi.stubEnv("OPENROUTER_MODEL", "qwen/qwen3.7-flash");
+  it("zapisuje faktyczny model użyty po automatycznym fallbacku", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockResolvedValue(Response.json(provider()));
-    await callAssistant(input, fixtureWorkspace(), fetcher);
+      .mockResolvedValue(
+        Response.json(provider(JSON.stringify(payload), undefined, "google/gemini-3.8-flash")),
+      );
+    const result = await callAssistant(input, fixtureWorkspace(), fetcher);
     const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
-    expect(request.response_format).toEqual({ type: "json_object" });
+    expect(request.models).toEqual([primaryAiModel, fallbackAiModel]);
+    expect(result.model).toBe("google/gemini-3.8-flash");
   });
   it("zwraca faktyczny koszt i tokeny raportowane przez OpenRouter", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(

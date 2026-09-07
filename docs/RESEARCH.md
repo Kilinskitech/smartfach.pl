@@ -124,3 +124,24 @@ Next.js. Nie aktualizować samych głównych wersji z pominięciem testów zgodn
 - Wniosek lokalnej alfy: domyślny Gemini 3.5 Flash z minimalnym rozumowaniem,
   `response-healing` i większym limitem odpowiedzi. Kolejny benchmark musi objąć
   polski hałas, nagrania HVAC, nazwy urządzeń i serię powtarzanych prób, nie pojedyncze trafienia.
+
+## Tani łańcuch produkcyjny — 2026-09-07
+
+- [GPT-5 Nano w OpenRouter](https://openrouter.ai/openai/gpt-5-nano): 0,05 USD za
+  milion tokenów wejścia i 0,40 USD za milion tokenów wyjścia; tekst, obrazy,
+  narzędzia i ścisły JSON Schema. Kilka tras, w tym Azure EU, daje lepszą odporność
+  niż model dostępny tylko u jednego dostawcy.
+- [Gemini Flash Latest w OpenRouter](https://openrouter.ai/~google/gemini-flash-latest/api):
+  alias zawsze wskazuje najnowszy model rodziny Flash. Jest fallbackiem, a nie
+  modelem używanym w każdym żądaniu, ponieważ jego cena i wskazanie mogą się zmieniać.
+- [Fallback modeli](https://openrouter.ai/docs/guides/routing/model-fallbacks): tablica
+  `models` uruchamia kolejny model po limicie, niedostępności, odmowie lub innym
+  błędzie pierwszego. Opłata dotyczy modelu, który ostatecznie obsłużył odpowiedź.
+- [Wyszukiwanie internetowe](https://openrouter.ai/docs/guides/features/server-tools/web-search):
+  pojedyncze wyszukanie może kosztować więcej niż krótka odpowiedź taniego modelu.
+  Adapter ogranicza je do jednego użycia oraz trzech wyników na odpowiedź.
+- Odrzucono Qwen3.7 Flash jako jedyny model główny. Niska cena nie kompensuje jednej
+  trasy Alibaba i zaobserwowanego błędu 429 przy drugiej wiadomości.
+- Decyzja techniczna nie zastępuje ewaluacji produktu. Przed płatnym ruchem trzeba
+  wykonać ten sam zestaw 15–30 polskich scenariuszy: rozmowa, zdjęcie, research,
+  ścisły JSON, dłuższy kontekst, koszt oraz wymuszone przełączenie na fallback.

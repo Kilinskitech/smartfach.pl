@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { stripeConfigured } from "@/lib/stripe";
 import { supabaseAdminConfigured } from "@/lib/supabase/config";
 import { requirePlatformAdmin } from "@/server/auth";
+import { aiConfigured } from "@/server/assistant-service";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel właściciela — SmartFach", robots: { index: false, follow: false } };
@@ -110,7 +111,7 @@ export default async function Page({
   const snapshot: AdminSnapshot = {
     generatedAt: new Date().toISOString(),
     integrations: {
-      ai: Boolean(process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_MODEL),
+      ai: aiConfigured(),
       webSearch: process.env.OPENROUTER_WEB_SEARCH !== "false",
       auth: true,
       billing: stripeConfigured(),

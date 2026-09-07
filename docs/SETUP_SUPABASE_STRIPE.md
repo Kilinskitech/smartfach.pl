@@ -121,10 +121,12 @@ dopiero po wejściu w profil konkretnego użytkownika, a każde takie otwarcie z
 
 ## 4. OpenRouter
 
-Uzupełnij `OPENROUTER_API_KEY`, wybierz `OPENROUTER_MODEL`, pozostaw
-`OPENROUTER_REQUIRE_ZDR=true` i ustaw `SMARTFACH_ENABLE_AI=true` dopiero wtedy,
-gdy chcesz wykonać płatne wywołania. Pole `usage` odpowiedzi zapisuje koszt, tokeny,
-model, dostawcę i identyfikator żądania per użytkownik.
+Uzupełnij `OPENROUTER_API_KEY`, pozostaw `OPENROUTER_REQUIRE_ZDR=true` i ustaw
+`SMARTFACH_ENABLE_AI=true` dopiero wtedy, gdy chcesz wykonać płatne wywołania.
+Modele są ustalone w kodzie: GPT-5 Nano jako główny oraz Gemini Flash Latest jako
+fallback. Stara zmienna Vercela `OPENROUTER_MODEL` może zostać usunięta i nie wpływa
+już na działanie aplikacji. Pole `usage` odpowiedzi zapisuje koszt, tokeny,
+faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.
 
 ## 5. Test akceptacyjny przed live
 

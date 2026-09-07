@@ -1,6 +1,6 @@
 # SmartFach — architektura AI
 
-Stan: 2026-09-06.
+Stan: 2026-09-07.
 
 ## Zasada
 
@@ -9,18 +9,23 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 
 ## Bieżący adapter
 
-- OpenRouter jest warstwą testowania modeli, nie trwałym zobowiązaniem dostawcy.
-- `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` i `SMARTFACH_ENABLE_AI=true` pozostają
-  wyłącznie po stronie serwera.
+- OpenRouter jest warstwą routingu modeli, nie trwałym zobowiązaniem dostawcy.
+- `OPENROUTER_API_KEY` i `SMARTFACH_ENABLE_AI=true` pozostają wyłącznie po stronie
+  serwera. Wybór modeli jest wersjonowany w kodzie, a nie zmieniany z panelu klienta.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
-- Qwen3.7 Flash korzysta z trybu JSON bez egzekwowania JSON Schema przez dostawcę;
-  każda odpowiedź nadal przechodzi ścisłą walidację Zod po stronie serwera.
+- Główny model to `openai/gpt-5-nano`. Po błędzie, limicie dostawcy albo braku
+  odpowiedzi OpenRouter automatycznie próbuje `~google/gemini-flash-latest`.
+- Oba modele otrzymują ten sam ścisły JSON Schema, minimalny poziom rozumowania,
+  ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
+  dodatkowo przechodzi walidację Zod po stronie serwera.
 - Tekst, do trzech zdjęć i ograniczona historia rozmowy mogą wejść do modelu.
 - Załączniki nie są obecnie trwałą pamięcią; wymaga to osobnego bezpiecznego storage.
-- Wyszukiwanie internetowe może być użyte do aktualnego researchu, a źródła są
-  pokazywane jako linki. Treść stron jest niezaufanym wejściem.
+- Wyszukiwanie internetowe może być użyte do aktualnego researchu maksymalnie raz
+  w jednej odpowiedzi, a źródła są pokazywane jako linki. Treść stron jest
+  niezaufanym wejściem.
 - `usage` z OpenRouter zapisuje koszt USD, tokeny, model, provider i identyfikator
-  żądania, przypisane do autoryzowanego użytkownika.
+  żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
+  użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
 
 ## Kontekst użytkownika
 
@@ -55,6 +60,10 @@ Timeout, błędny JSON, odmowa, ucięta odpowiedź i błąd providera mają zach
 wiadomość użytkownika i dać bezpieczne ponowienie. Jedno żądanie nie może zostać
 rozliczone dwa razy przez retry. Limity procesu są prototypem; płatna wersja wymaga
 atomowego obciążenia i audytowalnej księgi.
+
+Alias `~google/gemini-flash-latest` może w przyszłości wskazać nowszy model bez
+wdrożenia kodu. Jest używany wyłącznie awaryjnie, ale po każdej zmianie wskazania
+trzeba sprawdzić koszt, JSON, zdjęcia, język polski i wymagania prywatności.
 
 ## Ewaluacja
 

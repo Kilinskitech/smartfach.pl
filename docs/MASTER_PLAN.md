@@ -119,10 +119,11 @@ jasne przed płatnością.
 
 ## Technologia i zasady AI
 
-OpenRouter pozostaje bramką do testów modeli, a wybór modelu jest konfiguracją
-serwerową niewidoczną dla klienta. AI rozumie sytuację, prowadzi rozmowę i tworzy
-szkice. Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje
-mogące zmienić dane.
+OpenRouter pozostaje bramką i routerem modeli. Wersjonowana w kodzie kolejność to
+GPT-5 Nano jako model główny oraz Gemini Flash Latest jako awaryjny fallback;
+użytkownik jej nie widzi. AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
+Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje mogące
+zmienić dane.
 
 Nie budujemy rozbudowanego systemu agentowego. Najpierw mierzymy jakość ukończonego
 zadania, czas do wartości, koszt jednej skutecznej sesji i wynik kolejnego działania.

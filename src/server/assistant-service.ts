@@ -7,11 +7,12 @@ import {
 } from "../domain/assistant";
 import type { WebSource, Workspace } from "../domain/workspace";
 
-const configuredModel = () => process.env.OPENROUTER_MODEL?.trim() ?? "";
+export const primaryAiModel = "openai/gpt-5-nano";
+export const fallbackAiModel = "~google/gemini-flash-latest";
+export const aiModels = [primaryAiModel, fallbackAiModel] as const;
 export const aiConfigured = () =>
   process.env.SMARTFACH_ENABLE_AI === "true" &&
-  Boolean(process.env.OPENROUTER_API_KEY?.trim()) &&
-  Boolean(configuredModel());
+  Boolean(process.env.OPENROUTER_API_KEY?.trim());
 export const webSearchEnabled = () =>
   process.env.OPENROUTER_WEB_SEARCH !== "false";
 export function publicAiConfiguration() {
@@ -70,6 +71,7 @@ const providerCitation = z.object({
 
 const providerResponse = z.object({
   id: z.string().max(300).optional(),
+  model: z.string().max(300).optional(),
   provider: z.string().max(200).optional(),
   choices: z
     .array(
@@ -245,7 +247,6 @@ export async function callAssistant(
   userId?: string,
 ) {
   if (!aiConfigured()) throw new Error("AI nie jest jeszcze podłączone.");
-  const model = configuredModel();
   const context = {
     journey: workspace.journey,
   };
@@ -275,7 +276,7 @@ export async function callAssistant(
         "X-OpenRouter-Title": "SmartFach",
       },
       body: JSON.stringify({
-        model,
+        models: [...aiModels],
         ...(userId ? { user: userId } : {}),
         max_tokens: 5000,
         reasoning: {
@@ -301,25 +302,24 @@ export async function callAssistant(
           },
           ...providerMessages,
         ],
-        response_format:
-          model === "qwen/qwen3.7-flash"
-            ? { type: "json_object" }
-            : {
-                type: "json_schema",
-                json_schema: {
-                  name: "smartfach_result",
-                  strict: true,
-                  schema: assistantJsonSchema,
-                },
-              },
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "smartfach_result",
+            strict: true,
+            schema: assistantJsonSchema,
+          },
+        },
         ...(webSearchEnabled()
           ? {
+              max_tool_calls: 1,
               tools: [
                 {
                   type: "openrouter:web_search",
                   parameters: {
+                    max_uses: 1,
                     max_results: 3,
-                    max_total_results: 5,
+                    max_total_results: 3,
                     search_context_size: "low",
                   },
                 },
@@ -346,6 +346,7 @@ export async function callAssistant(
   const provider = providerResponse.safeParse(await response.json());
   if (!provider.success)
     throw new Error("Odpowiedź AI była niepełna. Niczego nie zapisano.");
+  const responseModel = provider.data.model ?? primaryAiModel;
   const message = provider.data.choices[0]!.message;
   if (message.refusal)
     throw new Error("AI odmówiło odpowiedzi. Doprecyzuj pytanie.");
@@ -364,7 +365,7 @@ export async function callAssistant(
     logRejectedProviderOutput(
       "invalid-json",
       provider.data,
-      model,
+      responseModel,
       raw.length,
       expectedDocument,
     );
@@ -376,7 +377,7 @@ export async function callAssistant(
         reply: fallback,
         quote: null,
         report: null,
-        model,
+        model: responseModel,
         sources,
         ...(usage ? { usage } : {}),
       };
@@ -391,7 +392,7 @@ export async function callAssistant(
     logRejectedProviderOutput(
       "invalid-schema",
       provider.data,
-      model,
+      responseModel,
       raw.length,
       expectedDocument,
     );
@@ -413,7 +414,7 @@ export async function callAssistant(
         .map((message) => message.content),
       null,
     ),
-    model,
+    model: responseModel,
     sources,
     ...(usage ? { usage } : {}),
   };
