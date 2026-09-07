@@ -241,6 +241,18 @@ function logRejectedProviderOutput(
   );
 }
 
+function logModelFallback(reason: string, status?: number) {
+  console.warn(
+    "SmartFach uruchomił awaryjny model AI " +
+      JSON.stringify({
+        primaryModel: primaryAiModel,
+        fallbackModel: fallbackAiModel,
+        reason,
+        ...(status ? { status } : {}),
+      }),
+  );
+}
+
 export async function callAssistant(
   input: z.infer<typeof assistantRequestSchema>,
   workspace: Workspace,
@@ -267,9 +279,8 @@ export async function callAssistant(
       ],
     };
   });
-  const response = await fetcher(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
+  const providerRequest = (model: (typeof aiModels)[number]) =>
+    fetcher("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         Authorization: "Bearer " + process.env.OPENROUTER_API_KEY,
@@ -277,9 +288,11 @@ export async function callAssistant(
         "X-OpenRouter-Title": "SmartFach",
       },
       body: JSON.stringify({
-        models: [...aiModels],
+        model,
         ...(userId ? { user: userId } : {}),
-        max_tokens: 5000,
+        ...(model === primaryAiModel
+          ? { max_completion_tokens: 5000 }
+          : { max_tokens: 5000 }),
         reasoning: {
           effort: "minimal",
           exclude: true,
@@ -333,9 +346,23 @@ export async function callAssistant(
           zdr: process.env.OPENROUTER_REQUIRE_ZDR !== "false",
         },
       }),
-      signal: AbortSignal.timeout(45000),
-    },
-  );
+      signal: AbortSignal.timeout(25000),
+    });
+
+  let response: Response;
+  let usedFallback = false;
+  try {
+    response = await providerRequest(primaryAiModel);
+  } catch (error) {
+    logModelFallback(error instanceof Error ? error.name : "request-failed");
+    usedFallback = true;
+    response = await providerRequest(fallbackAiModel);
+  }
+  if (!response.ok && !usedFallback && ![401, 402].includes(response.status)) {
+    logModelFallback("provider-error", response.status);
+    usedFallback = true;
+    response = await providerRequest(fallbackAiModel);
+  }
   if (!response.ok)
     throw new Error(
       response.status === 429
@@ -347,7 +374,8 @@ export async function callAssistant(
   const provider = providerResponse.safeParse(await response.json());
   if (!provider.success)
     throw new Error("Odpowiedź AI była niepełna. Niczego nie zapisano.");
-  const responseModel = provider.data.model ?? primaryAiModel;
+  const responseModel =
+    provider.data.model ?? (usedFallback ? fallbackAiModel : primaryAiModel);
   const message = provider.data.choices[0]!.message;
   if (message.refusal)
     throw new Error("AI odmówiło odpowiedzi. Doprecyzuj pytanie.");

@@ -845,6 +845,9 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Format: oba modele korzystają z tego samego ścisłego JSON Schema, minimalnego
   rozumowania, ukrytego toku rozumowania, `response-healing`, obrazów i narzędzia
   internetowego. Odpowiedź nadal przechodzi niezależną walidację serwera.
+- Korekta routingu: modele są wywoływane kolejno przez serwer, ponieważ zgodna z ZDR
+  trasa GPT-5 Nano wymaga `max_completion_tokens`, a Gemini używa `max_tokens`.
+  Wspólne żądanie z `require_parameters` pomijało GPT i uruchamiało stale fallback.
 - Pomiar: zapisujemy model faktycznie zwrócony przez OpenRouter, nie nazwę modelu
   głównego. Dzięki temu koszt i jakość fallbacku dają się oddzielnie analizować.
 - Koszt internetu: jedno żądanie może wykonać najwyżej jedno wyszukanie i pobrać

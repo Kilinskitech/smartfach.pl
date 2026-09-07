@@ -15,8 +15,9 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
 - W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
   modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
-- Główny model to `openai/gpt-5-nano`. Po błędzie, limicie dostawcy albo braku
-  odpowiedzi OpenRouter automatycznie próbuje `~google/gemini-flash-latest`.
+- Główny model to `openai/gpt-5-nano`. Serwer wywołuje
+  `~google/gemini-flash-latest` dopiero po błędzie, limicie dostawcy albo timeoutcie
+  modelu głównego. Osobne żądania pozwalają użyć właściwych parametrów każdego modelu.
 - Oba modele otrzymują ten sam ścisły JSON Schema, minimalny poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
@@ -28,6 +29,9 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `usage` z OpenRouter zapisuje koszt USD, tokeny, model, provider i identyfikator
   żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
+- GPT-5 Nano otrzymuje `max_completion_tokens`, wymagane przez jego trasę Azure;
+  Gemini otrzymuje `max_tokens`. Wspólny parametr wraz z `require_parameters`
+  wcześniej wykluczał GPT-5 Nano i nie może zostać ponownie użyty.
 
 ## Kontekst użytkownika
 

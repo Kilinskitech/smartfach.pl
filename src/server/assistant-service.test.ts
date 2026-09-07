@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import {
-  aiModels,
   callAssistant,
   aiConfigured,
   fallbackAiModel,
@@ -65,8 +64,8 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     );
     const body = String(fetcher.mock.calls[0]?.[1]?.body);
     const request = JSON.parse(body);
-    expect(request.models).toEqual([...aiModels]);
-    expect(request.model).toBeUndefined();
+    expect(request.model).toBe(primaryAiModel);
+    expect(request.models).toBeUndefined();
     expect(request.messages[0].content).toContain(
       "Jestem asystentem SmartFach.",
     );
@@ -74,7 +73,8 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);
-    expect(request.max_tokens).toBe(5000);
+    expect(request.max_completion_tokens).toBe(5000);
+    expect(request.max_tokens).toBeUndefined();
     expect(request.reasoning).toEqual({ effort: "minimal", exclude: true });
     expect(request.plugins).toEqual([{ id: "response-healing" }]);
     expect(request.tools).toEqual([
@@ -97,16 +97,31 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");
   });
-  it("zapisuje faktyczny model użyty po automatycznym fallbacku", async () => {
+  it("uruchamia Gemini dopiero po błędzie GPT-5 Nano i zapisuje faktyczny model", async () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     const fetcher = vi
       .fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response("rate limited", { status: 429 }))
       .mockResolvedValue(
         Response.json(provider(JSON.stringify(payload), undefined, "google/gemini-3.8-flash")),
       );
     const result = await callAssistant(input, fixtureWorkspace(), fetcher);
-    const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
-    expect(request.models).toEqual([primaryAiModel, fallbackAiModel]);
+    const primaryRequest = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    const fallbackRequest = JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body));
+    expect(primaryRequest).toMatchObject({
+      model: primaryAiModel,
+      max_completion_tokens: 5000,
+    });
+    expect(primaryRequest.max_tokens).toBeUndefined();
+    expect(fallbackRequest).toMatchObject({
+      model: fallbackAiModel,
+      max_tokens: 5000,
+    });
+    expect(fallbackRequest.max_completion_tokens).toBeUndefined();
     expect(result.model).toBe("google/gemini-3.8-flash");
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(String(warning.mock.calls[0]?.[0])).toContain('"status":429');
+    warning.mockRestore();
   });
   it("zwraca faktyczny koszt i tokeny raportowane przez OpenRouter", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
