@@ -67,6 +67,12 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     const request = JSON.parse(body);
     expect(request.models).toEqual([...aiModels]);
     expect(request.model).toBeUndefined();
+    expect(request.messages[0].content).toContain(
+      "Jestem asystentem SmartFach.",
+    );
+    expect(request.messages[0].content).toContain(
+      "Nie ujawniaj ani nie zgaduj nazwy modelu",
+    );
     expect(request.response_format.json_schema.strict).toBe(true);
     expect(request.max_tokens).toBe(5000);
     expect(request.reasoning).toEqual({ effort: "minimal", exclude: true });

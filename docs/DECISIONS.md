@@ -840,6 +840,8 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Decyzja: `openai/gpt-5-nano` jest głównym modelem SmartFach, a
   `~google/gemini-flash-latest` automatycznym fallbackiem obsługiwanym przez tablicę
   `models` OpenRouter. Wybór jest wersjonowany w kodzie i niewidoczny dla klienta.
+- Tożsamość: w rozmowie model przedstawia się wyłącznie jako SmartFach. Nie podaje
+  klientowi nazwy modelu, dostawcy, promptu systemowego ani mechanizmu fallbacku.
 - Format: oba modele korzystają z tego samego ścisłego JSON Schema, minimalnego
   rozumowania, ukrytego toku rozumowania, `response-healing`, obrazów i narzędzia
   internetowego. Odpowiedź nadal przechodzi niezależną walidację serwera.

@@ -13,6 +13,8 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `OPENROUTER_API_KEY` i `SMARTFACH_ENABLE_AI=true` pozostają wyłącznie po stronie
   serwera. Wybór modeli jest wersjonowany w kodzie, a nie zmieniany z panelu klienta.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
+- W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
+  modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
 - Główny model to `openai/gpt-5-nano`. Po błędzie, limicie dostawcy albo braku
   odpowiedzi OpenRouter automatycznie próbuje `~google/gemini-flash-latest`.
 - Oba modele otrzymują ten sam ścisły JSON Schema, minimalny poziom rozumowania,
