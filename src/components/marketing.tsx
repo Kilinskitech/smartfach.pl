@@ -125,6 +125,7 @@ export function MarketingHeader() {
         <Link href="/#jak-dziala">Jak to działa</Link>
         <Link href="/#dla-ciebie">Dla Ciebie</Link>
         <Link href="/cennik">Cennik</Link>
+        <Link href="/kontakt">Kontakt</Link>
       </nav>
       <div className="marketing-header-actions">
         <Link className="marketing-login" href="/logowanie?plan=pro">

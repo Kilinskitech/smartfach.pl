@@ -2670,7 +2670,7 @@ svg {
 /* Publiczna strona produktu. */
 .marketing-site {
   min-height: 100dvh;
-  overflow: hidden;
+  overflow: clip;
   background:
     radial-gradient(circle at 84% 7%, #ffd9bd73 0, transparent 25rem),
     #fafbf8;
@@ -5544,6 +5544,7 @@ svg {
 .marketing-header {
   position: sticky;
   top: 12px;
+  z-index: 50;
   width: min(1180px, calc(100% - 32px));
   min-height: 66px;
   margin-top: 12px;
