@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AdminDashboard, type AdminSnapshot } from "@/components/admin-dashboard";
-import { creditAllowance, planIdSchema, plans } from "@/domain/billing";
+import { planIdSchema, plans } from "@/domain/billing";
 import { workspaceSchema } from "@/domain/workspace";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { stripeConfigured } from "@/lib/stripe";
@@ -29,21 +29,36 @@ export default async function Page({
   const [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult] = await Promise.all([
     userIds.length ? admin.from("user_profiles").select("user_id, display_name").in("user_id", userIds) : Promise.resolve({ data: [] }),
     userIds.length ? admin.from("memberships").select("user_id, organization_id, role, status").in("user_id", userIds).eq("status", "active") : Promise.resolve({ data: [] }),
-    admin.from("subscriptions").select("organization_id, plan, status, payment_method_attached"),
+    admin.from("subscriptions").select("organization_id, plan, status, payment_method_attached, current_period_started_at"),
     admin.from("workspaces").select("organization_id, revision, data"),
-    admin.from("usage_events").select("user_id, cost_usd, total_tokens"),
+    admin.from("usage_events").select("user_id, cost_usd, total_tokens, created_at"),
   ]);
   const profiles = new Map((profilesResult.data ?? []).map((row) => [String(row.user_id), row]));
   const memberships = new Map((membershipsResult.data ?? []).map((row) => [String(row.user_id), row]));
   const subscriptions = new Map((subscriptionsResult.data ?? []).map((row) => [String(row.organization_id), row]));
   const workspaces = new Map((workspacesResult.data ?? []).map((row) => [String(row.organization_id), row]));
-  const usage = new Map<string, { costUsd: number; totalTokens: number; count: number }>();
+  const usage = new Map<string, {
+    costUsd: number;
+    totalTokens: number;
+    count: number;
+    events: Array<{ costUsd: number; createdAt: number }>;
+  }>();
   for (const row of usageResult.data ?? []) {
     const id = String(row.user_id);
-    const current = usage.get(id) ?? { costUsd: 0, totalTokens: 0, count: 0 };
-    current.costUsd += Number(row.cost_usd ?? 0);
+    const current = usage.get(id) ?? {
+      costUsd: 0,
+      totalTokens: 0,
+      count: 0,
+      events: [],
+    };
+    const eventCostUsd = Number(row.cost_usd ?? 0);
+    current.costUsd += eventCostUsd;
     current.totalTokens += Number(row.total_tokens ?? 0);
     current.count += 1;
+    current.events.push({
+      costUsd: eventCostUsd,
+      createdAt: Date.parse(String(row.created_at ?? "")),
+    });
     usage.set(id, current);
   }
 
@@ -67,6 +82,17 @@ export default async function Page({
           topUpCredits: 0,
           periodStartedAt: new Date().toISOString(),
         };
+    const userUsage = usage.get(authUser.id);
+    const periodStartedAt = Date.parse(
+      String(subscription?.current_period_started_at ?? billing.periodStartedAt),
+    );
+    const monthlyCostUsd = userUsage?.events.reduce(
+      (sum, event) =>
+        Number.isFinite(event.createdAt) && event.createdAt >= periodStartedAt
+          ? sum + event.costUsd
+          : sum,
+      0,
+    ) ?? 0;
     return {
       id: authUser.id,
       name: String(profile?.display_name ?? authUser.user_metadata?.display_name ?? ""),
@@ -74,10 +100,10 @@ export default async function Page({
       plan: plans[billing.plan].name,
       status: String(subscription?.status ?? "incomplete"),
       paymentMethodAttached: Boolean(subscription?.payment_method_attached),
-      usedCredits: billing.usedCredits,
-      allowance: creditAllowance(billing),
-      costUsd: usage.get(authUser.id)?.costUsd ?? 0,
-      totalTokens: usage.get(authUser.id)?.totalTokens ?? 0,
+      monthlyCostUsd,
+      monthlyLimitUsd: plans[billing.plan].monthlyCredits / 100,
+      totalCostUsd: userUsage?.costUsd ?? 0,
+      totalTokens: userUsage?.totalTokens ?? 0,
     };
   });
 

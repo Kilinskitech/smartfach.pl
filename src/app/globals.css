@@ -3910,7 +3910,7 @@ svg {
 }
 .admin-table-head {
   display: grid;
-  grid-template-columns: 1.5fr .7fr .7fr .7fr .7fr;
+  grid-template-columns: minmax(220px, 1.5fr) .55fr .7fr .55fr 1fr .7fr;
   gap: 10px;
   margin: 20px -22px 0;
   padding: 12px 22px;
@@ -3951,7 +3951,7 @@ svg {
 .admin-user-row {
   min-height: 72px;
   display: grid;
-  grid-template-columns: 1.5fr .7fr .7fr .7fr .7fr;
+  grid-template-columns: minmax(220px, 1.5fr) .55fr .7fr .55fr 1fr .7fr;
   align-items: center;
   gap: 10px;
   margin: 0 -22px;
@@ -3998,10 +3998,21 @@ svg {
 .admin-user-usage {
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
   gap: 6px;
   color: #4f6c59;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.admin-user-total-cost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: #405448;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .admin-users-footnote {
   margin: 14px 0 0;
@@ -4563,7 +4574,8 @@ svg {
   }
   .admin-user-row > :nth-child(2),
   .admin-user-row > :nth-child(3),
-  .admin-user-row > :nth-child(4) {
+  .admin-user-row > :nth-child(4),
+  .admin-user-row > :nth-child(6) {
     display: none;
   }
   .admin-user-header {
@@ -7522,6 +7534,35 @@ button.team-card:hover {
   border-color: #e5a67f;
   background: #fff3e9;
   color: #744c33;
+}
+.start-profile-custom {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+.start-profile-custom span {
+  color: #718078;
+  font-size: 9px;
+  font-weight: 650;
+}
+.start-profile-custom input {
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #dce4df;
+  border-radius: 9px;
+  outline: none;
+  background: white;
+  color: #344a40;
+  font: inherit;
+  font-size: 10px;
+}
+.start-profile-custom input:focus {
+  border-color: #d89062;
+  box-shadow: 0 0 0 3px #efb58d24;
+}
+.start-profile-custom input::placeholder {
+  color: #9aa49f;
 }
 .start-profile-submit {
   min-height: 50px;

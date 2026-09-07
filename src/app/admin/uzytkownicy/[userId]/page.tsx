@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { AdminUserDetail, type AdminUserDetailSnapshot } from "@/components/admin-user-detail";
-import { creditAllowance, plans } from "@/domain/billing";
+import { plans } from "@/domain/billing";
 import { workspaceSchema } from "@/domain/workspace";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePlatformAdmin } from "@/server/auth";
@@ -22,14 +22,14 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
   const [profileResult, membershipResult, usageResult] = await Promise.all([
     admin.from("user_profiles").select("display_name").eq("user_id", parsedId.data).maybeSingle(),
     admin.from("memberships").select("organization_id").eq("user_id", parsedId.data).eq("status", "active").order("created_at", { ascending: true }).limit(1).maybeSingle(),
-    admin.from("usage_events").select("cost_usd, total_tokens").eq("user_id", parsedId.data),
+    admin.from("usage_events").select("cost_usd, total_tokens, created_at").eq("user_id", parsedId.data),
   ]);
   const organizationId = membershipResult.data?.organization_id ? String(membershipResult.data.organization_id) : "";
   if (!organizationId) notFound();
   const [organizationResult, workspaceResult, subscriptionResult, membershipsResult] = await Promise.all([
     admin.from("organizations").select("name").eq("id", organizationId).maybeSingle(),
     admin.from("workspaces").select("revision, data").eq("organization_id", organizationId).single(),
-    admin.from("subscriptions").select("status, cancel_at_period_end, trial_ends_at, current_period_ends_at, stripe_subscription_id").eq("organization_id", organizationId).maybeSingle(),
+    admin.from("subscriptions").select("status, cancel_at_period_end, trial_ends_at, current_period_started_at, current_period_ends_at, stripe_subscription_id").eq("organization_id", organizationId).maybeSingle(),
     admin.from("memberships").select("user_id").eq("organization_id", organizationId).eq("status", "active"),
   ]);
   const workspace = workspaceSchema.parse({
@@ -37,6 +37,12 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     revision: Number(workspaceResult.data?.revision),
   });
   const usageRows = usageResult.data ?? [];
+  const periodStartedAt = Date.parse(
+    String(
+      subscriptionResult.data?.current_period_started_at ??
+        workspace.billing.periodStartedAt,
+    ),
+  );
   const snapshot: AdminUserDetailSnapshot = {
     generatedAt: new Date().toISOString(),
     id: parsedId.data,
@@ -44,8 +50,13 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     name: String(profileResult.data?.display_name ?? authData.user.user_metadata?.display_name ?? authData.user.email ?? "Użytkownik"),
     company: String(organizationResult.data?.name ?? workspace.company.name),
     plan: `Plan ${plans[workspace.billing.plan].name}`,
-    usedCredits: workspace.billing.usedCredits,
-    allowance: creditAllowance(workspace.billing),
+    monthlyCostUsd: usageRows.reduce((sum, row) => {
+      const createdAt = Date.parse(String(row.created_at ?? ""));
+      return Number.isFinite(createdAt) && createdAt >= periodStartedAt
+        ? sum + Number(row.cost_usd ?? 0)
+        : sum;
+    }, 0),
+    monthlyLimitUsd: plans[workspace.billing.plan].monthlyCredits / 100,
     totalCostUsd: usageRows.reduce((sum, row) => sum + Number(row.cost_usd ?? 0), 0),
     totalTokens: usageRows.reduce((sum, row) => sum + Number(row.total_tokens ?? 0), 0),
     measuredResponses: usageRows.length,

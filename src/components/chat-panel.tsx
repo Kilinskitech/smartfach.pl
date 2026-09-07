@@ -26,6 +26,7 @@ type PendingAttachment = AssistantAttachment & {
   size: number;
   preview?: string;
 };
+type StartBoundary = "phone" | "camera" | "budget";
 const acceptedImages = new Set([
   "image/jpeg",
   "image/png",
@@ -90,7 +91,8 @@ export function ChatPanel({
       : "open",
   );
   const [startSituation, setStartSituation] = useState<"unknown" | "idea" | "skills">("unknown");
-  const [startBoundary, setStartBoundary] = useState<"none" | "phone" | "camera" | "budget">("none");
+  const [startBoundaries, setStartBoundaries] = useState<StartBoundary[]>([]);
+  const [customBoundary, setCustomBoundary] = useState("");
   useEffect(
     () => () => {
       if (recordingTimer.current) clearInterval(recordingTimer.current);
@@ -105,6 +107,13 @@ export function ChatPanel({
       textarea.current?.setSelectionRange(text.length, text.length);
     });
   }
+  function toggleBoundary(boundary: StartBoundary) {
+    setStartBoundaries((current) =>
+      current.includes(boundary)
+        ? current.filter((item) => item !== boundary)
+        : [...current, boundary],
+    );
+  }
   function preparePersonalStart() {
     const workStyle = {
       remote: "chcę pracować zdalnie",
@@ -116,12 +125,18 @@ export function ChatPanel({
       idea: "mam już wstępny pomysł, ale chcę go sprawdzić",
       skills: "chcę zacząć od tego, co już umiem",
     }[startSituation];
-    const boundary = {
-      none: "nie mam jeszcze dodatkowych ograniczeń",
-      phone: "nie chcę prowadzić sprzedaży telefonicznej",
-      camera: "nie chcę pokazywać twarzy ani nagrywać filmów",
-      budget: "chcę zacząć z bardzo małym budżetem",
-    }[startBoundary];
+    const boundaryLabels: Record<StartBoundary, string> = {
+      phone: "sprzedaży telefonicznej",
+      camera: "pokazywania twarzy i nagrywania filmów",
+      budget: "dużych wydatków na start",
+    };
+    const selectedBoundaries = startBoundaries.map(
+      (boundary) => boundaryLabels[boundary],
+    );
+    if (customBoundary.trim()) selectedBoundaries.push(customBoundary.trim());
+    const boundary = selectedBoundaries.length
+      ? `chcę uniknąć: ${selectedBoundaries.join(", ")}`
+      : "nie mam jeszcze dodatkowych ograniczeń";
     startTask(
       `Chcę zbudować własny przychód. ${workStyle}, ${situation} i ${boundary}. Zacznij od maksymalnie 3 najważniejszych pytań o moją sytuację. Potem pomóż mi wybrać realną usługę, którą mogę przetestować bez długiego przygotowania.`,
     );
@@ -428,13 +443,16 @@ export function ChatPanel({
                   </div>
                 </fieldset>
                 <fieldset>
-                  <legend>Czego chcesz uniknąć?</legend>
-                  <div>
-                    <button className={startBoundary === "phone" ? "selected" : ""} onClick={() => setStartBoundary("phone")}><Ban size={16} /> Telefonów</button>
-                    <button className={startBoundary === "camera" ? "selected" : ""} onClick={() => setStartBoundary("camera")}><Ban size={16} /> Pokazywania twarzy</button>
-                    <button className={startBoundary === "budget" ? "selected" : ""} onClick={() => setStartBoundary("budget")}><Ban size={16} /> Dużych wydatków</button>
-                    <button className={startBoundary === "none" ? "selected" : ""} onClick={() => setStartBoundary("none")}>Jeszcze nie wiem</button>
+                  <legend>Czego chcesz uniknąć? Możesz wybrać kilka opcji.</legend>
+                  <div className="start-profile-options">
+                    <button type="button" aria-pressed={startBoundaries.includes("phone")} className={startBoundaries.includes("phone") ? "selected" : ""} onClick={() => toggleBoundary("phone")}><Ban size={16} /> Telefonów</button>
+                    <button type="button" aria-pressed={startBoundaries.includes("camera")} className={startBoundaries.includes("camera") ? "selected" : ""} onClick={() => toggleBoundary("camera")}><Ban size={16} /> Pokazywania twarzy</button>
+                    <button type="button" aria-pressed={startBoundaries.includes("budget")} className={startBoundaries.includes("budget") ? "selected" : ""} onClick={() => toggleBoundary("budget")}><Ban size={16} /> Dużych wydatków</button>
                   </div>
+                  <label className="start-profile-custom" htmlFor="start-custom-boundary">
+                    <span>Inne — wpisz własne</span>
+                    <input id="start-custom-boundary" value={customBoundary} onChange={(event) => setCustomBoundary(event.target.value)} maxLength={180} placeholder="np. pracy wieczorami, dojazdów, kontaktu przez social media" />
+                  </label>
                 </fieldset>
                 <button className="start-profile-submit" onClick={preparePersonalStart}>Ułóż mój pierwszy krok <ArrowRight size={17} /></button>
               </div>

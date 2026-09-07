@@ -19,8 +19,8 @@ export type AdminUserDetailSnapshot = {
   name: string;
   company: string;
   plan: string;
-  usedCredits: number;
-  allowance: number;
+  monthlyCostUsd: number;
+  monthlyLimitUsd: number;
   totalCostUsd: number;
   totalTokens: number;
   measuredResponses: number;
@@ -54,9 +54,12 @@ export type AdminUserDetailSnapshot = {
   }>;
 };
 
-function costLabel(value: number) {
-  if (value === 0) return "$0.00";
-  return `$${value < 0.01 ? value.toFixed(6) : value.toFixed(4)}`;
+function usdLabel(value: number, precise = false) {
+  const digits = precise && value > 0 && value < 0.01 ? 4 : 2;
+  return `${value.toLocaleString("pl-PL", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  })} USD`;
 }
 
 export function AdminUserDetail({
@@ -99,9 +102,9 @@ export function AdminUserDetail({
 
         <section className="admin-metric-grid admin-user-metrics" aria-label="Metryki użytkownika">
           <article><span><UserRound size={20} /></span><small>PROFIL</small><strong className="admin-text-value">Własny przychód</strong><p>Jeden spójny sposób pracy dla każdego użytkownika</p></article>
-          <article><span><Gauge size={20} /></span><small>PLAN I ZUŻYCIE</small><strong className="admin-text-value">{snapshot.plan}</strong><p>{snapshot.usedCredits} / {snapshot.allowance} jednostek planu</p></article>
+          <article><span><Gauge size={20} /></span><small>PLAN I TEN MIESIĄC</small><strong className="admin-text-value">{snapshot.plan}</strong><p>{usdLabel(snapshot.monthlyCostUsd)} / {usdLabel(snapshot.monthlyLimitUsd)}</p></article>
           <article><span><MessagesSquare size={20} /></span><small>AKTYWNOŚĆ</small><strong>{snapshot.conversations.length}</strong><p>{messageCount} wiadomości we wszystkich rozmowach</p></article>
-          <article><span><CircleDollarSign size={20} /></span><small>KOSZT OPENROUTER</small><strong className="admin-cost-value">{costLabel(snapshot.totalCostUsd)}</strong><p>{snapshot.totalTokens.toLocaleString("pl-PL")} tokenów · {snapshot.measuredResponses} zmierzonych odpowiedzi</p></article>
+          <article><span><CircleDollarSign size={20} /></span><small>KOSZT ŁĄCZNY</small><strong className="admin-cost-value">{usdLabel(snapshot.totalCostUsd, true)}</strong><p>{snapshot.totalTokens.toLocaleString("pl-PL")} tokenów · {snapshot.measuredResponses} zmierzonych odpowiedzi</p></article>
         </section>
 
         <section className="admin-panel admin-quality">
@@ -150,7 +153,7 @@ export function AdminUserDetail({
                         <p>{message.content}</p>
                         {message.usage && (
                           <dl className="admin-message-usage">
-                            <div><dt>Koszt</dt><dd>{costLabel(message.usage.costUsd)}</dd></div>
+                            <div><dt>Koszt</dt><dd>{usdLabel(message.usage.costUsd, true)}</dd></div>
                             <div><dt>Wejście</dt><dd>{message.usage.promptTokens.toLocaleString("pl-PL")}</dd></div>
                             <div><dt>Wyjście</dt><dd>{message.usage.completionTokens.toLocaleString("pl-PL")}</dd></div>
                             <div><dt>Łącznie</dt><dd>{message.usage.totalTokens.toLocaleString("pl-PL")} tokenów</dd></div>
