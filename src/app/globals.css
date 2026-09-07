@@ -955,10 +955,6 @@ svg {
   background: #eaf1e9;
   color: #365847;
 }
-.composer-tools button.recording {
-  background: #fff0e9;
-  color: #a54c34;
-}
 .composer-tools button:disabled {
   opacity: 0.52;
 }
@@ -4972,9 +4968,6 @@ svg {
   }
   .composer-tools button span {
     display: none;
-  }
-  .composer-tools button.recording span {
-    display: inline;
   }
 }
 

@@ -18,7 +18,7 @@ Zaimplementowane:
 - publiczne landingi, cennik, kontakt, regulamin i polityka prywatności;
 - rejestracja i logowanie przez Supabase oraz jeden spójny profil użytkownika;
 - prywatny workspace organizacji z RLS, walidacją i kontrolą rewizji;
-- jeden asystent tekst/zdjęcie/nagranie, historia rozmów i trwałe preferencje;
+- jeden asystent tekst/zdjęcie, historia rozmów i trwałe preferencje;
 - dopasowanie sposobu pracy, celu, czasu, doświadczenia i ograniczeń;
 - Stripe Checkout dla Lite/Pro, karta przed 3-dniową próbą, Customer Portal
   i podpisane, idempotentne webhooki;
@@ -31,7 +31,7 @@ Zaimplementowane:
 Niezaimplementowane lub niegotowe do sprzedaży:
 
 - jednorazowy zakup zwiększenia limitu i transakcyjna księga zużycia;
-- bezpieczny magazyn zdjęć/nagrań, XLSX, automatyczna wysyłka dokumentów i pełny offline;
+- bezpieczny magazyn zdjęć, XLSX, automatyczna wysyłka dokumentów i pełny offline;
 - produkcyjna konfiguracja e-maili, backupów, monitoringu oraz rozliczeń podatkowych;
 - test izolacji dwóch realnych kont w uruchomionym Supabase i testy Stripe end-to-end.
 
@@ -71,7 +71,7 @@ OpenRouter są zapisywane per użytkownik w `usage_events` i widoczne administra
 Wyszukiwanie internetowe może być dostępne modelowi przez
 `OPENROUTER_WEB_SEARCH=true`. Wynik z internetu jest odpowiedzią pomocniczą, a nie
 automatycznym źródłem ceny w dokumencie firmy. Model nie został jeszcze zatwierdzony
-produkcyjnie; trzeba mierzyć Task Success Rate na polskich nagraniach i realnych
+produkcyjnie; trzeba mierzyć Task Success Rate na polskich rozmowach, zdjęciach i realnych
 scenariuszach wyboru usługi, tworzenia oferty i pierwszego kontaktu z rynkiem.
 
 ## Weryfikacja

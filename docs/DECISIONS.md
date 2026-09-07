@@ -811,3 +811,25 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Kompromis: jedna jednostka odpowiada 0,01 USD i zaokrągla koszt w górę; jest to
   prostsze i bezpieczniejsze dla alfy niż obietnica konkretnej liczby wiadomości.
   Progi muszą zostać skalibrowane na 30–50 realnych płatnych kontach.
+
+## D040 — Tekst i zdjęcia w MVP; Qwen3.7 Flash do testu kosztowego
+
+- Data: 2026-09-07. Status: przygotowane na gałęzi Preview; wymaga testu
+  akceptacyjnego przed zmianą modelu na Live.
+- Decyzja: usuwamy nagrywanie głosu z obecnego interfejsu, API i komunikacji
+  sprzedażowej. Asystent przyjmuje tekst oraz maksymalnie trzy zdjęcia.
+- Model: `qwen/qwen3.7-flash` jest kandydatem do testu na Preview ze względu na
+  niski koszt, obsługę obrazu, narzędzi i trybu JSON. Nie jest zatwierdzony jako
+  model produkcyjny wyłącznie na podstawie ceny.
+- Format: Qwen korzysta z `response_format: json_object`, ponieważ nie egzekwuje
+  JSON Schema. Serwer nadal wymaga dokładnego kształtu odpowiedzi i odrzuca wynik,
+  który nie przejdzie walidacji Zod.
+- Powód: po zmianie produktu na asystenta budowania przychodu głos nie jest już
+  najważniejszym mechanizmem aktywacji. Tekst i zdjęcia wystarczą do sprawdzenia
+  wartości, a mniejszy zakres upraszcza produkt i zwiększa wybór tanich modeli.
+- Kompromis: rezygnujemy z wygody głosu i części wyróżnika dawnego produktu dla
+  fachowców terenowych. Funkcja trafia do Parking Lot i wróci tylko po potwierdzeniu
+  popytu lub wraz z osobnym, dobrze przetestowanym STT.
+- Bramka Live: przed publikacją mierzymy poprawność JSON, jakość polskiego,
+  konkretność rekomendacji, zdjęcia, wyszukiwanie, opóźnienie i koszt na stałym
+  zestawie scenariuszy. Pojedyncza poprawna rozmowa nie zatwierdza modelu.

@@ -16,7 +16,7 @@ Stan: 2026-09-06.
   pustym czatem ani wielostronicowym formularzem.
 - Asystent zadaje najwyżej trzy pytania naraz, pokazuje najwyżej trzy kierunki,
   rekomenduje jeden i kończy jednym działaniem.
-- Tekst, zdjęcie i nagranie prowadzą do tego samego asystenta.
+- Tekst i zdjęcie prowadzą do tego samego asystenta. Głos pozostaje poza obecnym MVP.
 - Odpowiedzi są krótkie, skanowalne i zorientowane na decyzję. Bez powitania typu
   „Oczywiście, chętnie pomogę” przed właściwą wartością.
 - Na telefonie cele dotykowe mają co najmniej 48 × 48 CSS px, widoczny fokus i

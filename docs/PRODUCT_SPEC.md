@@ -53,7 +53,7 @@ zawierać konkretną liczbę działań i termin powrotu z wynikiem.
 
 ## Narzędzia i autonomia
 
-AI może rozumieć wiadomości, zdjęcia i nagrania, prowadzić research oraz tworzyć
+AI może rozumieć wiadomości i zdjęcia, prowadzić research oraz tworzyć
 szkice. Bez świadomego potwierdzenia nie wysyła wiadomości, nie publikuje treści,
 nie kupuje reklam, nie zmienia płatności i nie usuwa danych.
 

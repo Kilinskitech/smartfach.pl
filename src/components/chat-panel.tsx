@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
+import { useRef, useState, type KeyboardEvent } from "react";
 import {
   ArrowUp,
   Sparkles,
@@ -7,10 +7,7 @@ import {
   LoaderCircle,
   RefreshCw,
   ImagePlus,
-  Mic,
-  Square,
   X,
-  AudioLines,
   Compass,
   Laptop,
   MapPin,
@@ -73,14 +70,9 @@ export function ChatPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [attachments, setAttachments] = useState<PendingAttachment[]>([]);
-  const [recording, setRecording] = useState(false);
-  const [recordingSeconds, setRecordingSeconds] = useState(0);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const lastMessage = useRef<HTMLDivElement>(null);
   const imageInput = useRef<HTMLInputElement>(null);
-  const mediaRecorder = useRef<MediaRecorder | null>(null);
-  const mediaStream = useRef<MediaStream | null>(null);
-  const recordingTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const messages = conversation?.messages ?? [];
   const creditsLeft = remainingCredits(data.billing);
   const requestCost = estimateRequestCredits(attachments);
@@ -93,13 +85,6 @@ export function ChatPanel({
   const [startSituation, setStartSituation] = useState<"unknown" | "idea" | "skills">("unknown");
   const [startBoundaries, setStartBoundaries] = useState<StartBoundary[]>([]);
   const [customBoundary, setCustomBoundary] = useState("");
-  useEffect(
-    () => () => {
-      if (recordingTimer.current) clearInterval(recordingTimer.current);
-      mediaStream.current?.getTracks().forEach((track) => track.stop());
-    },
-    [],
-  );
   function startTask(text: string) {
     setInput(text);
     requestAnimationFrame(() => {
@@ -185,114 +170,15 @@ export function ChatPanel({
       if (imageInput.current) imageInput.current.value = "";
     }
   }
-  function stopRecording() {
-    if (mediaRecorder.current?.state === "recording")
-      mediaRecorder.current.stop();
-  }
-  async function startRecording() {
-    if (recording || busy) return;
-    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
-      setError("Ta przeglądarka nie obsługuje nagrywania głosu.");
-      return;
-    }
-    if (attachments.length >= 3) {
-      setError("Do jednej wiadomości możesz dodać maksymalnie 3 pliki.");
-      return;
-    }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const preferred = [
-        "audio/webm;codecs=opus",
-        "audio/mp4",
-        "audio/ogg;codecs=opus",
-      ].find((type) => MediaRecorder.isTypeSupported(type));
-      const recorder = new MediaRecorder(
-        stream,
-        preferred ? { mimeType: preferred } : undefined,
-      );
-      const chunks: BlobPart[] = [];
-      recorder.ondataavailable = (event) => {
-        if (event.data.size) chunks.push(event.data);
-      };
-      recorder.onstop = async () => {
-        if (recordingTimer.current) clearInterval(recordingTimer.current);
-        recordingTimer.current = null;
-        stream.getTracks().forEach((track) => track.stop());
-        mediaStream.current = null;
-        mediaRecorder.current = null;
-        setRecording(false);
-        const mime = recorder.mimeType.split(";")[0] || "audio/webm";
-        const blob = new Blob(chunks, { type: mime });
-        if (!blob.size) {
-          setError("Nie udało się nagrać głosu. Spróbuj ponownie.");
-          return;
-        }
-        if (blob.size > 6_000_000) {
-          setError("Nagranie jest za duże. Nagraj krótszą wiadomość.");
-          return;
-        }
-        try {
-          const dataUrl = await readDataUrl(blob);
-          const data = dataUrl.split(",")[1] ?? "";
-          const total = attachments.reduce(
-            (sum, item) => sum + item.data.length,
-            0,
-          );
-          if (total + data.length > 10_000_000)
-            throw new Error("Łączny rozmiar załączników jest za duży.");
-          setAttachments((current) => [
-            ...current,
-            {
-              id: crypto.randomUUID(),
-              kind: "audio",
-              name: "Notatka głosowa",
-              mediaType: mime as AssistantAttachment["mediaType"],
-              data,
-              size: blob.size,
-            },
-          ]);
-          setError("");
-        } catch (error) {
-          setError(
-            error instanceof Error
-              ? error.message
-              : "Nie udało się dodać nagrania.",
-          );
-        }
-      };
-      mediaStream.current = stream;
-      mediaRecorder.current = recorder;
-      setRecordingSeconds(0);
-      setRecording(true);
-      setError("");
-      recorder.start(500);
-      recordingTimer.current = setInterval(() => {
-        setRecordingSeconds((seconds) => {
-          if (seconds >= 59) {
-            stopRecording();
-            return 60;
-          }
-          return seconds + 1;
-        });
-      }, 1000);
-    } catch {
-      setError(
-        "Nie udało się uruchomić mikrofonu. Sprawdź zgodę przeglądarki.",
-      );
-    }
-  }
   async function send() {
     const typedText = input.trim();
     const text =
       typedText ||
-      (attachments.some((item) => item.kind === "audio")
-        ? "Przeanalizuj tę notatkę głosową i wykonaj wynikające z niej zadanie."
-        : "Przeanalizuj dodane zdjęcie i odpowiedz na moje pytanie.");
+      "Przeanalizuj dodane zdjęcie i odpowiedz na moje pytanie.";
     if (
       (!typedText && !attachments.length) ||
       busy ||
       !available ||
-      recording ||
       creditExhausted
     )
       return;
@@ -354,11 +240,7 @@ export function ChatPanel({
             role: "user",
             content: [
               typedText,
-              ...attachments.map((item) =>
-                item.kind === "image"
-                  ? `📷 ${item.name}`
-                  : "🎙️ Notatka głosowa",
-              ),
+              ...attachments.map((item) => `📷 ${item.name}`),
             ]
               .filter(Boolean)
               .join("\n"),
@@ -536,19 +418,15 @@ export function ChatPanel({
             onKeyDown={keydown}
             maxLength={6000}
             rows={3}
-            placeholder="Napisz, nagraj albo dodaj zdjęcie…"
+            placeholder="Napisz wiadomość albo dodaj zdjęcie…"
             disabled={busy}
           />
           {attachments.length > 0 && (
             <div className="attachment-tray" aria-label="Dodane pliki">
               {attachments.map((attachment) => (
                 <div className="attachment-chip" key={attachment.id}>
-                  {attachment.preview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={attachment.preview} alt="" />
-                  ) : (
-                    <AudioLines size={18} />
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={attachment.preview} alt="" />
                   <span>
                     <strong>{attachment.name}</strong>
                     <small>
@@ -582,30 +460,12 @@ export function ChatPanel({
               />
               <button
                 type="button"
-                disabled={busy || recording || attachments.length >= 3}
+                disabled={busy || attachments.length >= 3}
                 onClick={() => imageInput.current?.click()}
                 aria-label="Dodaj zdjęcie"
               >
                 <ImagePlus size={20} />
                 <span>Zdjęcie</span>
-              </button>
-              <button
-                type="button"
-                className={recording ? "recording" : ""}
-                disabled={busy || (!recording && attachments.length >= 3)}
-                onClick={() =>
-                  recording ? stopRecording() : void startRecording()
-                }
-                aria-label={
-                  recording ? "Zakończ nagrywanie" : "Nagraj wiadomość"
-                }
-              >
-                {recording ? <Square size={17} /> : <Mic size={20} />}
-                <span>
-                  {recording
-                    ? `Stop · 0:${String(recordingSeconds).padStart(2, "0")}`
-                    : "Nagraj"}
-                </span>
               </button>
             </div>
             <button
@@ -614,7 +474,6 @@ export function ChatPanel({
                 !available ||
                 creditExhausted ||
                 busy ||
-                recording ||
                 (!input.trim() && attachments.length === 0)
               }
               aria-label="Wyślij wiadomość"

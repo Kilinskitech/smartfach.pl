@@ -12,7 +12,6 @@ import {
   MapPin,
   Menu,
   MessageCircle,
-  Mic,
   SearchCheck,
   ShieldCheck,
   Sparkles,
@@ -64,7 +63,7 @@ const planDetails: Record<
     features: [
       "Osobisty kierunek dopasowany do Twoich warunków",
       "Pomoc w ofercie, cenie i pierwszych działaniach",
-      "Tekst, zdjęcia i nagrania",
+      "Tekst, zdjęcia i research w internecie",
       "Zapisana historia i ustalenia",
       "Standardowy miesięczny limit",
     ],
@@ -399,7 +398,7 @@ export function MarketingHome() {
         </section>
         <section className="input-strip">
           <p>Opisujesz swoją sytuację.</p>
-          <div><span><MessageCircle size={18} /> Tekst</span><span><Mic size={18} /> Głos</span><span><ImageIcon size={18} /> Zdjęcie</span></div>
+          <div><span><MessageCircle size={18} /> Tekst</span><span><ImageIcon size={18} /> Zdjęcie</span><span><SearchCheck size={18} /> Internet</span></div>
           <strong>SmartFach układa następne działanie.</strong>
         </section>
         <FitSection />

@@ -13,7 +13,7 @@ ofertę i wykonać kolejne działania prowadzące do pierwszych klientów.
 2. Rejestracja, 3-dniowa próba z kartą, logowanie i zarządzanie abonamentem.
 3. Krótki profil startowy: zdalnie/lokalnie, sytuacja, ograniczenie.
 4. Ustawienia: czas tygodniowo, doświadczenie, ograniczenia, cel i bieżący fokus.
-5. Jeden asystent z tekstem, zdjęciem i nagraniem.
+5. Jeden asystent z tekstem i zdjęciami.
 6. Odpowiedź ograniczona do konkretnych opcji, rekomendacji i następnego kroku.
 7. Historia rozmów oraz zapis zatwierdzonego profilu.
 8. Kontrola wykorzystania, kosztu OpenRouter i limitu planu.

@@ -7,7 +7,7 @@ Stan: 2026-09-06.
 - Jeden landing pod pierwszą sprzedawalną usługę i klienta.
 - Plany Lite/Pro, uproszczona rejestracja i Stripe Sandbox.
 - Profil startowy z preferencjami i ograniczeniami.
-- Jeden asystent z tekstem, zdjęciem, nagraniem i historią.
+- Jeden asystent z tekstem, zdjęciami i historią.
 - Zaktualizowane instrukcje AI oraz trwałe ustawienia użytkownika.
 - Panel administratora, koszt OpenRouter, statusy kont i płatności.
 - Procent wykorzystania i jednorazowe zwiększenie limitu przez Stripe.

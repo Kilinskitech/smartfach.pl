@@ -161,6 +161,17 @@ describe("kontrolowane szkice AI", () => {
     expect(
       assistantRequestSchema.safeParse({
         ...base,
+        attachments: [{
+          kind: "audio",
+          name: "głos.webm",
+          mediaType: "audio/webm",
+          data: "YWJjZA==",
+        }],
+      }).success,
+    ).toBe(false);
+    expect(
+      assistantRequestSchema.safeParse({
+        ...base,
         attachments: [image, image, image, image],
       }).success,
     ).toBe(false);

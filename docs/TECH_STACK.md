@@ -13,7 +13,7 @@ testów end-to-end przed rozpoczęciem sprzedaży.
 | Dane             | Supabase/PostgreSQL, Auth, RLS                   | Projekt działa; migracje i zapis wymagają testu E2E        |
 | Region bazy      | Region UE                                       | Potwierdzić ustawienie przed danymi realnych klientów      |
 | Hosting          | Vercel                                          | Production działa pod `smartfach.pl`; Preview do procesu pracy |
-| AI/STT           | OpenRouter; wymienny model                       | Gemini 3.5 Flash dla alfy Preview; osobny STT brak         |
+| AI               | OpenRouter; wymienny model                       | Qwen3.7 Flash jako tani kandydat do testu na Preview       |
 | Rozliczenia      | Stripe Checkout + Billing                       | Sandbox podłączany; checkout/trial/portal/webhook wymagają E2E |
 | Analityka        | PostHog EU                                      | Plan, brak integracji                                      |
 | Testy            | Vitest, lint, typy, testy przeglądarkowe        | Obliczenia, schematy, CSV, AI, zapis, ochrona API, PDF     |
@@ -22,8 +22,8 @@ Historyczny adapter plikowy pozostał tylko w testach. Runtime używa prywatnego
 workspace JSONB w Supabase jako pomostu do stopniowej normalizacji danych. Zod, pdf-lib
 z fontkit i osadzonym Noto Sans (OFL) do polskich PDF. Licencja fontu w
 `public/fonts/OFL.txt`. Dane dokumentu nie opuszczają przeglądarki podczas eksportu.
-Załączniki nadal wymagają przyszłego Storage. Gemini 3.5 Flash jest wyborem
-alfy po małym benchmarku, nie zatwierdzonym modelem produkcyjnym.
+Zdjęcia nadal wymagają przyszłego Storage. Qwen3.7 Flash jest kandydatem do alfy
+ze względu na niski koszt, nie zatwierdzonym modelem produkcyjnym.
 
 Node.js: 24.x. Menedżer pakietów: npm. Wersje aplikacji są zapisane w
 `package.json` i `package-lock.json`; instalacja powtarzalna przez `npm ci`.

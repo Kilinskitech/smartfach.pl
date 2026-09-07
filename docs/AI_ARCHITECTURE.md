@@ -13,8 +13,9 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` i `SMARTFACH_ENABLE_AI=true` pozostają
   wyłącznie po stronie serwera.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
-- Odpowiedzi przechodzą przez ścisły schemat JSON i walidację Zod.
-- Tekst, do trzech zdjęć/nagrań i ograniczona historia rozmowy mogą wejść do modelu.
+- Qwen3.7 Flash korzysta z trybu JSON bez egzekwowania JSON Schema przez dostawcę;
+  każda odpowiedź nadal przechodzi ścisłą walidację Zod po stronie serwera.
+- Tekst, do trzech zdjęć i ograniczona historia rozmowy mogą wejść do modelu.
 - Załączniki nie są obecnie trwałą pamięcią; wymaga to osobnego bezpiecznego storage.
 - Wyszukiwanie internetowe może być użyte do aktualnego researchu, a źródła są
   pokazywane jako linki. Treść stron jest niezaufanym wejściem.
@@ -60,8 +61,7 @@ atomowego obciążenia i audytowalnej księgi.
 Model oceniamy na realnych polskich scenariuszach, nie na popularności ani samej
 cenie. Mierzymy: poprawne odczytanie preferencji, sens rekomendacji, liczbę korekt,
 konkretność kolejnego kroku, odsetek wykonanych działań, opóźnienie i koszt jednej
-sesji zakończonej użytecznym rezultatem. Osobno testujemy obraz, audio, hałas,
-liczby i nazwy własne.
+sesji zakończonej użytecznym rezultatem. Osobno testujemy obraz, liczby i nazwy własne.
 
 Nie budujemy wielu agentów, dopóki pojedynczy model z kontrolowanym workflow nie
 osiągnie dobrego Task Success Rate.

@@ -94,7 +94,7 @@ Publicznie istnieje jeden produkt i jedna ścieżka. Nie pokazujemy użytkowniko
 typów Odkryj/Uruchom/Prowadź ani segmentu Firma. Rejestracja wymaga wyłącznie wyboru
 Lite lub Pro. Nowe konta zaczynają w kontekście budowania własnego przychodu.
 
-Głównym miejscem pracy jest jeden asystent przyjmujący tekst, zdjęcie i nagranie.
+Głównym miejscem pracy jest jeden asystent przyjmujący tekst i zdjęcia.
 Na pustym koncie zamiast generycznego czatu pokazuje trzy proste wybory i natychmiast
 układa pierwszy krok. Ustawienia przechowują styl pracy, czas tygodniowo,
 doświadczenie, ograniczenia, cel i bieżący fokus.

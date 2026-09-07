@@ -48,20 +48,13 @@ export const assistantOutputSchema = z
 export type AssistantOutput = z.infer<typeof assistantOutputSchema>;
 export const assistantAttachmentSchema = z
   .object({
-    kind: z.enum(["image", "audio"]),
+    kind: z.literal("image"),
     name: z.string().trim().min(1).max(180),
     mediaType: z.enum([
       "image/jpeg",
       "image/png",
       "image/webp",
       "image/gif",
-      "audio/wav",
-      "audio/mpeg",
-      "audio/mp4",
-      "audio/ogg",
-      "audio/webm",
-      "audio/aac",
-      "audio/flac",
     ]),
     data: z
       .string()

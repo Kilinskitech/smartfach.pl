@@ -80,6 +80,15 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");
   });
+  it("używa trybu JSON obsługiwanego przez Qwen3.7 Flash", async () => {
+    vi.stubEnv("OPENROUTER_MODEL", "qwen/qwen3.7-flash");
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValue(Response.json(provider()));
+    await callAssistant(input, fixtureWorkspace(), fetcher);
+    const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(request.response_format).toEqual({ type: "json_object" });
+  });
   it("zwraca faktyczny koszt i tokeny raportowane przez OpenRouter", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
       Response.json({
@@ -316,7 +325,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
     expect(request.tools).toBeUndefined();
   });
-  it("wysyła prywatne zdjęcie i głos tylko w bieżącej wiadomości", async () => {
+  it("wysyła prywatne zdjęcie tylko w bieżącej wiadomości", async () => {
     const fetcher = vi
       .fn<typeof fetch>()
       .mockResolvedValue(Response.json(provider()));
@@ -330,12 +339,6 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
             mediaType: "image/jpeg",
             data: "YWJjZA==",
           },
-          {
-            kind: "audio",
-            name: "Notatka głosowa",
-            mediaType: "audio/webm",
-            data: "ZWZnaA==",
-          },
         ],
       },
       fixtureWorkspace(),
@@ -347,10 +350,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       type: "image_url",
       image_url: { url: "data:image/jpeg;base64,YWJjZA==" },
     });
-    expect(last[2]).toEqual({
-      type: "input_audio",
-      input_audio: { data: "ZWZnaA==", format: "webm" },
-    });
+    expect(last).toHaveLength(2);
   });
   it("nie wysyła dawnych danych firmowych do modelu", async () => {
     const fetcher = vi

@@ -41,14 +41,9 @@ describe("kredyty SmartFach", () => {
     expect(remainingCredits({ ...billing, usedCredits: 999 })).toBe(0);
   });
 
-  it("wycenia tekst, zdjęcie, głos i użycie internetu", () => {
+  it("wycenia tekst, zdjęcie i użycie internetu", () => {
     expect(estimateRequestCredits()).toBe(1);
-    expect(
-      settleRequestCredits(
-        [{ kind: "image" }, { kind: "audio" }],
-        true,
-      ),
-    ).toBe(9);
+    expect(settleRequestCredits([{ kind: "image" }], true)).toBe(5);
     expect(settleRequestCredits([], false, 0.053)).toBe(6);
     expect(settleRequestCredits([], false, 0)).toBe(1);
   });

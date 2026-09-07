@@ -44,7 +44,7 @@ Jednorazowe zwiększenia nie zmieniają abonamentu i pozostają do wykorzystania
 
 W runtime jedna wewnętrzna jednostka odpowiada jednemu centowi zmierzonego kosztu
 OpenRouter. Użytkownik nie widzi jednostek ani dolarów, ponieważ koszt jednego
-zadania zależy od modelu, długości, obrazu, głosu i wyszukiwania. Gdy dostawca nie
+zadania zależy od modelu, długości, obrazu i wyszukiwania. Gdy dostawca nie
 zwróci kosztu, działa zachowawcza wycena zastępcza. Płatności i obciążenia limitu
 mają osobne klucze idempotencji.
 

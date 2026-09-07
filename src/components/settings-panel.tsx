@@ -156,7 +156,7 @@ export function SettingsPanel({
           </p>
           <p className="form-hint">
             Przy rozmowie do usługi AI trafia treść wiadomości, zapisane
-            preferencje, dodane zdjęcie lub głosówka oraz kontekst potrzebny do
+            preferencje, dodane zdjęcie oraz kontekst potrzebny do
             wykonania zadania.
           </p>
           <p className="form-hint">

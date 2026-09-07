@@ -128,16 +128,13 @@ export function rollBillingPeriod(billing: Billing, periodStartedAt: string) {
 }
 
 export function estimateRequestCredits(
-  attachments: ReadonlyArray<{ kind: "image" | "audio" }> = [],
+  attachments: ReadonlyArray<{ kind: "image" }> = [],
 ) {
-  return attachments.reduce(
-    (total, attachment) => total + (attachment.kind === "image" ? 2 : 4),
-    1,
-  );
+  return 1 + attachments.length * 2;
 }
 
 export function settleRequestCredits(
-  attachments: ReadonlyArray<{ kind: "image" | "audio" }> = [],
+  attachments: ReadonlyArray<{ kind: "image" }> = [],
   usedWebSearch = false,
   measuredCostUsd?: number,
 ) {
