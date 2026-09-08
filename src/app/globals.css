@@ -7684,6 +7684,11 @@ button.team-card:hover {
 }
 .withdrawal-page { max-width: 760px; margin: 0 auto; padding: 64px 24px; }
 .withdrawal-page h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.12; letter-spacing: -1px; font-weight: 650; margin: 18px 0; }
+@media (min-width: 951px) and (max-width: 1100px) {
+  .marketing-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px; }
+  .marketing-header > nav { gap: 4px; }
+  .marketing-header > nav a { padding-inline: 8px; white-space: nowrap; }
+}
 .withdrawal-page > p, .withdrawal-result { line-height: 1.7; margin: 22px 0; }
 .withdrawal-page a { text-decoration: underline; text-underline-offset: 3px; }
 .withdrawal-page .auth-form { margin: 28px 0; }
