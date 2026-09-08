@@ -5637,9 +5637,11 @@ svg {
 .operator-settings-form label { display: grid; gap: 8px; font-size: 13px; }
 .operator-settings-form input { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: white; padding: 13px; color: var(--ink); }
 .admin-sidebar > a[href="#dane-sprzedawcy"],
+.admin-sidebar > a[href="#operacje"],
 .admin-sidebar > a[href="#obsluga-umow"] { min-height: 38px; display: flex; align-items: center; padding: 8px 12px; border-radius: 9px; color: #aebfc1; font-size: 11px; font-weight: 600; }
 .admin-sidebar > nav + a { margin-top: 12px; }
 .admin-sidebar > a[href="#dane-sprzedawcy"]:hover,
+.admin-sidebar > a[href="#operacje"]:hover,
 .admin-sidebar > a[href="#obsluga-umow"]:hover { background: #ffffff0d; color: white; }
 #dane-sprzedawcy { margin-top: 28px; scroll-margin-top: 24px; }
 #obsluga-umow { margin-top: 28px; scroll-margin-top: 24px; }
@@ -8488,11 +8490,69 @@ button.team-card:hover {
 .withdrawal-page > p, .withdrawal-result { line-height: 1.7; margin: 22px 0; }
 .withdrawal-page a { text-decoration: underline; text-underline-offset: 3px; }
 .withdrawal-page .auth-form { margin: 28px 0; }
-.admin-milestones { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 24px 0; }
+.admin-support-stack { display: grid; gap: 24px; margin-top: 24px; }
+.admin-support-stack > * { min-width: 0; }
+.admin-support-stack > #obsluga-umow { margin-top: 0; }
+.admin-operations { scroll-margin-top: 24px; }
+.admin-period { display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 20px; background: #f0f4f0; color: #536a60; font-size: 11px; white-space: nowrap; }
+.admin-section-copy { max-width: 72ch; margin: 16px 0 0; color: var(--muted); line-height: 1.65; }
+.admin-milestones { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 24px 0 16px; }
 .admin-milestones > div { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: #f8faf7; }
-.admin-milestones dt { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.admin-milestones dt { min-height: 3em; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .admin-milestones dd { margin: 12px 0 0; font-size: 28px; font-weight: 700; color: var(--navy); }
-#operacje > p { margin: 14px 0 24px; line-height: 1.6; }
+.admin-metrics-note { max-width: 90ch; margin: 0; font-size: 12px; line-height: 1.65; color: var(--muted); }
+.admin-reliability { margin-top: 28px; padding-top: 26px; border-top: 1px solid var(--line); }
+.admin-reliability-heading { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
+.admin-reliability-heading h3 { display: flex; align-items: center; gap: 9px; margin: 0; font-size: 16px; font-weight: 650; }
+.admin-health-badge { display: inline-flex; gap: 6px; align-items: center; padding: 7px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.admin-health-badge.clear { color: #356347; background: #edf5ee; }
+.admin-health-badge.needs-attention { color: #8a491c; background: #fff1df; }
+.admin-health-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.admin-health-card { border: 1px solid var(--line); border-radius: 14px; padding: 20px; background: #fbfcfa; }
+.admin-health-card.needs-attention { background: #fffaf3; border-color: #e6c49e; }
+.admin-health-card > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.admin-health-card h4 { margin: 0; font-size: 14px; font-weight: 650; }
+.admin-health-card strong { font-size: 28px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.admin-health-card p { margin: 14px 0 12px; line-height: 1.65; font-size: 13px; }
+.admin-health-card > span { display: block; color: var(--muted); line-height: 1.6; font-size: 11px; }
+.admin-reservations { margin-top: 24px; }
+.admin-reservations > h4 { margin: 0 0 16px; font-size: 14px; font-weight: 650; }
+.admin-reservation { padding: 20px; border: 1px solid var(--line); border-radius: 14px; margin-top: 12px; overflow-wrap: anywhere; }
+.admin-reservation p { margin: 12px 0; font-size: 12px; line-height: 1.7; }
+.admin-reservation form { display: grid; gap: 16px; margin-top: 16px; }
+.admin-reservation .purchase-consent-row { font-size: 12px; }
+.admin-reservation button { justify-self: start; }
+.admin-operation-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: #285e55; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.admin-contract-support { margin: 26px 0; padding: 20px; border: 1px solid var(--line); border-radius: 14px; background: #f8faf7; }
+.admin-contract-support h3, .admin-withdrawals-title { margin: 0; font-size: 15px; font-weight: 650; }
+.admin-contract-support p { margin: 10px 0 0; font-size: 13px; line-height: 1.7; color: var(--muted); }
+.admin-contract-support a { color: #285e55; text-decoration: underline; overflow-wrap: anywhere; }
+.admin-withdrawals-title { display: flex; gap: 10px; align-items: center; }
+.admin-withdrawals-title span { padding: 3px 9px; border-radius: 20px; background: #f0f4f0; font-size: 12px; }
+.admin-empty-note { display: flex; align-items: center; gap: 10px; padding: 18px; background: #f8faf7; border-radius: 12px; color: var(--muted); }
+.public-billing-help { display: flex; align-items: flex-start; gap: 20px; max-width: 1120px; margin: 0 auto 36px; padding: 28px; background: white; border: 1px solid var(--line); border-radius: 20px; scroll-margin-top: 110px; }
+.public-billing-help > svg { flex-shrink: 0; color: #537363; margin-top: 4px; }
+.public-billing-help h2 { font-size: 22px; font-weight: 650; margin: 0 0 14px; }
+.public-billing-help p { margin: 12px 0 0; max-width: 80ch; line-height: 1.75; color: var(--muted); }
+.public-billing-help a, .settings-billing-support a { color: #285e55; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.settings-billing-support { padding-top: 18px; margin-top: 20px; border-top: 1px solid var(--line); font-size: 12px; line-height: 1.65; }
+.settings-billing-support strong { display: block; color: var(--ink); }
+.settings-billing-support p { margin: 8px 0 12px; }
+.settings-billing-support > a { display: inline-flex; align-items: center; min-height: 44px; }
+.withdrawal-email-option { padding: 22px; background: white; border: 1px solid var(--line); border-radius: 16px; margin: 24px 0; }
+.withdrawal-email-option h2 { font-size: 18px; font-weight: 650; margin: 0 0 12px; }
+.withdrawal-email-option p { margin: 0; line-height: 1.7; color: var(--muted); }
+@media (max-width: 1100px) { .admin-milestones { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 700px) {
+  .admin-support-stack { gap: 20px; margin-top: 20px; }
+  .admin-operations .admin-panel-heading { flex-direction: column; gap: 12px; }
+  .admin-health-grid { grid-template-columns: minmax(0, 1fr); }
+  .admin-health-card, .admin-reservation { padding: 16px; }
+  .admin-milestones { gap: 10px; }
+  .admin-milestones > div { padding: 14px; }
+  .public-billing-help { margin-inline: 16px; padding: 22px; gap: 12px; }
+  .public-billing-help > svg { display: none; }
+}
 .admin-withdrawal { border-top: 1px solid var(--line); padding: 24px 0; overflow-wrap: anywhere; }
 .admin-withdrawal form { display: grid; gap: 16px; margin-top: 16px; }
 .purchase-consent-row { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.6; }

@@ -37,6 +37,14 @@ export async function ContactPage() {
             </div>
           </aside>
         </section>
+        <section className="public-billing-help" id="rozliczenia" aria-labelledby="billing-help-title">
+          <Mail size={24} />
+          <div><h2 id="billing-help-title">Płatności, odstąpienie i zwroty</h2>
+            <p>Napisz na <a href={`mailto:${smartFachOperator.email}`}>{smartFachOperator.email}</a>. Podaj e-mail konta i zakup, którego dotyczy sprawa. Numer zamówienia pomoże nam je odnaleźć, ale nie jest wymagany w wiadomości. Nie wysyłaj numeru karty ani hasła.</p>
+            <p>Odstąpienie możesz zgłosić e-mailem bez podawania przyczyny. Obsłużymy je indywidualnie, zgodnie z <Link href="/regulamin#punkt-8">zasadami odstąpienia</Link>. Możesz też skorzystać z funkcji <Link href="/odstapienie">Odstąp od umowy tutaj</Link>.</p>
+            <p>Chcesz tylko zatrzymać kolejne odnowienie? <Link href="/platnosc">Zarządzaj abonamentem</Link> — nie musisz do nas pisać.</p>
+          </div>
+        </section>
         <section className="public-info-content contact-content">
           <div className="section-intro">
             <p className="marketing-kicker">NAPISZ DO NAS</p>

@@ -172,7 +172,6 @@ export function SettingsPanel({
             Przechowuj ją w bezpiecznym miejscu. Przywracanie kopii z aplikacji
             nie jest jeszcze dostępne.
           </p>
-          <p><a href="/odstapienie">Odstąp od umowy tutaj</a></p>
           <p className="form-hint">Chcesz usunąć konto lub skorzystać ze swoich praw? <a href="/kontakt">Napisz do nas</a>. <a href="/regulamin">Regulamin</a> · <a href="/polityka-prywatnosci">Prywatność</a></p>
         </section>
         <section className="settings-card settings-account-card">
@@ -184,6 +183,7 @@ export function SettingsPanel({
             <a className="button button-secondary" href="/platnosc"><CreditCard size={17} /> Plan i płatność</a>
             <form action="/auth/wyloguj" method="post"><button className="button button-secondary"><LogOut size={17} /> Wyloguj się</button></form>
           </div>
+          <div className="settings-billing-support"><strong>Pomoc w sprawie płatności i zwrotów</strong><p>Skontaktuj się z nami e-mailem — sprawdzimy zakup i należne rozliczenie. <a href="/kontakt#rozliczenia">Kontakt w sprawie rozliczeń</a>.</p><a href="/odstapienie">Odstąp od umowy tutaj</a></div>
         </section>
         <div className="next-stage">
           <Check size={19} />

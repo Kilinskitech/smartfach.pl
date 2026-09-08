@@ -21,7 +21,7 @@ function WithdrawalItem({ request }: { request: WithdrawalRow }) {
   </article>;
 }
 
-export function AdminLegal({ withdrawals, smtpReady }: { withdrawals: WithdrawalRow[]; smtpReady: boolean }) {
+export function AdminLegal({ withdrawals, smtpReady, contactEmail }: { withdrawals: WithdrawalRow[]; smtpReady: boolean; contactEmail: string }) {
   const [smtpState, smtpAction, smtpPending] = useActionState(testSmtpConnection, undefined);
   return <section className="admin-panel" id="obsluga-umow">
     <div className="admin-panel-heading"><div><span><small>SPRZEDAŻ I PRAWA KLIENTA</small><h2>Obsługa umów</h2></span></div></div>
@@ -32,8 +32,12 @@ export function AdminLegal({ withdrawals, smtpReady }: { withdrawals: Withdrawal
     </div>
     {smtpState?.error && <p className="form-error" role="alert">{smtpState.error}</p>}
     {smtpState?.success && <p className="success-note" role="status">{smtpState.success}</p>}
-    <h3>Odstąpienia do obsłużenia: {withdrawals.length}</h3>
-    <p>Przeglądaj zgłoszenia codziennie. Formularz przyjmuje oświadczenie, ale nie anuluje subskrypcji ani nie wykonuje zwrotu automatycznie. Należne rozliczenie wykonaj w Stripe, odpowiedz klientowi i dopiero oznacz zgłoszenie jako obsłużone.</p>
-    {withdrawals.length ? withdrawals.map(request => <WithdrawalItem key={request.id} request={request} />) : <p>Brak oczekujących zgłoszeń.</p>}
+    <div className="admin-contract-support">
+      <h3>Kontakt i ręczne rozliczenia</h3>
+      <p>Sprawy zwrotów i odstąpień obsługujesz przez <a href={`mailto:${contactEmail}`}>{contactEmail}</a>. Każde należne rozliczenie wykonujesz osobiście w Stripe — żaden przycisk klienta nie zwraca pieniędzy automatycznie.</p>
+    </div>
+    <h3 className="admin-withdrawals-title">Zgłoszenia z formularza <span>{withdrawals.length}</span></h3>
+    <p>Formularz zapisuje oświadczenie klienta. Przeglądaj tę listę i skrzynkę codziennie. Zgłoszenia wysłane bezpośrednio e-mailem nie pojawiają się na tej liście.</p>
+    {withdrawals.length ? withdrawals.map(request => <WithdrawalItem key={request.id} request={request} />) : <p className="admin-empty-note"><MailCheck size={18} /> Brak oczekujących zgłoszeń z formularza.</p>}
   </section>;
 }

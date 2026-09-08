@@ -54,6 +54,8 @@ export function ContactForm({ email: recipient }: { email: string }) {
           <option>Chcę przetestować SmartFach</option>
           <option>Pomoc w wyborze planu</option>
           <option>Pomoc techniczna</option>
+          <option>Płatność lub zwrot</option>
+          <option>Odstąpienie od umowy</option>
           <option>Inna sprawa</option>
         </select>
       </div>

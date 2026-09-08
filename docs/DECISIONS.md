@@ -1067,3 +1067,20 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   dodatkowy koszt i mogłoby zmienić znaczenie. Istniejący Markdown jest renderowany,
   ale dawny zwykły tekst nie jest ponownie generowany.
 - MASTER_PLAN bez zmiany; doprecyzowanie UX_RULES, nie zmiana strategii.
+
+## D053 — Czytelne operacje i kontakt w sprawie rozliczeń
+
+- Data: 2026-09-09. Panel rozdziela etapy aktywacji (30 dni) od bieżących
+  nierozwiązanych webhooków i prób AI. Wspólny kontener zapewnia stałe odstępy
+  między panelem operacji i obsługą umów; puste stany nie udają pełnego testu systemu.
+- E-mail operatora jest eksponowany w kontakcie, odstąpieniu i obsłudze umów.
+  Rozliczenia/zwroty pozostają ręczne w Stripe. Anulowanie odnowienia pozostaje
+  samoobsługowe. Nie zmieniono warunków umów ani zapisanych akceptacji.
+- Nie usunięto formularza odstąpienia: art. 11a dyrektywy 2011/83/UE dodany przez
+  2023/2673 przewiduje funkcję odstąpienia online; termin stosowania zmian to
+  19.06.2026. Status polskiej transpozycji nie został potwierdzony w tym przeglądzie,
+  dlatego usunięcie istniejącej funkcji wymaga odrębnej weryfikacji prawnej.
+  Źródło: https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX%3A32023L2673
+- Kompromis: pozostaje mały moduł przyjmowania oświadczeń, bez automatycznych
+  zwrotów. Wiadomości wysłane bezpośrednio e-mailem nie są synchronizowane z panelem.
+- MASTER_PLAN bez zmiany — dopracowanie istniejącego panelu i kontaktu.

@@ -126,6 +126,7 @@ export default async function Page({
     users,
   };
   const params = await searchParams;
+  const operator = await getOperator();
   return (
     <AdminDashboard
       notice={
@@ -134,8 +135,8 @@ export default async function Page({
           : undefined
       }
       snapshot={snapshot}
-      operator={await getOperator()}
-      legalPanel={<><AdminOperations summary={operational.data as OperationalSummary} /><AdminLegal smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} /></>}
+      operator={operator}
+      legalPanel={<><AdminOperations summary={operational.data as OperationalSummary} /><AdminLegal contactEmail={operator.email} smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} /></>}
     />
   );
 }
