@@ -1011,3 +1011,21 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Trade-off: aktywna rezerwacja dostarczenia jest traktowana jako praca wykonywana
   przez drugi proces. Dwuminutowa dzierżawa i ręczne ponowienie webhooka nadal
   chronią przypadek przerwanej wysyłki. Bez zmiany MASTER_PLAN.
+
+## D050 — Zgodny z ZDR routing modeli i usunięcie Terra z bieżącego produktu
+
+- Data: 2026-09-08. Status: wdrożone w kodzie; wymaga testu rozmowy na Production.
+- Decyzja: zwykłe zadania obsługuje `openai/gpt-5-nano`, start biznesu, zdjęcia,
+  długie wiadomości i złożone zadania `openai/gpt-5.6-luna`, a awaryjny fallback
+  innego dostawcy to stały `google/gemini-3.8-flash`.
+- Przyczyna błędu: identyfikator Terra był prawidłowy. Przy włączonym ZDR OpenRouter
+  pozostawiał trasę Azure wymagającą `max_completion_tokens`, lecz adapter wysyłał
+  `max_tokens`. `require_parameters: true` odfiltrowywało wszystkie zgodne trasy,
+  dlatego główny model zwracał 404, a każdą odpowiedź wykonywał Gemini.
+- Implementacja: modele OpenAI otrzymują `max_completion_tokens`, Gemini
+  `max_tokens`. ZDR, brak zgody na retencję danych, ścisły schemat i serwerowa
+  walidacja pozostają bez zmian.
+- Ekonomia: Terra jest około dziesięć razy droższa od Luny i nie ma jeszcze
+  potwierdzonej przewagi w Task Success Rate. Wraca dopiero po kontrolowanym
+  benchmarku uzasadniającym koszt. Zastępuje D043 w zakresie wyboru modeli;
+  MASTER_PLAN bez zmiany.

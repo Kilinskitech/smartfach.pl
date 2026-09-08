@@ -175,3 +175,19 @@ Next.js. Nie aktualizować samych głównych wersji z pominięciem testów zgodn
 - Decyzja: Luna obsługuje zwykłą rozmowę, Terra tylko start, zdjęcia i wykryte złożone
   zadania, a Gemini 3.5 Flash jest awaryjny. Trzy równoległe odpowiedzi odrzucono ze
   względu na koszt, opóźnienie i trudniejsze diagnozowanie jakości.
+
+## Korekta routingu ZDR modeli OpenAI — 2026-09-08
+
+- Publiczne endpointy OpenRouter potwierdzają poprawność identyfikatorów GPT-5 Nano,
+  GPT-5.6 Luna i GPT-5.6 Terra. Błąd 404 nie wynikał z nieistniejącego modelu.
+- Przy `zdr: true` modele OpenAI mogą pozostać na trasie Azure. Ta trasa deklaruje
+  `max_completion_tokens`, podczas gdy pierwszy dostawca OpenAI deklaruje
+  `max_tokens`. Wysłanie `max_tokens` razem z `require_parameters: true` odfiltrowało
+  zgodną z ZDR trasę Azure i powodowało natychmiastowy błąd 404.
+- Adapter dobiera parametr limitu zależnie od rodziny: `max_completion_tokens` dla
+  OpenAI oraz `max_tokens` dla Gemini. Zachowujemy ZDR, `data_collection: deny`,
+  ścisły schemat i `require_parameters`.
+- Terra kosztuje około dziesięć razy więcej od Luny na wejściu i wyjściu. Bez danych
+  potwierdzających przewagę jakości nie jest rozsądnym modelem domyślnym w planach
+  49/99 zł. Routing produkcyjny: GPT-5 Nano dla krótkich zadań, GPT-5.6 Luna dla
+  startu, obrazu i złożonych zadań, Gemini 3.8 Flash jako awaryjny drugi dostawca.

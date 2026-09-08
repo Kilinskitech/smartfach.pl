@@ -15,11 +15,11 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
 - W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
   modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
-- Zwykłe pytania obsługuje `openai/gpt-5.6-luna`. Zatwierdzony start biznesu,
+- Zwykłe pytania obsługuje `openai/gpt-5-nano`. Zatwierdzony start biznesu,
   zdjęcia, długie wiadomości oraz złożone analizy trafiają do
-  `openai/gpt-5.6-terra`. To deterministyczny routing serwerowy, nie równoległe
+  `openai/gpt-5.6-luna`. To deterministyczny routing serwerowy, nie równoległe
   wywołanie ani głosowanie modeli.
-- Stały `google/gemini-3.5-flash` jest awaryjnym fallbackiem innego dostawcy,
+- Stały `google/gemini-3.8-flash` jest awaryjnym fallbackiem innego dostawcy,
   uruchamianym dopiero po błędzie, limicie lub timeoutcie wybranego modelu OpenAI.
 - Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
@@ -32,7 +32,8 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `usage` z OpenRouter zapisuje koszt USD, tokeny, model, provider i identyfikator
   żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
-- Adapter wysyła wspierane przez bieżące trasy OpenRouter `max_tokens`.
+- Adapter wysyła `max_completion_tokens` do modeli OpenAI oraz `max_tokens` do
+  Gemini. To konieczne przy ZDR, który dla OpenAI pozostawia m.in. trasy Azure.
   `require_parameters` wymusza trasę obsługującą żądane parametry. Nadal niezależnie
   walidujemy wynik na serwerze. ZDR i blokada dostawców przetwarzających dane są włączone.
 

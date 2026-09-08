@@ -75,8 +75,8 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);
-    expect(request.max_tokens).toBe(5000);
-    expect(request.max_completion_tokens).toBeUndefined();
+    expect(request.max_completion_tokens).toBe(5000);
+    expect(request.max_tokens).toBeUndefined();
     expect(request.reasoning).toEqual({ effort: "low", exclude: true });
     expect(request.plugins).toEqual([{ id: "response-healing" }]);
     expect(request.tools).toEqual([
@@ -112,9 +112,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     const fallbackRequest = JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body));
     expect(primaryRequest).toMatchObject({
       model: primaryAiModel,
-      max_tokens: 5000,
+      max_completion_tokens: 5000,
     });
-    expect(primaryRequest.max_completion_tokens).toBeUndefined();
+    expect(primaryRequest.max_tokens).toBeUndefined();
     expect(fallbackRequest).toMatchObject({
       model: fallbackAiModel,
       max_tokens: 5000,

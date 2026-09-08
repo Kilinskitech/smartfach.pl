@@ -7,9 +7,9 @@ import {
 } from "../domain/assistant";
 import type { WebSource, Workspace } from "../domain/workspace";
 
-export const primaryAiModel = "openai/gpt-5.6-luna";
-export const advancedAiModel = "openai/gpt-5.6-terra";
-export const fallbackAiModel = "google/gemini-3.5-flash";
+export const primaryAiModel = "openai/gpt-5-nano";
+export const advancedAiModel = "openai/gpt-5.6-luna";
+export const fallbackAiModel = "google/gemini-3.8-flash";
 export const aiModels = [primaryAiModel, advancedAiModel, fallbackAiModel] as const;
 export const aiConfigured = () =>
   process.env.SMARTFACH_ENABLE_AI === "true" &&
@@ -321,7 +321,9 @@ export async function callAssistant(
       body: JSON.stringify({
         model,
         ...(userId ? { user: userId } : {}),
-        max_tokens: 5000,
+        ...(model.startsWith("openai/")
+          ? { max_completion_tokens: 5000 }
+          : { max_tokens: 5000 }),
         reasoning: {
           effort: "low",
           exclude: true,
