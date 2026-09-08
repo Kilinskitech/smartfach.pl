@@ -3,6 +3,10 @@
 Stan: 8 września 2026. Implementacja nie jest równoznaczna z zatwierdzeniem prawnym,
 konfiguracją usług ani zakończonym testem rzeczywistej płatności.
 
+Aktualizacja 2026-09-09: najpierw wykonaj `RELEASE_2026-09-09.md`. Nowa wersja
+wymaga migracji bazy, `CRON_SECRET` i osobnej bazy Preview przed Stripe Live.
+Nie publikuj kodu bez tych przygotowań.
+
 ## Co jest w kodzie
 
 - Regulamin i prywatność zgodne z obecnym zakresem produktu, do czytania, druku
@@ -66,8 +70,9 @@ nie zamiennik poprawnie skonfigurowanego endpointu Stripe.
 Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
 ścisłego „exactly once” w przypadku przyjęcia e-maila i jednoczesnej awarii zapisu
 statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich braku.
-Równoległa aktywna rezerwacja tej samej wysyłki nie powoduje już odpowiedzi 500.
-Po wdrożeniu ponów wcześniejsze nieudane zdarzenie i potwierdź HTTP 200.
+Równoległa aktywna rezerwacja wysyłki od 2026-09-09 zwraca 503 do ponowienia
+webhooka. Nie oznaczamy zdarzenia jako zakończonego, zanim wysyłka się nie potwierdzi.
+Po zakończeniu pracy pierwszego procesu ponowienie powinno zwrócić HTTP 200.
 
 W Sandbox endpoint webhooka również musi działać w trybie testowym. Sekret
 `STRIPE_WEBHOOK_SECRET` musi pochodzić z dokładnie tego endpointu, który odbiera

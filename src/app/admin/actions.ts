@@ -32,6 +32,19 @@ export type AdminActionState =
   | { error?: string; success?: string }
   | undefined;
 
+export async function releaseAiReservation(_: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const parsed = z.object({ organizationId: z.uuid(), requestKey: z.uuid(), confirmed: z.literal("yes") }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Potwierdź sprawdzenie próby u dostawcy." };
+  try {
+    const owner = await requirePlatformAdmin();
+    const { data, error } = await createAdminClient().rpc("resolve_ai_reservation", { org: parsed.data.organizationId, request_key: parsed.data.requestKey, admin_actor: owner.userId });
+    if (error) throw error;
+    if (!data) return { error: "Próba jest już zakończona albo jeszcze trwa. Odśwież panel." };
+    revalidatePath("/admin");
+    return { success: "Zwolniono rezerwację. Operacja została zapisana w dzienniku administratora." };
+  } catch { return { error: "Nie zwolniono rezerwacji. Sprawdź uprawnienia i połączenie." }; }
+}
+
 export async function testSmtpConnection(
   previousState: AdminActionState,
   formData: FormData,

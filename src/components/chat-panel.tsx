@@ -92,6 +92,7 @@ export function ChatPanel({
   const textarea = useRef<HTMLTextAreaElement>(null);
   const lastMessage = useRef<HTMLDivElement>(null);
   const imageInput = useRef<HTMLInputElement>(null);
+  const pendingRequest = useRef<{ payload: string; key: string; conversationId: string } | null>(null);
   const messages = conversation?.messages ?? [];
   const creditsLeft = remainingCredits(data.billing);
   const requestCost = estimateRequestCredits(attachments);
@@ -312,11 +313,7 @@ export function ChatPanel({
     onBusy(true);
     setError("");
     try {
-      const response = await fetch("/api/assistant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idempotencyKey: crypto.randomUUID(),
+      const payload = JSON.stringify({
           mode: options.mode ?? "chat",
           ...(options.guidedStart ? { guidedStart: options.guidedStart } : {}),
           messages: [
@@ -333,18 +330,27 @@ export function ChatPanel({
             mediaType,
             data,
           })),
-        }),
+        });
+      if (pendingRequest.current?.payload !== payload) {
+        pendingRequest.current = { payload, key: crypto.randomUUID(), conversationId: conversation?.id ?? crypto.randomUUID() };
+      }
+      const attempt = pendingRequest.current;
+      const response = await fetch("/api/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...JSON.parse(payload), idempotencyKey: attempt.key }),
         signal: AbortSignal.timeout(55_000),
       });
       const result: AssistantResult & { error?: string; code?: string } =
         await response.json();
       if (!response.ok) {
+        if (["failed", "expired", "conflict", "provider_failed"].includes(result.code ?? "")) pendingRequest.current = null;
         if (result.code === "credit_limit") onOpenBilling();
         throw new Error(result.error ?? "Asystent nie odpowiedział.");
       }
       if (typeof result.reply !== "string")
         throw new Error("Odpowiedź nie została poprawnie odczytana.");
-      const id = conversation?.id ?? crypto.randomUUID();
+      const id = attempt.conversationId;
       const updated: Conversation = {
         id,
         title: conversation?.title ?? options.title ?? text.slice(0, 70),
@@ -376,6 +382,7 @@ export function ChatPanel({
         result.billing,
         result.workspaceRevision,
       );
+      pendingRequest.current = null;
       if (!options.text) setInput("");
       setAttachments([]);
       requestAnimationFrame(() =>

@@ -1,6 +1,6 @@
 # SmartFach — architektura AI
 
-Stan: 2026-09-08.
+Stan: 2026-09-09. Nowe zabezpieczenia wymagają migracji `202609090001_reliable_requests.sql`.
 
 ## Zasada
 
@@ -20,7 +20,9 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
   `openai/gpt-5.6-luna`. To deterministyczny routing serwerowy, nie równoległe
   wywołanie ani głosowanie modeli.
 - Stały `google/gemini-3.8-flash` jest awaryjnym fallbackiem innego dostawcy,
-  uruchamianym dopiero po błędzie, limicie lub timeoutcie wybranego modelu OpenAI.
+  uruchamianym po jednoznacznym odrzuceniu 400/404/422/429 wybranego modelu OpenAI.
+  Utrata połączenia, timeout i 5xx nie uruchamiają kolejnej generacji: poprzednia
+  mogła już zostać wykonana i obciążyć konto OpenRouter.
 - Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
@@ -73,10 +75,29 @@ Asystent ma:
 
 ## Odporność i koszty
 
-Timeout, błędny JSON, odmowa, ucięta odpowiedź i błąd providera mają zachować
-wiadomość użytkownika i dać bezpieczne ponowienie. Jedno żądanie nie może zostać
-rozliczone dwa razy przez retry. Limity procesu są prototypem; płatna wersja wymaga
-atomowego obciążenia i audytowalnej księgi.
+`begin_ai_request` blokuje wiersz workspace, sprawdza saldo z rezerwacjami, limit
+20 prób/h i dopuszcza jeden aktywny request na organizację. Klucz UUID i SHA-256
+zwalidowanej treści wiążą próbę z użytkownikiem. UI zachowuje ten sam klucz przy
+ponowieniu niezmienionej wiadomości w otwartym widoku. Odświeżenie strony lub zmiana
+treści tworzy nową próbę; nie obiecujemy deduplikacji semantycznie podobnych pytań.
+
+`finish_ai_request` w jednej transakcji zapisuje koszt, księgę, saldo, rewizję i
+wynik. Powtórzenie zakończonego klucza oddaje wynik bez wywołania AI i nowego naliczenia.
+Po 24h receipt pozostaje, ale wynik nie jest ponownie udostępniany. Cron usuwa
+techniczne treści odpowiedzi starsze niż 24h; dziennik prób nie zawiera promptów.
+
+Przed wywołaniem rezerwujemy do 30 jednostek dostępnej puli. Wynik jest rozliczany
+według kosztu zaokrąglonego do jednostki. Nadwyżkę kosztu jednego wywołania ponad
+pozostałą pulę ponosi operator, zachowując pomiar kosztu; nie odrzucamy już opłaconej
+odpowiedzi. To kontrola dostępu i naliczeń, nie twardy limit wydatków dostawcy.
+Koszt niepewnych generacji może nie być dostępny w lokalnym usage_events:
+rachunek OpenRouter należy osobno uzgadniać i ustawić limit klucza u dostawcy.
+
+Definitywne odrzucenie 4xx zwalnia rezerwację i zamyka klucz. Niepewne zakończenie
+pozostaje zarezerwowane. Administrator sprawdza logi i może zwolnić rezerwację
+przyjmując koszt po stronie SmartFach; decyzja trafia do audytu. Wygasły proces
+nie może ponownie naliczyć zamkniętej próby. Zapis odpowiedzi w historii rozmowy
+pozostaje osobnym optymistycznym zapisem UI; replay pozwala go ponowić po błędzie.
 
 Fallback ma stały identyfikator modelu zamiast aliasu `latest`, aby aktualizacja
 dostawcy nie zmieniła kosztu i zachowania bez wdrożenia. Każdą zmianę modelu trzeba

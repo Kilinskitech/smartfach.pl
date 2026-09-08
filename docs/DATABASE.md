@@ -3,6 +3,29 @@
 Stan: 2026-09-06. Runtime korzysta z hostowanego Supabase. Migracje znajdują się
 w `supabase/migrations` i nie wykonują się automatycznie z wdrożeniem Vercela.
 
+## Dodatek 2026-09-09 — przygotowany, wymaga zastosowania w środowisku
+
+Migracja `202609090001_reliable_requests.sql` jest addytywna i transakcyjna:
+
+- `ai_requests`: rezerwacja, klucz, hash wejścia, status i krótko przechowywany wynik.
+- `operation_leases`: wygasające blokady webhooków, checkoutów i synchronizacji;
+  token jest sprawdzany przy zatwierdzaniu webhooka i całego snapshotu abonamentu.
+- `checkout_attempts`: stabilny zakup na organizację; niepewnej próby starszej niż
+  23h nie odtwarzamy automatycznie z kluczem mogącym już wygasnąć w Stripe.
+- `organizations.trial_consumed_at`: jednorazowa próba, uzupełnienie z istniejących abonamentów.
+- `subscriptions.stripe_created_at`: ochrona przed nadpisaniem nowszego abonamentu starym.
+- `deployment_identity`: jawne przypisanie bazy do Preview albo Production.
+- `product_events`: pierwsze etapy aktywacji na użytkownika, bez promptów i śledzenia reklamowego.
+- `admin_usage_totals`: sumowanie pełnej historii kosztów w SQL zamiast pobierania pierwszych 1000 zdarzeń.
+
+Nowe tabele mają RLS, nowe funkcje uprawnienia wyłącznie dla `service_role`.
+Serwer autoryzuje użytkownika/admina przed ich wywołaniem. Klucz backendu nadal
+pozostaje `sb_secret_`, nie udostępniamy legacy service key ani RPC przeglądarce.
+Pełny test plików migracji używa PGlite/PostgreSQL i syntetycznego Auth; nie zastępuje
+testu dwóch zalogowanych kont w rzeczywistym Supabase.
+
+Kolejność publikacji, kontrola schematu i izolacja baz: `RELEASE_2026-09-09.md`.
+
 ## Wdrożona podstawa
 
 - `user_profiles`: nazwa użytkownika i techniczne pole zgodności `account_type`.

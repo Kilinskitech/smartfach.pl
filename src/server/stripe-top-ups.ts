@@ -13,6 +13,7 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applicationUrl, getStripe } from "@/lib/stripe";
 import { recordPurchaseAcceptance } from "./purchase-legal";
+import { assertDeploymentIdentity } from "./operations";
 
 const identitySchema = z.uuid();
 
@@ -25,6 +26,7 @@ export async function createUsageTopUpCheckout(input: {
   idempotencyKey: string;
 }) {
   const stripe = getStripe();
+  await assertDeploymentIdentity();
   const pack = creditPackById(input.packId);
   const grantedCredits = topUpCreditsForPlan(input.packId, input.plan);
   const acceptanceId = await recordPurchaseAcceptance({ userId: input.userId, purchaseKey: input.idempotencyKey,

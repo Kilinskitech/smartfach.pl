@@ -1,14 +1,13 @@
 import "server-only";
 import type Stripe from "stripe";
 import {
-  billingSchema,
   emailConfirmationHoldAction,
   planIdSchema,
-  rollBillingPeriod,
   type PlanId,
 } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe, planForStripePriceId } from "@/lib/stripe";
+import { withOperation, assertDeploymentIdentity, recordMilestone } from "./operations";
 
 const emailConfirmationHoldMetadata = "smartfach_email_confirmation_hold";
 
@@ -77,13 +76,7 @@ export async function releaseEmailConfirmationHoldForUser(userId: string) {
   const subscription = await stripe.subscriptions.retrieve(
     String(data.stripe_subscription_id),
   );
-  const reconciled = await reconcileEmailConfirmationHold(subscription, stripe);
-  if (
-    reconciled.cancel_at_period_end !== subscription.cancel_at_period_end ||
-    reconciled.metadata[emailConfirmationHoldMetadata] !==
-      subscription.metadata[emailConfirmationHoldMetadata]
-  )
-    await syncSubscription(reconciled);
+  await syncSubscription(subscription);
 }
 
 export async function subscriptionHasPaymentMethod(
@@ -104,124 +97,44 @@ export async function subscriptionHasPaymentMethod(
 
 export async function syncSubscription(
   subscription: Stripe.Subscription,
-  checkout?: {
-    organizationId?: string;
-    userId?: string;
-    plan?: string;
-  },
+  checkout?: { organizationId?: string; userId?: string; plan?: string },
 ) {
+  await assertDeploymentIdentity();
   const admin = createAdminClient();
-  let organizationId = checkout?.organizationId ?? subscription.metadata.organization_id;
-  let ownerUserId = checkout?.userId ?? subscription.metadata.user_id;
-  const pricePlan = planForStripePriceId(subscription.items.data[0]?.price.id);
-  let plan: PlanId | undefined =
-    pricePlan ??
-    planIdSchema.safeParse(checkout?.plan ?? subscription.metadata.plan).data;
-
-  if (!organizationId || !ownerUserId || !plan) {
-    const { data } = await admin
-      .from("subscriptions")
-      .select("organization_id, owner_user_id, plan")
-      .eq("stripe_subscription_id", subscription.id)
-      .maybeSingle();
-    organizationId ||= data?.organization_id;
-    ownerUserId ||= data?.owner_user_id;
-    const existingPlan = planIdSchema.safeParse(data?.plan);
-    if (!plan && existingPlan.success) plan = existingPlan.data;
-  }
-
-  if (!organizationId || !ownerUserId || !plan)
-    throw new Error("Subskrypcja Stripe nie ma powiązania z kontem SmartFach.");
-
-  const { data: existingSubscription } = await admin
-    .from("subscriptions")
-    .select("current_period_started_at")
-    .eq("organization_id", organizationId)
-    .maybeSingle();
-  const customerId =
-    typeof subscription.customer === "string"
-      ? subscription.customer
-      : subscription.customer.id;
-  const paymentMethodAttached = await subscriptionHasPaymentMethod(subscription);
-  const nextPeriodStart = periodStart(subscription);
-  const { error } = await admin.from("subscriptions").upsert(
-    {
-      organization_id: organizationId,
-      owner_user_id: ownerUserId,
-      plan,
-      status: subscription.status,
-      stripe_customer_id: customerId,
-      stripe_subscription_id: subscription.id,
-      trial_started_at: timestamp(subscription.trial_start),
-      trial_ends_at: timestamp(subscription.trial_end),
-      current_period_started_at: nextPeriodStart,
-      current_period_ends_at: periodEnd(subscription),
-      cancel_at_period_end: subscription.cancel_at_period_end,
-      payment_method_attached: paymentMethodAttached,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "organization_id" },
-  );
-  if (error) throw new Error("Nie zapisano statusu subskrypcji.");
-
-  const { data: workspaceRow } = await admin
-    .from("workspaces")
-    .select("revision, data")
-    .eq("organization_id", organizationId)
-    .maybeSingle();
-  if (workspaceRow?.data && typeof workspaceRow.data === "object") {
-    const workspace = workspaceRow.data as Record<string, unknown>;
-    const billing =
-      workspace.billing && typeof workspace.billing === "object"
-        ? (workspace.billing as Record<string, unknown>)
-        : {};
-    const periodChanged = Boolean(
-      nextPeriodStart &&
-        String(existingSubscription?.current_period_started_at ?? "") !==
-          nextPeriodStart,
-    );
-    const planChanged = billing.plan !== plan;
-    if (!planChanged && !periodChanged) return;
-    const currentBilling = billingSchema.parse(billing);
-    const rolledBilling =
-      periodChanged && nextPeriodStart
-        ? rollBillingPeriod(currentBilling, nextPeriodStart)
-        : currentBilling;
-    const expectedRevision = Number(workspaceRow.revision);
-    const nextData = {
-      ...workspace,
-      revision: expectedRevision,
-      billing: {
-        ...rolledBilling,
-        plan,
-      },
-    };
-    const { error: workspaceError } = await admin.rpc("save_workspace", {
-      target_organization_id: organizationId,
-      actor_user_id: ownerUserId,
-      expected_revision: expectedRevision,
-      next_data: nextData,
-    });
-    if (workspaceError) {
-      const desiredBilling = billingSchema.parse(nextData.billing);
-      const { data: refreshedRow, error: refreshError } = await admin
-        .from("workspaces")
-        .select("data")
-        .eq("organization_id", organizationId)
-        .maybeSingle();
-      const refreshedWorkspace =
-        refreshedRow?.data && typeof refreshedRow.data === "object"
-          ? (refreshedRow.data as Record<string, unknown>)
-          : null;
-      const refreshedBilling = billingSchema.safeParse(
-        refreshedWorkspace?.billing,
-      );
-      const anotherDeliveryAlreadyAppliedTheSameChange =
-        !refreshError &&
-        refreshedBilling.success &&
-        JSON.stringify(refreshedBilling.data) === JSON.stringify(desiredBilling);
-      if (!anotherDeliveryAlreadyAppliedTheSameChange)
-        throw new Error("Nie zsynchronizowano planu w koncie.");
+  const organizationId = checkout?.organizationId ?? subscription.metadata.organization_id;
+  const ownerUserId = checkout?.userId ?? subscription.metadata.user_id;
+  if (!organizationId || !ownerUserId) throw new Error("Brak powiązania abonamentu z kontem.");
+  return withOperation(`subscription:${organizationId}`, async (token) => {
+    const stripe = getStripe();
+    // Fetch AFTER acquiring the organization lease. Snapshot events can arrive out of order.
+    const fresh = await stripe.subscriptions.retrieve(subscription.id);
+    const { data: previous, error: previousError } = await admin.from("subscriptions")
+      .select("stripe_subscription_id,stripe_created_at").eq("organization_id", organizationId).maybeSingle();
+    if (previousError) throw new Error("Nie odczytano abonamentu.");
+    if (previous?.stripe_subscription_id && previous.stripe_subscription_id !== fresh.id) {
+      const previousCreated = Number(previous.stripe_created_at) || (await stripe.subscriptions.retrieve(String(previous.stripe_subscription_id))).created;
+      if (previousCreated >= fresh.created) return fresh;
     }
-  }
+    if (fresh.metadata.organization_id !== organizationId || fresh.metadata.user_id !== ownerUserId)
+      throw new Error("Niezgodność właściciela abonamentu.");
+    const reconciled = await reconcileEmailConfirmationHold(fresh, stripe);
+    const plan: PlanId | undefined = planForStripePriceId(reconciled.items.data[0]?.price.id)
+      ?? planIdSchema.safeParse(checkout?.plan ?? reconciled.metadata.plan).data;
+    if (!plan) throw new Error("Nieznany plan abonamentu.");
+    const customer = typeof reconciled.customer === "string" ? reconciled.customer : reconciled.customer.id;
+    const { error } = await admin.rpc("apply_subscription_snapshot", {
+      org: organizationId, actor: ownerUserId, lease_token: token,
+      snapshot: {
+        id: reconciled.id, created: reconciled.created, customer, plan, status: reconciled.status,
+        trial_start: timestamp(reconciled.trial_start), trial_end: timestamp(reconciled.trial_end),
+        period_start: periodStart(reconciled), period_end: periodEnd(reconciled),
+        cancel_at_period_end: reconciled.cancel_at_period_end,
+        payment_method: await subscriptionHasPaymentMethod(reconciled, stripe),
+      },
+    });
+    if (error) throw new Error("Nie zsynchronizowano abonamentu i limitu w koncie.");
+    if (reconciled.status === "active") await recordMilestone(ownerUserId, "paid");
+    if (reconciled.status === "canceled") await recordMilestone(ownerUserId, "canceled");
+    return reconciled;
+  });
 }

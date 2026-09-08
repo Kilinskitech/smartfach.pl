@@ -1,109 +1,62 @@
 import Stripe from "stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
-import {
-  reconcileEmailConfirmationHold,
-  syncSubscription,
-} from "@/server/stripe-subscriptions";
+import { syncSubscription } from "@/server/stripe-subscriptions";
 import { grantUsageTopUpFromSession } from "@/server/stripe-top-ups";
 import { confirmPurchaseContract } from "@/server/purchase-legal";
+import { assertDeploymentIdentity, withOperation, recordMilestone, OperationBusy } from "@/server/operations";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
+export const maxDuration = 60;
 export async function POST(request: Request) {
   const signature = request.headers.get("stripe-signature");
   const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
-  if (!signature || !secret)
-    return Response.json({ error: "Brak podpisu webhooka." }, { status: 400 });
-
+  if (!signature || !secret) return Response.json({ error: "Brak podpisu webhooka." }, { status: 400 });
   const stripe = getStripe();
   let event: Stripe.Event;
+  try { event = stripe.webhooks.constructEvent(await request.text(), signature, secret); }
+  catch { return Response.json({ error: "Nieprawidłowy podpis webhooka." }, { status: 400 }); }
+  const liveKey = /^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY?.trim() ?? "");
+  if (event.livemode !== liveKey) return Response.json({ error: "Niezgodny tryb płatności." }, { status: 400 });
   try {
-    event = stripe.webhooks.constructEvent(await request.text(), signature, secret);
-  } catch {
-    return Response.json({ error: "Nieprawidłowy podpis webhooka." }, { status: 400 });
-  }
-
-  const admin = createAdminClient();
-  const { error: claimError } = await admin.from("stripe_events").insert({
-    event_id: event.id,
-    event_type: event.type,
-  });
-  if (claimError?.code === "23505") {
-    const { data: existing } = await admin.from("stripe_events").select("processed_at").eq("event_id", event.id).maybeSingle();
-    // A concurrent delivery is not a completed delivery. Keep retries alive.
-    return existing?.processed_at
-      ? Response.json({ received: true })
-      : Response.json({ error: "Zdarzenie jest jeszcze przetwarzane." }, { status: 503 });
-  }
-  if (claimError) return Response.json({ error: "Nie zapisano webhooka." }, { status: 500 });
-
-  try {
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      if (session.metadata?.purchase_type === "usage_top_up") {
-        if (session.payment_status === "paid") {
-          await grantUsageTopUpFromSession(session);
-          await confirmPurchaseContract(session);
-        }
-      } else {
-        const subscriptionId =
-          typeof session.subscription === "string"
-            ? session.subscription
-            : session.subscription?.id;
-        if (!subscriptionId)
-          throw new Error("Checkout abonamentu nie zawiera subskrypcji.");
-        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-        const protectedSubscription = await reconcileEmailConfirmationHold(
-          subscription,
-          stripe,
-        );
-        await syncSubscription(protectedSubscription, {
-          organizationId: session.metadata?.organization_id,
-          userId: session.metadata?.user_id,
-          plan: session.metadata?.plan,
-        });
-        await confirmPurchaseContract(session, protectedSubscription.trial_end);
-      }
-    }
-    if (event.type === "checkout.session.async_payment_succeeded") {
-      const session = event.data.object;
-      if (session.metadata?.purchase_type === "usage_top_up") {
-        await grantUsageTopUpFromSession(session);
-        await confirmPurchaseContract(session);
-      }
-    }
-    if (
-      event.type === "customer.subscription.created" ||
-      event.type === "customer.subscription.updated" ||
-      event.type === "customer.subscription.deleted"
-    ) {
-      if (event.data.object.metadata.smartfach_account_deleted === "true") {
-        await admin
-          .from("stripe_events")
-          .update({ processed_at: new Date().toISOString() })
-          .eq("event_id", event.id);
-        return Response.json({ received: true });
-      }
-      const protectedSubscription = await reconcileEmailConfirmationHold(
-        event.data.object,
-        stripe,
+    await assertDeploymentIdentity();
+    return await withOperation(`stripe-event:${event.id}`, async (token) => {
+      const admin = createAdminClient();
+      const { data: existing, error: readError } = await admin.from("stripe_events").select("processed_at").eq("event_id",event.id).maybeSingle();
+      if (readError) throw new Error("Nie można sprawdzić zdarzenia.");
+      if (existing?.processed_at) return Response.json({ received: true });
+      const { error: claimError } = await admin.from("stripe_events").upsert(
+        { event_id: event.id, event_type: event.type }, { onConflict: "event_id", ignoreDuplicates: true },
       );
-      await syncSubscription(protectedSubscription);
-    }
-    await admin
-      .from("stripe_events")
-      .update({ processed_at: new Date().toISOString() })
-      .eq("event_id", event.id);
-    return Response.json({ received: true });
-  } catch (error) {
-    await admin.from("stripe_events").delete().eq("event_id", event.id);
-    console.error("Nie przetworzono webhooka Stripe", {
-      eventId: event.id,
-      eventType: event.type,
-      message: error instanceof Error ? error.message : "unknown",
+      if (claimError) throw new Error("Nie zapisano zdarzenia.");
+      if (event.type === "checkout.session.completed" || event.type === "checkout.session.async_payment_succeeded") {
+        const session = event.data.object;
+        if (session.metadata?.purchase_type === "usage_top_up") {
+          if (session.payment_status === "paid") {
+            await grantUsageTopUpFromSession(session);
+            await confirmPurchaseContract(session);
+            if (session.metadata.user_id) await recordMilestone(session.metadata.user_id, "top_up");
+          }
+        } else if (event.type === "checkout.session.completed") {
+          const id = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
+          if (!id) throw new Error("Brak abonamentu.");
+          const latest = await syncSubscription(await stripe.subscriptions.retrieve(id), {
+            organizationId: session.metadata?.organization_id, userId: session.metadata?.user_id, plan: session.metadata?.plan,
+          });
+          await confirmPurchaseContract(session, latest.trial_end);
+          if (session.metadata?.user_id) await recordMilestone(session.metadata.user_id, "checkout_completed");
+        }
+      }
+      if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
+        if (event.data.object.metadata.smartfach_account_deleted !== "true") await syncSubscription(event.data.object);
+      }
+      const { data: finished, error } = await admin.rpc("complete_stripe_event", { event_id: event.id, lease_token: token });
+      if (error || finished !== true) throw new Error("Nie potwierdzono zakończenia zdarzenia.");
+      return Response.json({ received: true });
     });
-    return Response.json({ error: "Webhook zostanie ponowiony." }, { status: 500 });
+  } catch (error) {
+    console.error("stripe_event_failed", { eventId: event.id, eventType: event.type, message: error instanceof Error ? error.message : "unknown" });
+    return Response.json({ error: "Webhook zostanie ponowiony." }, { status: error instanceof OperationBusy ? 503 : 500 });
   }
 }

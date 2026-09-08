@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { getOperator } from "@/server/operator-settings";
 import { sendContractEmail, smtpConfigured } from "@/server/transactional-email";
+import { assertDeploymentIdentity } from "@/server/operations";
 
 export type WithdrawalState = { error?: string; success?: string } | undefined;
 const schema = z.object({
@@ -16,6 +17,7 @@ export async function submitWithdrawal(_: WithdrawalState, formData: FormData): 
   const parsed = schema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { error: "Podaj imię i nazwisko, e-mail konta oraz numer zamówienia zaczynający się od cs_." };
   try {
+    await assertDeploymentIdentity();
     const session = await getStripe().checkout.sessions.retrieve(parsed.data.order);
     if (session.status !== "complete" || !session.metadata?.user_id)
       return { error: "Nie znaleziono ukończonego zamówienia dla tych danych. Możesz złożyć oświadczenie również przez kontakt e-mail." };

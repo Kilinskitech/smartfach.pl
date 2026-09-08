@@ -7,7 +7,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { confirmPurchaseContract } from "@/server/purchase-legal";
 import {
-  reconcileEmailConfirmationHold,
   syncSubscription,
 } from "@/server/stripe-subscriptions";
 
@@ -66,11 +65,7 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
       return "processing";
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    const protectedSubscription = await reconcileEmailConfirmationHold(
-      subscription,
-      stripe,
-    );
-    await syncSubscription(protectedSubscription, {
+    const protectedSubscription = await syncSubscription(subscription, {
       organizationId,
       userId,
       plan: checkout.metadata?.plan,
@@ -112,13 +107,14 @@ export default async function Page({
       <PaymentResultPage
         icon={<CheckCircle2 size={34} />}
         eyebrow="GOTOWE"
-        title="Konto i 3-dniowa próba są aktywne"
+        title="Konto zostało aktywowane"
         description="Możesz od razu przejść do SmartFach i zacząć pracę nad pierwszą ofertą."
         steps={stepsFor(state)}
       >
         <p className="payment-result-detail">
-          Pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie
-          anulujesz abonamentu.
+          Plan i termin następnej płatności sprawdzisz w swoim koncie.
+          Jeśli rozpoczynasz pierwszą próbę, możesz anulować ją przed końcem 3 dni,
+          aby uniknąć pierwszej opłaty.
         </p>
         <Link className="button button-primary" href="/app">
           Otwórz SmartFach <span aria-hidden>→</span>

@@ -3,12 +3,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { createClient } from "@/lib/supabase/server";
 import { hasSubscriptionAccess } from "@/domain/billing";
+import { assertDeploymentIdentity } from "./operations";
 
 export class AuthenticationRequired extends Error {}
 export class EmailConfirmationRequired extends AuthenticationRequired {}
 export class SubscriptionRequired extends Error {}
 
 export async function authenticatedContext() {
+  await assertDeploymentIdentity();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
@@ -74,6 +76,7 @@ export async function requireSubscription(
 }
 
 export async function requirePlatformAdmin() {
+  await assertDeploymentIdentity();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = typeof data?.claims?.sub === "string" ? data.claims.sub : null;
@@ -85,5 +88,8 @@ export async function requirePlatformAdmin() {
     !isPlatformAdminIdentity({ userId, email })
   )
     throw new AuthenticationRequired("Brak dostępu do panelu administratora.");
-  return { supabase, userId, email };
+  const { data: verified, error: verifiedError } = await supabase.auth.getUser();
+  if (verifiedError || verified.user?.id !== userId || !verified.user.email_confirmed_at)
+    throw new AuthenticationRequired("Potwierdź konto administratora i zaloguj się ponownie.");
+  return { supabase, userId, email: verified.user.email ?? email };
 }

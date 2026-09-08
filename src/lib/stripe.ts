@@ -14,7 +14,7 @@ export function stripeConfigured() {
 export function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key) throw new Error("Brak konfiguracji Stripe.");
-  return new Stripe(key, { appInfo: { name: "SmartFach", version: "0.1.0" } });
+  return new Stripe(key, { timeout: 15_000, maxNetworkRetries: 1, appInfo: { name: "SmartFach", version: "0.1.0" } });
 }
 
 export function stripePriceId(plan: PlanId) {

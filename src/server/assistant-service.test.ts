@@ -34,6 +34,16 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
+  it("nie wysyła drugiego płatnego zapytania po niepewnym timeout", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockRejectedValue(new DOMException("Lost response", "TimeoutError"));
+    await expect(callAssistant(input, fixtureWorkspace(), fetcher)).rejects.toThrow("Lost response");
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it("nie ponawia automatycznie niejednoznacznego błędu 5xx", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response("Server error", { status: 502 }));
+    await expect(callAssistant(input, fixtureWorkspace(), fetcher)).rejects.toThrow();
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it("wymaga świadomego włączenia i klucza", async () => {
     vi.stubEnv("SMARTFACH_ENABLE_AI", "false");
     const fetcher = vi.fn();

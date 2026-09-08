@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
 import { releaseEmailConfirmationHoldForUser } from "@/server/stripe-subscriptions";
 import { legalDocumentVersion } from "@/domain/operator";
+import { assertDeploymentIdentity, recordMilestone } from "@/server/operations";
 
 export type AuthState = { error?: string; success?: string } | undefined;
 
@@ -69,6 +70,7 @@ function passwordResetCallback() {
 }
 
 export async function signIn(_: AuthState, formData: FormData): Promise<AuthState> {
+  await assertDeploymentIdentity();
   const parsed = credentialsSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -109,6 +111,7 @@ export async function signIn(_: AuthState, formData: FormData): Promise<AuthStat
 }
 
 export async function signUp(_: AuthState, formData: FormData): Promise<AuthState> {
+  await assertDeploymentIdentity();
   const parsed = registrationSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -139,6 +142,7 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
   if (error) return { error: message(error) };
   if (!data.user?.id || data.user.identities?.length === 0)
     return { error: "Konto z tym adresem już istnieje. Zaloguj się." };
+  await recordMilestone(data.user.id, "registered");
 
   let checkoutUrl: string;
   try {
@@ -182,6 +186,7 @@ export async function resendConfirmation(
   _: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
+  await assertDeploymentIdentity();
   const sessionId = String(formData.get("sessionId") ?? "");
   if (!/^cs_(?:test_|live_)?[A-Za-z0-9]+$/.test(sessionId))
     return { error: "Nieprawidłowy identyfikator płatności." };
@@ -220,6 +225,7 @@ export async function requestPasswordReset(
   _: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
+  await assertDeploymentIdentity();
   const parsed = emailSchema.safeParse({ email: formData.get("email") });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message };
 
@@ -240,6 +246,7 @@ export async function updatePassword(
   _: AuthState,
   formData: FormData,
 ): Promise<AuthState> {
+  await assertDeploymentIdentity();
   const parsed = passwordUpdateSchema.safeParse({
     password: formData.get("password"),
     passwordConfirmation: formData.get("passwordConfirmation"),

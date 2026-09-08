@@ -18,19 +18,23 @@ export function CheckoutPlans({
   currentAccessAllowed,
   configured,
   canceled,
+  trialEligible = true,
+  linkedSubscription = false,
 }: {
   initialPlan: PublicPlanId;
   currentStatus?: string;
   currentAccessAllowed: boolean;
   configured: boolean;
   canceled: boolean;
+  trialEligible?: boolean;
+  linkedSubscription?: boolean;
 }) {
   const [plan, setPlan] = useState(() => normalizePublicPlan(initialPlan));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [consented, setConsented] = useState(false);
-  const hasSubscription = currentStatus === "active" || currentStatus === "trialing";
-  const hasAccess = hasSubscription && currentAccessAllowed;
+  const hasSubscription = ["active", "trialing", "past_due", "unpaid", "paused"].includes(currentStatus ?? "") || (currentStatus === "incomplete" && linkedSubscription);
+  const hasAccess = (currentStatus === "active" || currentStatus === "trialing") && currentAccessAllowed;
 
   async function openCheckout() {
     if (!consented) return;
@@ -71,11 +75,11 @@ export function CheckoutPlans({
     <main className="checkout-page">
       <header>
         <p className="eyebrow">BEZPIECZNY START</p>
-        <h1>{hasAccess ? "Twój abonament jest aktywny" : hasSubscription ? "Dokończ konfigurację płatności" : "Wybierz plan i uruchom 3-dniową próbę"}</h1>
-        <p>{hasAccess ? "Dostęp do aplikacji wynika ze statusu potwierdzonego przez Stripe." : hasSubscription ? "Dostęp pozostaje zablokowany, dopóki Stripe nie potwierdzi aktywnej metody płatności." : "Dziś zapłacisz 0 zł. Karta jest wymagana, a pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie anulujesz."}</p>
+        <h1>{hasAccess ? "Twój abonament jest aktywny" : hasSubscription ? "Dokończ konfigurację płatności" : trialEligible ? "Wybierz plan i uruchom 3-dniową próbę" : "Wznów swój abonament"}</h1>
+        <p>{hasAccess ? "Dostęp do aplikacji wynika ze statusu potwierdzonego przez Stripe." : hasSubscription ? "Dostęp pozostaje zablokowany, dopóki Stripe nie potwierdzi aktywnej metody płatności." : trialEligible ? "Dziś zapłacisz 0 zł. Karta jest wymagana, a pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie anulujesz." : "Próba na tym koncie została wykorzystana. Opłata za wybrany plan zostanie pobrana dziś."}</p>
       </header>
 
-      {canceled && <p className="checkout-notice">Płatność została przerwana. Próba nie wystartowała i niczego nie pobrano.</p>}
+      {canceled && <p className="checkout-notice">Wrócono z formularza płatności. Sprawdź stan abonamentu przed kolejnym zakupem.</p>}
 
       {!hasAccess && !hasSubscription && (
         <>
@@ -84,7 +88,7 @@ export function CheckoutPlans({
             {publicPlanIds.map((id) => (
               <button key={id} type="button" aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
                 <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
-                <strong>{plans[id].price}<small>/ miesiąc po próbie</small></strong>
+                <strong>{plans[id].price}<small>{trialEligible ? "/ miesiąc po próbie" : "/ miesiąc"}</small></strong>
                 <p>{plans[id].description}</p>
               </button>
             ))}
@@ -97,7 +101,7 @@ export function CheckoutPlans({
         <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
       </section>
 
-      {!hasAccess && !hasSubscription && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
+      {!hasAccess && !hasSubscription && <div className="checkout-legal"><p className="purchase-summary">{trialEligible ? "Dziś 0 zł. Po próbie " : "Od dziś "}<strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!configured ? (
         <p className="setup-inline">Stripe czeka na konfigurację kluczy, cen i webhooka. Przycisk pozostaje wyłączony, aby nie udawać płatności.</p>

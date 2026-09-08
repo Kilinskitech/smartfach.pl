@@ -11,6 +11,7 @@ import { aiConfigured } from "@/server/assistant-service";
 import { getOperator } from "@/server/operator-settings";
 import { smtpConfigured } from "@/server/transactional-email";
 import { AdminLegal } from "@/components/admin-legal";
+import { AdminOperations, type OperationalSummary } from "@/components/admin-operations";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel właściciela — SmartFach", robots: { index: false, follow: false } };
@@ -24,6 +25,8 @@ export default async function Page({
   const platformAdmin = await requirePlatformAdmin().catch(() => notFound());
 
   const admin = createAdminClient();
+  const operational = await admin.rpc("admin_operational_summary");
+  if (operational.error) throw new Error("Nie można wczytać stanu operacji. Sprawdź migrację bazy.");
   const withdrawals = await admin.from("withdrawal_requests").select("id,user_id,email,statement,received_at,email_sent_at,checkout_session_id").is("resolved_at", null).order("received_at");
   if (withdrawals.error) throw new Error("Nie można wczytać zgłoszeń odstąpienia.");
   const { data: authData, error: authError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -37,8 +40,10 @@ export default async function Page({
     userIds.length ? admin.from("memberships").select("user_id, organization_id, role, status").in("user_id", userIds).eq("status", "active") : Promise.resolve({ data: [] }),
     admin.from("subscriptions").select("organization_id, plan, status, payment_method_attached, current_period_started_at"),
     admin.from("workspaces").select("organization_id, revision, data"),
-    admin.from("usage_events").select("user_id, cost_usd, total_tokens, created_at"),
+    admin.rpc("admin_usage_totals"),
   ]);
+  for (const result of [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult])
+    if ("error" in result && result.error) throw new Error("Nie można wczytać pełnych danych panelu.");
   const profiles = new Map((profilesResult.data ?? []).map((row) => [String(row.user_id), row]));
   const memberships = new Map((membershipsResult.data ?? []).map((row) => [String(row.user_id), row]));
   const subscriptions = new Map((subscriptionsResult.data ?? []).map((row) => [String(row.organization_id), row]));
@@ -47,7 +52,7 @@ export default async function Page({
     costUsd: number;
     totalTokens: number;
     count: number;
-    events: Array<{ costUsd: number; createdAt: number }>;
+    monthlyCostUsd: number;
   }>();
   for (const row of usageResult.data ?? []) {
     const id = String(row.user_id);
@@ -55,16 +60,13 @@ export default async function Page({
       costUsd: 0,
       totalTokens: 0,
       count: 0,
-      events: [],
+      monthlyCostUsd: 0,
     };
     const eventCostUsd = Number(row.cost_usd ?? 0);
     current.costUsd += eventCostUsd;
     current.totalTokens += Number(row.total_tokens ?? 0);
-    current.count += 1;
-    current.events.push({
-      costUsd: eventCostUsd,
-      createdAt: Date.parse(String(row.created_at ?? "")),
-    });
+    current.count += Number(row.response_count ?? 0);
+    current.monthlyCostUsd += Number(row.period_cost_usd ?? 0);
     usage.set(id, current);
   }
 
@@ -89,16 +91,7 @@ export default async function Page({
           periodStartedAt: new Date().toISOString(),
         };
     const userUsage = usage.get(authUser.id);
-    const periodStartedAt = Date.parse(
-      String(subscription?.current_period_started_at ?? billing.periodStartedAt),
-    );
-    const monthlyCostUsd = userUsage?.events.reduce(
-      (sum, event) =>
-        Number.isFinite(event.createdAt) && event.createdAt >= periodStartedAt
-          ? sum + event.costUsd
-          : sum,
-      0,
-    ) ?? 0;
+    const monthlyCostUsd = userUsage?.monthlyCostUsd ?? 0;
     return {
       id: authUser.id,
       name: String(profile?.display_name ?? authUser.user_metadata?.display_name ?? ""),
@@ -142,7 +135,7 @@ export default async function Page({
       }
       snapshot={snapshot}
       operator={await getOperator()}
-      legalPanel={<AdminLegal smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} />}
+      legalPanel={<><AdminOperations summary={operational.data as OperationalSummary} /><AdminLegal smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} /></>}
     />
   );
 }

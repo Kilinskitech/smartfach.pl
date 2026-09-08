@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { releaseEmailConfirmationHoldForUser } from "@/server/stripe-subscriptions";
+import { assertDeploymentIdentity } from "@/server/operations";
 
 const emailOtpTypes = new Set<EmailOtpType>([
   "email",
@@ -20,6 +21,7 @@ function safeNextPath(requested: string | null) {
 }
 
 export async function GET(request: Request) {
+  await assertDeploymentIdentity();
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const tokenHash = url.searchParams.get("token_hash");

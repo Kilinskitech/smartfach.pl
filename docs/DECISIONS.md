@@ -1035,3 +1035,24 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   potwierdzonej przewagi w Task Success Rate. Wraca dopiero po kontrolowanym
   benchmarku uzasadniającym koszt. Zastępuje D043 w zakresie wyboru modeli;
   MASTER_PLAN bez zmiany.
+
+## D051 — Trwała rezerwacja kosztu, odzyskiwalne płatności i jawna gotowość wdrożenia
+
+- Data: 2026-09-09. Status: implementacja i testy w repozytorium; migracja zdalna
+  oraz testy pełnego checkoutu/AI wymagają połączenia z usługami. Nie oznacza live-ready.
+- AI: dopuszczenie w transakcji przed generacją, stabilny klucz próby, wynik do replay,
+  jedno naliczenie. Odrzucono limit w pamięci procesu i ponowne wywołanie po timeoutcie.
+  Niepewne próby wymagają audytowanej decyzji administratora; to celowy kompromis
+  dostępności na rzecz ochrony kosztów. Wywołanie ponad resztę puli pokrywa operator.
+- Stripe: wygasające blokady z tokenami, odczyt aktualnej subskrypcji po blokadzie,
+  atomowy snapshot i odnowienie limitu. Wysyłka umowy w toku nie może oznaczać
+  przetworzonego webhooka. Odrzucono bezterminowe locki i dwa niezależne zapisy salda/statusu.
+- Jednorazowa próba na konto, trwały checkout i ochrona przed odtworzeniem
+  niepewnego zakupu po wygaśnięciu klucza Stripe. Nie jest to pełny antyfraud wielu kont.
+- Izolacja: Stripe Live wymaga powiązania Production z własną bazą. Preview
+  ze wskazaniem bazy Production jest blokowane zamiast cichego dostępu do realnych danych.
+- Metryki: pierwszy etap na konto + koszt SQL + alerty operacyjne. Odrzucono
+  fałszywe współczynniki konwersji oraz dodawanie reklamowych trackerów bez decyzji właściciela.
+- Marketing: dokładny opis profilu i krótkiego kontekstu, bez obietnicy pełnej
+  pamięci wszystkich czatów i bez niepopartej danymi etykiety „najczęściej wybierany”.
+- MASTER_PLAN zaktualizowany: rzeczywisty routing, granice pamięci i jednorazowa próba.

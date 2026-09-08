@@ -296,7 +296,7 @@ function ContinuityLoop() {
       <div className="section-intro">
         <p className="marketing-kicker">DLATEGO TO ABONAMENT, A NIE JEDNORAZOWY PLAN</p>
         <h2>Wracasz z wynikiem. SmartFach pomaga zdecydować, co dalej.</h2>
-        <p>Oferta rzadko jest idealna za pierwszym razem. SmartFach pamięta ustalenia, analizuje odpowiedzi klientów i pomaga poprawiać kierunek, cenę oraz kolejne działania.</p>
+        <p>Oferta rzadko jest idealna za pierwszym razem. Wklej odpowiedź klienta i dopracuj ofertę razem ze SmartFach. Asystent korzysta z Twojego profilu i ostatnich wiadomości w otwartej rozmowie. W nowym czacie przypomnij ważne ustalenia.</p>
       </div>
       <div className="continuity-loop">
         {[
@@ -331,7 +331,7 @@ function PricingSection() {
           const details = planDetails[planId];
           return (
             <article key={planId} className={planId === "pro" ? "featured" : ""}>
-              {planId === "pro" && <span className="plan-ribbon">NAJCZĘŚCIEJ WYBIERANY</span>}
+              {planId === "pro" && <span className="plan-ribbon">REKOMENDOWANY</span>}
               <small>{details.audience}</small>
               <h3>SmartFach {plan.name}</h3>
               <p>{details.description}</p>

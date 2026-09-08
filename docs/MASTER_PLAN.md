@@ -1,6 +1,6 @@
 # SmartFach — MASTER PLAN
 
-Stan: 2026-09-06. Ten dokument jest nadrzędnym źródłem kierunku produktu.
+Stan: 2026-09-09. Ten dokument jest nadrzędnym źródłem kierunku produktu.
 
 ## Teza produktu
 
@@ -61,8 +61,11 @@ Retencja nie może opierać się na jednorazowym wygenerowaniu planu. Pętla pro
 **ustal krok → wykonaj → wróć z wynikiem → popraw ofertę lub sposób dotarcia →
 wykonaj następny krok**.
 
-SmartFach z czasem pamięta zatwierdzone informacje o użytkowniku, jego ofercie,
-próbach sprzedaży i wynikach. Pomaga m.in.:
+Docelowo SmartFach będzie pamiętał zatwierdzone informacje o ofercie, próbach
+sprzedaży i wynikach. Obecnie kontekst AI to zapisany profil oraz ostatnie 11
+wiadomości otwartej rozmowy i nowe pytanie. Historia pozostaje dostępna użytkownikowi,
+ale nie jest automatycznie przeszukiwana między czatami. Nie reklamujemy pełnej
+pamięci postępu przed jej wdrożeniem. Asystent pomaga m.in.:
 
 - wybrać i zawęzić usługę;
 - opisać ofertę i ustalić cenę jako hipotezę do testu;
@@ -114,6 +117,7 @@ tezy produktu.
 - Lite: 49 zł miesięcznie;
 - Pro: 99 zł miesięcznie;
 - 3 pełne dni próby, karta wymagana, potem automatyczne miesięczne odnowienie;
+- próba jeden raz na konto; powrót po wykorzystaniu próby oznacza zakup płatny od dziś;
 - użytkownik może anulować przed pierwszym obciążeniem.
 
 Plan Firma i dodatkowe miejsca zostały usunięte z bieżącego runtime oraz nowego
@@ -125,8 +129,8 @@ jasne przed płatnością.
 ## Technologia i zasady AI
 
 OpenRouter pozostaje bramką modeli. Wersjonowany routing kieruje zwykłe pytania do
-GPT-5.6 Luna, ważny start, zdjęcia i trudniejsze analizy do GPT-5.6 Terra, a stały
-Gemini 3.5 Flash pozostaje awaryjnym fallbackiem innego dostawcy. Użytkownik nie widzi
+GPT-5 Nano, ważny start, zdjęcia i trudniejsze analizy do GPT-5.6 Luna, a stały
+Gemini 3.8 Flash pozostaje awaryjnym fallbackiem innego dostawcy. Użytkownik nie widzi
 tego podziału. AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
 Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje mogące
 zmienić dane.
@@ -150,6 +154,12 @@ Najważniejsze zdarzenia lejka:
 - koszt AI na aktywnego i płacącego użytkownika.
 
 Rejestracje i liczba wiadomości nie wystarczają do uznania produktu za dobry.
+
+Implementacja pomiaru od 2026-09-09 zapisuje pierwsze etapy operacyjne na koncie:
+rejestrację, otwarcie/ukończenie Checkout, pierwszą odpowiedź/start biznesu,
+aktywację/zakończenie abonamentu i pierwsze doładowanie. To nie jest jeszcze
+pomiar konwersji z anonimowego landingu, deklarowanej sprzedaży, D7/D30 ani CAC.
+Panel pokazuje niezależne liczby etapów, a nie pozorne procenty różnych kohort.
 
 ## Walidacja
 

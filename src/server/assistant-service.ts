@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ProviderRejectedError } from "./provider-errors";
 import {
   assistantJsonSchema,
   assistantOutputSchema,
@@ -396,17 +397,10 @@ export async function callAssistant(
 
   let response: Response;
   let usedFallback = false;
-  try {
-    response = await providerRequest(selectedModel);
-  } catch (error) {
-    logModelFallback(
-      selectedModel,
-      error instanceof Error ? error.name : "request-failed",
-    );
-    usedFallback = true;
-    response = await providerRequest(fallbackAiModel);
-  }
-  if (!response.ok && !usedFallback && ![401, 402].includes(response.status)) {
+  // A timeout is ambiguous: the provider may still charge for the generation.
+  // Fallback only follows a definitive rejection, never a lost response.
+  response = await providerRequest(selectedModel);
+  if (!response.ok && [400, 404, 422, 429].includes(response.status)) {
     // Classify the upstream error without logging prompts or raw provider payloads.
     const errorBody = await response.clone().json().catch(() => null);
     const message = typeof errorBody?.error?.message === "string"
@@ -426,7 +420,7 @@ export async function callAssistant(
     response = await providerRequest(fallbackAiModel);
   }
   if (!response.ok)
-    throw new Error(
+    throw new (response.status >= 400 && response.status < 500 ? ProviderRejectedError : Error)(
       response.status === 429
         ? "Dostawca AI osiągnął limit. Spróbuj później."
           : response.status === 400 && input.attachments?.length

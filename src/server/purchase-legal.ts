@@ -7,6 +7,7 @@ import { legalDocumentVersion } from "@/domain/operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getOperator } from "./operator-settings";
 import { sendContractEmail, smtpConfigured } from "./transactional-email";
+import { OperationBusy } from "./operations";
 
 export async function recordPurchaseAcceptance(input: { userId: string; purchaseKey: string; offer: string }) {
   if (/^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY?.trim() ?? "") && !smtpConfigured())
@@ -86,7 +87,8 @@ export async function confirmPurchaseContract(session: Stripe.Checkout.Session, 
       throw new Error("Nie można sprawdzić trwającej wysyłki potwierdzenia.");
     // Strona sukcesu i webhook mogą wejść tutaj równocześnie. Aktywna rezerwacja
     // oznacza, że drugi proces już dostarcza tę samą, zapisaną kopię umowy.
-    if (delivery.email_sent_at || delivery.delivery_claimed_at) return;
+    if (delivery.email_sent_at) return;
+    if (delivery.delivery_claimed_at) throw new OperationBusy();
     throw new Error("Nie udało się rozpocząć wysyłki potwierdzenia.");
   }
   try {

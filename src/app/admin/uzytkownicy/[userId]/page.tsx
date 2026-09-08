@@ -22,7 +22,7 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
   const [profileResult, membershipResult, usageResult] = await Promise.all([
     admin.from("user_profiles").select("display_name").eq("user_id", parsedId.data).maybeSingle(),
     admin.from("memberships").select("organization_id").eq("user_id", parsedId.data).eq("status", "active").order("created_at", { ascending: true }).limit(1).maybeSingle(),
-    admin.from("usage_events").select("cost_usd, total_tokens, created_at").eq("user_id", parsedId.data),
+    admin.rpc("admin_usage_totals").eq("user_id", parsedId.data),
   ]);
   const organizationId = membershipResult.data?.organization_id ? String(membershipResult.data.organization_id) : "";
   if (!organizationId) notFound();
@@ -36,13 +36,8 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     ...(workspaceResult.data?.data as object),
     revision: Number(workspaceResult.data?.revision),
   });
-  const usageRows = usageResult.data ?? [];
-  const periodStartedAt = Date.parse(
-    String(
-      subscriptionResult.data?.current_period_started_at ??
-        workspace.billing.periodStartedAt,
-    ),
-  );
+  if (usageResult.error) throw new Error("Nie można wczytać pełnego zużycia użytkownika.");
+  const usage = usageResult.data?.[0];
   const snapshot: AdminUserDetailSnapshot = {
     generatedAt: new Date().toISOString(),
     id: parsedId.data,
@@ -50,16 +45,11 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     name: String(profileResult.data?.display_name ?? authData.user.user_metadata?.display_name ?? authData.user.email ?? "Użytkownik"),
     company: String(organizationResult.data?.name ?? workspace.company.name),
     plan: `Plan ${plans[workspace.billing.plan].name}`,
-    monthlyCostUsd: usageRows.reduce((sum, row) => {
-      const createdAt = Date.parse(String(row.created_at ?? ""));
-      return Number.isFinite(createdAt) && createdAt >= periodStartedAt
-        ? sum + Number(row.cost_usd ?? 0)
-        : sum;
-    }, 0),
+    monthlyCostUsd: Number(usage?.period_cost_usd ?? 0),
     monthlyLimitUsd: plans[workspace.billing.plan].monthlyCredits / 100,
-    totalCostUsd: usageRows.reduce((sum, row) => sum + Number(row.cost_usd ?? 0), 0),
-    totalTokens: usageRows.reduce((sum, row) => sum + Number(row.total_tokens ?? 0), 0),
-    measuredResponses: usageRows.length,
+    totalCostUsd: Number(usage?.cost_usd ?? 0),
+    totalTokens: Number(usage?.total_tokens ?? 0),
+    measuredResponses: Number(usage?.response_count ?? 0),
     subscriptionStatus: String(subscriptionResult.data?.status ?? "incomplete"),
     cancelAtPeriodEnd: Boolean(subscriptionResult.data?.cancel_at_period_end),
     subscriptionEndsAt: subscriptionResult.data?.current_period_ends_at

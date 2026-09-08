@@ -8424,6 +8424,11 @@ button.team-card:hover {
 .withdrawal-page > p, .withdrawal-result { line-height: 1.7; margin: 22px 0; }
 .withdrawal-page a { text-decoration: underline; text-underline-offset: 3px; }
 .withdrawal-page .auth-form { margin: 28px 0; }
+.admin-milestones { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 24px 0; }
+.admin-milestones > div { border: 1px solid var(--line); border-radius: 14px; padding: 18px; background: #f8faf7; }
+.admin-milestones dt { color: var(--muted); font-size: 13px; line-height: 1.5; }
+.admin-milestones dd { margin: 12px 0 0; font-size: 28px; font-weight: 700; color: var(--navy); }
+#operacje > p { margin: 14px 0 24px; line-height: 1.6; }
 .admin-withdrawal { border-top: 1px solid var(--line); padding: 24px 0; overflow-wrap: anywhere; }
 .admin-withdrawal form { display: grid; gap: 16px; margin-top: 16px; }
 .purchase-consent-row { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.6; }
