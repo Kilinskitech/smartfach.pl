@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { ArrowRight, Check, Mail } from "lucide-react";
 import Link from "next/link";
-import { smartFachOperator } from "@/domain/operator";
 
-export function ContactForm() {
+export function ContactForm({ email: recipient }: { email: string }) {
   const [status, setStatus] = useState("");
 
   return (
@@ -27,7 +26,7 @@ export function ContactForm() {
         setStatus(
           "Otwieram program pocztowy. Wiadomość wyślesz dopiero po jej sprawdzeniu.",
         );
-        window.location.href = `mailto:${smartFachOperator.email}?subject=${encodeURIComponent(
+        window.location.href = `mailto:${recipient}?subject=${encodeURIComponent(
           `[SmartFach] ${subject}`,
         )}&body=${encodeURIComponent(body)}`;
       }}

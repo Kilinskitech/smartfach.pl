@@ -37,12 +37,14 @@ export const plans = {
   lite: {
     name: "Lite",
     price: "49 zł",
+    monthlyPriceGrosze: 4900,
     monthlyCredits: 225,
     description: "Spokojny start i najważniejsze działania w miesiącu.",
   },
   pro: {
     name: "Pro",
     price: "99 zł",
+    monthlyPriceGrosze: 9900,
     monthlyCredits: 550,
     description: "Regularne budowanie oferty, sprzedaży i przychodu.",
   },
@@ -51,6 +53,7 @@ export const plans = {
   {
     name: string;
     price: string;
+    monthlyPriceGrosze: number;
     monthlyCredits: number;
     description: string;
   }
@@ -76,6 +79,14 @@ export const creditPacks = [
     unitAmountGrosze: 12_999,
   },
 ] as const;
+
+export function matchesSubscriptionPrice(plan: PlanId, price: {
+  active: boolean; currency: string; unit_amount: number | null;
+  recurring?: { interval: string; interval_count: number } | null;
+}) {
+  return price.active && price.currency === "pln" && price.unit_amount === plans[plan].monthlyPriceGrosze
+    && price.recurring?.interval === "month" && price.recurring.interval_count === 1;
+}
 
 export const creditPackIdSchema = z.enum(["mini", "plus", "max"]);
 export type CreditPackId = z.infer<typeof creditPackIdSchema>;

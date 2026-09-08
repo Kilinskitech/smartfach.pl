@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { InstallAppCard } from "./pwa";
 import {
   Check,
   CreditCard,
@@ -116,6 +117,7 @@ export function SettingsPanel({
         </form>
       </section>
       <div className="settings-side">
+        <InstallAppCard />
         <section className="settings-card settings-usage-card">
           <div className="card-heading">
             <Gauge size={21} />
@@ -189,6 +191,9 @@ export function SettingsPanel({
             Przechowuj ją w bezpiecznym miejscu. Przywracanie kopii z aplikacji
             nie jest jeszcze dostępne.
           </p>
+          <a className="button button-secondary" href="/api/billing/contracts" download><Download size={18} />Pobierz potwierdzenia zamówień</a>
+          <p><a href="/odstapienie">Odstąp od umowy tutaj</a></p>
+          <p className="form-hint">Chcesz usunąć konto lub skorzystać ze swoich praw? <a href="/kontakt">Napisz do nas</a>. <a href="/regulamin">Regulamin</a> · <a href="/polityka-prywatnosci">Prywatność</a></p>
         </section>
         <div className="next-stage">
           <Check size={19} />

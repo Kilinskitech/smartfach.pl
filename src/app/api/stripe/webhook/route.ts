@@ -6,6 +6,7 @@ import {
   syncSubscription,
 } from "@/server/stripe-subscriptions";
 import { grantUsageTopUpFromSession } from "@/server/stripe-top-ups";
+import { confirmPurchaseContract } from "@/server/purchase-legal";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,15 +30,23 @@ export async function POST(request: Request) {
     event_id: event.id,
     event_type: event.type,
   });
-  if (claimError?.code === "23505") return Response.json({ received: true });
+  if (claimError?.code === "23505") {
+    const { data: existing } = await admin.from("stripe_events").select("processed_at").eq("event_id", event.id).maybeSingle();
+    // A concurrent delivery is not a completed delivery. Keep retries alive.
+    return existing?.processed_at
+      ? Response.json({ received: true })
+      : Response.json({ error: "Zdarzenie jest jeszcze przetwarzane." }, { status: 503 });
+  }
   if (claimError) return Response.json({ error: "Nie zapisano webhooka." }, { status: 500 });
 
   try {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
       if (session.metadata?.purchase_type === "usage_top_up") {
-        if (session.payment_status === "paid")
+        if (session.payment_status === "paid") {
           await grantUsageTopUpFromSession(session);
+          await confirmPurchaseContract(session);
+        }
       } else {
         const subscriptionId =
           typeof session.subscription === "string"
@@ -56,12 +65,15 @@ export async function POST(request: Request) {
           plan: session.metadata?.plan,
           paymentMethodAttached: true,
         });
+        await confirmPurchaseContract(session, protectedSubscription.trial_end);
       }
     }
     if (event.type === "checkout.session.async_payment_succeeded") {
       const session = event.data.object;
-      if (session.metadata?.purchase_type === "usage_top_up")
+      if (session.metadata?.purchase_type === "usage_top_up") {
         await grantUsageTopUpFromSession(session);
+        await confirmPurchaseContract(session);
+      }
     }
     if (
       event.type === "customer.subscription.created" ||

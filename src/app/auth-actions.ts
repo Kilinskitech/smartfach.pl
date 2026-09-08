@@ -9,6 +9,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
 import { releaseEmailConfirmationHoldForUser } from "@/server/stripe-subscriptions";
+import { legalDocumentVersion } from "@/domain/operator";
 
 export type AuthState = { error?: string; success?: string } | undefined;
 
@@ -21,6 +22,8 @@ const registrationSchema = credentialsSchema.extend({
   displayName: z.string().trim().min(2, "Podaj imię lub nazwę.").max(160),
   plan: publicPlanIdSchema,
   terms: z.literal("accepted", "Zaakceptuj regulamin i politykę prywatności."),
+  earlyPerformance: z.literal("requested", "Potwierdź uruchomienie usługi od razu."),
+  legalVersion: z.literal(legalDocumentVersion, "Odśwież formularz, aby zapoznać się z aktualnymi warunkami."),
 });
 
 function message(error: unknown) {
@@ -80,6 +83,8 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
     displayName: formData.get("displayName"),
     plan: formData.get("plan"),
     terms: formData.get("terms"),
+    earlyPerformance: formData.get("earlyPerformance"),
+    legalVersion: formData.get("legalVersion"),
   });
   if (!parsed.success) return { error: parsed.error.issues[0]?.message };
   if (!stripeConfigured())

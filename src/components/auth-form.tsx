@@ -6,10 +6,11 @@ import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { signIn, signUp } from "@/app/auth-actions";
 import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
+import { PurchaseConsent } from "./purchase-consent";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean }) {
+export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; loginFirst?: boolean }) {
   const [view, setView] = useState<"register" | "login">(
-    checkoutCanceled || confirmationFailed ? "login" : "register",
+    checkoutCanceled || confirmationFailed || loginFirst ? "login" : "register",
   );
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
@@ -80,7 +81,9 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
               ))}
             </fieldset>
             <p className="auth-selection-note"><Check size={15} /> Oba plany prowadzą przez ten sam proces. Pro ma większy miesięczny limit.</p>
-            <label className="auth-consent"><input type="checkbox" name="terms" value="accepted" required /><span>Akceptuję <Link href="/regulamin" target="_blank">regulamin</Link> i <Link href="/polityka-prywatnosci" target="_blank">politykę prywatności</Link>.</span></label>
+            <p className="purchase-summary">Dziś 0 zł. Po 3 pełnych dniach <strong>{plans[plan].price} miesięcznie</strong>, automatycznie do anulowania. Ceny całkowite. Karta jest wymagana. Anulujesz w Ustawieniach lub przez kontakt.</p>
+            <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p>Plan {plans[plan].name}: {plans[plan].monthlyCredits} jednostek na okres. Koszt wiadomości zależy od długości, zdjęć i użytych narzędzi, minimum 1 jednostka. Pula odnawia się bez kumulacji. Po wyczerpaniu możesz poczekać albo dokupić zapas. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
+            <PurchaseConsent />
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
             <button className="button button-primary auth-submit" disabled={registerPending}>{registerPending ? "Przekierowanie do Stripe…" : "Utwórz konto i przejdź dalej"} <ArrowRight size={18} /></button>
             <p className="auth-trial-copy"><ShieldCheck size={15} /> Przejdziesz bezpośrednio do Stripe. Adres e-mail potwierdzisz po zapisaniu karty.</p>

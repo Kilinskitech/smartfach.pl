@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { brandColors } from "@/components/brand";
 import { isProductionDeployment, productionOrigin } from "@/lib/seo";
 import "./globals.css";
+import { PwaProvider } from "@/components/pwa";
 
 export const metadata: Metadata = {
   metadataBase: new URL(productionOrigin),
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
   description:
     "SmartFach pomaga dopasować usługę do Twoich warunków, przygotować ofertę i przejść do pierwszych działań sprzedażowych.",
   applicationName: "SmartFach",
+  manifest: "/manifest.webmanifest",
   robots: isProductionDeployment()
     ? { index: true, follow: true }
     : { index: false, follow: false, noarchive: true },
@@ -19,6 +21,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: brandColors.navy,
 };
 
@@ -27,7 +30,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <body><PwaProvider>{children}</PwaProvider></body>
     </html>
   );
 }

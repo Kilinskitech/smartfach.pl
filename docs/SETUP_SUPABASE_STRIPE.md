@@ -60,6 +60,8 @@ W Supabase Auth pozostaw Site URL `https://smartfach.pl` i dodaj do Redirect URL
    - `supabase/migrations/202609050002_fix_workspace_write.sql`;
    - `supabase/migrations/202609060003_single_builder_profile.sql`;
    - `supabase/migrations/20260907120000_usage_top_ups.sql`.
+   - `supabase/migrations/20260907180000_legal_purchases_operator.sql`;
+   - `supabase/migrations/20260907190000_withdrawal_requests.sql`.
 3. W ustawieniach Auth ustaw Site URL na `NEXT_PUBLIC_APP_URL`.
 4. Dodaj redirect URL: `NEXT_PUBLIC_APP_URL/auth/callback`.
 5. Z Project Settings → API Keys skopiuj do Vercel Environment Variables dla
@@ -151,5 +153,7 @@ faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.
 - Automatycznego fakturowania zgodnego z polskimi obowiązkami.
 - Produkcyjnej retencji, backupów i bezpiecznego magazynu załączników.
 
-Przed pierwszą realną opłatą potrzebny jest przegląd prawny i księgowy, decyzja
-czy publiczne ceny są brutto czy netto oraz konfiguracja wiadomości przed końcem próby.
+Publiczne ceny są całkowite: Lite 49 zł i Pro 99 zł miesięcznie, bez doliczania podatku
+w Checkout. Kwoty Stripe muszą być identyczne. Przed pierwszą realną opłatą potrzebny
+jest przegląd prawny i księgowy oraz konfiguracja wiadomości przed końcem próby.
+Aktualną checklistę oraz SMTP potwierdzeń umów opisuje `docs/LAUNCH_CHECKLIST.md`.

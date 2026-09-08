@@ -5214,8 +5214,61 @@ svg {
 .legal-document p,
 .legal-document li {
   color: #5e7068;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.85;
+  white-space: pre-line;
+}
+.legal-document section { scroll-margin-top: 110px; }
+.legal-download { margin-top: 24px; width: fit-content; }
+.legal-contents { display: grid; gap: 12px; padding: 26px; background: white; border: 1px solid var(--line); border-radius: 18px; margin-bottom: 24px; }
+.legal-contents strong { margin-bottom: 6px; }
+.legal-contents a { font-size: 14px; line-height: 1.5; }
+.purchase-consent { display: grid; gap: 14px; margin-block: 18px; text-align: left; }
+.purchase-consent .auth-consent { align-items: flex-start; margin: 0; font-size: 14px; line-height: 1.65; }
+.purchase-consent input[type="checkbox"] { width: 20px; height: 20px; min-width: 20px; margin-top: 2px; accent-color: var(--navy); }
+.purchase-summary { font-size: 13px; line-height: 1.7; background: #f3f6f2; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.purchase-summary a, .purchase-limits a { text-decoration: underline; text-underline-offset: 3px; }
+.purchase-limits { font-size: 12px; line-height: 1.65; }
+.purchase-limits summary { cursor: pointer; padding: 10px 0; font-weight: 650; }
+.checkout-legal { max-width: 760px; margin: 20px auto; }
+.operator-settings-form { max-width: 800px; }
+.operator-settings-form label { display: grid; gap: 8px; font-size: 13px; }
+.operator-settings-form input { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: white; padding: 13px; color: var(--ink); }
+.admin-sidebar > a[href="#dane-sprzedawcy"] { padding: 16px; font-weight: 600; }
+#dane-sprzedawcy { margin-top: 28px; scroll-margin-top: 24px; }
+.install-app-card { background: linear-gradient(145deg, #fff 0%, #fff7ef 100%); }
+.install-app-identity { display: flex; align-items: center; gap: 16px; margin: 22px 0; }
+.install-app-identity strong, .install-app-identity small { display: block; }
+.install-app-identity strong { font-size: 22px; }
+.install-app-identity small { color: var(--muted); margin-top: 7px; line-height: 1.5; }
+.install-app-card > .button { width: 100%; margin-top: 12px; }
+.install-instructions { padding: 0 24px 26px; }
+.install-instructions ol { padding-left: 23px; line-height: 1.8; display: grid; gap: 16px; }
+.install-instructions li svg { display: inline; vertical-align: middle; }
+.install-instructions summary { cursor: pointer; padding-block: 16px; font-weight: 600; }
+.install-instructions p { line-height: 1.75; }
+.install-note { background: #fff0dd; border-radius: 12px; padding: 16px; }
+.install-hero { align-items: center; }
+.install-hero > .install-app-card { padding: 28px; max-width: 440px; border-radius: 24px; }
+.install-benefits { list-style: none; padding: 0; display: grid; gap: 14px; margin: 28px 0; }
+.install-benefits li { display: flex; align-items: center; gap: 10px; }
+.install-platforms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+.install-platforms p { color: var(--muted); line-height: 1.8; }
+@media (max-width: 700px) {
+  .install-platforms { grid-template-columns: 1fr; gap: 16px; }
+  .install-hero > .install-app-card { padding: 22px; max-width: none; }
+  .install-instructions { padding-inline: 20px; }
+  .operator-settings-form input { font-size: 16px; }
+  .legal-contents { padding: 20px; }
+  .product-app { padding-top: env(safe-area-inset-top); }
+}
+@media print {
+  .legal-site .marketing-header, .legal-site .marketing-footer, .legal-contents, .legal-download { display: none !important; }
+  .legal-site, .legal-hero { background: white !important; }
+  .legal-hero { min-height: auto; padding: 20px 0; width: 100%; }
+  .legal-document { width: 100%; padding: 0; }
+  .legal-document p { font-size: 11pt; color: black; }
+  .legal-document h2 { break-after: avoid; }
 }
 .legal-document ul {
   display: grid;
@@ -7629,3 +7682,13 @@ button.team-card:hover {
     grid-template-columns: 1fr;
   }
 }
+.withdrawal-page { max-width: 760px; margin: 0 auto; padding: 64px 24px; }
+.withdrawal-page > p, .withdrawal-result { line-height: 1.7; margin: 22px 0; }
+.withdrawal-page a { text-decoration: underline; text-underline-offset: 3px; }
+.withdrawal-page .auth-form { margin: 28px 0; }
+.admin-withdrawal { border-top: 1px solid var(--line); padding: 24px 0; overflow-wrap: anywhere; }
+.admin-withdrawal form { display: grid; gap: 16px; margin-top: 16px; }
+.purchase-consent-row { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; line-height: 1.6; }
+.purchase-consent-row input { width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px; }
+.withdrawal-page select { min-height: 50px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; background: white; width: 100%; font: inherit; }
+#obsluga-umow > p, .admin-withdrawal p { margin: 14px 0; line-height: 1.6; }

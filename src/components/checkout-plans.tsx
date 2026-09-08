@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { PurchaseConsent } from "./purchase-consent";
+import { legalDocumentVersion } from "@/domain/operator";
 import { ArrowRight, Check, CreditCard, ExternalLink, ShieldCheck } from "lucide-react";
 import {
   normalizePublicPlan,
@@ -23,16 +26,18 @@ export function CheckoutPlans({
   const [plan, setPlan] = useState(() => normalizePublicPlan(initialPlan));
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [consented, setConsented] = useState(false);
   const hasAccess = currentStatus === "active" || currentStatus === "trialing";
 
   async function openCheckout() {
+    if (!consented) return;
     setBusy(true);
     setError("");
     try {
       const response = await fetch("/api/billing/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan, idempotencyKey: crypto.randomUUID() }),
+        body: JSON.stringify({ plan, idempotencyKey: crypto.randomUUID(), termsAccepted: true, earlyServiceRequested: true, legalVersion: legalDocumentVersion }),
       });
       const result = await response.json();
       if (!response.ok || typeof result.url !== "string")
@@ -89,13 +94,14 @@ export function CheckoutPlans({
         <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
       </section>
 
+      {!hasAccess && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan zawiera {plans[plan].monthlyCredits} jednostek na okres; koszt zależy od zadania, minimum 1 na żądanie. Pula odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!configured ? (
         <p className="setup-inline">Stripe czeka na konfigurację kluczy, cen i webhooka. Przycisk pozostaje wyłączony, aby nie udawać płatności.</p>
       ) : hasAccess ? (
         <div className="checkout-actions"><a className="button button-primary" href="/app">Przejdź do aplikacji <ArrowRight size={18} /></a><button className="button button-secondary" onClick={openPortal} disabled={busy}>Zarządzaj płatnością <ExternalLink size={17} /></button></div>
       ) : (
-        <button className="button button-primary checkout-button" onClick={openCheckout} disabled={busy}>{busy ? "Otwieranie Stripe…" : "Przejdź do bezpiecznego formularza"}<ArrowRight size={18} /></button>
+        <button className="button button-primary checkout-button" onClick={openCheckout} disabled={busy || !consented}>{busy ? "Otwieranie Stripe…" : "Przejdź do bezpiecznego formularza"}<ArrowRight size={18} /></button>
       )}
       <form action="/auth/wyloguj" method="post"><button className="auth-signout">Wyloguj się</button></form>
     </main>

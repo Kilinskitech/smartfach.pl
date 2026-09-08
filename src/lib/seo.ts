@@ -4,6 +4,7 @@ export const publicPaths = [
   "/",
   "/cennik",
   "/kontakt",
+  "/pobierz",
   "/regulamin",
   "/polityka-prywatnosci",
 ] as const;

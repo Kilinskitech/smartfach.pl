@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactPage } from "@/components/public-pages";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Kontakt — SmartFach",

@@ -8,6 +8,9 @@ import { stripeConfigured } from "@/lib/stripe";
 import { supabaseAdminConfigured } from "@/lib/supabase/config";
 import { requirePlatformAdmin } from "@/server/auth";
 import { aiConfigured } from "@/server/assistant-service";
+import { getOperator } from "@/server/operator-settings";
+import { smtpConfigured } from "@/server/transactional-email";
+import { AdminLegal } from "@/components/admin-legal";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel właściciela — SmartFach", robots: { index: false, follow: false } };
@@ -21,6 +24,11 @@ export default async function Page({
   const platformAdmin = await requirePlatformAdmin().catch(() => notFound());
 
   const admin = createAdminClient();
+  const [withdrawals, pendingContracts] = await Promise.all([
+    admin.from("withdrawal_requests").select("id,user_id,email,statement,received_at,email_sent_at,checkout_session_id").is("resolved_at", null).order("received_at"),
+    admin.from("purchase_contracts").select("checkout_session_id", { count: "exact", head: true }).is("email_sent_at", null),
+  ]);
+  if (withdrawals.error || pendingContracts.error) throw new Error("Nie można wczytać zgłoszeń i potwierdzeń umów.");
   const { data: authData, error: authError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
   if (authError) throw new Error("Nie można wczytać użytkowników.");
   const customerUsers = authData.users.filter(
@@ -136,6 +144,8 @@ export default async function Page({
           : undefined
       }
       snapshot={snapshot}
+      operator={await getOperator()}
+      legalPanel={<AdminLegal smtpReady={smtpConfigured()} pendingEmails={pendingContracts.count ?? 0} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} />}
     />
   );
 }

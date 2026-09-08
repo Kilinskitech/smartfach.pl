@@ -862,3 +862,22 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   i ponownego testu po zmianie modelu wskazywanego przez alias.
 - Zastępuje D040 wyłącznie w zakresie wyboru modelu; decyzja o pozostawieniu tekstu
   i zdjęć bez głosu pozostaje aktualna.
+
+## D042 — Dokumenty umowy, dane operatora i instalacja PWA
+
+- Data: 2026-09-08. Status: implementacja i migracje; bramki uruchomienia sprzedaży
+  pozostają w `LAUNCH_CHECKLIST.md`.
+- Decyzja: jedno źródło treści dokumentów; jawne warunki trialu, ceny całkowite,
+  limity, odrębne żądanie rozpoczęcia usługi i zachowane prawa konsumenta.
+- Każdy nowy zakup zapisuje ofertę i niezmienną kopię dokumentów. Potwierdzenie
+  wysyła aplikacja przez SMTP, niezależnie od e-maili Supabase. Brak SMTP blokuje
+  nowe Checkout Live. Odrzucono sam link do zmiennej strony zamiast kopii umowy.
+- Dane działalności są edytowalne tylko przez administratora, z audytem.
+  Nie zmienia to dawnych potwierdzeń ani tożsamości sprzedawcy w Stripe.
+- Formularz odstąpienia zapisuje oświadczenie i potwierdzenie; właściciel ręcznie
+  rozpatruje je i rozlicza w Stripe. Nie automatyzujemy decyzji o zwrocie.
+- PWA instalowana z witryny: bez sklepu i bez nowej opłaty. Asystent nadal wymaga
+  internetu. Cache obejmuje tylko publiczny ekran offline, nie dane klientów.
+- Kompromis: nowa konfiguracja SMTP i obowiązek codziennej obsługi zgłoszeń;
+  mniejszy zakres niż pełny moduł fakturowania, supportu i aplikacje natywne.
+- MASTER_PLAN bez zmiany strategii — to domknięcie zakupu i dostępu do produktu.

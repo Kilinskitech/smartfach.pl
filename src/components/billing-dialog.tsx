@@ -20,6 +20,8 @@ import {
 import { useRouter } from "next/navigation";
 import type { Billing } from "@/domain/workspace";
 import { Dialog } from "./dialog";
+import { PurchaseConsent } from "./purchase-consent";
+import { legalDocumentVersion } from "@/domain/operator";
 
 const packNames = {
   mini: ["Małe zwiększenie", "Na kilka dodatkowych zadań"],
@@ -37,20 +39,21 @@ export function BillingDialog({
   const router = useRouter();
   const [busyPack, setBusyPack] = useState<CreditPackId | null>(null);
   const [error, setError] = useState("");
+  const [consented, setConsented] = useState(false);
   const plan = plans[billing.plan];
   const percentage = monthlyUsagePercentage(billing);
   const remaining = remainingCredits(billing);
   const hasExtraLimit = remainingTopUpCredits(billing) > 0;
 
   async function openCheckout(packId: CreditPackId) {
-    if (busyPack) return;
+    if (busyPack || !consented) return;
     setBusyPack(packId);
     setError("");
     try {
       const response = await fetch("/api/billing/top-up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ packId, idempotencyKey: crypto.randomUUID() }),
+        body: JSON.stringify({ packId, idempotencyKey: crypto.randomUUID(), termsAccepted: true, earlyServiceRequested: true, legalVersion: legalDocumentVersion }),
       });
       const result = (await response.json()) as { url?: string; error?: string };
       if (!response.ok || !result.url)
@@ -108,6 +111,8 @@ export function BillingDialog({
           </div>
           <span>Nie zmienia abonamentu</span>
         </div>
+        <p className="purchase-summary">Ceny całkowite, płatność jednorazowa. Zapas przechodzi na kolejne okresy; jego wykorzystanie wymaga aktywnego abonamentu. Jednostki rozliczają koszt pracy AI, nie stałą liczbę wiadomości.</p>
+        <PurchaseConsent onChange={setConsented} />
         <div className="credit-pack-grid">
           {creditPacks.map((pack) => (
             <article key={pack.id} className={pack.id === "plus" ? "featured" : ""}>
@@ -116,9 +121,10 @@ export function BillingDialog({
               <strong>{packNames[pack.id][0]}</strong>
               <p>{packNames[pack.id][1]}</p>
               <span>{pack.price}</span>
+              <p>{pack.credits} jednostek dodatkowego limitu</p>
               <button
                 className="button button-primary"
-                disabled={Boolean(busyPack)}
+                disabled={Boolean(busyPack) || !consented}
                 onClick={() => void openCheckout(pack.id)}
               >
                 <CreditCard size={17} />

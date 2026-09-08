@@ -7,10 +7,42 @@ import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePlatformAdmin } from "@/server/auth";
 import { syncSubscription } from "@/server/stripe-subscriptions";
+import { operatorSchema } from "@/domain/operator";
+
+export async function saveOperatorSettings(_: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const parsed = operatorSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Sprawdź nazwę, pełny adres, NIP, REGON, telefon i e-mail." };
+  try {
+    const owner = await requirePlatformAdmin();
+    const { error } = await createAdminClient().rpc("save_operator_settings", {
+      settings_value: parsed.data, actor_id: owner.userId,
+    });
+    if (error) throw new Error("Nie zapisano ustawień.");
+    for (const path of ["/admin", "/kontakt", "/regulamin", "/polityka-prywatnosci"])
+      revalidatePath(path);
+    return { success: "Zapisano. Publiczne dokumenty i nowe zamówienia korzystają z nowych danych." };
+  } catch {
+    return { error: "Nie zapisano danych. Sprawdź uprawnienia lub spróbuj ponownie." };
+  }
+}
 
 export type AdminActionState =
   | { error?: string; success?: string }
   | undefined;
+
+export async function resolveWithdrawal(_: AdminActionState, formData: FormData): Promise<AdminActionState> {
+  const parsed = z.object({ id: z.uuid(), confirmed: z.literal("yes") }).safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { error: "Potwierdź wcześniejsze rozliczenie zgłoszenia i odpowiedź klientowi." };
+  try {
+    const owner = await requirePlatformAdmin();
+    const { error } = await createAdminClient().rpc("resolve_withdrawal", { request_id: parsed.data.id, actor_id: owner.userId });
+    if (error) throw new Error("Nie zapisano rozliczenia.");
+    revalidatePath("/admin");
+    return { success: "Oznaczono jako obsłużone. Ta operacja nie wykonuje zwrotu w Stripe." };
+  } catch {
+    return { error: "Nie zapisano statusu. Sprawdź uprawnienia i spróbuj ponownie." };
+  }
+}
 
 const subscriptionActionSchema = z.object({
   userId: z.uuid(),

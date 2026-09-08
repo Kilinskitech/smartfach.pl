@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { PrivacyPage } from "@/components/public-pages";
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Polityka prywatności — SmartFach",

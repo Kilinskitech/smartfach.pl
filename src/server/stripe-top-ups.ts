@@ -8,6 +8,7 @@ import {
 } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { applicationUrl, getStripe } from "@/lib/stripe";
+import { recordPurchaseAcceptance } from "./purchase-legal";
 
 const identitySchema = z.uuid();
 
@@ -20,10 +21,14 @@ export async function createUsageTopUpCheckout(input: {
 }) {
   const stripe = getStripe();
   const pack = creditPackById(input.packId);
+  const acceptanceId = await recordPurchaseAcceptance({ userId: input.userId, purchaseKey: input.idempotencyKey,
+    offer: `Jednorazowe zwiększenie limitu SmartFach: ${pack.credits} jednostek za ${pack.price} (cena całkowita). Bez automatycznego odnowienia. Wykorzystanie wymaga aktywnego abonamentu; niewykorzystany zapas przechodzi na następne okresy.`,
+  });
   const session = await stripe.checkout.sessions.create(
     {
       mode: "payment",
       locale: "pl",
+      custom_text: { submit: { message: `${pack.credits} jednostek za ${pack.price}. Zakup jednorazowy, wymaga aktywnego abonamentu. Niewykorzystany zapas przechodzi na następne okresy.` } },
       customer: input.customerId,
       client_reference_id: input.userId,
       line_items: [
@@ -45,6 +50,7 @@ export async function createUsageTopUpCheckout(input: {
         organization_id: input.organizationId,
         user_id: input.userId,
         top_up_pack: input.packId,
+        legal_acceptance_id: acceptanceId,
       },
       success_url: `${applicationUrl()}/platnosc/limit/sukces?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${applicationUrl()}/app?limit=anulowano`,

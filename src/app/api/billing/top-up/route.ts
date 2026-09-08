@@ -9,11 +9,12 @@ import {
 } from "@/server/auth";
 import { limitedJson } from "@/server/request-body";
 import { createUsageTopUpCheckout } from "@/server/stripe-top-ups";
+import { purchaseConsentSchema } from "@/domain/legal";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const requestSchema = z.object({
+const requestSchema = purchaseConsentSchema.extend({
   packId: creditPackIdSchema,
   idempotencyKey: z.uuid(),
 });

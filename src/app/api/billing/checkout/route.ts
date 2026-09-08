@@ -4,11 +4,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { authenticatedContext } from "@/server/auth";
 import { limitedJson } from "@/server/request-body";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
+import { purchaseConsentSchema } from "@/domain/legal";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const requestSchema = z.object({
+const requestSchema = purchaseConsentSchema.extend({
   plan: publicPlanIdSchema,
   idempotencyKey: z.uuid(),
 });
