@@ -33,6 +33,9 @@ Stan: 2026-09-06.
 - Nazwa modelu, OpenRouter, tokeny i „kredyty” nie są częścią interfejsu klienta.
 - Po wykorzystaniu limitu komunikujemy „zwiększ miesięczny zakres” lub zmianę planu.
 - Animacje podkreślają kolejność i szybkość. `prefers-reduced-motion` wyłącza ruch.
+- Instalacja PWA używa natywnego okna przeglądarki jednym kliknięciem, gdy jest
+  dostępne. Na iOS i w przeglądarkach wewnątrz social mediów pokazujemy krótką,
+  dopasowaną do urządzenia instrukcję; nie obiecujemy niemożliwej automatycznej instalacji.
 - Nie dodajemy fikcyjnych statystyk, klientów, zarobków ani powiadomień dla wyglądu.
 - Błąd nie może usuwać wiadomości ani udawać zapisu. Użytkownik dostaje ponowienie.
 - Każda operacja zewnętrzna lub nieodwracalna wymaga świadomego potwierdzenia.

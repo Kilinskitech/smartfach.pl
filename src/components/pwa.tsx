@@ -1,7 +1,19 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useSyncExternalStore } from "react";
-import { ArrowUpFromLine, CheckCircle2, Download, Smartphone } from "lucide-react";
+import {
+  AppWindow,
+  Check,
+  CheckCircle2,
+  Download,
+  ExternalLink,
+  Monitor,
+  MoreVertical,
+  MousePointerClick,
+  Share2,
+  Smartphone,
+  SquarePlus,
+} from "lucide-react";
 import { Dialog } from "./dialog";
 import { BrandMark } from "./brand";
 
@@ -9,34 +21,160 @@ interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
-const InstallContext = createContext<{ prompt: InstallPromptEvent | null; clear: () => void; installed: boolean }>({ prompt: null, clear: () => {}, installed: false });
+
+type InstallPlatform = "ios" | "android" | "desktop";
+type InstallPlatformSnapshot = InstallPlatform | "unknown";
+type GuideIcon = "browser" | "menu" | "share" | "add";
+
+const InstallContext = createContext<{
+  prompt: InstallPromptEvent | null;
+  clear: () => void;
+  installed: boolean;
+}>({ prompt: null, clear: () => {}, installed: false });
+
 const noSubscribe = () => () => {};
 const serverFalse = () => false;
+const serverUnknown = (): InstallPlatformSnapshot => "unknown";
+
+const guides: Record<InstallPlatform, {
+  label: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  steps: Array<{ icon: GuideIcon; title: string; description: string }>;
+}> = {
+  ios: {
+    label: "iPhone / iPad",
+    eyebrow: "SAFARI · OKOŁO 20 SEKUND",
+    title: "Dodaj SmartFach do ekranu początkowego",
+    description: "Apple wymaga krótkiego potwierdzenia w Safari. Po dodaniu SmartFach otwiera się jak zwykła aplikacja.",
+    steps: [
+      { icon: "browser", title: "Otwórz stronę w Safari", description: "Wejdź na smartfach.pl. Jeśli jesteś w Facebooku lub Instagramie, najpierw wybierz „Otwórz w Safari”." },
+      { icon: "share", title: "Naciśnij Udostępnij", description: "Użyj ikony ze strzałką do góry. W nowszym Safari może być ukryta pod przyciskiem Więcej (•••)." },
+      { icon: "add", title: "Wybierz „Do ekranu początkowego”", description: "Jeśli nie widzisz tej opcji, przewiń listę i wybierz „Edytuj czynności”, aby ją dodać." },
+      { icon: "add", title: "Potwierdź przyciskiem „Dodaj”", description: "Pozostaw włączone „Otwórz jako aplikację”, jeśli iPhone pokaże taką opcję." },
+    ],
+  },
+  android: {
+    label: "Android",
+    eyebrow: "CHROME · JEDNO KLIKNIĘCIE",
+    title: "Zainstaluj SmartFach na telefonie",
+    description: "Gdy Chrome udostępni instalację, pomarańczowy przycisk otworzy natywne okno jednym kliknięciem.",
+    steps: [
+      { icon: "browser", title: "Otwórz stronę w Chrome", description: "Wejdź na smartfach.pl bezpośrednio w Chrome, nie w przeglądarce Facebooka lub Instagrama." },
+      { icon: "menu", title: "Otwórz menu Chrome", description: "Jeśli okno instalacji nie pojawiło się automatycznie, naciśnij trzy kropki (⋮) w prawym górnym rogu." },
+      { icon: "add", title: "Wybierz instalację", description: "Naciśnij „Zainstaluj aplikację” lub „Dodaj do ekranu głównego” i potwierdź." },
+    ],
+  },
+  desktop: {
+    label: "Komputer",
+    eyebrow: "CHROME · EDGE · SAFARI",
+    title: "Miej SmartFach pod ręką na komputerze",
+    description: "Aplikacja może działać we własnym oknie i być przypięta do paska lub Docka.",
+    steps: [
+      { icon: "browser", title: "Otwórz smartfach.pl", description: "Użyj aktualnej wersji Chrome, Edge albo Safari na Macu." },
+      { icon: "add", title: "Wybierz instalację", description: "W Chrome lub Edge użyj ikony instalacji przy adresie albo opcji w menu. W Safari wybierz Plik → Dodaj do Docka." },
+      { icon: "add", title: "Potwierdź", description: "SmartFach pojawi się wśród aplikacji i będzie używać tego samego konta oraz planu." },
+    ],
+  },
+};
+
 function standalone() {
-  return window.matchMedia("(display-mode: standalone)").matches || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
+  return window.matchMedia("(display-mode: standalone)").matches
+    || Boolean((navigator as Navigator & { standalone?: boolean }).standalone);
 }
+
 function subscribeStandalone(notify: () => void) {
   const media = window.matchMedia("(display-mode: standalone)");
   media.addEventListener("change", notify);
   window.addEventListener("appinstalled", notify);
-  return () => { media.removeEventListener("change", notify); window.removeEventListener("appinstalled", notify); };
+  return () => {
+    media.removeEventListener("change", notify);
+    window.removeEventListener("appinstalled", notify);
+  };
+}
+
+function devicePlatform(): InstallPlatformSnapshot {
+  const userAgent = navigator.userAgent;
+  const ios = /iPad|iPhone|iPod/.test(userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  if (ios) return "ios";
+  if (/Android/i.test(userAgent)) return "android";
+  return "desktop";
+}
+
+function socialBrowser() {
+  return /FBAN|FBAV|Instagram|TikTok/i.test(navigator.userAgent);
+}
+
+function iosOutsideSafari() {
+  if (devicePlatform() !== "ios") return false;
+  return /CriOS|FxiOS|EdgiOS|OPiOS/i.test(navigator.userAgent) || socialBrowser();
+}
+
+function GuideStepIcon({ icon }: { icon: GuideIcon }) {
+  if (icon === "menu") return <MoreVertical size={20} />;
+  if (icon === "share") return <Share2 size={20} />;
+  if (icon === "add") return <SquarePlus size={20} />;
+  return <AppWindow size={20} />;
+}
+
+function PlatformIcon({ platform, size = 20 }: { platform: InstallPlatform; size?: number }) {
+  return platform === "desktop" ? <Monitor size={size} /> : <Smartphone size={size} />;
+}
+
+function InstallSteps({ platform }: { platform: InstallPlatform }) {
+  return <div className="install-step-list">
+    {guides[platform].steps.map((step, index) => <article className="install-step" key={`${platform}-${step.title}`}>
+      <span className="install-step-number">{index + 1}</span>
+      <span className="install-step-icon"><GuideStepIcon icon={step.icon} /></span>
+      <div><strong>{step.title}</strong><p>{step.description}</p></div>
+    </article>)}
+  </div>;
+}
+
+function BrowserNotice({ platform, inSocialBrowser, outsideSafari }: {
+  platform: InstallPlatform;
+  inSocialBrowser: boolean;
+  outsideSafari: boolean;
+}) {
+  if (!inSocialBrowser && !outsideSafari) return null;
+  const target = platform === "ios" ? "Safari" : "Chrome";
+  return <div className="install-browser-notice">
+    <ExternalLink size={20} />
+    <div><strong>Najpierw otwórz stronę w {target}</strong><p>Użyj menu obecnej przeglądarki i wybierz „Otwórz w {target}”. Dopiero tam system pokaże opcję dodania aplikacji.</p></div>
+  </div>;
 }
 
 export function PwaProvider({ children }: { children: React.ReactNode }) {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
   const [installationCompleted, setInstallationCompleted] = useState(false);
   const inApp = useSyncExternalStore(subscribeStandalone, standalone, serverFalse);
+
   useEffect(() => {
-    function available(event: Event) { event.preventDefault(); setPrompt(event as InstallPromptEvent); }
-    function installed() { setPrompt(null); setInstallationCompleted(true); }
+    function available(event: Event) {
+      event.preventDefault();
+      setPrompt(event as InstallPromptEvent);
+    }
+    function installed() {
+      setPrompt(null);
+      setInstallationCompleted(true);
+    }
     window.addEventListener("beforeinstallprompt", available);
     window.addEventListener("appinstalled", installed);
-    if ("serviceWorker" in navigator && window.isSecureContext)
+    if ("serviceWorker" in navigator && window.isSecureContext) {
       navigator.serviceWorker.register("/sw.js", { scope: "/", updateViaCache: "none" })
         .catch(() => console.warn("Nie zarejestrowano obsługi ekranu offline."));
-    return () => { window.removeEventListener("beforeinstallprompt", available); window.removeEventListener("appinstalled", installed); };
+    }
+    return () => {
+      window.removeEventListener("beforeinstallprompt", available);
+      window.removeEventListener("appinstalled", installed);
+    };
   }, []);
-  return <InstallContext.Provider value={{ prompt, clear: () => setPrompt(null), installed: inApp || installationCompleted }}>{children}</InstallContext.Provider>;
+
+  return <InstallContext.Provider value={{ prompt, clear: () => setPrompt(null), installed: inApp || installationCompleted }}>
+    {children}
+  </InstallContext.Provider>;
 }
 
 export function InstallAppButton({ className = "button button-secondary" }: { className?: string }) {
@@ -44,38 +182,104 @@ export function InstallAppButton({ className = "button button-secondary" }: { cl
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  const isIos = useSyncExternalStore(noSubscribe, () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1), serverFalse);
-  const inSocialBrowser = useSyncExternalStore(noSubscribe, () => /FBAN|FBAV|Instagram|TikTok/i.test(navigator.userAgent), serverFalse);
+  const detectedPlatform = useSyncExternalStore(noSubscribe, devicePlatform, serverUnknown);
+  const inSocialBrowser = useSyncExternalStore(noSubscribe, socialBrowser, serverFalse);
+  const outsideSafari = useSyncExternalStore(noSubscribe, iosOutsideSafari, serverFalse);
+  const platform: InstallPlatform = detectedPlatform === "unknown" ? "desktop" : detectedPlatform;
+
   async function install() {
     if (installed) return;
     setMessage("");
-    if (!prompt) { setOpen(true); return; }
+    if (!prompt) {
+      setOpen(true);
+      return;
+    }
     setBusy(true);
     try {
       await prompt.prompt();
       const result = await prompt.userChoice;
-      if (result.outcome === "dismissed") setMessage("Instalację możesz uruchomić ponownie z menu przeglądarki.");
-      else setMessage("Dokończ instalację w oknie przeglądarki. Ikona pojawi się na Twoim urządzeniu.");
-    } catch { setOpen(true); }
-    finally { clear(); setBusy(false); }
+      if (result.outcome === "dismissed") {
+        setMessage("Instalacja została zamknięta. Możesz uruchomić ją ponownie z menu przeglądarki.");
+      } else {
+        setMessage("Instalacja rozpoczęta. Ikona SmartFach pojawi się na Twoim urządzeniu.");
+      }
+    } catch {
+      setOpen(true);
+    } finally {
+      clear();
+      setBusy(false);
+    }
   }
+
+  const buttonLabel = installed
+    ? "Aplikacja jest zainstalowana"
+    : busy
+      ? "Otwieranie instalacji…"
+      : prompt
+        ? "Dodaj aplikację jednym kliknięciem"
+        : platform === "ios"
+          ? "Dodaj na iPhone’a lub iPada"
+          : platform === "android"
+            ? "Zainstaluj na Androidzie"
+            : "Zainstaluj aplikację";
+
   return <>
     <button type="button" className={className} onClick={() => void install()} disabled={busy || installed}>
-      {installed ? <CheckCircle2 size={18} /> : <Download size={18} />}
-      {installed ? "Aplikacja jest zainstalowana" : busy ? "Otwieranie instalacji…" : "Zainstaluj aplikację"}
+      {installed ? <CheckCircle2 size={18} /> : prompt ? <MousePointerClick size={18} /> : <Download size={18} />}
+      {buttonLabel}
     </button>
-    {message && <p className="form-hint" role="status">{message}</p>}
-    {open && <Dialog title="SmartFach na Twoim telefonie" description="Dodaj ikonę do ekranu początkowego i wracaj prosto do asystenta." onClose={() => setOpen(false)}>
+    {message && <p className="form-hint install-button-message" role="status">{message}</p>}
+    {open && <Dialog
+      title={guides[platform].title}
+      description={guides[platform].description}
+      onClose={() => setOpen(false)}
+    >
       <div className="install-instructions">
-        {inSocialBrowser && <p className="install-note">Otwórz tę stronę w Safari lub Chrome przez menu przeglądarki Facebooka, Instagrama lub TikToka. Instalacja w tym oknie może być niedostępna.</p>}
-        <h3>{isIos ? "Na iPhonie lub iPadzie" : "Na telefonie z Androidem"}</h3>
-        <ol>{isIos ? <><li>Otwórz smartfach.pl w Safari.</li><li>Naciśnij <ArrowUpFromLine size={16} /> <strong>Udostępnij</strong> w menu przeglądarki.</li><li>Wybierz <strong>Do ekranu początkowego</strong> i zatwierdź <strong>Dodaj</strong>. Jeśli pojawi się opcja otwierania jako aplikacji, pozostaw ją włączoną.</li></> : <><li>Otwórz smartfach.pl w Chrome.</li><li>Otwórz menu <strong>⋮</strong> w przeglądarce.</li><li>Wybierz <strong>Zainstaluj aplikację</strong> lub <strong>Dodaj do ekranu głównego</strong> i potwierdź.</li></>}</ol>
-        <details><summary>{isIos ? "Android i komputer" : "iPhone, iPad i komputer"}</summary><p>iPhone / iPad: Safari → Udostępnij → Do ekranu początkowego. Android: Chrome → menu ⋮ → Zainstaluj aplikację. Komputer: ikona instalacji przy adresie w Chrome lub Edge; w Safari na Macu menu Plik → Dodaj do Docka, jeśli dostępne.</p></details>
-        <p className="form-hint">Instalacja jest bez dodatkowej opłaty. Korzystasz z tego samego konta i planu. Asystent wymaga internetu. Nazwy opcji zależą od wersji systemu i przeglądarki.</p>
-        <button className="button button-primary" onClick={() => setOpen(false)}>Rozumiem</button>
+        <BrowserNotice platform={platform} inSocialBrowser={inSocialBrowser} outsideSafari={outsideSafari} />
+        <div className="install-dialog-platform">
+          <span><PlatformIcon platform={platform} size={23} /></span>
+          <div><small>{guides[platform].eyebrow}</small><strong>{guides[platform].label}</strong></div>
+        </div>
+        <InstallSteps platform={platform} />
+        <div className="install-complete-note"><CheckCircle2 size={19} /><span><strong>Po instalacji niczego nie konfigurujesz ponownie.</strong> To samo konto, plan i rozmowy będą od razu dostępne.</span></div>
+        <button className="button button-primary" onClick={() => setOpen(false)}>Gotowe</button>
       </div>
     </Dialog>}
   </>;
+}
+
+export function InstallPlatformGuide() {
+  const detectedPlatform = useSyncExternalStore(noSubscribe, devicePlatform, serverUnknown);
+  const inSocialBrowser = useSyncExternalStore(noSubscribe, socialBrowser, serverFalse);
+  const outsideSafari = useSyncExternalStore(noSubscribe, iosOutsideSafari, serverFalse);
+  const [selected, setSelected] = useState<InstallPlatform | null>(null);
+  const active: InstallPlatform = selected
+    ?? (detectedPlatform === "unknown" ? "ios" : detectedPlatform);
+  const guide = guides[active];
+
+  return <div className="install-guide">
+    <div className="install-guide-tabs" role="tablist" aria-label="Wybierz urządzenie">
+      {(Object.keys(guides) as InstallPlatform[]).map((platform) => <button
+        key={platform}
+        type="button"
+        role="tab"
+        aria-selected={active === platform}
+        className={active === platform ? "active" : ""}
+        onClick={() => setSelected(platform)}
+      >
+        <PlatformIcon platform={platform} size={18} />{guides[platform].label}
+      </button>)}
+    </div>
+    <div className="install-guide-panel" role="tabpanel">
+      <div className="install-guide-heading">
+        <span className="install-guide-device"><PlatformIcon platform={active} size={25} /></span>
+        <div><small>{guide.eyebrow}</small><h2>{guide.title}</h2><p>{guide.description}</p></div>
+      </div>
+      <BrowserNotice platform={active} inSocialBrowser={inSocialBrowser} outsideSafari={outsideSafari} />
+      <InstallSteps platform={active} />
+      <div className="install-guide-finish"><Check size={18} /><span>Gotowe — ikona SmartFach będzie dostępna razem z innymi aplikacjami.</span></div>
+    </div>
+  </div>;
 }
 
 export function InstallAppCard() {
@@ -84,6 +288,7 @@ export function InstallAppCard() {
     <div className="install-app-identity"><BrandMark size={62} /><span><strong>SmartFach</strong><small>Twoje rozmowy. Twój następny krok.</small></span></div>
     <p>Dodaj SmartFacha do ekranu początkowego. Otworzysz go jednym dotknięciem, bez szukania karty w przeglądarce.</p>
     <InstallAppButton className="button button-primary" />
-    <p className="form-hint">Bez dodatkowej opłaty. To samo konto i plan. Do pracy z AI potrzebujesz internetu.</p>
+    <div className="install-app-points"><span><Check size={15} /> Bez dodatkowej opłaty</span><span><Check size={15} /> To samo konto i plan</span></div>
+    <p className="form-hint">Asystent AI wymaga połączenia z internetem.</p>
   </section>;
 }

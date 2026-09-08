@@ -979,3 +979,20 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Trade-off: prawdziwa awaria webhooka może zostać częściowo zamaskowana, dlatego
   HTTP 200 zdarzeń i `email_sent_at` nadal są obowiązkową częścią testu sprzedaży.
   Zmiana nie wymaga aktualizacji MASTER_PLAN.
+
+## D048 — Progresywna instalacja PWA zamiast jednego fałszywego przebiegu
+
+- Data: 2026-09-08. Status: wdrożone w kodzie; wymaga testu na fizycznym iPhonie
+  i urządzeniu z Androidem po publikacji.
+- Decyzja: na Androidzie, Chrome i Edge używamy natywnego okna instalacji uruchamianego
+  przyciskiem, jeśli przeglądarka udostępni `beforeinstallprompt`. Na iPhonie i iPadzie
+  pokazujemy cztery krótkie kroki Safari, ponieważ iOS nie udostępnia stronie
+  automatycznego wywołania instalacji PWA.
+- Strona `/pobierz` sama rozpoznaje urządzenie, ale pozwala przełączyć instrukcję
+  między iPhone/iPad, Androidem i komputerem. Przeglądarki Facebooka, Instagrama
+  i TikToka dostają najpierw jawny krok przejścia do Safari lub Chrome.
+- Powód: jeden generyczny komunikat był technicznie nieprawdziwy na iOS i mało pomocny
+  na urządzeniach, na których przeglądarka nie pokazuje natywnego promptu.
+- Trade-off: instalacja na iOS nadal wymaga kilku działań użytkownika. Nie wdrażamy
+  eksperymentalnego elementu instalacji Chrome ani aplikacji natywnych. Bez zmiany
+  MASTER_PLAN — dopracowano istniejącą funkcję PWA.

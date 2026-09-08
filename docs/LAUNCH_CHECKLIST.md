@@ -21,8 +21,10 @@ konfiguracją usług ani zakończonym testem rzeczywistej płatności.
   Używa numeru zamówienia `cs_...` oraz e-maila konta; alternatywnie e-mail/posta.
   Konto zalogowane ma listę własnych nowych zamówień. Zgłoszenie nie wykonuje
   automatycznie zwrotu. Obsługa: `/admin#obsluga-umow` i Stripe.
-- `/pobierz` oraz karta w Ustawieniach: instalacja PWA, instrukcje iOS/Android,
-  manifest, ikony 180/192/512 oraz maskable, publiczny ekran braku internetu.
+- `/pobierz` oraz karta w Ustawieniach: natywna instalacja jednym kliknięciem,
+  gdy pozwala na nią przeglądarka; dopasowane instrukcje iOS/Android/komputer oraz
+  ostrzeżenie dla przeglądarek Facebooka, Instagrama i TikToka; manifest, ikony
+  180/192/512 oraz maskable, publiczny ekran braku internetu.
   Brak offline AI: service worker nie zapisuje prywatnych stron ani API.
 
 ## 1. Poczta — osobno od Supabase
@@ -117,9 +119,14 @@ potwierdzenia i nie nadają się do tego testu.
   przyznania dostępu lub zwiększenia limitu.
 - [ ] Sprawdź e-maile: przyjęcie przez SMTP nie dowodzi dotarcia do odbiorcy.
 - [ ] „Nie pamiętasz hasła?” → polski e-mail → nowe hasło → ponowne logowanie.
-- [ ] Fizyczny iPhone/Safari oraz Android/Chrome: instalacja, ikona, start `/app`,
-  logowanie, zdjęcie, klawiatura, powrót po zamknięciu, brak sieci i ponowne połączenie.
-  Sprawdź też wejście z przeglądarki reklamy Facebook/Instagram i przejście do Safari/Chrome.
+- [ ] Fizyczny iPhone/Safari: `/pobierz` rozpoznaje iOS, pokazuje instrukcję Safari,
+  „Do ekranu początkowego” tworzy poprawną ikonę, a uruchomienie prowadzi do `/app`.
+- [ ] Fizyczny Android/Chrome: przycisk otwiera natywne okno instalacji jednym
+  kliknięciem; po odrzuceniu nadal działa instrukcja z menu Chrome. Sprawdź ikonę,
+  start `/app`, logowanie, zdjęcie, klawiaturę, powrót po zamknięciu, brak sieci
+  i ponowne połączenie.
+- [ ] Wejście na `/pobierz` z reklamy w Facebooku/Instagramie/TikToku pokazuje
+  najpierw przejście do Safari/Chrome, a potem pozwala dokończyć instalację.
 - [ ] Włącz alerty błędów Vercel/Stripe, kosztów OpenRouter oraz sprawdzaj codziennie
   skrzynkę i `/admin#obsluga-umow`. Nie uruchamiaj Meta Pixel/GA bez wymaganej zgody.
 
