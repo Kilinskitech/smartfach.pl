@@ -62,8 +62,8 @@ export function SettingsPanel({
         <div className="card-heading">
           <SlidersHorizontal size={21} />
           <div>
-            <h3>Jak chcesz działać</h3>
-            <p>Te informacje pomagają odrzucić pomysły, które do Ciebie nie pasują.</p>
+            <h3>Twój profil działania</h3>
+            <p>SmartFach pamięta te informacje i uwzględnia je w każdej rozmowie.</p>
           </div>
         </div>
         <form
@@ -79,6 +79,7 @@ export function SettingsPanel({
               constraints: form.get("constraints"),
               focus: form.get("focus"),
               goal: form.get("goal"),
+              onboardingCompleted: true,
             });
             if (!parsed.success) {
               setJourneyError("Sprawdź wpisane informacje.");
@@ -114,7 +115,7 @@ export function SettingsPanel({
           <div className="field"><label htmlFor="journey-focus">Nad czym obecnie pracujesz?</label><input id="journey-focus" name="focus" defaultValue={data.journey.focus} maxLength={160} placeholder="Możesz zostawić puste, jeśli dopiero szukasz kierunku" /></div>
           {journeyError && <p className="form-error" role="alert">{journeyError}</p>}
           {journeySaved && <p className="success-note" role="status"><Check size={16} />SmartFach będzie korzystał z tych informacji.</p>}
-          <button className="button button-primary" disabled={journeyBusy}><Target size={18} />{journeyBusy ? "Zapisywanie…" : "Zapisz moje warunki"}</button>
+          <button className="button button-primary" disabled={journeyBusy}><Target size={18} />{journeyBusy ? "Zapisywanie…" : "Zapisz profil"}</button>
         </form>
       </section>
       <div className="settings-side">

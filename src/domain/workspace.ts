@@ -189,6 +189,7 @@ export const journeySchema = z.object({
   weeklyHours: z.string().max(80).default(""),
   experience: z.string().max(1200).default(""),
   constraints: z.string().max(1200).default(""),
+  onboardingCompleted: z.boolean().default(false),
 });
 export const workspaceSchema = z
   .object({
@@ -207,6 +208,7 @@ export const workspaceSchema = z
       weeklyHours: "",
       experience: "",
       constraints: "",
+      onboardingCompleted: false,
     }),
     billing: billingSchema.default({
       plan: "lite",
@@ -273,6 +275,7 @@ export const emptyWorkspace: Workspace = {
     weeklyHours: "",
     experience: "",
     constraints: "",
+    onboardingCompleted: false,
   },
   billing: {
     plan: "lite",

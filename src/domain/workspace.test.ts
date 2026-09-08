@@ -9,6 +9,7 @@ import {
   draftSchema,
 } from "./workspace";
 import { fixtureWorkspace, fixtureClient } from "../test/fixtures";
+import { completeJourneyOnboarding } from "./journey";
 
 describe("warsztat bez danych przykładowych", () => {
   it("zaczyna bez klientów, stawek, członków zespołu, dokumentów i rozmów", () => {
@@ -145,10 +146,28 @@ describe("warsztat bez danych przykładowych", () => {
     };
     const migrated = workspaceSchema.parse(legacy);
     expect(migrated.journey.workStyle).toBe("open");
+    expect(migrated.journey.onboardingCompleted).toBe(false);
     expect(migrated.billing.plan).toBe("lite");
     expect(migrated.team).toEqual([]);
     expect(migrated.journey).not.toHaveProperty("mode");
     expect(migrated.conversations[0]).not.toHaveProperty("mode");
+  });
+  it("zapisuje pierwszy profil jako trwały kontekst kolejnych rozmów", () => {
+    const journey = completeJourneyOnboarding(emptyWorkspace.journey, {
+      workStyle: "remote",
+      situation: "skills",
+      priorities: ["fast", "after_hours"],
+      boundaries: ["phone", "camera"],
+      customBoundary: "maksymalnie 300 zł na start",
+      additionalInfo: "Umiem obrabiać zdjęcia produktów.",
+    });
+    expect(journey.onboardingCompleted).toBe(true);
+    expect(journey.workStyle).toBe("remote");
+    expect(journey.focus).toContain("umiejętnościach");
+    expect(journey.experience).toContain("obrabiać zdjęcia");
+    expect(journey.constraints).toContain("sprzedaży telefonicznej");
+    expect(journey.constraints).toContain("maksymalnie 300 zł");
+    expect(journey.goal).toContain("po godzinach");
   });
   it("przechowuje członków zespołu i odrzuca powtórzony identyfikator", () => {
     const data = structuredClone(emptyWorkspace);

@@ -926,3 +926,20 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Powód: brak odzyskiwania hasła i brak możliwości odróżnienia awarii SMTP od
   awarii webhooka blokowały gotowość sprzedażową. Zmiana nie rozszerza obietnicy
   produktu i nie wymaga aktualizacji MASTER_PLAN.
+
+## D045 — Profil tylko raz, nowe rozmowy zaczynają się od zadania
+
+- Data: 2026-09-08. Status: wdrożone w kodzie na gałęzi Preview; wymaga testu E2E.
+- Decyzja: formularz warunków pojawia się tylko przed pierwszym prowadzonym startem.
+  Jego wynik jest zapisywany jako trwały profil konta przed wywołaniem AI. Każda
+  kolejna nowa rozmowa pokazuje wybór aktualnego zadania: znalezienie klientów,
+  dopracowanie oferty, plan działań, analiza wyniku albo własne pytanie.
+- Ustawienia są miejscem późniejszej edycji profilu, a nie drugim onboardingiem.
+  Zwykłe pytanie można zadać także bez zakończenia profilu startowego.
+- Powód: ponawianie tych samych pytań w każdej rozmowie tworzyło tarcie i sugerowało,
+  że SmartFach nie pamięta użytkownika. Jednorazowy profil buduje ciągłość, a wybór
+  bieżącego zadania skraca drogę do wartości subskrypcyjnej.
+- Trade-off: profil może się zdezaktualizować, dlatego pozostaje jawnie edytowalny.
+  Nie budujemy jeszcze automatycznej pamięci wyciągającej trwałe fakty z każdej rozmowy.
+- Zastępuje D043 wyłącznie w zasadzie pokazywania profilu w każdej nowej rozmowie.
+  Routing modeli i limity z D043 pozostają bez zmiany. Zaktualizowano MASTER_PLAN.

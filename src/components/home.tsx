@@ -309,6 +309,9 @@ export function Home() {
                 checking={checking}
                 checkConnection={checkConnection}
                 onSaveConversation={saveConversation}
+                onSaveJourney={async (journey) => {
+                  await commit((current) => ({ ...current, journey }));
+                }}
                 onSettings={() => navigate("settings")}
                 onBusy={setChatBusy}
                 onOpenBilling={() => setModal("billing")}

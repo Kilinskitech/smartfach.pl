@@ -22,8 +22,10 @@ Stan: 2026-09-06.
 - Na telefonie cele dotykowe mają co najmniej 48 × 48 CSS px, widoczny fokus i
   jednoznaczne etykiety. Najważniejsza akcja jest w zasięgu kciuka.
 - Historia rozmów jest w panelu bocznym, a na telefonie otwierana z nagłówka.
-- Ustawienia opisujemy językiem użytkownika: „Jak chcesz działać”, „Ile masz czasu”,
-  „Czego nie chcesz robić”. Nie pokazujemy technicznych trybów konta.
+- Pierwszy profil wypełnia się raz. Kolejna nowa rozmowa pokazuje zadania: klienci,
+  oferta, plan, analiza wyniku lub własne pytanie — bez powtarzania onboardingu.
+- Ustawienia opisujemy jako „Twój profil działania” i służą do edycji zapamiętanego
+  kontekstu. Nie pokazujemy technicznych trybów konta.
 - Plan Lite/Pro można przełączyć w widoku rejestracji bez przeładowania.
 - Trial pokazuje 0 zł dzisiaj, datę pierwszej opłaty, cenę po próbie i anulowanie.
 - Nazwa modelu, OpenRouter, tokeny i „kredyty” nie są częścią interfejsu klienta.

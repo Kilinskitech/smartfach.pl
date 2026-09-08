@@ -41,9 +41,11 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 Prompt otrzymuje zatwierdzone preferencje: zdalnie/lokalnie, czas tygodniowo,
 doświadczenie, ograniczenia, cel i bieżący fokus. Typ konta ani tryb rozmowy nie są
 częścią kontekstu; wszystkie konta używają jednego procesu budowania przychodu.
-Pierwszy ekran przekazuje jednak techniczny tryb `guided_start`: po zatwierdzeniu
-asystent ma od razu porównać maksymalnie trzy kierunki, rekomendować jeden i zacząć
-pierwsze działanie. Ścieżka zwykłego pytania omija ten workflow.
+Jednorazowy pierwszy ekran zapisuje profil w workspace, a następnie przekazuje
+techniczny tryb `guided_start`: asystent ma od razu porównać maksymalnie trzy kierunki,
+rekomendować jeden i zacząć pierwsze działanie. Kolejne nowe rozmowy używają zapisanego
+profilu i zaczynają się od wyboru aktualnego zadania. Ścieżka zwykłego pytania omija
+workflow startowy.
 
 Asystent ma:
 

@@ -95,11 +95,12 @@ typów Odkryj/Uruchom/Prowadź ani segmentu Firma. Rejestracja wymaga wyłączni
 Lite lub Pro. Nowe konta zaczynają w kontekście budowania własnego przychodu.
 
 Głównym miejscem pracy jest jeden asystent przyjmujący tekst i zdjęcia.
-Każda nowa rozmowa zaczyna się od krótkiego profilu z odpowiedziami wielokrotnego
-wyboru i polem dodatkowych informacji. Zatwierdzenie uruchamia rekomendację i pierwsze
-działanie bez kopiowania promptu do pola rozmowy. Osobna ścieżka pozwala od razu zadać
-zwykłe pytanie. Ustawienia przechowują styl pracy, czas tygodniowo,
-doświadczenie, ograniczenia, cel i bieżący fokus.
+Tylko pierwsze uruchomienie pokazuje krótki profil z odpowiedziami wielokrotnego
+wyboru i polem dodatkowych informacji. Zatwierdzenie zapisuje profil na koncie,
+uruchamia rekomendację i pierwsze działanie bez kopiowania promptu do pola rozmowy.
+Każda kolejna nowa rozmowa zaczyna się od wyboru aktualnego zadania: klienci, oferta,
+plan działań, analiza wyniku albo własne pytanie. Ustawienia służą do późniejszej
+edycji zapisanego profilu: stylu pracy, czasu, doświadczenia, ograniczeń, celu i fokusu.
 
 Historyczne schematy workflow firm terenowych pozostają czasowo w modelu workspace,
 aby nie usuwać danych. Nie mają wejścia w głównej aplikacji, rejestracji ani

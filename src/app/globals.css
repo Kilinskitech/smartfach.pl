@@ -7916,6 +7916,111 @@ button.team-card:hover {
   margin-top: 20px;
   padding: 9px 15px;
 }
+.task-start-grid {
+  width: min(100%, 720px);
+  margin: 25px auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  text-align: left;
+}
+.task-start-grid > button {
+  position: relative;
+  min-height: 128px;
+  padding: 19px 48px 18px 19px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  border: 1px solid #dbe4de;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #fff 62%, #f2f7f2);
+  color: #29433a;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+.task-start-grid > button:nth-child(2n) {
+  background: linear-gradient(145deg, #fff 62%, #fff3e9);
+}
+.task-start-grid > button:hover {
+  transform: translateY(-2px);
+  border-color: #d3a07e;
+  box-shadow: 0 14px 30px #1d433916;
+}
+.task-start-grid > button:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+  transform: none;
+  box-shadow: none;
+}
+.task-start-grid > button > span {
+  grid-row: 1 / 3;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  background: #e6f0e7;
+  color: #476b58;
+}
+.task-start-grid > button:nth-child(2n) > span {
+  background: #fff0e4;
+  color: #9a613d;
+}
+.task-start-grid strong {
+  align-self: end;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.task-start-grid small {
+  align-self: start;
+  margin-top: 4px;
+  color: #75847c;
+  font-size: 9px;
+  line-height: 1.5;
+}
+.task-start-grid > button > svg {
+  position: absolute;
+  right: 18px;
+  top: calc(50% - 8px);
+  color: #91a098;
+}
+.task-own-question {
+  min-height: 44px;
+  margin-top: 13px;
+  padding: 9px 16px;
+}
+.task-start-working {
+  margin: 14px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: #5c7066;
+  font-size: 10px;
+}
+.task-start-working svg {
+  animation: spin .9s linear infinite;
+}
+.task-start-error {
+  width: min(100%, 720px);
+  margin: 13px auto 0;
+  text-align: left;
+}
+.task-start-billing {
+  min-height: 42px;
+  margin-top: 13px;
+  padding: 9px 15px;
+  border: 0;
+  border-radius: 10px;
+  background: #173f38;
+  color: white;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .journey-settings-form {
   margin-top: 22px;
 }
@@ -7974,6 +8079,12 @@ button.team-card:hover {
   }
   .start-profile-actions {
     grid-template-columns: 1fr;
+  }
+  .task-start-grid {
+    grid-template-columns: 1fr;
+  }
+  .task-start-grid > button {
+    min-height: 105px;
   }
   .start-profile fieldset button {
     min-height: 44px;
