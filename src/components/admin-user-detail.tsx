@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { BrandMark } from "./brand";
 import { AdminUserActions } from "./admin-user-actions";
+import type { TopUpPurchase, TopUpSummary } from "@/domain/top-up-summary";
 
 export type AdminUserDetailSnapshot = {
   generatedAt: string;
@@ -21,6 +22,10 @@ export type AdminUserDetailSnapshot = {
   plan: string;
   monthlyCostUsd: number;
   monthlyLimitUsd: number;
+  baseLimitUsd: number;
+  chargedLimitUsd: number;
+  topUps: TopUpSummary;
+  topUpPurchases: TopUpPurchase[];
   totalCostUsd: number;
   totalTokens: number;
   measuredResponses: number;
@@ -105,6 +110,25 @@ export function AdminUserDetail({
           <article><span><Gauge size={20} /></span><small>PLAN I TEN MIESIĄC</small><strong className="admin-text-value">{snapshot.plan}</strong><p>{usdLabel(snapshot.monthlyCostUsd)} / {usdLabel(snapshot.monthlyLimitUsd)}</p></article>
           <article><span><MessagesSquare size={20} /></span><small>AKTYWNOŚĆ</small><strong>{snapshot.conversations.length}</strong><p>{messageCount} wiadomości we wszystkich rozmowach</p></article>
           <article><span><CircleDollarSign size={20} /></span><small>KOSZT ŁĄCZNY</small><strong className="admin-cost-value">{usdLabel(snapshot.totalCostUsd, true)}</strong><p>{snapshot.totalTokens.toLocaleString("pl-PL")} tokenów · {snapshot.measuredResponses} zmierzonych odpowiedzi</p></article>
+        </section>
+
+        <section className="admin-panel admin-top-ups" aria-labelledby="top-ups-title">
+          <div className="admin-panel-heading"><div><Gauge size={20} /><span><small>LIMIT I ZAKUPY</small><h2 id="top-ups-title">Pakiety dodatkowego limitu</h2></span></div></div>
+          <dl className="admin-milestones">
+            <div><dt>Zakupione pakiety łącznie</dt><dd>{snapshot.topUps.count}</dd></div>
+            <div><dt>Przyznane z zakupów łącznie</dt><dd>{usdLabel(snapshot.topUps.grantedUsd)}</dd></div>
+            <div><dt>Pozostało z zakupów</dt><dd>{usdLabel(snapshot.topUps.remainingExtraUsd)}</dd></div>
+            <div><dt>Łączny limit tego okresu</dt><dd>{snapshot.topUps.totalPercentage}%</dd></div>
+          </dl>
+          <p className="admin-section-copy">Pula bazowa: {usdLabel(snapshot.baseLimitUsd)}. Łączny limit okresu: {usdLabel(snapshot.monthlyLimitUsd)}. Rozliczone użycie limitu: {usdLabel(snapshot.chargedLimitUsd)}. Pozostało do wykorzystania: {usdLabel(snapshot.topUps.remainingAllowanceUsd)}.</p>
+          <p className="admin-metrics-note">Koszt OpenRouter i rozliczone użycie limitu mogą się różnić przez zaokrąglanie każdej odpowiedzi. Najpierw zużywana jest pula planu, potem zakupy. Na kolejny okres przechodzi tylko niewykorzystana część zakupów.</p>
+          <h3>Historia przyznanych pakietów</h3>
+          <p className="admin-metrics-note">Wartość zarejestrowanych zakupów: {(snapshot.topUps.purchasedGrosze / 100).toLocaleString("pl-PL", { style: "currency", currency: "PLN" })}. To historia przyznań, nie raport przychodu po zwrotach. Pokazujemy ostatnie 20; podsumowanie obejmuje wszystkie.</p>
+          {snapshot.topUpPurchases.length ? <div className="admin-top-up-history">{snapshot.topUpPurchases.map(p => <article key={p.checkoutSessionId}>
+            <div><strong>Pakiet {p.packId}</strong><time dateTime={p.createdAt}>{new Date(p.createdAt).toLocaleString("pl-PL", { timeZone: "Europe/Warsaw" })}</time></div>
+            <div><strong>{usdLabel(p.grantedCredits / 100)} limitu</strong><span>{(p.amountGrosze / 100).toLocaleString("pl-PL", { style: "currency", currency: "PLN" })}</span></div>
+            <code>{p.checkoutSessionId}</code>
+          </article>)}</div> : <p className="admin-empty-note">Brak potwierdzonych zakupów dodatkowego limitu.</p>}
         </section>
 
         <section className="admin-panel admin-quality">

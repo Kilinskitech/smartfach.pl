@@ -12,6 +12,8 @@ import { getOperator } from "@/server/operator-settings";
 import { smtpConfigured } from "@/server/transactional-email";
 import { AdminLegal } from "@/components/admin-legal";
 import { AdminOperations, type OperationalSummary } from "@/components/admin-operations";
+import { loadAdminTopUps } from "@/server/admin-top-ups";
+import { summarizeTopUps } from "@/domain/top-up-summary";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Panel właściciela — SmartFach", robots: { index: false, follow: false } };
@@ -46,6 +48,7 @@ export default async function Page({
     if ("error" in result && result.error) throw new Error("Nie można wczytać pełnych danych panelu.");
   const profiles = new Map((profilesResult.data ?? []).map((row) => [String(row.user_id), row]));
   const memberships = new Map((membershipsResult.data ?? []).map((row) => [String(row.user_id), row]));
+  const topUpPurchases = await loadAdminTopUps(admin, [...memberships.values()].map(row => String(row.organization_id)));
   const subscriptions = new Map((subscriptionsResult.data ?? []).map((row) => [String(row.organization_id), row]));
   const workspaces = new Map((workspacesResult.data ?? []).map((row) => [String(row.organization_id), row]));
   const usage = new Map<string, {
@@ -92,6 +95,7 @@ export default async function Page({
         };
     const userUsage = usage.get(authUser.id);
     const monthlyCostUsd = userUsage?.monthlyCostUsd ?? 0;
+    const topUps = summarizeTopUps(topUpPurchases.filter(p => p.organizationId === organizationId), billing);
     return {
       id: authUser.id,
       name: String(profile?.display_name ?? authUser.user_metadata?.display_name ?? ""),
@@ -100,7 +104,8 @@ export default async function Page({
       status: String(subscription?.status ?? "incomplete"),
       paymentMethodAttached: Boolean(subscription?.payment_method_attached),
       monthlyCostUsd,
-      monthlyLimitUsd: plans[billing.plan].monthlyCredits / 100,
+      monthlyLimitUsd: topUps.totalAllowanceUsd,
+      topUps,
       totalCostUsd: userUsage?.costUsd ?? 0,
       totalTokens: userUsage?.totalTokens ?? 0,
     };

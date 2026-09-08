@@ -1084,3 +1084,16 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Kompromis: pozostaje mały moduł przyjmowania oświadczeń, bez automatycznych
   zwrotów. Wiadomości wysłane bezpośrednio e-mailem nie są synchronizowane z panelem.
 - MASTER_PLAN bez zmiany — dopracowanie istniejącego panelu i kontaktu.
+
+## D054 — Jedna widoczna pula i historia zakupów limitu
+
+- Data: 2026-09-09. Decyzja foundera: zakup powiększa jeden widoczny limit,
+  np. 100% + 25% = 125%, bez osobnego licznika „dodatkowego zapasu”.
+- Pasek mierzy zużycie względem całej puli, etykiety względem bazowego planu.
+  Procenty są przybliżeniem; finansowe rozliczenie pozostaje w jednostkach całkowitych.
+- Zachowano istniejące przenoszenie niewykorzystanego dodatku i idempotentne
+  przyznawanie przez Stripe. Zużyte dodatki nie wracają przy odnowieniu. Brak migracji.
+- Panel administratora czyta istniejącą księgę usage_top_ups: liczbę zakupów,
+  historyczne kwoty i przyznania, pozostały zapas oraz całkowity limit okresu.
+  Nie wyliczamy historycznych zakupów z obecnego salda ani z aktualnego cennika.
+- MASTER_PLAN bez zmiany; zaktualizowano PRICING. Ceny i budżety bez zmiany.

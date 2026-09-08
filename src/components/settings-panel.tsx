@@ -14,9 +14,8 @@ import {
   Target,
 } from "lucide-react";
 import {
-  monthlyUsagePercentage,
+  usageLimitView,
   plans,
-  remainingTopUpCredits,
 } from "@/domain/billing";
 import {
   journeySchema,
@@ -39,9 +38,8 @@ export function SettingsPanel({
   const [journeyBusy, setJourneyBusy] = useState(false);
   const [journeySaved, setJourneySaved] = useState(false);
   const [journeyError, setJourneyError] = useState("");
-  const usagePercentage = monthlyUsagePercentage(data.billing);
+  const limit = usageLimitView(data.billing);
   const plan = plans[data.billing.plan];
-  const hasExtraLimit = remainingTopUpCredits(data.billing) > 0;
   function exportData() {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -115,16 +113,17 @@ export function SettingsPanel({
             <Gauge size={21} />
             <div>
               <h3>Plan {plan.name} i wykorzystanie</h3>
-              <p>{usagePercentage}% miesięcznego limitu wykorzystane</p>
+              <p>Łączna pula w tym okresie: {limit.totalPercentage}% limitu planu</p>
             </div>
           </div>
           <div className="settings-usage-value">
-            <strong>{usagePercentage}%</strong>
-            <span>{hasExtraLimit ? "Dodatkowy zapas jest aktywny" : "Limit odnowi się w kolejnym okresie"}</span>
+            <strong>{limit.usedPercentage}% <small>z {limit.totalPercentage}%</small></strong>
+            <span>Wykorzystane · pozostało {limit.remainingPercentage}% limitu planu</span>
           </div>
           <div className="settings-usage-progress" aria-hidden="true">
-            <span style={{ width: `${usagePercentage}%` }} />
+            <span style={{ width: `${limit.progressPercentage}%` }} />
           </div>
+          <p className="form-hint">100% to pula Twojego planu. Zakupy zwiększają ten sam limit. Przy odnowieniu wraca pula planu, a niewykorzystana część zakupów przechodzi dalej.</p>
           <button className="button button-primary" onClick={onOpenBilling}>
             <CreditCard size={17} /> Zwiększ limit
           </button>

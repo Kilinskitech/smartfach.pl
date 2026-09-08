@@ -18,7 +18,7 @@ import { ChatPanel } from "./chat-panel";
 import { Dialog } from "./dialog";
 import { SettingsPanel } from "./settings-panel";
 import { useWorkspace } from "./use-workspace";
-import { monthlyUsagePercentage, plans } from "@/domain/billing";
+import { usageLimitView, plans } from "@/domain/billing";
 import type { Conversation } from "@/domain/workspace";
 
 type View = "chat" | "settings";
@@ -232,10 +232,10 @@ export function Home() {
               <button
                 className="topbar-credits"
                 onClick={() => setModal("billing")}
-                aria-label={`Wykorzystano ${monthlyUsagePercentage(data.billing)}% miesięcznego limitu`}
+                aria-label={`Wykorzystano ${usageLimitView(data.billing).usedPercentage}% z ${usageLimitView(data.billing).totalPercentage}% limitu planu`}
               >
                 <Gauge size={16} />
-                <span>{monthlyUsagePercentage(data.billing)}%</span>
+                <span>{usageLimitView(data.billing).usedPercentage}% / {usageLimitView(data.billing).totalPercentage}%</span>
               </button>
             )}
             <span className="local-badge">

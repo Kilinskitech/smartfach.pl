@@ -134,6 +134,20 @@ export function remainingCredits(billing: Billing) {
   return Math.max(0, creditAllowance(billing) - billing.usedCredits);
 }
 
+/** One customer-facing pool; percentages refer to the current plan's base allowance. */
+export function usageLimitView(billing: Billing) {
+  const base = plans[billing.plan].monthlyCredits;
+  const total = creditAllowance(billing);
+  const totalPercentage = Math.round(total * 100 / base);
+  const usedPercentage = Math.min(totalPercentage, Math.ceil(billing.usedCredits * 100 / base));
+  return {
+    totalPercentage,
+    usedPercentage,
+    remainingPercentage: Math.max(0, totalPercentage - usedPercentage),
+    progressPercentage: Math.min(100, Math.max(0, billing.usedCredits / total * 100)),
+  };
+}
+
 export function monthlyUsagePercentage(billing: Billing) {
   return Math.min(
     100,

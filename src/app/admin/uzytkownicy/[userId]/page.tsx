@@ -6,6 +6,8 @@ import { plans } from "@/domain/billing";
 import { workspaceSchema } from "@/domain/workspace";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePlatformAdmin } from "@/server/auth";
+import { loadAdminTopUps } from "@/server/admin-top-ups";
+import { summarizeTopUps } from "@/domain/top-up-summary";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Profil użytkownika — SmartFach", robots: { index: false, follow: false } };
@@ -38,6 +40,8 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
   });
   if (usageResult.error) throw new Error("Nie można wczytać pełnego zużycia użytkownika.");
   const usage = usageResult.data?.[0];
+  const purchases = await loadAdminTopUps(admin, [organizationId]);
+  const topUps = summarizeTopUps(purchases, workspace.billing);
   const snapshot: AdminUserDetailSnapshot = {
     generatedAt: new Date().toISOString(),
     id: parsedId.data,
@@ -46,7 +50,11 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     company: String(organizationResult.data?.name ?? workspace.company.name),
     plan: `Plan ${plans[workspace.billing.plan].name}`,
     monthlyCostUsd: Number(usage?.period_cost_usd ?? 0),
-    monthlyLimitUsd: plans[workspace.billing.plan].monthlyCredits / 100,
+    monthlyLimitUsd: topUps.totalAllowanceUsd,
+    baseLimitUsd: plans[workspace.billing.plan].monthlyCredits / 100,
+    chargedLimitUsd: workspace.billing.usedCredits / 100,
+    topUps,
+    topUpPurchases: purchases.slice(0, 20),
     totalCostUsd: Number(usage?.cost_usd ?? 0),
     totalTokens: Number(usage?.total_tokens ?? 0),
     measuredResponses: Number(usage?.response_count ?? 0),

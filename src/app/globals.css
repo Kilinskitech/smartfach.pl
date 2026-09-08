@@ -8491,6 +8491,18 @@ button.team-card:hover {
 .withdrawal-page a { text-decoration: underline; text-underline-offset: 3px; }
 .withdrawal-page .auth-form { margin: 28px 0; }
 .admin-support-stack { display: grid; gap: 24px; margin-top: 24px; }
+.settings-usage-value strong small { font-size: 16px; font-weight: 500; color: var(--muted); }
+.admin-user-usage small { display: block; margin-top: 5px; font-size: 10px; font-weight: 400; line-height: 1.5; color: var(--muted); white-space: normal; }
+.admin-top-ups { margin-top: 24px; }
+.admin-top-ups .admin-milestones dd { font-size: 22px; overflow-wrap: anywhere; }
+.admin-top-ups > h3 { margin: 24px 0 12px; font-size: 16px; font-weight: 650; }
+.admin-top-ups > .admin-metrics-note { margin-top: 12px; }
+.admin-top-up-history { display: grid; gap: 12px; margin-top: 18px; }
+.admin-top-up-history article { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; }
+.admin-top-up-history article > div { display: grid; gap: 6px; }
+.admin-top-up-history article > div:nth-child(2) { text-align: right; }
+.admin-top-up-history time, .admin-top-up-history article span { color: var(--muted); font-size: 12px; }
+.admin-top-up-history code { grid-column: 1 / -1; overflow-wrap: anywhere; font-size: 10px; color: var(--muted); }
 .admin-support-stack > * { min-width: 0; }
 .admin-support-stack > #obsluga-umow { margin-top: 0; }
 .admin-operations { scroll-margin-top: 24px; }

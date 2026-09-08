@@ -32,6 +32,17 @@ na podstawie kosztu jednej skutecznej sesji, a nie samej liczby wiadomości.
 
 ## Zwiększenie użycia
 
+Prezentacja od 2026-09-09: jedna pula, np. wykorzystano 110% z 125% limitu
+bazowego. Pasek pokazuje użycie względem całej powiększonej puli, nie zatrzymuje
+się po wykorzystaniu bazowych 100%. Procenty są zaokrąglane do pełnych punktów;
+księga nadal przechowuje dokładne całkowite jednostki rozliczeniowe.
+Po odnowieniu wraca tylko bazowe 100%; niewykorzystana część zakupów przechodzi
+dalej, zużyta nie odnawia się. Przy zmianie planu pozostaje ta sama wartość
+dodatku, ale jego procent odnosi się do nowej puli bazowej.
+Administrator widzi liczbę i historię przyznanych pakietów, ich historyczną cenę,
+sumę przyznań, pozostałe saldo i całkowity limit okresu. Historia przyznań nie
+jest raportem sprzedaży netto po zwrotach.
+
 Interfejs codzienny nie pokazuje salda „kredytów”. Po wykorzystaniu planu użytkownik
 widzi procent miesięcznego limitu i może zwiększyć zakres albo przejść na Pro.
 Jednorazowe zwiększenia nie zmieniają abonamentu i pozostają do wykorzystania:

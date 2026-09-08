@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 import {
   creditPacks,
-  monthlyUsagePercentage,
+  usageLimitView,
   plans,
-  remainingTopUpPercentage,
+  topUpCreditsForPlan,
   type CreditPackId,
 } from "@/domain/billing";
 import type { Billing } from "@/domain/workspace";
@@ -38,10 +38,9 @@ export function BillingDialog({
   const [error, setError] = useState("");
   const [consented, setConsented] = useState(false);
   const plan = plans[billing.plan];
-  const percentage = monthlyUsagePercentage(billing);
-  const remaining = Math.max(0, 100 - percentage);
-  const extraRemaining = remainingTopUpPercentage(billing);
+  const limit = usageLimitView(billing);
   const selected = creditPacks.find((pack) => pack.id === selectedPack)!;
+  const afterPurchase = usageLimitView({ ...billing, topUpCredits: billing.topUpCredits + topUpCreditsForPlan(selectedPack, billing.plan) });
 
   async function openCheckout(packId: CreditPackId) {
     if (busyPack || !consented) return;
@@ -76,10 +75,10 @@ export function BillingDialog({
     >
       <div className="billing-dialog">
         <section className="billing-summary billing-summary-compact">
-          <div><span className="billing-plan">PLAN {plan.name}</span><strong>{remaining}% miesięcznego limitu pozostało</strong></div>
-          <span className="billing-percentage">{percentage}% wykorzystane</span>
-          <div className="credit-progress" aria-label={`${percentage}% wykorzystanego limitu`}>
-            <span style={{ width: `${percentage}%` }} />
+          <div><span className="billing-plan">PLAN {plan.name}</span><strong>Twój łączny limit: {limit.totalPercentage}%</strong></div>
+          <span className="billing-percentage">Wykorzystano {limit.usedPercentage}% · pozostało {limit.remainingPercentage}%</span>
+          <div className="credit-progress" aria-label={`Wykorzystano ${limit.usedPercentage}% z ${limit.totalPercentage}% limitu planu`}>
+            <span style={{ width: `${limit.progressPercentage}%` }} />
           </div>
         </section>
         <div className="billing-heading">
@@ -87,7 +86,6 @@ export function BillingDialog({
             <p className="eyebrow">WYBIERZ ZAPAS</p>
             <h3>Ile dodatkowego limitu potrzebujesz?</h3>
           </div>
-          {extraRemaining > 0 && <span>Masz jeszcze +{extraRemaining}% dodatkowego limitu</span>}
         </div>
         <fieldset className="credit-pack-grid" aria-label="Pakiet dodatkowego limitu">
           {creditPacks.map((pack) => (
@@ -113,7 +111,8 @@ export function BillingDialog({
         </fieldset>
         <section className="billing-checkout-box">
           <div className="billing-order-line"><span>Wybrano <strong>+{selected.percentage}% limitu</strong></span><b>{selected.price}</b></div>
-          <p>Jednorazowa płatność. Zwiększenie przechodzi na kolejne okresy i działa przy aktywnym abonamencie. Różne zadania mogą wykorzystywać limit w różnym tempie.</p>
+          <p><strong>Po zakupie: {afterPurchase.totalPercentage}% łącznego limitu w tym okresie.</strong> Procenty odnoszą się do podstawowej puli planu {plan.name}, nie do już powiększonego limitu.</p>
+          <p>Jednorazowa płatność. Niewykorzystana część zakupu przechodzi na kolejne okresy; wykorzystana nie odnawia się. Korzystanie wymaga aktywnego abonamentu. Przy zmianie planu zachowujemy pozostałą wartość dodatku, a jego procent przeliczamy względem nowego planu. Procenty w widoku są zaokrąglone.</p>
           <PurchaseConsent onChange={setConsented} />
           {error && <p className="form-error" role="alert">{error}</p>}
           <button type="button" className="button button-primary billing-checkout-button" disabled={Boolean(busyPack) || !consented} onClick={() => void openCheckout(selectedPack)}>

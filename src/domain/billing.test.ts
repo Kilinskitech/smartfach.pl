@@ -17,6 +17,7 @@ import {
   monthlyUsagePercentage,
   stripeExistingCustomerUpdate,
   topUpCreditsForPlan,
+  usageLimitView,
 } from "./billing";
 
 const billing = {
@@ -27,6 +28,28 @@ const billing = {
 };
 
 describe("kredyty SmartFach", () => {
+  it("pokazuje jedną pulę 125% zamiast osobnego zapasu", () => {
+    const b = { ...billing, plan: "pro" as const, usedCredits: 550, topUpCredits: topUpCreditsForPlan("mini", "pro") };
+    expect(usageLimitView(b)).toMatchObject({ totalPercentage: 125, usedPercentage: 100, remainingPercentage: 25 });
+    expect(usageLimitView(b).progressPercentage).toBeCloseTo(79.94, 1);
+    expect(usageLimitView({ ...b, usedCredits: 605 })).toMatchObject({ totalPercentage: 125, usedPercentage: 110, remainingPercentage: 15 });
+    expect(usageLimitView({ ...b, usedCredits: 900 })).toMatchObject({ usedPercentage: 125, remainingPercentage: 0, progressPercentage: 100 });
+  });
+  it("przenosi tylko niewykorzystany dodatek przez kolejne miesiące", () => {
+    const b = { ...billing, plan: "pro" as const, usedCredits: 605, topUpCredits: topUpCreditsForPlan("mini", "pro") };
+    const next = rollBillingPeriod(b, "2026-10-01T00:00:00.000Z");
+    expect(next.topUpCredits).toBe(83);
+    expect(usageLimitView(next)).toMatchObject({ totalPercentage: 115, usedPercentage: 0 });
+    expect(rollBillingPeriod(next, next.periodStartedAt)).toEqual(next);
+    expect(rollBillingPeriod(next, "2026-11-01T00:00:00.000Z").topUpCredits).toBe(83);
+    expect(rollBillingPeriod({ ...next, usedCredits: 633 }, "2026-11-01T00:00:00.000Z").topUpCredits).toBe(0);
+  });
+  it("sumuje wiele zakupów i przelicza procent po zmianie planu bez mnożenia wartości", () => {
+    const b = { ...billing, plan: "pro" as const, usedCredits: 0, topUpCredits: topUpCreditsForPlan("plus", "pro") * 2 };
+    expect(usageLimitView(b).totalPercentage).toBe(200);
+    expect(remainingTopUpCredits({ ...b, plan: "lite" })).toBe(550);
+    expect(usageLimitView({ ...b, plan: "lite" }).totalPercentage).toBe(344);
+  });
   it("definiuje trzydniowy trial z kartą i automatycznym przejściem na plan", () => {
     expect(trialPolicy).toEqual({
       durationDays: 3,
