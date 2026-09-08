@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { InstallAppCard } from "./pwa";
 import {
+  Bot,
   Check,
   CreditCard,
   Download,
@@ -117,7 +118,6 @@ export function SettingsPanel({
         </form>
       </section>
       <div className="settings-side">
-        <InstallAppCard />
         <section className="settings-card settings-usage-card">
           <div className="card-heading">
             <Gauge size={21} />
@@ -137,9 +137,10 @@ export function SettingsPanel({
             <CreditCard size={17} /> Zwiększ limit
           </button>
         </section>
-        <section className="settings-card">
+        <InstallAppCard />
+        <section className="settings-card settings-assistant-card">
           <div className="card-heading">
-            <KeyRound size={21} />
+            <Bot size={21} />
             <div>
               <h3>Asystent SmartFach</h3>
               <p>
@@ -156,18 +157,9 @@ export function SettingsPanel({
               ? "Internet jest włączony. Asystent uruchamia wyszukiwanie tylko wtedy, gdy pytanie wymaga aktualnych danych, i pokazuje źródła."
               : "Wyszukiwanie internetowe jest wyłączone w konfiguracji serwera."}
           </p>
-          <p className="form-hint">
-            Przy rozmowie do usługi AI trafia treść wiadomości, zapisane
-            preferencje, dodane zdjęcie oraz kontekst potrzebny do
-            wykonania zadania.
-          </p>
-          <p className="form-hint">
-            Nie wklejaj klucza do czatu ani do danych firmy. Włączenie API
-            oznacza płatne zapytania do dostawcy, a wyszukiwanie internetowe może
-            doliczać osobny koszt. Limit bezpieczeństwa: 20 zapytań na godzinę i konto.
-          </p>
+          <details className="settings-details"><summary>Jak przetwarzana jest rozmowa?</summary><p>Do usługi AI trafia treść wiadomości, zapisane preferencje, dodane zdjęcie oraz kontekst potrzebny do wykonania zadania. Nie wklejaj do rozmowy haseł ani kluczy dostępu. Limit bezpieczeństwa wynosi 20 zapytań na godzinę i konto.</p></details>
         </section>
-        <section className="settings-card">
+        <section className="settings-card settings-data-card">
           <div className="card-heading">
             <ShieldCheck size={21} />
             <div>
@@ -179,21 +171,27 @@ export function SettingsPanel({
             Dane są przypisane do Twojego konta i chronione prywatną sesją.
             Pobierz kopię, jeśli chcesz zachować własny eksport poza SmartFach.
           </p>
-          <button
-            className="button button-secondary export-button"
-            onClick={exportData}
-          >
-            <Download size={18} />
-            Pobierz kopię danych
-          </button>
+          <div className="settings-data-actions">
+            <button className="button button-secondary export-button" onClick={exportData}><Download size={18} />Pobierz kopię danych</button>
+            <a className="button button-secondary" href="/api/billing/contracts" download><Download size={18} />Pobierz potwierdzenia zamówień</a>
+          </div>
           <p className="form-hint">
             Kopia zawiera zapisane ustawienia, rozmowy i pozostałe dane konta.
             Przechowuj ją w bezpiecznym miejscu. Przywracanie kopii z aplikacji
             nie jest jeszcze dostępne.
           </p>
-          <a className="button button-secondary" href="/api/billing/contracts" download><Download size={18} />Pobierz potwierdzenia zamówień</a>
           <p><a href="/odstapienie">Odstąp od umowy tutaj</a></p>
           <p className="form-hint">Chcesz usunąć konto lub skorzystać ze swoich praw? <a href="/kontakt">Napisz do nas</a>. <a href="/regulamin">Regulamin</a> · <a href="/polityka-prywatnosci">Prywatność</a></p>
+        </section>
+        <section className="settings-card settings-account-card">
+          <div className="card-heading">
+            <KeyRound size={21} />
+            <div><h3>Konto i bezpieczeństwo</h3><p>Abonament, płatności i dostęp do konta</p></div>
+          </div>
+          <div className="account-actions">
+            <a className="button button-secondary" href="/platnosc"><CreditCard size={17} /> Plan i płatność</a>
+            <form action="/auth/wyloguj" method="post"><button className="button button-secondary"><LogOut size={17} /> Wyloguj się</button></form>
+          </div>
         </section>
         <div className="next-stage">
           <Check size={19} />
@@ -201,10 +199,6 @@ export function SettingsPanel({
             Preferencje możesz zmieniać w dowolnym momencie. SmartFach użyje
             najnowszych informacji przy kolejnych odpowiedziach.
           </span>
-        </div>
-        <div className="account-actions">
-          <a className="button button-secondary" href="/platnosc"><CreditCard size={17} /> Plan i płatność</a>
-          <form action="/auth/wyloguj" method="post"><button className="button button-secondary"><LogOut size={17} /> Wyloguj się</button></form>
         </div>
       </div>
     </div>

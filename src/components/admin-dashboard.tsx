@@ -9,6 +9,7 @@ import {
   CreditCard,
   Database,
   Gauge,
+  LogOut,
   RefreshCw,
   ShieldCheck,
   Users,
@@ -80,7 +81,7 @@ export function AdminDashboard({ snapshot, notice, operator, legalPanel }: { sna
         <nav aria-label="Sekcje panelu administratora"><a className="selected" href="#przeglad"><BarChart3 size={18} /> Przegląd</a><a href="#uzytkownicy"><Users size={18} /> Użytkownicy</a><a href="#zuzycie"><Gauge size={18} /> Zużycie</a><a href="#bezpieczenstwo"><ShieldCheck size={18} /> Bezpieczeństwo</a></nav>
         <a href="#dane-sprzedawcy">Dane sprzedawcy</a>
         <a href="#obsluga-umow">Obsługa umów</a>
-        <div className="admin-sidebar-bottom"><span><i /> Konto właściciela</span><Link href="/">Wróć na stronę <ArrowRight size={15} /></Link></div>
+        <div className="admin-sidebar-bottom"><span><i /> Konto właściciela</span><Link href="/">Wróć na stronę <ArrowRight size={15} /></Link><form action="/auth/wyloguj" method="post"><button type="submit"><LogOut size={16} /> Wyloguj się</button></form></div>
       </aside>
       <main className="admin-main">
         <header className="admin-header" id="przeglad"><div><p className="eyebrow">CENTRUM WŁAŚCICIELA</p><h1>Przegląd SmartFach</h1><p>Użytkownicy, triale, płatności i koszt AI. Treść rozmów jest wyłącznie w profilu konkretnego użytkownika.</p></div><Link href="/admin" className="admin-refresh"><RefreshCw size={17} /> Odśwież dane</Link></header>

@@ -18,6 +18,20 @@ Szablon używa `{{ .ConfirmationURL }}`, dlatego zachowuje adres powrotu przekaz
 przy rejestracji. Aplikacja obsługuje także wariant SSR z `token_hash`, gdy w
 przyszłości zmienimy sposób budowania linku.
 
+## Odzyskiwanie hasła
+
+1. Otwórz Supabase → Authentication → Email Templates → Reset password.
+2. Ustaw temat: `Ustaw nowe hasło — SmartFach`.
+3. Wklej całą zawartość `docs/email-templates/recovery.html`.
+4. Sprawdź, czy w Redirect URLs znajdują się oba adresy:
+   `https://smartfach.pl/auth/callback` oraz
+   `https://preview.smartfach.pl/auth/callback`.
+5. Na `/logowanie` wybierz „Nie pamiętasz hasła?”, wyślij test i sprawdź, czy
+   link otwiera `/ustaw-haslo`, a zapisane hasło pozwala ponownie się zalogować.
+
+Formularz celowo pokazuje taki sam komunikat dla istniejącego i nieistniejącego
+adresu, aby nie ujawniać osobom postronnym listy kont.
+
 ## Wysyłka produkcyjna
 
 Domyślny serwer Supabase służy tylko do testów, ma silne limity i nie dostarcza
@@ -32,6 +46,11 @@ wiadomości do zwykłych klientów projektu. Przed reklamą i realnymi rejestrac
 6. ustaw rozsądne limity Auth i alerty błędów dostarczenia.
 
 Hasło SMTP jest sekretem. Nie zapisuj go w GitHub ani w publicznej zmiennej Vercela.
+
+SMTP wpisany w Vercelu nie konfiguruje wiadomości Supabase. Są to dwa osobne
+klienty pocztowe korzystające z tej samej skrzynki: Supabase wysyła potwierdzenie
+konta i odzyskiwanie hasła, a aplikacja wysyła potwierdzenie zamówienia po
+ukończeniu Stripe Checkout. Oba miejsca trzeba skonfigurować oddzielnie.
 
 ## Ustawienia Hostido dla SmartFach
 

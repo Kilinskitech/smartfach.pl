@@ -14,6 +14,7 @@ const emailOtpTypes = new Set<EmailOtpType>([
 
 function safeNextPath(requested: string | null) {
   if (requested === "/app") return "/app";
+  if (requested === "/ustaw-haslo") return "/ustaw-haslo";
   if (requested?.startsWith("/platnosc")) return requested;
   return "/app";
 }

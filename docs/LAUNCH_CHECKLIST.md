@@ -42,14 +42,19 @@ ale konfiguracja nie przenosi się automatycznie. Nadawcą jest `SMTP_USER`;
 odpowiedzi trafiają na kontakt zapisany w danych sprzedawcy. Zmiana adresu
 w panelu SmartFach nie zakłada skrzynki i nie zmienia hasła SMTP.
 
+Po wdrożeniu wejdź w `/admin#obsluga-umow` i użyj „Wyślij test SMTP”. Ten test
+sprawdza aplikację oraz zmienne Vercela bez tworzenia zakupu. Osobno przetestuj
+potwierdzenie konta i odzyskiwanie hasła, ponieważ te wiadomości wysyła Supabase
+z własnej konfiguracji SMTP i własnych szablonów.
+
 Bez kompletu SMTP kod blokuje nowe Checkout z kluczem Stripe Live. W Sandbox
 potwierdzenia bez SMTP pozostają w bazie i w eksporcie użytkownika. Ustawione
 zmienne nie dowodzą dostarczalności: wykonaj nowe testowe zamówienie i sprawdź
 Gmail oraz Outlook, także spam i załącznik.
 
 Gdy wysyłka po zakupie zawiedzie, webhook zwraca błąd do ponowienia, a potwierdzenie
-jest już zapisane. Po naprawie SMTP ponów zdarzenie w Stripe. Panel pokazuje liczbę
-niewysłanych potwierdzeń. Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
+jest już zapisane. Po naprawie SMTP użyj w panelu akcji „Wyślij oczekujące”; panel
+pokazuje ich liczbę. Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
 ścisłego „exactly once” w przypadku przyjęcia e-maila i jednoczesnej awarii zapisu
 statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich braku.
 
@@ -89,6 +94,7 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 - [ ] Dokupienie limitu, kopia umowy e-mailem i w Ustawieniach, zgłoszenie odstąpienia,
   otrzymanie zgłoszenia w adminie, rozliczenie przez właściciela w Stripe.
 - [ ] Sprawdź e-maile: przyjęcie przez SMTP nie dowodzi dotarcia do odbiorcy.
+- [ ] „Nie pamiętasz hasła?” → polski e-mail → nowe hasło → ponowne logowanie.
 - [ ] Fizyczny iPhone/Safari oraz Android/Chrome: instalacja, ikona, start `/app`,
   logowanie, zdjęcie, klawiatura, powrót po zamknięciu, brak sieci i ponowne połączenie.
   Sprawdź też wejście z przeglądarki reklamy Facebook/Instagram i przejście do Safari/Chrome.
@@ -97,7 +103,7 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 
 ## Weryfikacja wykonana w tej zmianie
 
-- `npm run check`: typy, lint i 162 testy poprawne.
+- `npm run check`: typy, lint i 166 testów poprawne.
 - Standardowy `npm run build` napotkał ograniczenie sandboxa: Turbopack nie mógł
   otworzyć wewnętrznego portu. Alternatywny `npm run build -- --webpack` zakończony
   poprawnie; nie zmieniono produkcyjnego polecenia kompilacji ani architektury.

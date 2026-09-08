@@ -18,6 +18,23 @@ const credentialsSchema = z.object({
   password: z.string().min(8, "Hasło musi mieć co najmniej 8 znaków.").max(200),
 });
 
+const emailSchema = z.object({
+  email: z.email("Podaj poprawny adres e-mail.").trim().max(254),
+});
+
+const passwordUpdateSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Hasło musi mieć co najmniej 8 znaków.")
+      .max(200),
+    passwordConfirmation: z.string(),
+  })
+  .refine((value) => value.password === value.passwordConfirmation, {
+    message: "Hasła nie są takie same.",
+    path: ["passwordConfirmation"],
+  });
+
 const registrationSchema = credentialsSchema.extend({
   displayName: z.string().trim().min(2, "Podaj imię lub nazwę.").max(160),
   plan: publicPlanIdSchema,
@@ -40,6 +57,12 @@ function message(error: unknown) {
 function confirmationCallback() {
   const callback = new URL("/auth/callback", applicationUrl());
   callback.searchParams.set("next", "/app");
+  return callback.toString();
+}
+
+function passwordResetCallback() {
+  const callback = new URL("/auth/callback", applicationUrl());
+  callback.searchParams.set("next", "/ustaw-haslo");
   return callback.toString();
 }
 
@@ -182,4 +205,54 @@ export async function resendConfirmation(
     });
     return { error: "Nie udało się wysłać wiadomości. Spróbuj ponownie za chwilę." };
   }
+}
+
+export async function requestPasswordReset(
+  _: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message };
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(
+    parsed.data.email,
+    { redirectTo: passwordResetCallback() },
+  );
+  if (error) return { error: message(error) };
+
+  return {
+    success:
+      "Jeśli konto z tym adresem istnieje, wysłaliśmy link do ustawienia nowego hasła. Sprawdź też Spam.",
+  };
+}
+
+export async function updatePassword(
+  _: AuthState,
+  formData: FormData,
+): Promise<AuthState> {
+  const parsed = passwordUpdateSchema.safeParse({
+    password: formData.get("password"),
+    passwordConfirmation: formData.get("passwordConfirmation"),
+  });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message };
+
+  const supabase = await createClient();
+  const { data: claims, error: claimsError } = await supabase.auth.getClaims();
+  const userId =
+    typeof claims?.claims?.sub === "string" ? claims.claims.sub : null;
+  const email =
+    typeof claims?.claims?.email === "string" ? claims.claims.email : null;
+  if (claimsError || !userId)
+    return {
+      error:
+        "Link utracił ważność. Poproś o nową wiadomość na stronie logowania.",
+    };
+
+  const { error } = await supabase.auth.updateUser({
+    password: parsed.data.password,
+  });
+  if (error) return { error: message(error) };
+
+  redirect(isPlatformAdminIdentity({ userId, email }) ? "/admin" : "/app");
 }

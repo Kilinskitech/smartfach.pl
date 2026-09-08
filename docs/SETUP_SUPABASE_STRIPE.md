@@ -125,14 +125,17 @@ dopiero po wejściu w profil konkretnego użytkownika, a każde takie otwarcie z
 
 Uzupełnij `OPENROUTER_API_KEY`, pozostaw `OPENROUTER_REQUIRE_ZDR=true` i ustaw
 `SMARTFACH_ENABLE_AI=true` dopiero wtedy, gdy chcesz wykonać płatne wywołania.
-Modele są ustalone w kodzie: GPT-5 Nano jako główny oraz Gemini Flash Latest jako
-fallback. Stara zmienna Vercela `OPENROUTER_MODEL` może zostać usunięta i nie wpływa
-już na działanie aplikacji. Pole `usage` odpowiedzi zapisuje koszt, tokeny,
+Modele są ustalone w kodzie: GPT-5.6 Luna do zwykłej rozmowy, GPT-5.6 Terra do
+startu, obrazów i trudniejszych zadań oraz Gemini 3.5 Flash jako awaryjny fallback.
+Stara zmienna Vercela `OPENROUTER_MODEL` może zostać usunięta i nie wpływa już na
+działanie aplikacji. Pole `usage` odpowiedzi zapisuje koszt, tokeny,
 faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.
 
 ## 5. Test akceptacyjny przed live
 
 - Rejestracja i potwierdzenie e-maila.
+- Odzyskiwanie i zmiana hasła z polską wiadomością Supabase.
+- Wejście zalogowanego administratora na `/logowanie` przekierowuje do `/admin`.
 - Bezpośrednie przejście rejestracja → Stripe bez blokującego ekranu e-mail.
 - Brak płatnego odnowienia, gdy adres nie został potwierdzony przed końcem trialu.
 - Powrót z Checkout i status `trialing`.
@@ -140,6 +143,7 @@ faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.
 - Zapis profilu i rozmowy po odświeżeniu.
 - Anulowanie oraz zmiana planu w portalu i poprawna synchronizacja webhooka.
 - Ponowne wysłanie tego samego webhooka bez podwójnego skutku.
+- Test SMTP z panelu administratora oraz potwierdzenie umowy po ukończonym Checkout.
 - Zakup każdego zwiększenia limitu, anulowanie Checkout i idempotentny powrót.
 - Odnowienie subskrypcji resetuje miesięczne użycie bez przywracania zużytego
   zwiększenia.

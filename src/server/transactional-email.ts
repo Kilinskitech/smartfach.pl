@@ -5,15 +5,19 @@ export function smtpConfigured() {
   return Boolean(process.env.SMTP_HOST?.trim() && process.env.SMTP_USER?.trim() && process.env.SMTP_PASSWORD && [465, 587].includes(Number(process.env.SMTP_PORT || 465)));
 }
 
-export async function sendContractEmail(input: { recipient: string; body: string; sessionId: string; replyTo: string; subject?: string }) {
+function createSmtpTransport() {
   if (!smtpConfigured()) throw new Error("Brak SMTP do wysyłki potwierdzenia umowy.");
   const port = Number(process.env.SMTP_PORT || 465);
-  const transport = nodemailer.createTransport({
+  return nodemailer.createTransport({
     host: process.env.SMTP_HOST!.trim(), port, secure: port === 465, requireTLS: true,
     auth: { user: process.env.SMTP_USER!.trim(), pass: process.env.SMTP_PASSWORD },
     connectionTimeout: 10_000, greetingTimeout: 10_000, socketTimeout: 20_000,
     disableFileAccess: true, disableUrlAccess: true,
   });
+}
+
+export async function sendContractEmail(input: { recipient: string; body: string; sessionId: string; replyTo: string; subject?: string }) {
+  const transport = createSmtpTransport();
   const escape = (text: string) => text.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
   const heading = input.subject ?? "Twoje zamówienie i warunki korzystania — SmartFach";
   const intro = input.body.split("Twoje oświadczenia:")[0] ?? input.body;
@@ -27,4 +31,27 @@ export async function sendContractEmail(input: { recipient: string; body: string
     attachments: [{ filename: `smartfach-potwierdzenie-${input.sessionId.slice(-12)}.txt`, content: input.body, contentType: "text/plain; charset=utf-8" }],
   });
   if (!result.accepted.length) throw new Error("Serwer poczty nie przyjął potwierdzenia umowy.");
+}
+
+export async function sendSmtpTest(input: {
+  recipient: string;
+  replyTo?: string;
+}) {
+  const transport = createSmtpTransport();
+  const result = await transport.sendMail({
+    from: { name: "SmartFach", address: process.env.SMTP_USER!.trim() },
+    to: input.recipient,
+    replyTo: input.replyTo,
+    messageId: `<smtp-test-${Date.now()}@smartfach.pl>`,
+    subject: "Test poczty transakcyjnej — SmartFach",
+    text: [
+      "Poczta transakcyjna SmartFach działa.",
+      "",
+      "Ta wiadomość została wysłana ręcznie z panelu administratora.",
+      "Potwierdzenia zamówień są wysyłane osobno po ukończeniu Stripe Checkout i poprawnym przetworzeniu webhooka.",
+    ].join("\n"),
+    html: `<html lang="pl"><body style="margin:0;background:#f5f5f0;font-family:Arial,sans-serif;color:#172b3a"><table role="presentation" width="100%" cellspacing="0" cellpadding="24"><tr><td align="center"><table role="presentation" width="100%" style="max-width:620px;background:white;border-radius:20px" cellspacing="0" cellpadding="28"><tr><td style="background:#172b3a;color:white;font-size:24px;font-weight:bold">Smart<span style="color:#ffab70">Fach</span></td></tr><tr><td><h1 style="font-size:24px;line-height:1.3">Poczta transakcyjna działa</h1><p style="font-size:15px;line-height:1.7">Ta wiadomość została wysłana ręcznie z panelu administratora SmartFach.</p><p style="font-size:14px;line-height:1.6;color:#53666d">Potwierdzenia zamówień są wysyłane osobno po ukończeniu Stripe Checkout i poprawnym przetworzeniu webhooka.</p></td></tr></table></td></tr></table></body></html>`,
+  });
+  if (!result.accepted.length)
+    throw new Error("Serwer poczty nie przyjął wiadomości testowej.");
 }

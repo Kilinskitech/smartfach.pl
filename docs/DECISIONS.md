@@ -907,3 +907,23 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   kosztu. Jakość oceniamy przez Task Success Rate, nie liczbę wiadomości.
 - Zastępuje D041 w wyborze i routingu modeli oraz D039 w publicznej prezentacji
   i cenach zwiększeń. Historyczne uzasadnienia i wewnętrzna księga pozostają.
+
+## D044 — Domknięte odzyskiwanie dostępu i niezależny test poczty
+
+- Data: 2026-09-08. Status: wdrożone w kodzie na gałęzi Preview; wymaga testu
+  dwóch wiadomości po wdrożeniu.
+- Decyzja: `/logowanie` rozpoznaje aktywną sesję i prowadzi administratora do
+  `/admin`, a klienta do aplikacji. Panel właściciela ma jawne wylogowanie.
+- Odzyskiwanie hasła korzysta z mechanizmu Supabase Auth, bez ujawniania, czy
+  podany adres istnieje. Link prowadzi przez kontrolowany callback do osobnej
+  strony ustawienia nowego hasła.
+- Poczta: panel administratora pozwala wysłać bezpieczną wiadomość testową przez
+  SMTP aplikacji oraz jawnie ponowić oczekujące potwierdzenia. Nie mylimy jej z
+  e-mailami Supabase ani potwierdzeniem umowy, które powstaje dopiero po ukończeniu
+  Stripe Checkout i webhooku.
+- UX konta: profil działania i ustawienia konta tworzą dwie rzeczywiste kolumny
+  na desktopie; plan, instalacja, dane i bezpieczeństwo są pogrupowane w osobne
+  karty bez pustej połowy ekranu.
+- Powód: brak odzyskiwania hasła i brak możliwości odróżnienia awarii SMTP od
+  awarii webhooka blokowały gotowość sprzedażową. Zmiana nie rozszerza obietnicy
+  produktu i nie wymaga aktualizacji MASTER_PLAN.

@@ -2,19 +2,20 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { ArrowRight, Check, Eye, EyeOff, ShieldCheck } from "lucide-react";
-import { signIn, signUp } from "@/app/auth-actions";
+import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, KeyRound, ShieldCheck } from "lucide-react";
+import { requestPasswordReset, signIn, signUp } from "@/app/auth-actions";
 import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 import { PurchaseConsent } from "./purchase-consent";
 
 export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; loginFirst?: boolean }) {
-  const [view, setView] = useState<"register" | "login">(
+  const [view, setView] = useState<"register" | "login" | "reset">(
     checkoutCanceled || confirmationFailed || loginFirst ? "login" : "register",
   );
   const [showPassword, setShowPassword] = useState(false);
   const [loginState, loginAction, loginPending] = useActionState(signIn, undefined);
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
+  const [resetState, resetAction, resetPending] = useActionState(requestPasswordReset, undefined);
   const [plan, setPlan] = useState<PublicPlanId>(initialPlan);
 
   return (
@@ -34,30 +35,40 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
       </section>
 
       <section className="auth-card">
-        <div className="auth-tabs" role="tablist" aria-label="Konto SmartFach">
+        {view !== "reset" && <div className="auth-tabs" role="tablist" aria-label="Konto SmartFach">
           <button className={view === "register" ? "selected" : ""} onClick={() => setView("register")}>Załóż konto</button>
           <button className={view === "login" ? "selected" : ""} onClick={() => setView("login")}>Zaloguj się</button>
-        </div>
+        </div>}
 
-        {checkoutCanceled && (
+        {view !== "reset" && checkoutCanceled && (
           <p className="checkout-notice" role="status">
             Formularz Stripe został przerwany i niczego nie pobrano. Konto już
             istnieje — potwierdź adres z wiadomości, zaloguj się i ponownie wybierz plan.
           </p>
         )}
-        {confirmationFailed && (
+        {view !== "reset" && confirmationFailed && (
           <p className="form-error" role="alert">
             Link potwierdzający jest nieprawidłowy albo wygasł. Spróbuj zalogować
             się lub wróć do wiadomości wysłanej przez SmartFach.
           </p>
         )}
 
-        {view === "login" ? (
+        {view === "reset" ? (
+          <form action={resetAction} className="auth-form auth-reset-form">
+            <button type="button" className="auth-back-button" onClick={() => setView("login")}><ArrowLeft size={16} /> Wróć do logowania</button>
+            <div className="auth-form-heading"><span className="auth-form-icon"><KeyRound size={20} /></span><div><p className="eyebrow">ODZYSKIWANIE DOSTĘPU</p><h2>Ustaw nowe hasło</h2><p>Podaj adres konta. Wyślemy bezpieczny link do ustawienia nowego hasła.</p></div></div>
+            <label>E-mail<input name="email" type="email" autoComplete="email" autoFocus required /></label>
+            {resetState?.error && <p className="form-error" role="alert">{resetState.error}</p>}
+            {resetState?.success && <p className="success-note" role="status"><Check size={16} /> {resetState.success}</p>}
+            <button className="button button-primary auth-submit" disabled={resetPending || Boolean(resetState?.success)}>{resetPending ? "Wysyłanie…" : "Wyślij link do zmiany hasła"} <ArrowRight size={18} /></button>
+          </form>
+        ) : view === "login" ? (
           <form action={loginAction} className="auth-form">
             <div><p className="eyebrow">WITAJ PONOWNIE</p><h2>Zaloguj się do SmartFach</h2></div>
             <input type="hidden" name="next" value={next} />
             <label>E-mail<input name="email" type="email" autoComplete="email" required /></label>
             <label>Hasło<span className="password-field"><input name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" minLength={8} required /><button type="button" aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"} onClick={() => setShowPassword((value) => !value)}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button></span></label>
+            <button type="button" className="auth-forgot-button" onClick={() => setView("reset")}>Nie pamiętasz hasła?</button>
             {loginState?.error && <p className="form-error" role="alert">{loginState.error}</p>}
             <button className="button button-primary auth-submit" disabled={loginPending}>Zaloguj się <ArrowRight size={18} /></button>
           </form>

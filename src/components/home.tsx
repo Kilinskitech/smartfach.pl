@@ -225,7 +225,7 @@ export function Home() {
           <div className="breadcrumb">
             <span>SmartFach</span>
             <ChevronRight size={14} />
-            <h1>{view === "chat" ? "Asystent" : "Ustawienia"}</h1>
+            <h1>{view === "chat" ? "Asystent" : "Twoje konto"}</h1>
           </div>
           <div className="topbar-actions">
             {data && (
@@ -315,13 +315,13 @@ export function Home() {
               />
             </div>
           ) : (
-            <section className="module-view" aria-label="Ustawienia">
+            <section className="module-view" aria-label="Twoje konto">
               <div className="module-heading">
                 <div>
-                  <p className="eyebrow">TWÓJ SPOSÓB DZIAŁANIA</p>
-                  <h2>Ustawienia</h2>
+                  <p className="eyebrow">USTAWIENIA I PLAN</p>
+                  <h2>Twoje konto</h2>
                   <p>
-                    Zapisz swoje warunki, cel, płatność i prywatny eksport danych.
+                    Ustaw sposób działania, kontroluj plan i zarządzaj swoimi danymi.
                   </p>
                 </div>
               </div>

@@ -8,6 +8,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePlatformAdmin } from "@/server/auth";
 import { syncSubscription } from "@/server/stripe-subscriptions";
 import { operatorSchema } from "@/domain/operator";
+import { getOperator } from "@/server/operator-settings";
+import { sendSmtpTest, smtpConfigured } from "@/server/transactional-email";
+import { deliverPendingContractEmails } from "@/server/purchase-legal";
 
 export async function saveOperatorSettings(_: AdminActionState, formData: FormData): Promise<AdminActionState> {
   const parsed = operatorSchema.safeParse(Object.fromEntries(formData));
@@ -29,6 +32,77 @@ export async function saveOperatorSettings(_: AdminActionState, formData: FormDa
 export type AdminActionState =
   | { error?: string; success?: string }
   | undefined;
+
+export async function testSmtpConnection(
+  previousState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  void previousState;
+  void formData;
+  try {
+    const platformAdmin = await requirePlatformAdmin();
+    if (!smtpConfigured())
+      return { error: "Brakuje pełnej konfiguracji SMTP w tym środowisku." };
+    const operator = await getOperator();
+    const recipient = platformAdmin.email ?? operator.email;
+    await sendSmtpTest({ recipient, replyTo: operator.email });
+    return {
+      success: `Serwer SMTP przyjął wiadomość wysłaną na ${recipient}. Sprawdź skrzynkę i Spam.`,
+    };
+  } catch (error) {
+    console.error("Nie wysłano testu SMTP z panelu administratora", {
+      message: errorMessage(error),
+    });
+    return {
+      error:
+        "Test SMTP nie powiódł się. Sprawdź host, port, login i hasło w zmiennych tego wdrożenia.",
+    };
+  }
+}
+
+export async function retryPendingContractEmails(
+  previousState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  void previousState;
+  void formData;
+  try {
+    const platformAdmin = await requirePlatformAdmin();
+    const result = await deliverPendingContractEmails();
+    const { error: auditError } = await createAdminClient()
+      .from("admin_audit_events")
+      .insert({
+        admin_user_id: platformAdmin.userId,
+        target_user_id: platformAdmin.userId,
+        action: "retry_pending_contract_emails",
+        metadata: result,
+      });
+    if (auditError)
+      console.error("Nie zapisano audytu ponownej wysyłki potwierdzeń", auditError);
+    revalidatePath("/admin");
+    if (!result.sent && !result.failed && !result.skipped)
+      return { success: "Nie ma oczekujących potwierdzeń do wysłania." };
+    if (result.failed)
+      return {
+        error: `Wysłano ${result.sent}, nie wysłano ${result.failed}${result.skipped ? `, pominięto ${result.skipped} trwające wysyłki` : ""}. Sprawdź konfigurację i spróbuj ponownie.`,
+      };
+    if (result.skipped)
+      return {
+        error: `Wysłano ${result.sent}. ${result.skipped} ${result.skipped === 1 ? "wiadomość jest właśnie obsługiwana" : "wiadomości są właśnie obsługiwane"}; odśwież panel za chwilę.`,
+      };
+    return {
+      success: `Wysłano ${result.sent} ${result.sent === 1 ? "potwierdzenie" : "potwierdzenia"}.`,
+    };
+  } catch (error) {
+    console.error("Nie wysłano oczekujących potwierdzeń umów", {
+      message: errorMessage(error),
+    });
+    return {
+      error:
+        "Nie udało się wysłać oczekujących potwierdzeń. Najpierw wykonaj test SMTP.",
+    };
+  }
+}
 
 export async function resolveWithdrawal(_: AdminActionState, formData: FormData): Promise<AdminActionState> {
   const parsed = z.object({ id: z.uuid(), confirmed: z.literal("yes") }).safeParse(Object.fromEntries(formData));

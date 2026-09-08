@@ -86,3 +86,56 @@ export async function confirmPurchaseContract(session: Stripe.Checkout.Session, 
     throw deliveryError;
   }
 }
+
+export async function deliverPendingContractEmails(limit = 10) {
+  if (!smtpConfigured())
+    throw new Error("Brak SMTP do wysyłki potwierdzeń umowy.");
+  const admin = createAdminClient();
+  const operator = await getOperator();
+  const { data, error } = await admin
+    .from("purchase_contracts")
+    .select("checkout_session_id,body,recipient")
+    .is("email_sent_at", null)
+    .order("created_at", { ascending: true })
+    .limit(limit);
+  if (error) throw new Error("Nie odczytano oczekujących potwierdzeń.");
+
+  let sent = 0;
+  let failed = 0;
+  let skipped = 0;
+  for (const contract of data ?? []) {
+    const sessionId = String(contract.checkout_session_id);
+    const { data: claimed, error: claimError } = await admin.rpc(
+      "claim_contract_delivery",
+      { session_id: sessionId },
+    );
+    if (claimError || !claimed) {
+      skipped += 1;
+      continue;
+    }
+    try {
+      await sendContractEmail({
+        recipient: String(contract.recipient),
+        body: String(contract.body),
+        sessionId,
+        replyTo: operator.email,
+      });
+      const { error: markError } = await admin
+        .from("purchase_contracts")
+        .update({
+          email_sent_at: new Date().toISOString(),
+          delivery_claimed_at: null,
+        })
+        .eq("checkout_session_id", sessionId);
+      if (markError) throw new Error("Nie zapisano statusu wysyłki.");
+      sent += 1;
+    } catch {
+      failed += 1;
+      await admin
+        .from("purchase_contracts")
+        .update({ delivery_claimed_at: null })
+        .eq("checkout_session_id", sessionId);
+    }
+  }
+  return { sent, failed, skipped };
+}
