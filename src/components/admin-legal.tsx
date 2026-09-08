@@ -1,7 +1,7 @@
 "use client";
 import { useActionState } from "react";
 import { MailCheck, Send } from "lucide-react";
-import { resolveWithdrawal, retryPendingContractEmails, testSmtpConnection } from "@/app/admin/actions";
+import { resolveWithdrawal, testSmtpConnection } from "@/app/admin/actions";
 
 export type WithdrawalRow = { id: string; userId: string | null; email: string; statement: string; receivedAt: string; emailSent: boolean; orderId: string };
 
@@ -21,9 +21,8 @@ function WithdrawalItem({ request }: { request: WithdrawalRow }) {
   </article>;
 }
 
-export function AdminLegal({ withdrawals, pendingEmails, smtpReady }: { withdrawals: WithdrawalRow[]; pendingEmails: number; smtpReady: boolean }) {
+export function AdminLegal({ withdrawals, smtpReady }: { withdrawals: WithdrawalRow[]; smtpReady: boolean }) {
   const [smtpState, smtpAction, smtpPending] = useActionState(testSmtpConnection, undefined);
-  const [deliveryState, deliveryAction, deliveryPending] = useActionState(retryPendingContractEmails, undefined);
   return <section className="admin-panel" id="obsluga-umow">
     <div className="admin-panel-heading"><div><span><small>SPRZEDAŻ I PRAWA KLIENTA</small><h2>Obsługa umów</h2></span></div></div>
     <div className="admin-smtp-test">
@@ -33,12 +32,6 @@ export function AdminLegal({ withdrawals, pendingEmails, smtpReady }: { withdraw
     </div>
     {smtpState?.error && <p className="form-error" role="alert">{smtpState.error}</p>}
     {smtpState?.success && <p className="success-note" role="status">{smtpState.success}</p>}
-    <div className="admin-pending-contracts">
-      <div><strong>Oczekujące potwierdzenia: {pendingEmails}</strong><p>To ukończone zamówienia zapisane w SmartFach, dla których nie zapisano jeszcze poprawnej wysyłki e-mail.</p></div>
-      <form action={deliveryAction}><button className="button button-secondary" disabled={!smtpReady || !pendingEmails || deliveryPending}>{deliveryPending ? "Wysyłanie…" : "Wyślij oczekujące"}</button></form>
-    </div>
-    {deliveryState?.error && <p className="form-error" role="alert">{deliveryState.error}</p>}
-    {deliveryState?.success && <p className="success-note" role="status">{deliveryState.success}</p>}
     <h3>Odstąpienia do obsłużenia: {withdrawals.length}</h3>
     <p>Przeglądaj zgłoszenia codziennie. Formularz przyjmuje oświadczenie, ale nie anuluje subskrypcji ani nie wykonuje zwrotu automatycznie. Należne rozliczenie wykonaj w Stripe, odpowiedz klientowi i dopiero oznacz zgłoszenie jako obsłużone.</p>
     {withdrawals.length ? withdrawals.map(request => <WithdrawalItem key={request.id} request={request} />) : <p>Brak oczekujących zgłoszeń.</p>}

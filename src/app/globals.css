@@ -4585,6 +4585,7 @@ svg {
     margin-right: auto;
   }
   .admin-sidebar nav,
+  .admin-sidebar > a,
   .admin-sidebar-bottom span {
     display: none;
   }
@@ -5305,8 +5306,13 @@ svg {
 .operator-settings-form { max-width: 800px; }
 .operator-settings-form label { display: grid; gap: 8px; font-size: 13px; }
 .operator-settings-form input { width: 100%; min-width: 0; border: 1px solid var(--line); border-radius: 10px; background: white; padding: 13px; color: var(--ink); }
-.admin-sidebar > a[href="#dane-sprzedawcy"] { padding: 16px; font-weight: 600; }
+.admin-sidebar > a[href="#dane-sprzedawcy"],
+.admin-sidebar > a[href="#obsluga-umow"] { min-height: 38px; display: flex; align-items: center; padding: 8px 12px; border-radius: 9px; color: #aebfc1; font-size: 11px; font-weight: 600; }
+.admin-sidebar > nav + a { margin-top: 12px; }
+.admin-sidebar > a[href="#dane-sprzedawcy"]:hover,
+.admin-sidebar > a[href="#obsluga-umow"]:hover { background: #ffffff0d; color: white; }
 #dane-sprzedawcy { margin-top: 28px; scroll-margin-top: 24px; }
+#obsluga-umow { margin-top: 28px; scroll-margin-top: 24px; }
 .install-app-card { background: linear-gradient(145deg, #fff 0%, #fff7ef 100%); }
 .install-app-identity { display: flex; align-items: center; gap: 16px; margin: 22px 0; }
 .install-app-identity strong, .install-app-identity small { display: block; }
@@ -8002,14 +8008,8 @@ button.team-card:hover {
 .admin-smtp-test p { margin: 4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
 .admin-smtp-test form { margin: 0; }
 .admin-smtp-test .button { white-space: nowrap; }
-.admin-pending-contracts { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 14px 0 22px; padding: 15px 16px; border-radius: 14px; background: #fff8f2; }
-.admin-pending-contracts strong { color: var(--navy); font-size: 13px; }
-.admin-pending-contracts p { margin: 5px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
-.admin-pending-contracts form { flex: 0 0 auto; }
 @media (max-width: 700px) {
   .admin-smtp-test { grid-template-columns: auto 1fr; }
   .admin-smtp-test form { grid-column: 1 / -1; }
   .admin-smtp-test .button { width: 100%; justify-content: center; }
-  .admin-pending-contracts { align-items: stretch; flex-direction: column; }
-  .admin-pending-contracts .button { width: 100%; justify-content: center; }
 }

@@ -53,8 +53,8 @@ zmienne nie dowodzą dostarczalności: wykonaj nowe testowe zamówienie i sprawd
 Gmail oraz Outlook, także spam i załącznik.
 
 Gdy wysyłka po zakupie zawiedzie, webhook zwraca błąd do ponowienia, a potwierdzenie
-jest już zapisane. Po naprawie SMTP użyj w panelu akcji „Wyślij oczekujące”; panel
-pokazuje ich liczbę. Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
+jest już zapisane. Po naprawie SMTP ponów nieprzetworzone zdarzenie w Stripe.
+Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
 ścisłego „exactly once” w przypadku przyjęcia e-maila i jednoczesnej awarii zapisu
 statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich braku.
 

@@ -918,9 +918,8 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   podany adres istnieje. Link prowadzi przez kontrolowany callback do osobnej
   strony ustawienia nowego hasła.
 - Poczta: panel administratora pozwala wysłać bezpieczną wiadomość testową przez
-  SMTP aplikacji oraz jawnie ponowić oczekujące potwierdzenia. Nie mylimy jej z
-  e-mailami Supabase ani potwierdzeniem umowy, które powstaje dopiero po ukończeniu
-  Stripe Checkout i webhooku.
+  SMTP aplikacji. Nie mylimy jej z e-mailami Supabase ani potwierdzeniem umowy,
+  które powstaje dopiero po ukończeniu Stripe Checkout i webhooku.
 - UX konta: profil działania i ustawienia konta tworzą dwie rzeczywiste kolumny
   na desktopie; plan, instalacja, dane i bezpieczeństwo są pogrupowane w osobne
   karty bez pustej połowy ekranu.
