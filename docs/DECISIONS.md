@@ -943,3 +943,19 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   Nie budujemy jeszcze automatycznej pamięci wyciągającej trwałe fakty z każdej rozmowy.
 - Zastępuje D043 wyłącznie w zasadzie pokazywania profilu w każdej nowej rozmowie.
   Routing modeli i limity z D043 pozostają bez zmiany. Zaktualizowano MASTER_PLAN.
+
+## D046 — Dostęp do limitu dopiero po pełnej aktywacji konta
+
+- Data: 2026-09-08. Status: wdrożone w kodzie na gałęzi Preview; wymaga testu E2E.
+- Decyzja: wszystkie serwerowe wejścia do aplikacji, workspace i AI wymagają
+  potwierdzonego adresu e-mail oraz abonamentu `trialing` lub `active` z metodą
+  płatności potwierdzoną na podstawie danych Stripe. Trial musi mieć przyszłą datę
+  zakończenia. Sam status `trialing` nie daje już dostępu.
+- Logowanie jawnie odrzuca konto bez potwierdzonego adresu. Widok płatności nie
+  nazywa abonamentu aktywnym, jeżeli brakuje metody płatności, i prowadzi do Stripe.
+- Subskrypcja użytkownika, który nie potwierdzi e-maila, pozostaje ustawiona do
+  zakończenia wraz z trialem. Nie obciążamy go po próbie, ale nie anulujemy jej
+  natychmiast, aby mógł dokończyć poprawną aktywację w okresie próbnym.
+- Powód: kontrola wyłącznie w interfejsie albo sam status subskrypcji nie chronią
+  kosztu AI. Bramka musi działać po stronie serwera przed odczytem danych i wywołaniem
+  modelu. Nie wymaga zmiany MASTER_PLAN — domyka wcześniej przyjęty model trialu.

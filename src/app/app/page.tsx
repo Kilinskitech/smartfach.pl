@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { Home } from "@/components/home";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { supabaseConfigured } from "@/lib/supabase/config";
-import { authenticatedContext, SubscriptionRequired, requireSubscription } from "@/server/auth";
+import { authenticatedContext, EmailConfirmationRequired, SubscriptionRequired, requireSubscription } from "@/server/auth";
 
 export const metadata: Metadata = {
   title: "SmartFach — aplikacja",
@@ -16,7 +16,11 @@ export const dynamic = "force-dynamic";
 export default async function AppPage() {
   if (!supabaseConfigured())
     return <main className="setup-required"><h1>Podłącz Supabase</h1><p>Lokalny profil testowy został usunięty. Po dodaniu konfiguracji utworzysz tutaj pierwsze prawdziwe konto użytkownika.</p></main>;
-  const context = await authenticatedContext();
+  const context = await authenticatedContext().catch((error) => {
+    if (error instanceof EmailConfirmationRequired)
+      redirect("/logowanie?blad=potwierdz-email");
+    throw error;
+  });
   if (
     isPlatformAdminIdentity({ userId: context.userId, email: context.email })
   )

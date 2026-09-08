@@ -47,7 +47,6 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
       organizationId,
       userId,
       plan: checkout.metadata?.plan,
-      paymentMethodAttached: true,
     });
 
     const admin = createAdminClient();

@@ -61,6 +61,8 @@ ale główna aplikacja nie pokazuje ich nowym ani obecnym kontom.
 ## Bramka przed ruchem płatnym
 
 - pełny test rejestracja → Checkout → aktywacja → aplikacja → anulowanie;
+- serwer blokuje aplikację, workspace i AI do czasu potwierdzenia e-maila oraz
+  aktywnego trialu/subskrypcji z podpiętą metodą płatności;
 - polskie wiadomości e-mail i sprawdzony SMTP;
 - jasna cena, data pierwszej opłaty i sposób anulowania;
 - izolacja kont, RLS, autoryzacja administratora i audyt dostępu;

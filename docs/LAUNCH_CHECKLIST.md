@@ -47,6 +47,10 @@ sprawdza aplikację oraz zmienne Vercela bez tworzenia zakupu. Osobno przetestuj
 potwierdzenie konta i odzyskiwanie hasła, ponieważ te wiadomości wysyła Supabase
 z własnej konfiguracji SMTP i własnych szablonów.
 
+W Supabase Auth pozostaw włączone wymaganie potwierdzenia e-maila przed logowaniem.
+SmartFach dodatkowo sprawdza `email_confirmed_at` po stronie serwera, ale poprawna
+konfiguracja Supabase jest pierwszą warstwą blokady.
+
 Bez kompletu SMTP kod blokuje nowe Checkout z kluczem Stripe Live. W Sandbox
 potwierdzenia bez SMTP pozostają w bazie i w eksporcie użytkownika. Ustawione
 zmienne nie dowodzą dostarczalności: wykonaj nowe testowe zamówienie i sprawdź
@@ -90,7 +94,9 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 - [ ] Włącz ochronę haseł z wycieków w Supabase, jeśli dostępna w planie. Kontrola
   Supabase zgłaszała tę funkcję jako wyłączoną. MFA na kontach właściciela dostawców.
 - [ ] Nowe konto → próba → e-mail konta → asystent → odświeżenie → anulowanie.
-  Sprawdź brak opłaty bez potwierdzenia adresu i brak podwójnego naliczenia webhooka.
+  Przed potwierdzeniem e-maila sprawdź brak logowania, brak dostępu do workspace i
+  brak wywołania OpenRouter. Sprawdź też blokadę konta bez metody płatności, brak
+  opłaty bez potwierdzenia adresu i brak podwójnego naliczenia webhooka.
 - [ ] Dokupienie limitu, kopia umowy e-mailem i w Ustawieniach, zgłoszenie odstąpienia,
   otrzymanie zgłoszenia w adminie, rozliczenie przez właściciela w Stripe.
 - [ ] Sprawdź e-maile: przyjęcie przez SMTP nie dowodzi dotarcia do odbiorcy.

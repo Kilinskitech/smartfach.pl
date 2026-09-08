@@ -3,6 +3,7 @@ import {
   creditAllowance,
   creditPackById,
   emailConfirmationHoldAction,
+  hasSubscriptionAccess,
   estimateRequestCredits,
   normalizePublicPlan,
   publicPlanIdSchema,
@@ -121,6 +122,48 @@ describe("kredyty SmartFach", () => {
         cancelAtPeriodEnd: true,
       }),
     ).toBeNull();
+  });
+
+  it("wpuszcza tylko aktywny abonament albo niewygasły trial z metodą płatności", () => {
+    const now = Date.parse("2026-09-08T12:00:00.000Z");
+    expect(
+      hasSubscriptionAccess({
+        status: "trialing",
+        paymentMethodAttached: true,
+        trialEndsAt: "2026-09-09T12:00:00.000Z",
+        now,
+      }),
+    ).toBe(true);
+    expect(
+      hasSubscriptionAccess({
+        status: "trialing",
+        paymentMethodAttached: false,
+        trialEndsAt: "2026-09-09T12:00:00.000Z",
+        now,
+      }),
+    ).toBe(false);
+    expect(
+      hasSubscriptionAccess({
+        status: "trialing",
+        paymentMethodAttached: true,
+        trialEndsAt: "2026-09-08T11:59:59.000Z",
+        now,
+      }),
+    ).toBe(false);
+    expect(
+      hasSubscriptionAccess({
+        status: "active",
+        paymentMethodAttached: true,
+        now,
+      }),
+    ).toBe(true);
+    expect(
+      hasSubscriptionAccess({
+        status: "active",
+        paymentMethodAttached: false,
+        now,
+      }),
+    ).toBe(false);
   });
 
   it("usuwa tylko blokadę zarządzaną przez SmartFach", () => {

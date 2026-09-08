@@ -15,11 +15,13 @@ import {
 export function CheckoutPlans({
   initialPlan,
   currentStatus,
+  currentAccessAllowed,
   configured,
   canceled,
 }: {
   initialPlan: PublicPlanId;
   currentStatus?: string;
+  currentAccessAllowed: boolean;
   configured: boolean;
   canceled: boolean;
 }) {
@@ -27,7 +29,8 @@ export function CheckoutPlans({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [consented, setConsented] = useState(false);
-  const hasAccess = currentStatus === "active" || currentStatus === "trialing";
+  const hasSubscription = currentStatus === "active" || currentStatus === "trialing";
+  const hasAccess = hasSubscription && currentAccessAllowed;
 
   async function openCheckout() {
     if (!consented) return;
@@ -68,13 +71,13 @@ export function CheckoutPlans({
     <main className="checkout-page">
       <header>
         <p className="eyebrow">BEZPIECZNY START</p>
-        <h1>{hasAccess ? "Twój abonament jest aktywny" : "Wybierz plan i uruchom 3-dniową próbę"}</h1>
-        <p>{hasAccess ? "Dostęp do aplikacji wynika ze statusu potwierdzonego przez Stripe." : "Dziś zapłacisz 0 zł. Karta jest wymagana, a pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie anulujesz."}</p>
+        <h1>{hasAccess ? "Twój abonament jest aktywny" : hasSubscription ? "Dokończ konfigurację płatności" : "Wybierz plan i uruchom 3-dniową próbę"}</h1>
+        <p>{hasAccess ? "Dostęp do aplikacji wynika ze statusu potwierdzonego przez Stripe." : hasSubscription ? "Dostęp pozostaje zablokowany, dopóki Stripe nie potwierdzi aktywnej metody płatności." : "Dziś zapłacisz 0 zł. Karta jest wymagana, a pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie anulujesz."}</p>
       </header>
 
       {canceled && <p className="checkout-notice">Płatność została przerwana. Próba nie wystartowała i niczego nie pobrano.</p>}
 
-      {!hasAccess && (
+      {!hasAccess && !hasSubscription && (
         <>
           <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>Buduj własny przychód</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
           <section className="checkout-plan-grid checkout-plan-grid-two">
@@ -94,12 +97,14 @@ export function CheckoutPlans({
         <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
       </section>
 
-      {!hasAccess && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
+      {!hasAccess && !hasSubscription && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!configured ? (
         <p className="setup-inline">Stripe czeka na konfigurację kluczy, cen i webhooka. Przycisk pozostaje wyłączony, aby nie udawać płatności.</p>
       ) : hasAccess ? (
         <div className="checkout-actions"><a className="button button-primary" href="/app">Przejdź do aplikacji <ArrowRight size={18} /></a><button className="button button-secondary" onClick={openPortal} disabled={busy}>Zarządzaj płatnością <ExternalLink size={17} /></button></div>
+      ) : hasSubscription ? (
+        <div className="checkout-actions"><button className="button button-primary" onClick={openPortal} disabled={busy}>{busy ? "Otwieranie Stripe…" : "Uzupełnij metodę płatności"}<ExternalLink size={17} /></button></div>
       ) : (
         <button className="button button-primary checkout-button" onClick={openCheckout} disabled={busy || !consented}>{busy ? "Otwieranie Stripe…" : "Przejdź do bezpiecznego formularza"}<ArrowRight size={18} /></button>
       )}

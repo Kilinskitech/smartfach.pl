@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import {
+  hasSubscriptionAccess,
   normalizePublicPlan,
   planIdSchema,
 } from "@/domain/billing";
@@ -8,21 +9,25 @@ import { CheckoutPlans } from "@/components/checkout-plans";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { stripeConfigured } from "@/lib/stripe";
 import { supabaseConfigured } from "@/lib/supabase/config";
-import { authenticatedContext } from "@/server/auth";
+import { authenticatedContext, EmailConfirmationRequired } from "@/server/auth";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Plan i płatność — SmartFach", robots: { index: false, follow: false } };
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ plan?: string; anulowano?: string }> }) {
   if (!supabaseConfigured()) redirect("/logowanie");
-  const context = await authenticatedContext();
+  const context = await authenticatedContext().catch((error) => {
+    if (error instanceof EmailConfirmationRequired)
+      redirect("/logowanie?blad=potwierdz-email");
+    throw error;
+  });
   if (
     isPlatformAdminIdentity({ userId: context.userId, email: context.email })
   )
     redirect("/admin");
   const { data } = await context.supabase
     .from("subscriptions")
-    .select("status, plan")
+    .select("status, plan, trial_ends_at, payment_method_attached")
     .eq("organization_id", context.organizationId)
     .maybeSingle();
   const params = await searchParams;
@@ -31,5 +36,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ p
   const initialPlan = normalizePublicPlan(
     requested.success ? requested.data : stored.success ? stored.data : undefined,
   );
-  return <CheckoutPlans initialPlan={initialPlan} currentStatus={data?.status ? String(data.status) : undefined} configured={stripeConfigured()} canceled={params.anulowano === "1"} />;
+  const currentStatus = data?.status ? String(data.status) : undefined;
+  const currentAccessAllowed = currentStatus
+    ? hasSubscriptionAccess({
+        status: currentStatus,
+        paymentMethodAttached: Boolean(data?.payment_method_attached),
+        trialEndsAt: data?.trial_ends_at ? String(data.trial_ends_at) : null,
+      })
+    : false;
+  return <CheckoutPlans initialPlan={initialPlan} currentStatus={currentStatus} currentAccessAllowed={currentAccessAllowed} configured={stripeConfigured()} canceled={params.anulowano === "1"} />;
 }

@@ -86,13 +86,28 @@ export async function releaseEmailConfirmationHoldForUser(userId: string) {
     await syncSubscription(reconciled);
 }
 
+export async function subscriptionHasPaymentMethod(
+  subscription: Stripe.Subscription,
+  stripe = getStripe(),
+) {
+  if (subscription.default_payment_method || subscription.default_source)
+    return true;
+  const customer =
+    typeof subscription.customer === "string"
+      ? await stripe.customers.retrieve(subscription.customer)
+      : subscription.customer;
+  if ("deleted" in customer && customer.deleted) return false;
+  return Boolean(
+    customer.invoice_settings.default_payment_method || customer.default_source,
+  );
+}
+
 export async function syncSubscription(
   subscription: Stripe.Subscription,
   checkout?: {
     organizationId?: string;
     userId?: string;
     plan?: string;
-    paymentMethodAttached?: boolean;
   },
 ) {
   const admin = createAdminClient();
@@ -120,18 +135,14 @@ export async function syncSubscription(
 
   const { data: existingSubscription } = await admin
     .from("subscriptions")
-    .select("payment_method_attached, current_period_started_at")
+    .select("current_period_started_at")
     .eq("organization_id", organizationId)
     .maybeSingle();
   const customerId =
     typeof subscription.customer === "string"
       ? subscription.customer
       : subscription.customer.id;
-  const paymentMethodAttached = Boolean(
-    subscription.default_payment_method ||
-      checkout?.paymentMethodAttached ||
-      existingSubscription?.payment_method_attached,
-  );
+  const paymentMethodAttached = await subscriptionHasPaymentMethod(subscription);
   const nextPeriodStart = periodStart(subscription);
   const { error } = await admin.from("subscriptions").upsert(
     {

@@ -63,7 +63,6 @@ export async function POST(request: Request) {
           organizationId: session.metadata?.organization_id,
           userId: session.metadata?.user_id,
           plan: session.metadata?.plan,
-          paymentMethodAttached: true,
         });
         await confirmPurchaseContract(session, protectedSubscription.trial_end);
       }

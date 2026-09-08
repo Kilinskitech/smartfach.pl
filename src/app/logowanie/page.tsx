@@ -23,12 +23,15 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ d
   const email =
     typeof session?.claims?.email === "string" ? session.claims.email : null;
 
-  if (userId) {
+  const { data: verifiedUser } = userId
+    ? await supabase.auth.getUser()
+    : { data: { user: null } };
+  if (userId && verifiedUser.user?.email_confirmed_at) {
     redirect(
       isPlatformAdminIdentity({ userId, email }) ? "/admin" : requestedNext,
     );
   }
 
   const selectedPlan = publicPlanIdSchema.safeParse(params.plan);
-  return <AuthForm loginFirst={Boolean(params.dalej) || !params.plan} next={requestedNext} initialPlan={selectedPlan.success ? selectedPlan.data : "pro"} checkoutCanceled={params.anulowano === "1"} confirmationFailed={params.blad === "potwierdzenie"} />;
+  return <AuthForm loginFirst={Boolean(params.dalej) || !params.plan} next={requestedNext} initialPlan={selectedPlan.success ? selectedPlan.data : "pro"} checkoutCanceled={params.anulowano === "1"} confirmationFailed={params.blad === "potwierdzenie"} confirmationRequired={params.blad === "potwierdz-email" || Boolean(userId && !verifiedUser.user?.email_confirmed_at)} />;
 }

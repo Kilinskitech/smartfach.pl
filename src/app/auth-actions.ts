@@ -47,6 +47,8 @@ function message(error: unknown) {
   if (!(error instanceof Error)) return "Nie udało się wykonać operacji.";
   if (/invalid login credentials/i.test(error.message))
     return "Nieprawidłowy e-mail lub hasło.";
+  if (/email not confirmed/i.test(error.message))
+    return "Najpierw potwierdź adres e-mail przyciskiem z otrzymanej wiadomości.";
   if (/already registered|already exists/i.test(error.message))
     return "Konto z tym adresem już istnieje. Zaloguj się.";
   if (/rate limit|security purposes/i.test(error.message))
@@ -75,6 +77,13 @@ export async function signIn(_: AuthState, formData: FormData): Promise<AuthStat
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword(parsed.data);
   if (error) return { error: message(error) };
+  if (!data.user?.email_confirmed_at) {
+    await supabase.auth.signOut();
+    return {
+      error:
+        "Najpierw potwierdź adres e-mail przyciskiem z otrzymanej wiadomości.",
+    };
+  }
 
   if (
     isPlatformAdminIdentity({

@@ -8,7 +8,7 @@ import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 import { PurchaseConsent } from "./purchase-consent";
 
-export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; loginFirst?: boolean }) {
+export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, confirmationRequired = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; confirmationRequired?: boolean; loginFirst?: boolean }) {
   const [view, setView] = useState<"register" | "login" | "reset">(
     checkoutCanceled || confirmationFailed || loginFirst ? "login" : "register",
   );
@@ -50,6 +50,12 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
           <p className="form-error" role="alert">
             Link potwierdzający jest nieprawidłowy albo wygasł. Spróbuj zalogować
             się lub wróć do wiadomości wysłanej przez SmartFach.
+          </p>
+        )}
+        {view !== "reset" && confirmationRequired && !confirmationFailed && (
+          <p className="form-error" role="alert">
+            Potwierdź adres e-mail przyciskiem z otrzymanej wiadomości. Dopiero
+            wtedy logowanie i korzystanie z limitu będą możliwe.
           </p>
         )}
 

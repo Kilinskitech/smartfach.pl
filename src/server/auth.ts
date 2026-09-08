@@ -2,8 +2,10 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { isPlatformAdminIdentity } from "@/lib/platform-admin";
 import { createClient } from "@/lib/supabase/server";
+import { hasSubscriptionAccess } from "@/domain/billing";
 
 export class AuthenticationRequired extends Error {}
+export class EmailConfirmationRequired extends AuthenticationRequired {}
 export class SubscriptionRequired extends Error {}
 
 export async function authenticatedContext() {
@@ -13,6 +15,14 @@ export async function authenticatedContext() {
   const email =
     typeof data?.claims?.email === "string" ? data.claims.email : null;
   if (error || !userId) throw new AuthenticationRequired("Zaloguj się ponownie.");
+
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+  if (userError || !userData.user || userData.user.id !== userId)
+    throw new AuthenticationRequired("Zaloguj się ponownie.");
+  if (!userData.user.email_confirmed_at)
+    throw new EmailConfirmationRequired(
+      "Potwierdź adres e-mail przed uruchomieniem SmartFach.",
+    );
 
   const { data: membership, error: membershipError } = await supabase
     .from("memberships")
@@ -28,7 +38,7 @@ export async function authenticatedContext() {
   return {
     supabase,
     userId,
-    email,
+    email: userData.user.email ?? email,
     organizationId: String(membership.organization_id),
     organizationRole: String(membership.role),
   };
@@ -46,6 +56,20 @@ export async function requireSubscription(
   if (error) throw new Error("Nie można sprawdzić abonamentu.");
   if (!data || !["trialing", "active"].includes(String(data.status)))
     throw new SubscriptionRequired("Wybierz plan, aby korzystać ze SmartFach.");
+  if (!data.payment_method_attached)
+    throw new SubscriptionRequired(
+      "Dokończ podpinanie metody płatności, aby korzystać ze SmartFach.",
+    );
+  if (
+    !hasSubscriptionAccess({
+      status: String(data.status),
+      paymentMethodAttached: Boolean(data.payment_method_attached),
+      trialEndsAt: data.trial_ends_at ? String(data.trial_ends_at) : null,
+    })
+  )
+    throw new SubscriptionRequired(
+      "Okres próbny wygasł. Sprawdź status płatności, aby kontynuować.",
+    );
   return data;
 }
 

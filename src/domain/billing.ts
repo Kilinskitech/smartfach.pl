@@ -19,6 +19,19 @@ export const trialPolicy = {
   convertsToPaidAutomatically: true,
 } as const;
 
+export function hasSubscriptionAccess(input: {
+  status: string;
+  paymentMethodAttached: boolean;
+  trialEndsAt?: string | null;
+  now?: number;
+}) {
+  if (!input.paymentMethodAttached) return false;
+  if (input.status === "active") return true;
+  if (input.status !== "trialing" || !input.trialEndsAt) return false;
+  const trialEnd = Date.parse(input.trialEndsAt);
+  return Number.isFinite(trialEnd) && trialEnd > (input.now ?? Date.now());
+}
+
 export type EmailConfirmationHoldAction = "apply" | "release" | null;
 
 export function emailConfirmationHoldAction(input: {
