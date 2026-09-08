@@ -95,8 +95,10 @@ typów Odkryj/Uruchom/Prowadź ani segmentu Firma. Rejestracja wymaga wyłączni
 Lite lub Pro. Nowe konta zaczynają w kontekście budowania własnego przychodu.
 
 Głównym miejscem pracy jest jeden asystent przyjmujący tekst i zdjęcia.
-Na pustym koncie zamiast generycznego czatu pokazuje trzy proste wybory i natychmiast
-układa pierwszy krok. Ustawienia przechowują styl pracy, czas tygodniowo,
+Każda nowa rozmowa zaczyna się od krótkiego profilu z odpowiedziami wielokrotnego
+wyboru i polem dodatkowych informacji. Zatwierdzenie uruchamia rekomendację i pierwsze
+działanie bez kopiowania promptu do pola rozmowy. Osobna ścieżka pozwala od razu zadać
+zwykłe pytanie. Ustawienia przechowują styl pracy, czas tygodniowo,
 doświadczenie, ograniczenia, cel i bieżący fokus.
 
 Historyczne schematy workflow firm terenowych pozostają czasowo w modelu workspace,
@@ -119,9 +121,10 @@ jasne przed płatnością.
 
 ## Technologia i zasady AI
 
-OpenRouter pozostaje bramką i routerem modeli. Wersjonowana w kodzie kolejność to
-GPT-5 Nano jako model główny oraz Gemini Flash Latest jako awaryjny fallback;
-użytkownik jej nie widzi. AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
+OpenRouter pozostaje bramką modeli. Wersjonowany routing kieruje zwykłe pytania do
+GPT-5.6 Luna, ważny start, zdjęcia i trudniejsze analizy do GPT-5.6 Terra, a stały
+Gemini 3.5 Flash pozostaje awaryjnym fallbackiem innego dostawcy. Użytkownik nie widzi
+tego podziału. AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
 Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje mogące
 zmienić dane.
 

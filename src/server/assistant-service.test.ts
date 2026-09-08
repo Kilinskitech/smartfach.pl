@@ -1,10 +1,12 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import {
   callAssistant,
+  advancedAiModel,
   aiConfigured,
   fallbackAiModel,
   primaryAiModel,
   publicAiConfiguration,
+  selectAiModel,
 } from "./assistant-service";
 import { fixtureClient, fixtureWorkspace } from "../test/fixtures";
 const input = {
@@ -73,9 +75,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);
-    expect(request.max_completion_tokens).toBe(5000);
-    expect(request.max_tokens).toBeUndefined();
-    expect(request.reasoning).toEqual({ effort: "minimal", exclude: true });
+    expect(request.max_tokens).toBe(5000);
+    expect(request.max_completion_tokens).toBeUndefined();
+    expect(request.reasoning).toEqual({ effort: "low", exclude: true });
     expect(request.plugins).toEqual([{ id: "response-healing" }]);
     expect(request.tools).toEqual([
       {
@@ -92,11 +94,12 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(request.provider).toEqual({
       data_collection: "deny",
       zdr: true,
+      require_parameters: true,
     });
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");
   });
-  it("uruchamia Gemini dopiero po błędzie GPT-5 Nano i zapisuje faktyczny model", async () => {
+  it("uruchamia model innego dostawcy dopiero po błędzie modelu głównego", async () => {
     const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     const fetcher = vi
       .fn<typeof fetch>()
@@ -109,9 +112,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     const fallbackRequest = JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body));
     expect(primaryRequest).toMatchObject({
       model: primaryAiModel,
-      max_completion_tokens: 5000,
+      max_tokens: 5000,
     });
-    expect(primaryRequest.max_tokens).toBeUndefined();
+    expect(primaryRequest.max_completion_tokens).toBeUndefined();
     expect(fallbackRequest).toMatchObject({
       model: fallbackAiModel,
       max_tokens: 5000,
@@ -121,6 +124,49 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
     expect(String(warning.mock.calls[0]?.[0])).toContain('"status":429');
     warning.mockRestore();
+  });
+  it("kieruje zatwierdzony start i zdjęcia do dokładniejszego modelu", () => {
+    expect(selectAiModel({ ...input, mode: "guided_start" })).toBe(advancedAiModel);
+    expect(
+      selectAiModel({
+        ...input,
+        attachments: [
+          {
+            kind: "image",
+            name: "test.jpg",
+            mediaType: "image/jpeg",
+            data: "YWJj",
+          },
+        ],
+      }),
+    ).toBe(advancedAiModel);
+    expect(selectAiModel(input)).toBe(primaryAiModel);
+  });
+  it("przekazuje profil startowy jako dane i od razu uruchamia działanie", async () => {
+    const guidedInput = {
+      ...input,
+      mode: "guided_start" as const,
+      guidedStart: {
+        workStyle: "remote" as const,
+        situation: "unknown" as const,
+        priorities: ["fast" as const, "low_cost" as const],
+        boundaries: ["phone" as const],
+        customBoundary: "",
+        additionalInfo: "Mam osiem godzin tygodniowo.",
+      },
+    };
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json(provider(JSON.stringify(payload), undefined, advancedAiModel)),
+    );
+    await callAssistant(guidedInput, fixtureWorkspace(), fetcher);
+    const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(request.model).toBe(advancedAiModel);
+    expect(request.messages[0].content).toContain(
+      "Użytkownik właśnie zatwierdził ekran rozpoczęcia działania",
+    );
+    expect(request.messages[2].content).toContain(
+      '"priorities":["fast","low_cost"]',
+    );
   });
   it("zwraca faktyczny koszt i tokeny raportowane przez OpenRouter", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(

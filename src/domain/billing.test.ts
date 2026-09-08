@@ -9,11 +9,13 @@ import {
   publicPlanIds,
   remainingCredits,
   remainingTopUpCredits,
+  remainingTopUpPercentage,
   rollBillingPeriod,
   settleRequestCredits,
   trialPolicy,
   monthlyUsagePercentage,
   stripeExistingCustomerUpdate,
+  topUpCreditsForPlan,
 } from "./billing";
 
 const billing = {
@@ -35,6 +37,7 @@ describe("kredyty SmartFach", () => {
     expect(creditAllowance(billing)).toBe(245);
     expect(remainingCredits(billing)).toBe(205);
     expect(monthlyUsagePercentage(billing)).toBe(18);
+    expect(monthlyUsagePercentage({ ...billing, usedCredits: 1 })).toBe(1);
     expect(remainingTopUpCredits(billing)).toBe(20);
   });
 
@@ -51,13 +54,15 @@ describe("kredyty SmartFach", () => {
 
   it("ma trzy serwerowo wycenione pakiety dodatkowego limitu", () => {
     expect(creditPackById("mini")).toMatchObject({
-      credits: 150,
+      percentage: 25,
       unitAmountGrosze: 1_999,
     });
     expect(creditPackById("max")).toMatchObject({
-      credits: 1_100,
-      unitAmountGrosze: 12_999,
+      percentage: 100,
+      unitAmountGrosze: 5_999,
     });
+    expect(topUpCreditsForPlan("plus", "lite")).toBe(113);
+    expect(topUpCreditsForPlan("plus", "pro")).toBe(275);
   });
 
   it("pozwala Stripe uzupełnić nazwę istniejącego klienta przy zbieraniu NIP", () => {
@@ -71,6 +76,7 @@ describe("kredyty SmartFach", () => {
         usedCredits: 230,
       }),
     ).toBe(15);
+    expect(remainingTopUpPercentage({ ...billing, usedCredits: 230 })).toBe(7);
     expect(
       monthlyUsagePercentage({ ...billing, usedCredits: 999 }),
     ).toBe(100);

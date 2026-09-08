@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { legalDocumentText, privacyDocument, purchaseConsentSchema, termsDocument } from "./legal";
 import { legalDocumentVersion, operatorSchema, smartFachOperator } from "./operator";
-import { matchesSubscriptionPrice, plans } from "./billing";
+import { creditPacks, matchesSubscriptionPrice, plans } from "./billing";
 
 describe("warunki zakupu", () => {
   const consent = { termsAccepted: true, earlyServiceRequested: true, legalVersion: legalDocumentVersion };
@@ -25,8 +25,12 @@ describe("warunki zakupu", () => {
     const text = legalDocumentText(termsDocument(smartFachOperator));
     for (const plan of Object.values(plans)) {
       expect(text).toContain(plan.price);
-      expect(text).toContain(String(plan.monthlyCredits));
     }
+    for (const pack of creditPacks) {
+      expect(text).toContain(`+${pack.percentage}%`);
+      expect(text).toContain(pack.price);
+    }
+    expect(text).not.toContain("jednostek rozliczeniowych");
     expect(text).toContain("14 dni");
     expect(text).toContain("https://smartfach.pl/odstapienie");
   });

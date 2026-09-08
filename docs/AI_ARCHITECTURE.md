@@ -1,6 +1,6 @@
 # SmartFach — architektura AI
 
-Stan: 2026-09-07.
+Stan: 2026-09-08.
 
 ## Zasada
 
@@ -15,10 +15,13 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
 - W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
   modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
-- Główny model to `openai/gpt-5-nano`. Serwer wywołuje
-  `~google/gemini-flash-latest` dopiero po błędzie, limicie dostawcy albo timeoutcie
-  modelu głównego. Osobne żądania pozwalają użyć właściwych parametrów każdego modelu.
-- Oba modele otrzymują ten sam ścisły JSON Schema, minimalny poziom rozumowania,
+- Zwykłe pytania obsługuje `openai/gpt-5.6-luna`. Zatwierdzony start biznesu,
+  zdjęcia, długie wiadomości oraz złożone analizy trafiają do
+  `openai/gpt-5.6-terra`. To deterministyczny routing serwerowy, nie równoległe
+  wywołanie ani głosowanie modeli.
+- Stały `google/gemini-3.5-flash` jest awaryjnym fallbackiem innego dostawcy,
+  uruchamianym dopiero po błędzie, limicie lub timeoutcie wybranego modelu OpenAI.
+- Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
 - Tekst, do trzech zdjęć i ograniczona historia rozmowy mogą wejść do modelu.
@@ -29,17 +32,18 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `usage` z OpenRouter zapisuje koszt USD, tokeny, model, provider i identyfikator
   żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
-- GPT-5 Nano otrzymuje `max_completion_tokens`, wymagane przez jego trasę Azure;
-  Gemini otrzymuje `max_tokens`. Nie wymuszamy `require_parameters`: w połączeniu
-  z ZDR i narzędziem internetowym filtr usuwał wszystkie dostępne trasy GPT-5 Nano.
-  Nadal wymagamy ścisłego JSON Schema w żądaniu i niezależnie walidujemy wynik na
-  serwerze. ZDR oraz blokada dostawców przetwarzających dane pozostają włączone.
+- Adapter wysyła wspierane przez bieżące trasy OpenRouter `max_tokens`.
+  `require_parameters` wymusza trasę obsługującą żądane parametry. Nadal niezależnie
+  walidujemy wynik na serwerze. ZDR i blokada dostawców przetwarzających dane są włączone.
 
 ## Kontekst użytkownika
 
 Prompt otrzymuje zatwierdzone preferencje: zdalnie/lokalnie, czas tygodniowo,
 doświadczenie, ograniczenia, cel i bieżący fokus. Typ konta ani tryb rozmowy nie są
 częścią kontekstu; wszystkie konta używają jednego procesu budowania przychodu.
+Pierwszy ekran przekazuje jednak techniczny tryb `guided_start`: po zatwierdzeniu
+asystent ma od razu porównać maksymalnie trzy kierunki, rekomendować jeden i zacząć
+pierwsze działanie. Ścieżka zwykłego pytania omija ten workflow.
 
 Asystent ma:
 
@@ -69,9 +73,10 @@ wiadomość użytkownika i dać bezpieczne ponowienie. Jedno żądanie nie może
 rozliczone dwa razy przez retry. Limity procesu są prototypem; płatna wersja wymaga
 atomowego obciążenia i audytowalnej księgi.
 
-Alias `~google/gemini-flash-latest` może w przyszłości wskazać nowszy model bez
-wdrożenia kodu. Jest używany wyłącznie awaryjnie, ale po każdej zmianie wskazania
-trzeba sprawdzić koszt, JSON, zdjęcia, język polski i wymagania prywatności.
+Fallback ma stały identyfikator modelu zamiast aliasu `latest`, aby aktualizacja
+dostawcy nie zmieniła kosztu i zachowania bez wdrożenia. Każdą zmianę modelu trzeba
+sprawdzić na stałym zestawie polskich scenariuszy: jakość, JSON, zdjęcia, opóźnienie,
+koszt i wymagania prywatności.
 
 ## Ewaluacja
 

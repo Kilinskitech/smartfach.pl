@@ -12,8 +12,7 @@ import {
   creditPacks,
   monthlyUsagePercentage,
   plans,
-  remainingCredits,
-  remainingTopUpCredits,
+  remainingTopUpPercentage,
   type CreditPackId,
 } from "@/domain/billing";
 import type { Billing } from "@/domain/workspace";
@@ -40,8 +39,8 @@ export function BillingDialog({
   const [consented, setConsented] = useState(false);
   const plan = plans[billing.plan];
   const percentage = monthlyUsagePercentage(billing);
-  const remaining = remainingCredits(billing);
-  const extraRemaining = remainingTopUpCredits(billing);
+  const remaining = Math.max(0, 100 - percentage);
+  const extraRemaining = remainingTopUpPercentage(billing);
   const selected = creditPacks.find((pack) => pack.id === selectedPack)!;
 
   async function openCheckout(packId: CreditPackId) {
@@ -77,7 +76,7 @@ export function BillingDialog({
     >
       <div className="billing-dialog">
         <section className="billing-summary billing-summary-compact">
-          <div><span className="billing-plan">PLAN {plan.name}</span><strong>{remaining} jednostek pozostało</strong></div>
+          <div><span className="billing-plan">PLAN {plan.name}</span><strong>{remaining}% miesięcznego limitu pozostało</strong></div>
           <span className="billing-percentage">{percentage}% wykorzystane</span>
           <div className="credit-progress" aria-label={`${percentage}% wykorzystanego limitu`}>
             <span style={{ width: `${percentage}%` }} />
@@ -88,7 +87,7 @@ export function BillingDialog({
             <p className="eyebrow">WYBIERZ ZAPAS</p>
             <h3>Ile dodatkowego limitu potrzebujesz?</h3>
           </div>
-          {extraRemaining > 0 && <span>Masz jeszcze {extraRemaining} dodatkowych jednostek</span>}
+          {extraRemaining > 0 && <span>Masz jeszcze +{extraRemaining}% dodatkowego limitu</span>}
         </div>
         <fieldset className="credit-pack-grid" aria-label="Pakiet dodatkowego limitu">
           {creditPacks.map((pack) => (
@@ -107,14 +106,14 @@ export function BillingDialog({
               <span className="credit-pack-check">{selectedPack === pack.id ? <Check size={16} /> : <Gauge size={16} />}</span>
               <strong>{packNames[pack.id][0]}</strong>
               <p>{packNames[pack.id][1]}</p>
-              <b>{pack.credits} jednostek</b>
+              <b>+{pack.percentage}% limitu</b>
               <em>{pack.price}</em>
             </label>
           ))}
         </fieldset>
         <section className="billing-checkout-box">
-          <div className="billing-order-line"><span>Wybrano <strong>{selected.credits} jednostek</strong></span><b>{selected.price}</b></div>
-          <p>Jednorazowa płatność. Zapas przechodzi na kolejne okresy i działa przy aktywnym abonamencie. Jednostki rozliczają koszt pracy AI, nie stałą liczbę wiadomości.</p>
+          <div className="billing-order-line"><span>Wybrano <strong>+{selected.percentage}% limitu</strong></span><b>{selected.price}</b></div>
+          <p>Jednorazowa płatność. Zwiększenie przechodzi na kolejne okresy i działa przy aktywnym abonamencie. Różne zadania mogą wykorzystywać limit w różnym tempie.</p>
           <PurchaseConsent onChange={setConsented} />
           {error && <p className="form-error" role="alert">{error}</p>}
           <button type="button" className="button button-primary billing-checkout-button" disabled={Boolean(busyPack) || !consented} onClick={() => void openCheckout(selectedPack)}>

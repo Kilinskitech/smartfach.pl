@@ -94,7 +94,7 @@ export function CheckoutPlans({
         <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
       </section>
 
-      {!hasAccess && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan zawiera {plans[plan].monthlyCredits} jednostek na okres; koszt zależy od zadania, minimum 1 na żądanie. Pula odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
+      {!hasAccess && <div className="checkout-legal"><p className="purchase-summary">Dziś 0 zł. Po próbie <strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!configured ? (
         <p className="setup-inline">Stripe czeka na konfigurację kluczy, cen i webhooka. Przycisk pozostaje wyłączony, aby nie udawać płatności.</p>

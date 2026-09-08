@@ -1,6 +1,6 @@
 # SmartFach — ceny i limity
 
-Stan: 2026-09-07. Ceny są hipotezą do walidacji.
+Stan: 2026-09-08. Ceny są hipotezą do walidacji.
 
 | Plan | Cena miesięczna | Dla kogo |
 | --- | ---: | --- |
@@ -36,14 +36,15 @@ Interfejs codzienny nie pokazuje salda „kredytów”. Po wykorzystaniu planu u
 widzi procent miesięcznego limitu i może zwiększyć zakres albo przejść na Pro.
 Jednorazowe zwiększenia nie zmieniają abonamentu i pozostają do wykorzystania:
 
-| Zwiększenie | Cena brutto — hipoteza | Wewnętrzny budżet kosztu AI |
-| --- | ---: | ---: |
-| Małe | 19,99 zł | 1,50 USD |
-| Większe | 49,99 zł | 4,00 USD |
-| Intensywne | 129,99 zł | 11,00 USD |
+| Zwiększenie względem limitu planu | Cena brutto — hipoteza |
+| --- | ---: |
+| +25% | 19,99 zł |
+| +50% | 29,99 zł |
+| +100% | 59,99 zł |
 
-W runtime jedna wewnętrzna jednostka odpowiada jednemu centowi zmierzonego kosztu
-OpenRouter. Użytkownik nie widzi jednostek ani dolarów, ponieważ koszt jednego
+W runtime wewnętrzny licznik odpowiada zmierzonemu kosztowi OpenRouter, a zakupiony
+procent jest przeliczany względem planu aktywnego przy zakupie. Użytkownik nie widzi
+jednostek ani dolarów, ponieważ koszt jednego
 zadania zależy od modelu, długości, obrazu i wyszukiwania. Gdy dostawca nie
 zwróci kosztu, działa zachowawcza wycena zastępcza. Płatności i obciążenia limitu
 mają osobne klucze idempotencji.
@@ -58,8 +59,8 @@ mają osobne klucze idempotencji.
 Budżet 10 USD w Lite i 20 USD w Pro został odrzucony. Przy cenach brutto, VAT 23%,
 prowizji Stripe 1,5% + 1 zł i kursie NBP z 2026-09-04 pozostawiałby około 0,96 zł
 oraz 3,71 zł przed hostingiem, wsparciem, zwrotami i podatkiem dochodowym. Również
-sprzedanie za 19,99 zł limitu kosztującego 12 zł jest zbyt ciasne: po VAT i Stripe
-pozostałoby około 2,95 zł przed innymi kosztami.
+sprzedanie za 19,99 zł limitu kosztującego 12 zł jest zbyt ciasne. Nowe pakiety
+procentowe zachowują większy bufor, ale ich marżę mierzymy na faktycznym miksie modeli.
 
 ## Pomiar
 

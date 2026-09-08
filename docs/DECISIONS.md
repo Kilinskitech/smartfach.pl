@@ -881,3 +881,29 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Kompromis: nowa konfiguracja SMTP i obowiązek codziennej obsługi zgłoszeń;
   mniejszy zakres niż pełny moduł fakturowania, supportu i aplikacje natywne.
 - MASTER_PLAN bez zmiany strategii — to domknięcie zakupu i dostępu do produktu.
+
+## D043 — Start prowadzący do działania, procentowe limity i routing jakości
+
+- Data: 2026-09-08. Status: wdrożone w kodzie; wymaga testu E2E na Preview.
+- Start rozmowy: nowa rozmowa pokazuje krótki profil z odpowiedziami pojedynczego
+  i wielokrotnego wyboru oraz polem dodatkowych informacji. Zatwierdzenie wysyła
+  dane bezpośrednio do kontrolowanego trybu `guided_start`; nie uzupełnia pola czatu.
+  Asystent porównuje najwyżej trzy kierunki, rekomenduje jeden i zaczyna pierwsze
+  działanie. Osobny przycisk omija profil i otwiera zwykłe pytanie.
+- Limity: klient widzi wyłącznie procent miesięcznego limitu. Zwiększenia wynoszą
+  +25% za 19,99 zł, +50% za 29,99 zł oraz +100% za 59,99 zł. Procent jest przeliczany
+  na wewnętrzny budżet aktywnego planu przy tworzeniu Checkout i ponownie sprawdzany
+  po płatności. Podstawowe pule Lite/Pro pozostają bez zmiany do czasu danych o użyciu.
+- Modele: zwykła rozmowa korzysta z `openai/gpt-5.6-luna`; `guided_start`, obrazy,
+  długie wiadomości i rozpoznane złożone zadania trafiają do
+  `openai/gpt-5.6-terra`. `google/gemini-3.5-flash` pozostaje awaryjnym fallbackiem
+  innego dostawcy. Nie wywołujemy trzech modeli równolegle.
+- Powód: Nano jest zoptymalizowane przede wszystkim pod proste streszczenia i
+  klasyfikację, a nie kluczową rekomendację biznesową. Stały Gemini zamiast aliasu
+  `latest` ogranicza niekontrolowaną zmianę kosztu i zachowania. Cross-provider
+  fallback chroni dostępność lepiej niż trzy modele jednego dostawcy.
+- Koszt: routing zachowuje istniejący twardy budżet planu, więc lepszy model może
+  wykorzystać większy procent przy trudnym zadaniu, ale nie tworzy nieograniczonego
+  kosztu. Jakość oceniamy przez Task Success Rate, nie liczbę wiadomości.
+- Zastępuje D041 w wyborze i routingu modeli oraz D039 w publicznej prezentacji
+  i cenach zwiększeń. Historyczne uzasadnienia i wewnętrzna księga pozostają.

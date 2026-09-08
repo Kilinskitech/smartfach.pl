@@ -149,3 +149,29 @@ Next.js. Nie aktualizować samych głównych wersji z pominięciem testów zgodn
 - Decyzja techniczna nie zastępuje ewaluacji produktu. Przed płatnym ruchem trzeba
   wykonać ten sam zestaw 15–30 polskich scenariuszy: rozmowa, zdjęcie, research,
   ścisły JSON, dłuższy kontekst, koszt oraz wymuszone przełączenie na fallback.
+
+## Routing jakości i weryfikacja endpointów — 2026-09-08
+
+- [GPT-5.6 Luna — dokumentacja OpenAI](https://developers.openai.com/api/docs/models/gpt-5.6-luna)
+  opisuje model jako wariant do zadań o dużym wolumenie i wrażliwych kosztowo;
+  obsługuje obrazy, narzędzia i structured outputs.
+- [GPT-5.6 Terra — dokumentacja OpenAI](https://developers.openai.com/api/docs/models/gpt-5.6-terra)
+  pozycjonuje model jako balans jakości i kosztu; obsługuje obrazy, narzędzia i
+  structured outputs. Cena jest wielokrotnie wyższa od Luna, dlatego Terra nie
+  powinna obsługiwać każdej krótkiej wiadomości.
+- [Luna w OpenRouter](https://openrouter.ai/openai/gpt-5.6-luna/pricing) i
+  [Terra w OpenRouter](https://openrouter.ai/openai/gpt-5.6-terra/pricing) mają
+  aktywne trasy raportujące obsługę `max_tokens`, reasoning, JSON/structured outputs
+  oraz narzędzi. Endpointy sprawdzono bezpośrednio 2026-09-08.
+- [Gemini 3.5 Flash w OpenRouter](https://openrouter.ai/google/gemini-3.5-flash/pricing)
+  ma kilka aktywnych tras i obsługuje tekst, obrazy, narzędzia oraz structured outputs.
+  Stały identyfikator ogranicza ryzyko niejawnej zmiany modelu przez alias `latest`.
+- [Fallback modeli OpenRouter](https://openrouter.ai/docs/guides/routing/model-fallbacks)
+  uruchamia kolejny model po błędzie i nalicza koszt modelu, który faktycznie dostarczył
+  odpowiedź. SmartFach robi jawny drugi request, aby zachować osobne parametry i log.
+- [Structured outputs OpenRouter](https://openrouter.ai/docs/guides/features/structured-outputs)
+  zaleca ścisły schemat; `require_parameters` ogranicza routing do tras obsługujących
+  wymagane parametry. Niezależna walidacja serwera pozostaje obowiązkowa.
+- Decyzja: Luna obsługuje zwykłą rozmowę, Terra tylko start, zdjęcia i wykryte złożone
+  zadania, a Gemini 3.5 Flash jest awaryjny. Trzy równoległe odpowiedzi odrzucono ze
+  względu na koszt, opóźnienie i trudniejsze diagnozowanie jakości.

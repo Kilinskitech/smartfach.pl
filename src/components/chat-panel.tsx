@@ -1,12 +1,18 @@
 "use client";
 import { useRef, useState, type KeyboardEvent } from "react";
 import {
+  ArrowLeft,
   ArrowUp,
   Sparkles,
   ArrowRight,
+  Clock3,
   LoaderCircle,
   RefreshCw,
   ImagePlus,
+  MessageCircle,
+  Rocket,
+  TrendingUp,
+  Wallet,
   X,
   Compass,
   Laptop,
@@ -15,7 +21,7 @@ import {
 } from "lucide-react";
 import { BrandMark } from "./brand";
 import type { Conversation, Workspace } from "@/domain/workspace";
-import type { AssistantAttachment, AssistantResult } from "@/domain/assistant";
+import type { AssistantAttachment, AssistantResult, GuidedStart } from "@/domain/assistant";
 import { estimateRequestCredits, remainingCredits } from "@/domain/billing";
 
 type PendingAttachment = AssistantAttachment & {
@@ -24,6 +30,14 @@ type PendingAttachment = AssistantAttachment & {
   preview?: string;
 };
 type StartBoundary = "phone" | "camera" | "budget";
+type StartPriority = "fast" | "low_cost" | "after_hours" | "full_income";
+type SendOptions = {
+  text?: string;
+  displayText?: string;
+  mode?: "chat" | "guided_start";
+  guidedStart?: GuidedStart;
+  title?: string;
+};
 const acceptedImages = new Set([
   "image/jpeg",
   "image/png",
@@ -83,20 +97,23 @@ export function ChatPanel({
       : "open",
   );
   const [startSituation, setStartSituation] = useState<"unknown" | "idea" | "skills">("unknown");
+  const [startPriorities, setStartPriorities] = useState<StartPriority[]>([]);
   const [startBoundaries, setStartBoundaries] = useState<StartBoundary[]>([]);
   const [customBoundary, setCustomBoundary] = useState("");
-  function startTask(text: string) {
-    setInput(text);
-    requestAnimationFrame(() => {
-      textarea.current?.focus();
-      textarea.current?.setSelectionRange(text.length, text.length);
-    });
-  }
+  const [additionalInfo, setAdditionalInfo] = useState("");
+  const [startMode, setStartMode] = useState<"guided" | "question">("guided");
   function toggleBoundary(boundary: StartBoundary) {
     setStartBoundaries((current) =>
       current.includes(boundary)
         ? current.filter((item) => item !== boundary)
         : [...current, boundary],
+    );
+  }
+  function togglePriority(priority: StartPriority) {
+    setStartPriorities((current) =>
+      current.includes(priority)
+        ? current.filter((item) => item !== priority)
+        : [...current, priority],
     );
   }
   function preparePersonalStart() {
@@ -119,12 +136,44 @@ export function ChatPanel({
       (boundary) => boundaryLabels[boundary],
     );
     if (customBoundary.trim()) selectedBoundaries.push(customBoundary.trim());
-    const boundary = selectedBoundaries.length
-      ? `chcę uniknąć: ${selectedBoundaries.join(", ")}`
-      : "nie mam jeszcze dodatkowych ograniczeń";
-    startTask(
-      `Chcę zbudować własny przychód. ${workStyle}, ${situation} i ${boundary}. Zacznij od maksymalnie 3 najważniejszych pytań o moją sytuację. Potem pomóż mi wybrać realną usługę, którą mogę przetestować bez długiego przygotowania.`,
+    const priorityLabels: Record<StartPriority, string> = {
+      fast: "szybko przejść do pierwszego testu",
+      low_cost: "zacząć małym kosztem",
+      after_hours: "działać po godzinach",
+      full_income: "docelowo utrzymywać się z własnego biznesu",
+    };
+    const selectedPriorities = startPriorities.map(
+      (priority) => priorityLabels[priority],
     );
+    const details = [
+      `Preferencja pracy: ${workStyle}.`,
+      `Punkt startu: ${situation}.`,
+      selectedPriorities.length
+        ? `Najważniejsze: ${selectedPriorities.join(", ")}.`
+        : "Nie wskazuję jeszcze dodatkowego priorytetu.",
+      selectedBoundaries.length
+        ? `Chcę uniknąć: ${selectedBoundaries.join(", ")}.`
+        : "Nie wskazuję dodatkowych ograniczeń.",
+      additionalInfo.trim()
+        ? `Dodatkowe informacje: ${additionalInfo.trim()}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+    void send({
+      text: details,
+      displayText: details,
+      mode: "guided_start",
+      guidedStart: {
+        workStyle: startStyle,
+        situation: startSituation,
+        priorities: startPriorities,
+        boundaries: startBoundaries,
+        customBoundary: customBoundary.trim(),
+        additionalInfo: additionalInfo.trim(),
+      },
+      title: "Mój plan działania",
+    });
   }
   async function addImage(file: File | undefined) {
     if (!file) return;
@@ -170,8 +219,8 @@ export function ChatPanel({
       if (imageInput.current) imageInput.current.value = "";
     }
   }
-  async function send() {
-    const typedText = input.trim();
+  async function send(options: SendOptions = {}) {
+    const typedText = (options.text ?? input).trim();
     const text =
       typedText ||
       "Przeanalizuj dodane zdjęcie i odpowiedz na moje pytanie.";
@@ -203,6 +252,8 @@ export function ChatPanel({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           idempotencyKey: crypto.randomUUID(),
+          mode: options.mode ?? "chat",
+          ...(options.guidedStart ? { guidedStart: options.guidedStart } : {}),
           messages: [
             ...messages
               .slice(-11)
@@ -231,7 +282,7 @@ export function ChatPanel({
       const id = conversation?.id ?? crypto.randomUUID();
       const updated: Conversation = {
         id,
-        title: conversation?.title ?? text.slice(0, 70),
+        title: conversation?.title ?? options.title ?? text.slice(0, 70),
         updatedAt: new Date().toISOString(),
         messages: [
           ...messages,
@@ -239,7 +290,7 @@ export function ChatPanel({
             id: crypto.randomUUID(),
             role: "user",
             content: [
-              typedText,
+              options.displayText ?? typedText,
               ...attachments.map((item) => `📷 ${item.name}`),
             ]
               .filter(Boolean)
@@ -260,7 +311,7 @@ export function ChatPanel({
         result.billing,
         result.workspaceRevision,
       );
-      setInput("");
+      if (!options.text) setInput("");
       setAttachments([]);
       requestAnimationFrame(() =>
         lastMessage.current?.scrollIntoView({ block: "nearest" }),
@@ -300,45 +351,103 @@ export function ChatPanel({
               <Sparkles size={13} />
             </span>
           </div>
-          <>
-              <p className="eyebrow">ZACZNIJMY OD CIEBIE</p>
-              <h2>Jak chcesz budować swój przychód?</h2>
+          {startMode === "guided" ? (
+            <>
+              <p className="eyebrow">SMARTFACH ZACZYNA DZIAŁAĆ</p>
+              <h2>Powiedz, jak chcesz pracować.</h2>
               <p className="welcome-copy">
-                Nie musisz mieć pomysłu ani wyjątkowych umiejętności. Wybierz
-                najbliższe odpowiedzi, a SmartFach zada potrzebne pytania.
+                Zaznacz odpowiedzi najbliższe Twojej sytuacji. Po zatwierdzeniu
+                SmartFach wybierze kierunek i od razu przeprowadzi Cię do
+                pierwszego konkretnego działania.
               </p>
-              <div className="start-profile" aria-label="Szybki start SmartFach">
+              <form
+                className="start-profile"
+                aria-label="Rozpoczęcie pracy ze SmartFach"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  preparePersonalStart();
+                }}
+              >
                 <fieldset>
                   <legend>Gdzie chcesz pracować?</legend>
                   <div>
-                    <button className={startStyle === "remote" ? "selected" : ""} onClick={() => setStartStyle("remote")}><Laptop size={17} /> Zdalnie</button>
-                    <button className={startStyle === "local" ? "selected" : ""} onClick={() => setStartStyle("local")}><MapPin size={17} /> Lokalnie</button>
-                    <button className={startStyle === "open" ? "selected" : ""} onClick={() => setStartStyle("open")}><Compass size={17} /> Bez znaczenia</button>
+                    <button type="button" aria-pressed={startStyle === "remote"} className={startStyle === "remote" ? "selected" : ""} onClick={() => setStartStyle("remote")}><Laptop size={17} /> Zdalnie</button>
+                    <button type="button" aria-pressed={startStyle === "local"} className={startStyle === "local" ? "selected" : ""} onClick={() => setStartStyle("local")}><MapPin size={17} /> Lokalnie</button>
+                    <button type="button" aria-pressed={startStyle === "open"} className={startStyle === "open" ? "selected" : ""} onClick={() => setStartStyle("open")}><Compass size={17} /> Bez znaczenia</button>
                   </div>
                 </fieldset>
                 <fieldset>
                   <legend>Od czego zaczynasz?</legend>
                   <div>
-                    <button className={startSituation === "unknown" ? "selected" : ""} onClick={() => setStartSituation("unknown")}>Nie wiem, co sprzedawać</button>
-                    <button className={startSituation === "skills" ? "selected" : ""} onClick={() => setStartSituation("skills")}>Mam umiejętności</button>
-                    <button className={startSituation === "idea" ? "selected" : ""} onClick={() => setStartSituation("idea")}>Mam pomysł</button>
+                    <button type="button" aria-pressed={startSituation === "unknown"} className={startSituation === "unknown" ? "selected" : ""} onClick={() => setStartSituation("unknown")}>Nie wiem, co sprzedawać</button>
+                    <button type="button" aria-pressed={startSituation === "skills"} className={startSituation === "skills" ? "selected" : ""} onClick={() => setStartSituation("skills")}>Mam umiejętności</button>
+                    <button type="button" aria-pressed={startSituation === "idea"} className={startSituation === "idea" ? "selected" : ""} onClick={() => setStartSituation("idea")}>Mam pomysł</button>
                   </div>
                 </fieldset>
-                <fieldset>
-                  <legend>Czego chcesz uniknąć? Możesz wybrać kilka opcji.</legend>
+                <fieldset className="start-profile-wide">
+                  <legend>Co jest dla Ciebie ważne? Możesz wybrać kilka.</legend>
+                  <div className="start-profile-options start-priority-options">
+                    <button type="button" aria-pressed={startPriorities.includes("fast")} className={startPriorities.includes("fast") ? "selected" : ""} onClick={() => togglePriority("fast")}><Rocket size={16} /> Szybko zacząć</button>
+                    <button type="button" aria-pressed={startPriorities.includes("low_cost")} className={startPriorities.includes("low_cost") ? "selected" : ""} onClick={() => togglePriority("low_cost")}><Wallet size={16} /> Mały koszt startu</button>
+                    <button type="button" aria-pressed={startPriorities.includes("after_hours")} className={startPriorities.includes("after_hours") ? "selected" : ""} onClick={() => togglePriority("after_hours")}><Clock3 size={16} /> Działanie po godzinach</button>
+                    <button type="button" aria-pressed={startPriorities.includes("full_income")} className={startPriorities.includes("full_income") ? "selected" : ""} onClick={() => togglePriority("full_income")}><TrendingUp size={16} /> Docelowo pełny dochód</button>
+                  </div>
+                </fieldset>
+                <fieldset className="start-profile-wide">
+                  <legend>Czego chcesz uniknąć? Możesz wybrać kilka.</legend>
                   <div className="start-profile-options">
                     <button type="button" aria-pressed={startBoundaries.includes("phone")} className={startBoundaries.includes("phone") ? "selected" : ""} onClick={() => toggleBoundary("phone")}><Ban size={16} /> Telefonów</button>
                     <button type="button" aria-pressed={startBoundaries.includes("camera")} className={startBoundaries.includes("camera") ? "selected" : ""} onClick={() => toggleBoundary("camera")}><Ban size={16} /> Pokazywania twarzy</button>
                     <button type="button" aria-pressed={startBoundaries.includes("budget")} className={startBoundaries.includes("budget") ? "selected" : ""} onClick={() => toggleBoundary("budget")}><Ban size={16} /> Dużych wydatków</button>
                   </div>
                   <label className="start-profile-custom" htmlFor="start-custom-boundary">
-                    <span>Inne — wpisz własne</span>
-                    <input id="start-custom-boundary" value={customBoundary} onChange={(event) => setCustomBoundary(event.target.value)} maxLength={180} placeholder="np. pracy wieczorami, dojazdów, kontaktu przez social media" />
+                    <span>Inne ograniczenie</span>
+                    <input id="start-custom-boundary" value={customBoundary} onChange={(event) => setCustomBoundary(event.target.value)} maxLength={180} placeholder="np. dojazdy, praca wieczorami, social media" />
                   </label>
                 </fieldset>
-                <button className="start-profile-submit" onClick={preparePersonalStart}>Ułóż mój pierwszy krok <ArrowRight size={17} /></button>
-              </div>
-          </>
+                <fieldset className="start-profile-wide start-additional-info">
+                  <legend>Dodatkowe informacje — opcjonalnie</legend>
+                  <textarea
+                    value={additionalInfo}
+                    onChange={(event) => setAdditionalInfo(event.target.value)}
+                    maxLength={600}
+                    rows={3}
+                    placeholder="Napisz, co umiesz, ile masz czasu, jaki masz budżet albo jaki pomysł chodzi Ci po głowie."
+                  />
+                </fieldset>
+                {error && <div className="chat-error start-profile-wide" role="alert">{error}</div>}
+                <div className="start-profile-actions">
+                  <button className="start-profile-submit" type="submit" disabled={busy || !available || creditExhausted}>
+                    {busy ? <><LoaderCircle size={17} /> SmartFach zaczyna…</> : <>Przejdź do działania <ArrowRight size={17} /></>}
+                  </button>
+                  <button
+                    className="start-question-button"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => {
+                      setStartMode("question");
+                      setError("");
+                      requestAnimationFrame(() => textarea.current?.focus());
+                    }}
+                  >
+                    <MessageCircle size={17} /> Chcę tylko zadać pytanie
+                  </button>
+                </div>
+              </form>
+            </>
+          ) : (
+            <>
+              <p className="eyebrow">ZAPYTAJ SMARTFACH</p>
+              <h2>O co chcesz zapytać?</h2>
+              <p className="welcome-copy">
+                Możesz poprosić o wyjaśnienie, analizę pomysłu, przygotowanie
+                treści albo dodać zdjęcie. Formularz startowy nie jest wymagany.
+              </p>
+              <button className="start-back-button" type="button" onClick={() => setStartMode("guided")}>
+                <ArrowLeft size={16} /> Wróć do rozpoczęcia działania
+              </button>
+            </>
+          )}
         </div>
       ) : (
         <div className="chat-messages" aria-label="Historia rozmowy">
@@ -378,7 +487,7 @@ export function ChatPanel({
           <div ref={lastMessage} />
         </div>
       )}
-      <div className="composer-area">
+      {(messages.length > 0 || startMode === "question") && <div className="composer-area">
         {creditExhausted && (
           <div className="credit-limit-banner" role="alert">
             <Sparkles size={18} />
@@ -514,7 +623,7 @@ export function ChatPanel({
             </div>
           </>
         )}
-      </div>
+      </div>}
     </div>
   );
 }

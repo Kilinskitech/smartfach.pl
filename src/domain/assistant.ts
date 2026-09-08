@@ -64,9 +64,24 @@ export const assistantAttachmentSchema = z
   })
   .strict();
 export type AssistantAttachment = z.infer<typeof assistantAttachmentSchema>;
+export const guidedStartSchema = z
+  .object({
+    workStyle: z.enum(["remote", "local", "open"]),
+    situation: z.enum(["unknown", "idea", "skills"]),
+    priorities: z
+      .array(z.enum(["fast", "low_cost", "after_hours", "full_income"]))
+      .max(4),
+    boundaries: z.array(z.enum(["phone", "camera", "budget"])).max(3),
+    customBoundary: z.string().trim().max(180),
+    additionalInfo: z.string().trim().max(600),
+  })
+  .strict();
+export type GuidedStart = z.infer<typeof guidedStartSchema>;
 export const assistantRequestSchema = z
   .object({
     idempotencyKey: z.uuid().optional(),
+    mode: z.enum(["chat", "guided_start"]).optional(),
+    guidedStart: guidedStartSchema.optional(),
     messages: z
       .array(
         z
@@ -94,6 +109,10 @@ export const assistantRequestSchema = z
   .refine(
     (value) => value.messages.at(-1)?.role === "user",
     "Ostatnia wiadomość musi pochodzić od użytkownika.",
+  )
+  .refine(
+    (value) => value.mode !== "guided_start" || Boolean(value.guidedStart),
+    "Brakuje danych rozpoczęcia działania.",
   );
 export const assistantJsonSchema = {
   type: "object",

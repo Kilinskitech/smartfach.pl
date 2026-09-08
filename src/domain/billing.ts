@@ -62,21 +62,21 @@ export const plans = {
 export const creditPacks = [
   {
     id: "mini",
-    credits: 150,
+    percentage: 25,
     price: "19,99 zł",
     unitAmountGrosze: 1_999,
   },
   {
     id: "plus",
-    credits: 400,
-    price: "49,99 zł",
-    unitAmountGrosze: 4_999,
+    percentage: 50,
+    price: "29,99 zł",
+    unitAmountGrosze: 2_999,
   },
   {
     id: "max",
-    credits: 1_100,
-    price: "129,99 zł",
-    unitAmountGrosze: 12_999,
+    percentage: 100,
+    price: "59,99 zł",
+    unitAmountGrosze: 5_999,
   },
 ] as const;
 
@@ -97,6 +97,11 @@ export type CreditPackId = z.infer<typeof creditPackIdSchema>;
 
 export function creditPackById(id: CreditPackId) {
   return creditPacks.find((pack) => pack.id === id)!;
+}
+
+export function topUpCreditsForPlan(id: CreditPackId, plan: PlanId) {
+  const pack = creditPackById(id);
+  return Math.ceil((plans[plan].monthlyCredits * pack.percentage) / 100);
 }
 
 export const billingSchema = z.object({
@@ -121,7 +126,7 @@ export function monthlyUsagePercentage(billing: Billing) {
     100,
     Math.max(
       0,
-      Math.round((billing.usedCredits / plans[billing.plan].monthlyCredits) * 100),
+      Math.ceil((billing.usedCredits / plans[billing.plan].monthlyCredits) * 100),
     ),
   );
 }
@@ -130,6 +135,16 @@ export function remainingTopUpCredits(billing: Billing) {
   const monthlyCredits = plans[billing.plan].monthlyCredits;
   const usedTopUpCredits = Math.max(0, billing.usedCredits - monthlyCredits);
   return Math.max(0, billing.topUpCredits - usedTopUpCredits);
+}
+
+export function remainingTopUpPercentage(billing: Billing) {
+  return Math.max(
+    0,
+    Math.ceil(
+      (remainingTopUpCredits(billing) / plans[billing.plan].monthlyCredits) *
+        100,
+    ),
+  );
 }
 
 export function rollBillingPeriod(billing: Billing, periodStartedAt: string) {

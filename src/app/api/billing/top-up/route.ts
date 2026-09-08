@@ -10,6 +10,7 @@ import {
 import { limitedJson } from "@/server/request-body";
 import { createUsageTopUpCheckout } from "@/server/stripe-top-ups";
 import { purchaseConsentSchema } from "@/domain/legal";
+import { readWorkspace } from "@/server/supabase-workspace-repository";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,10 +43,16 @@ export async function POST(request: Request) {
         { status: 409 },
       );
 
+    const workspace = await readWorkspace(
+      context.supabase,
+      context.organizationId,
+    );
+
     const session = await createUsageTopUpCheckout({
       organizationId: context.organizationId,
       userId: context.userId,
       customerId: String(subscription.stripe_customer_id),
+      plan: workspace.billing.plan,
       packId: input.packId,
       idempotencyKey: `usage-top-up:${context.organizationId}:${input.idempotencyKey}`,
     });

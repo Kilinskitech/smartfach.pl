@@ -176,4 +176,25 @@ describe("kontrolowane szkice AI", () => {
       }).success,
     ).toBe(false);
   });
+  it("wymaga kontrolowanych danych dla trybu rozpoczęcia działania", () => {
+    const base = {
+      clientId: null,
+      mode: "guided_start" as const,
+      messages: [{ role: "user" as const, content: "Zacznijmy działać" }],
+    };
+    expect(assistantRequestSchema.safeParse(base).success).toBe(false);
+    expect(
+      assistantRequestSchema.safeParse({
+        ...base,
+        guidedStart: {
+          workStyle: "remote",
+          situation: "unknown",
+          priorities: ["fast", "low_cost"],
+          boundaries: ["phone"],
+          customBoundary: "",
+          additionalInfo: "Mam osiem godzin tygodniowo.",
+        },
+      }).success,
+    ).toBe(true);
+  });
 });

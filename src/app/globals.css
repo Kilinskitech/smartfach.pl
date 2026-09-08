@@ -794,7 +794,7 @@ svg {
   text-align: center;
   margin: 0 auto 34px;
   width: 100%;
-  max-width: 690px;
+  max-width: 760px;
 }
 .welcome-mark {
   display: inline-flex;
@@ -7681,18 +7681,24 @@ button.team-card:hover {
 }
 
 .start-profile {
-  width: min(100%, 680px);
+  width: min(100%, 760px);
   margin: 24px auto 0;
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
   text-align: left;
 }
 .start-profile fieldset {
+  min-width: 0;
   margin: 0;
-  padding: 13px;
+  padding: 14px;
   border: 1px solid #dbe4de;
   border-radius: 13px;
   background: #ffffffc7;
+}
+.start-profile .start-profile-wide,
+.start-profile-actions {
+  grid-column: 1 / -1;
 }
 .start-profile legend {
   padding: 0 5px;
@@ -7701,9 +7707,12 @@ button.team-card:hover {
   font-weight: 720;
 }
 .start-profile fieldset > div {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
+}
+.start-profile fieldset > .start-priority-options {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .start-profile fieldset button {
   min-height: 38px;
@@ -7755,6 +7764,32 @@ button.team-card:hover {
 .start-profile-custom input::placeholder {
   color: #9aa49f;
 }
+.start-additional-info textarea {
+  width: 100%;
+  min-height: 76px;
+  resize: vertical;
+  padding: 11px 12px;
+  border: 1px solid #dce4df;
+  border-radius: 9px;
+  outline: none;
+  background: white;
+  color: #344a40;
+  font: inherit;
+  font-size: 10px;
+  line-height: 1.55;
+}
+.start-additional-info textarea:focus {
+  border-color: #d89062;
+  box-shadow: 0 0 0 3px #efb58d24;
+}
+.start-additional-info textarea::placeholder {
+  color: #9aa49f;
+}
+.start-profile-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(220px, .7fr);
+  gap: 9px;
+}
 .start-profile-submit {
   min-height: 50px;
   display: flex;
@@ -7769,6 +7804,40 @@ button.team-card:hover {
   font-weight: 720;
   cursor: pointer;
   box-shadow: 0 12px 28px #173f3822;
+}
+.start-profile-submit:disabled,
+.start-question-button:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+}
+.start-profile-submit svg.lucide-loader-circle {
+  animation: spin .9s linear infinite;
+}
+.start-question-button,
+.start-back-button {
+  min-height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid #d7e0da;
+  border-radius: 11px;
+  background: #fff;
+  color: #486058;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.start-question-button:hover,
+.start-back-button:hover {
+  border-color: #c9d7cf;
+  background: #f7faf8;
+}
+.start-back-button {
+  min-height: 42px;
+  margin-top: 20px;
+  padding: 9px 15px;
 }
 .journey-settings-form {
   margin-top: 22px;
@@ -7814,9 +7883,20 @@ button.team-card:hover {
     padding: 45px 21px;
     border-radius: 24px;
   }
-  .start-profile fieldset > div {
+  .start-profile {
+    grid-template-columns: 1fr;
+  }
+  .start-profile .start-profile-wide,
+  .start-profile-actions {
+    grid-column: auto;
+  }
+  .start-profile fieldset > div,
+  .start-profile fieldset > .start-priority-options {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .start-profile-actions {
+    grid-template-columns: 1fr;
   }
   .start-profile fieldset button {
     min-height: 44px;

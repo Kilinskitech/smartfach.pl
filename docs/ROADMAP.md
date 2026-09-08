@@ -1,17 +1,18 @@
 # SmartFach — roadmapa
 
-Stan: 2026-09-07.
+Stan: 2026-09-08.
 
 ## Teraz — Preview
 
 - Jeden landing pod pierwszą sprzedawalną usługę i klienta.
 - Plany Lite/Pro, uproszczona rejestracja i Stripe Sandbox.
-- Profil startowy z preferencjami i ograniczeniami.
+- Profil startowy uruchamiający działanie oraz osobna ścieżka zwykłego pytania.
 - Jeden asystent z tekstem, zdjęciami i historią.
-- GPT-5 Nano jako model główny oraz Gemini Flash Latest jako automatyczny fallback.
+- GPT-5.6 Luna do zwykłej rozmowy, Terra do startu i trudnych zadań oraz
+  Gemini 3.5 Flash jako awaryjny fallback innego dostawcy.
 - Zaktualizowane instrukcje AI oraz trwałe ustawienia użytkownika.
 - Panel administratora, koszt OpenRouter, statusy kont i płatności.
-- Procent wykorzystania i jednorazowe zwiększenie limitu przez Stripe.
+- Procent wykorzystania i zwiększenia +25%, +50% lub +100% przez Stripe.
 - Testy statyczne, automatyczne i pełny przebieg na stałym Preview.
 
 ## Następny eksperyment
