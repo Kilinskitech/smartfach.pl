@@ -202,6 +202,26 @@ export async function syncSubscription(
       expected_revision: expectedRevision,
       next_data: nextData,
     });
-    if (workspaceError) throw new Error("Nie zsynchronizowano planu w koncie.");
+    if (workspaceError) {
+      const desiredBilling = billingSchema.parse(nextData.billing);
+      const { data: refreshedRow, error: refreshError } = await admin
+        .from("workspaces")
+        .select("data")
+        .eq("organization_id", organizationId)
+        .maybeSingle();
+      const refreshedWorkspace =
+        refreshedRow?.data && typeof refreshedRow.data === "object"
+          ? (refreshedRow.data as Record<string, unknown>)
+          : null;
+      const refreshedBilling = billingSchema.safeParse(
+        refreshedWorkspace?.billing,
+      );
+      const anotherDeliveryAlreadyAppliedTheSameChange =
+        !refreshError &&
+        refreshedBilling.success &&
+        JSON.stringify(refreshedBilling.data) === JSON.stringify(desiredBilling);
+      if (!anotherDeliveryAlreadyAppliedTheSameChange)
+        throw new Error("Nie zsynchronizowano planu w koncie.");
+    }
   }
 }

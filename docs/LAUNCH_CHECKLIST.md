@@ -66,6 +66,8 @@ nie zamiennik poprawnie skonfigurowanego endpointu Stripe.
 Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
 ścisłego „exactly once” w przypadku przyjęcia e-maila i jednoczesnej awarii zapisu
 statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich braku.
+Równoległa aktywna rezerwacja tej samej wysyłki nie powoduje już odpowiedzi 500.
+Po wdrożeniu ponów wcześniejsze nieudane zdarzenie i potwierdź HTTP 200.
 
 W Sandbox endpoint webhooka również musi działać w trybie testowym. Sekret
 `STRIPE_WEBHOOK_SECRET` musi pochodzić z dokładnie tego endpointu, który odbiera

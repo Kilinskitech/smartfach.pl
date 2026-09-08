@@ -75,7 +75,20 @@ export async function confirmPurchaseContract(session: Stripe.Checkout.Session, 
   if (contractError) throw new Error("Nie odczytano potwierdzenia umowy.");
   if (contract.email_sent_at) return;
   const { data: claimed, error: claimError } = await admin.rpc("claim_contract_delivery", { session_id: session.id });
-  if (claimError || !claimed) throw new Error("Potwierdzenie czeka na zakończenie wysyłki; ponów webhook.");
+  if (claimError) throw new Error("Nie można zarezerwować wysyłki potwierdzenia.");
+  if (!claimed) {
+    const { data: delivery, error: deliveryError } = await admin
+      .from("purchase_contracts")
+      .select("email_sent_at,delivery_claimed_at")
+      .eq("checkout_session_id", session.id)
+      .single();
+    if (deliveryError)
+      throw new Error("Nie można sprawdzić trwającej wysyłki potwierdzenia.");
+    // Strona sukcesu i webhook mogą wejść tutaj równocześnie. Aktywna rezerwacja
+    // oznacza, że drugi proces już dostarcza tę samą, zapisaną kopię umowy.
+    if (delivery.email_sent_at || delivery.delivery_claimed_at) return;
+    throw new Error("Nie udało się rozpocząć wysyłki potwierdzenia.");
+  }
   try {
     await sendContractEmail({ recipient: contract.recipient, body: contract.body, sessionId: session.id, replyTo: snapshot.operator.email });
     const { error: markError } = await admin.from("purchase_contracts")

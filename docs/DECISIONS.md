@@ -996,3 +996,18 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Trade-off: instalacja na iOS nadal wymaga kilku działań użytkownika. Nie wdrażamy
   eksperymentalnego elementu instalacji Chrome ani aplikacji natywnych. Bez zmiany
   MASTER_PLAN — dopracowano istniejącą funkcję PWA.
+
+## D049 — Współbieżne potwierdzenie zakupu jest poprawnym ponowieniem
+
+- Data: 2026-09-08. Status: wdrożone w kodzie; wymaga ponowienia zdarzenia Sandbox.
+- Decyzja: równoległe przetwarzanie tego samego zakupu przez webhook Stripe i stronę
+  sukcesu nie jest błędem, jeśli druga ścieżka już zarezerwowała wysyłkę tej samej
+  zapisanej umowy. Analogicznie konflikt rewizji workspace jest uznawany za
+  zakończony tylko wtedy, gdy ponowny odczyt potwierdza dokładnie oczekiwany stan
+  rozliczeń.
+- Powód: Stripe może dostarczyć zdarzenie równolegle z powrotem klienta z Checkout.
+  Dotychczas e-mail dochodził poprawnie, ale druga ścieżka zwracała HTTP 500,
+  przez co Stripe niepotrzebnie oznaczał dostarczenie jako nieudane i ponawiał je.
+- Trade-off: aktywna rezerwacja dostarczenia jest traktowana jako praca wykonywana
+  przez drugi proces. Dwuminutowa dzierżawa i ręczne ponowienie webhooka nadal
+  chronią przypadek przerwanej wysyłki. Bez zmiany MASTER_PLAN.
