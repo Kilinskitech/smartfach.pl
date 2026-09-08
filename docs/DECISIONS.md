@@ -959,3 +959,21 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 - Powód: kontrola wyłącznie w interfejsie albo sam status subskrypcji nie chronią
   kosztu AI. Bramka musi działać po stronie serwera przed odczytem danych i wywołaniem
   modelu. Nie wymaga zmiany MASTER_PLAN — domyka wcześniej przyjęty model trialu.
+
+## D047 — Jednoznaczny powrót z płatności i zapasowe potwierdzenie umowy
+
+- Data: 2026-09-08. Status: wdrożone w kodzie na gałęzi Preview; wymaga nowego
+  testowego Checkout i kontroli webhooka po wdrożeniu.
+- Decyzja: wynik zakupu abonamentu i zwiększenia limitu korzysta ze wspólnego,
+  wyśrodkowanego ekranu marki z nagłówkiem, postępem, kontaktem i informacją o
+  bezpieczeństwie. Wejście bez `session_id` nie udaje trwającej weryfikacji, tylko
+  wyjaśnia brak danych zamówienia.
+- Potwierdzenie umowy nadal wysyła przede wszystkim webhook Stripe. Prawidłowy
+  powrót po ukończonym Checkout idempotentnie ponawia zapis i dostarczenie wiadomości,
+  aby opóźniony webhook nie pozostawił użytkownika bez potwierdzenia.
+- Powód: test SMTP nie obejmuje zdarzeń Stripe, a surowy adres strony sukcesu bez
+  identyfikatora wprowadzał w błąd. Dwie niezależne okazje do wywołania tej samej,
+  zabezpieczonej operacji zwiększają niezawodność bez podwójnego przyznania dostępu.
+- Trade-off: prawdziwa awaria webhooka może zostać częściowo zamaskowana, dlatego
+  HTTP 200 zdarzeń i `email_sent_at` nadal są obowiązkową częścią testu sprzedaży.
+  Zmiana nie wymaga aktualizacji MASTER_PLAN.

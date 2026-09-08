@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, MailCheck, ShieldCheck } from "lucide-react";
+import { CheckCircle2, MailCheck, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react";
 import { ConfirmationResend } from "@/components/confirmation-resend";
+import { PaymentResultPage, type PaymentResultStep } from "@/components/payment-result";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
+import { confirmPurchaseContract } from "@/server/purchase-legal";
 import {
   reconcileEmailConfirmationHold,
   syncSubscription,
@@ -15,11 +17,36 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-type ActivationState = "confirmed" | "awaiting-email" | "processing";
+type ActivationState = "confirmed" | "awaiting-email" | "processing" | "missing";
+
+const stepsFor = (state: ActivationState): PaymentResultStep[] => [
+  {
+    label: "Konto",
+    state: state === "missing" ? "pending" : "complete",
+  },
+  {
+    label: "Karta",
+    state:
+      state === "confirmed" || state === "awaiting-email"
+        ? "complete"
+        : state === "processing"
+          ? "current"
+          : "pending",
+  },
+  {
+    label: "Aktywacja",
+    state:
+      state === "confirmed"
+        ? "complete"
+        : state === "awaiting-email"
+          ? "current"
+          : "pending",
+  },
+];
 
 async function activationState(sessionId: string | undefined): Promise<ActivationState> {
   if (!sessionId || !/^cs_(?:test_|live_)?[A-Za-z0-9]+$/.test(sessionId))
-    return "processing";
+    return "missing";
 
   try {
     const stripe = getStripe();
@@ -49,6 +76,17 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
       plan: checkout.metadata?.plan,
     });
 
+    // Webhook pozostaje główną ścieżką. Powrót ze Stripe bezpiecznie ponawia
+    // zapis i dostarczenie potwierdzenia, gdy webhook jest opóźniony.
+    try {
+      await confirmPurchaseContract(checkout, protectedSubscription.trial_end);
+    } catch (error) {
+      console.error("Nie dostarczono potwierdzenia umowy ze strony sukcesu", {
+        sessionId: checkout.id,
+        message: error instanceof Error ? error.message : "unknown",
+      });
+    }
+
     const admin = createAdminClient();
     const { data, error } = await admin.auth.admin.getUserById(userId);
     if (error || !data.user) return "processing";
@@ -71,30 +109,33 @@ export default async function Page({
 
   if (state === "confirmed")
     return (
-      <main className="payment-success">
-        <CheckCircle2 size={48} />
-        <p className="eyebrow">GOTOWE</p>
-        <h1>Konto i 3-dniowa próba są aktywne</h1>
-        <p>
+      <PaymentResultPage
+        icon={<CheckCircle2 size={34} />}
+        eyebrow="GOTOWE"
+        title="Konto i 3-dniowa próba są aktywne"
+        description="Możesz od razu przejść do SmartFach i zacząć pracę nad pierwszą ofertą."
+        steps={stepsFor(state)}
+      >
+        <p className="payment-result-detail">
           Pierwsza opłata nastąpi po 3 pełnych dniach, jeśli wcześniej nie
           anulujesz abonamentu.
         </p>
         <Link className="button button-primary" href="/app">
           Otwórz SmartFach <span aria-hidden>→</span>
         </Link>
-      </main>
+      </PaymentResultPage>
     );
 
   if (state === "awaiting-email")
     return (
-      <main className="payment-success payment-confirm-email">
-        <MailCheck size={48} />
-        <p className="eyebrow">OSTATNI KROK</p>
-        <h1>Karta zapisana. Potwierdź teraz adres e-mail.</h1>
-        <p>
-          Wysłaliśmy wiadomość z przyciskiem aktywacyjnym. Po kliknięciu od razu
-          przejdziesz do SmartFach — bez ponownego wybierania planu.
-        </p>
+      <PaymentResultPage
+        icon={<MailCheck size={34} />}
+        eyebrow="OSTATNI KROK"
+        title="Karta zapisana. Potwierdź adres e-mail."
+        description="Wysłaliśmy wiadomość z przyciskiem aktywacyjnym. Po kliknięciu od razu przejdziesz do SmartFach — bez ponownego wybierania planu."
+        tone="pending"
+        steps={stepsFor(state)}
+      >
         <div className="activation-safety">
           <ShieldCheck size={20} />
           <span>
@@ -106,21 +147,46 @@ export default async function Page({
         <Link className="text-link" href="/logowanie">
           Adres już potwierdzony? Zaloguj się
         </Link>
-      </main>
+      </PaymentResultPage>
+    );
+
+  if (state === "missing")
+    return (
+      <PaymentResultPage
+        icon={<ShieldAlert size={34} />}
+        eyebrow="BRAK DANYCH ZAMÓWIENIA"
+        title="Otwórz stronę, na którą przekierował Cię Stripe"
+        description="Ten ekran działa z indywidualnym identyfikatorem płatności. Jeśli adres został otwarty ręcznie, nie możemy sprawdzić zamówienia."
+        tone="attention"
+        steps={stepsFor(state)}
+      >
+        <Link className="button button-primary" href="/cennik">
+          Wróć do wyboru planu
+        </Link>
+        <Link className="text-link" href="/kontakt">
+          Płatność została wykonana? Napisz do nas
+        </Link>
+      </PaymentResultPage>
     );
 
   return (
-    <main className="payment-success">
-      <ShieldCheck size={48} />
-      <p className="eyebrow">WERYFIKUJEMY</p>
-      <h1>Kończymy uruchamianie konta</h1>
-      <p>
-        Stripe może potrzebować krótkiej chwili na potwierdzenie. Odśwież stronę;
-        jeśli problem nie zniknie, napisz na kontakt@smartfach.pl.
-      </p>
-      <Link className="button button-secondary" href="/">
-        Wróć na stronę główną
+    <PaymentResultPage
+      icon={<RefreshCw size={34} />}
+      eyebrow="WERYFIKUJEMY"
+      title="Kończymy uruchamianie konta"
+      description="Stripe może potrzebować krótkiej chwili na potwierdzenie płatności. Twoje zamówienie nie zostanie utworzone drugi raz."
+      tone="pending"
+      steps={stepsFor(state)}
+    >
+      <a
+        className="button button-primary"
+        href={`/platnosc/sukces?session_id=${encodeURIComponent(sessionId!)}`}
+      >
+        <RefreshCw size={17} aria-hidden="true" /> Sprawdź ponownie
+      </a>
+      <Link className="text-link" href="/kontakt">
+        Problem nie znika? Skontaktuj się z nami
       </Link>
-    </main>
+    </PaymentResultPage>
   );
 }

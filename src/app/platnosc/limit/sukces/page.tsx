@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, RefreshCw, ShieldAlert } from "lucide-react";
+import { PaymentResultPage, type PaymentResultStep } from "@/components/payment-result";
 import { authenticatedContext } from "@/server/auth";
 import { retrieveAndGrantUsageTopUp } from "@/server/stripe-top-ups";
 
@@ -34,24 +35,26 @@ export default async function Page({
     });
   }
 
+  const steps: PaymentResultStep[] = [
+    { label: "Płatność", state: success ? "complete" : "current" },
+    { label: "Nowy limit", state: success ? "complete" : "pending" },
+  ];
+
   return (
-    <main className="payment-success">
-      {success ? <CheckCircle2 size={48} /> : <ShieldCheck size={48} />}
-      <p className="eyebrow">{success ? "GOTOWE" : "WERYFIKUJEMY"}</p>
-      <h1>
-        {success
-          ? "Twój limit został zwiększony"
-          : "Nie udało się jeszcze potwierdzić płatności"}
-      </h1>
-      <p>
-        {success
-          ? "Dodatkowy zakres jest już dostępny i nie zmienia Twojego abonamentu."
-          : "Płatność może potrzebować krótkiej chwili. Odśwież stronę albo skontaktuj się z nami, jeśli komunikat pozostanie."}
-      </p>
+    <PaymentResultPage
+      icon={success ? <CheckCircle2 size={34} /> : <ShieldAlert size={34} />}
+      eyebrow={success ? "GOTOWE" : "WERYFIKUJEMY"}
+      title={success ? "Twój limit został zwiększony" : "Nie udało się jeszcze potwierdzić płatności"}
+      description={success
+        ? "Dodatkowy zakres jest już dostępny i nie zmienia ceny ani terminu Twojego abonamentu."
+        : "Stripe może potrzebować krótkiej chwili. Sprawdź ponownie albo skontaktuj się z nami, jeśli komunikat pozostanie."}
+      tone={success ? "success" : "pending"}
+      steps={steps}
+    >
       <Link className="button button-primary" href="/app">
-        {success ? "Wróć do SmartFach" : "Wróć do aplikacji"}
-        <span aria-hidden>→</span>
+        {success ? "Wróć do SmartFach" : <><RefreshCw size={17} /> Sprawdź w aplikacji</>}
       </Link>
-    </main>
+      {!success && <Link className="text-link" href="/kontakt">Płatność pobrana, a limit się nie zmienił?</Link>}
+    </PaymentResultPage>
   );
 }

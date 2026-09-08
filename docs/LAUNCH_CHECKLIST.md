@@ -58,9 +58,21 @@ Gmail oraz Outlook, także spam i załącznik.
 
 Gdy wysyłka po zakupie zawiedzie, webhook zwraca błąd do ponowienia, a potwierdzenie
 jest już zapisane. Po naprawie SMTP ponów nieprzetworzone zdarzenie w Stripe.
+Prawidłowy powrót na `/platnosc/sukces?session_id=cs_...` wykonuje dodatkowo
+idempotentne ponowienie zapisu i wysyłki. To zabezpieczenie na opóźniony webhook,
+nie zamiennik poprawnie skonfigurowanego endpointu Stripe.
 Równoległe wysyłki mają krótką blokadę; SMTP nie zapewnia
 ścisłego „exactly once” w przypadku przyjęcia e-maila i jednoczesnej awarii zapisu
 statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich braku.
+
+W Sandbox endpoint webhooka również musi działać w trybie testowym. Sekret
+`STRIPE_WEBHOOK_SECRET` musi pochodzić z dokładnie tego endpointu, który odbiera
+zdarzenia testowe dla `https://smartfach.pl/api/stripe/webhook`. Działający test
+SMTP nie sprawdza webhooka. Po nowym Checkout sprawdź osobno, czy
+`checkout.session.completed` zakończył się HTTP 200 i czy w tabeli
+`purchase_contracts` dla nowego `cs_test_...` pojawiło się `email_sent_at`.
+Starsze sesje utworzone przed zapisem `legal_acceptance_id` nie generują takiego
+potwierdzenia i nie nadają się do tego testu.
 
 ## 2. Stripe Live
 
@@ -99,6 +111,10 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
   opłaty bez potwierdzenia adresu i brak podwójnego naliczenia webhooka.
 - [ ] Dokupienie limitu, kopia umowy e-mailem i w Ustawieniach, zgłoszenie odstąpienia,
   otrzymanie zgłoszenia w adminie, rozliczenie przez właściciela w Stripe.
+- [ ] Nowy zakup Sandbox: `checkout.session.completed` ma HTTP 200, powrót zawiera
+  `session_id=cs_test_...`, a odpowiadający rekord `purchase_contracts` ma
+  uzupełnione `email_sent_at`. Ponów celowo ten sam webhook i potwierdź brak drugiego
+  przyznania dostępu lub zwiększenia limitu.
 - [ ] Sprawdź e-maile: przyjęcie przez SMTP nie dowodzi dotarcia do odbiorcy.
 - [ ] „Nie pamiętasz hasła?” → polski e-mail → nowe hasło → ponowne logowanie.
 - [ ] Fizyczny iPhone/Safari oraz Android/Chrome: instalacja, ikona, start `/app`,
@@ -109,7 +125,7 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 
 ## Weryfikacja wykonana w tej zmianie
 
-- `npm run check`: typy, lint i 166 testów poprawne.
+- `npm run check`: typy, lint i 168 testów poprawne.
 - Standardowy `npm run build` napotkał ograniczenie sandboxa: Turbopack nie mógł
   otworzyć wewnętrznego portu. Alternatywny `npm run build -- --webpack` zakończony
   poprawnie; nie zmieniono produkcyjnego polecenia kompilacji ani architektury.
@@ -120,9 +136,12 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 - PWA: test cache potwierdza brak utrwalania prywatnego HTML/API i pozostawienie
   cudzych cache bez zmian. Fizycznej instalacji na telefonach nie wykonano.
 - SMTP oraz rzeczywistej transakcji Live nie przetestowano w tej zmianie.
+- Nowy ekran powrotu z płatności i ponowienie dostarczenia umowy wymagają wdrożenia
+  Preview oraz świeżego Checkout; bez `session_id` ekran celowo nie weryfikuje zakupu.
 - Po publikacji: HTTP 200 dla dokumentów, kontaktu, instalacji, odstąpienia,
-  manifestu, ikon i ekranu offline; prywatne potwierdzenia bez sesji zwracają 401.
-  Zweryfikowano telefon w dokumentach i prawidłowy cache-control service workera.
+  manifestu, ikon i ekranu offline. Ekran wyniku płatności bez `session_id` pokazuje
+  bezpieczny stan bez danych zamówienia i nie przyznaje dostępu. Zweryfikowano telefon
+  w dokumentach i prawidłowy cache-control service workera.
 - W przeglądarce Codex sprawdzono otwieranie instrukcji instalacji, układ 390px,
   regulamin mobilny i pierwszy krok odstąpienia bez wysyłania oświadczenia.
   Poprawiono kontrast karty instalacji. To nie zastępuje testu fizycznego urządzenia.
