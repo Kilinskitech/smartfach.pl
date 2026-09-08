@@ -108,6 +108,12 @@ statusu. Stały Message-ID ogranicza skutki duplikatów, ale nie gwarantuje ich 
 - PWA: test cache potwierdza brak utrwalania prywatnego HTML/API i pozostawienie
   cudzych cache bez zmian. Fizycznej instalacji na telefonach nie wykonano.
 - SMTP oraz rzeczywistej transakcji Live nie przetestowano w tej zmianie.
+- Po publikacji: HTTP 200 dla dokumentów, kontaktu, instalacji, odstąpienia,
+  manifestu, ikon i ekranu offline; prywatne potwierdzenia bez sesji zwracają 401.
+  Zweryfikowano telefon w dokumentach i prawidłowy cache-control service workera.
+- W przeglądarce Codex sprawdzono otwieranie instrukcji instalacji, układ 390px,
+  regulamin mobilny i pierwszy krok odstąpienia bez wysyłania oświadczenia.
+  Poprawiono kontrast karty instalacji. To nie zastępuje testu fizycznego urządzenia.
 
 ## Źródła przeglądu dokumentów (7–8 września 2026)
 
