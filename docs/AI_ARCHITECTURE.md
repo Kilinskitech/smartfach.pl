@@ -34,7 +34,9 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
 - Adapter wysyła `max_completion_tokens` do modeli OpenAI oraz `max_tokens` do
   Gemini. To konieczne przy ZDR, który dla OpenAI pozostawia m.in. trasy Azure.
-  `require_parameters` wymusza trasę obsługującą żądane parametry. Nadal niezależnie
+  `require_parameters: false` pozwala routerowi dostosować parametry do dostawcy.
+  Ścisły filtr powodował podejrzenie odrzucania tras; dokładną kategorię błędu
+  zapisujemy bez treści rozmów. Nadal niezależnie
   walidujemy wynik na serwerze. ZDR i blokada dostawców przetwarzających dane są włączone.
 
 ## Kontekst użytkownika

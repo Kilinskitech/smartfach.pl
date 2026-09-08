@@ -1014,6 +1014,12 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
 
 ## D050 — Zgodny z ZDR routing modeli i usunięcie Terra z bieżącego produktu
 
+Korekta po ponownym błędzie Production o 21:46: sama zmiana parametru limitu nie
+rozwiązała 404. Wcześniejsza diagnoza była hipotezą, nie potwierdzoną przyczyną.
+Wyłączono `require_parameters`, zachowując ZDR i `data_collection: deny` oraz
+walidację wyniku. Dodano bezpieczną klasyfikację błędu dostawcy w logach.
+Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
+
 - Data: 2026-09-08. Status: wdrożone w kodzie; wymaga testu rozmowy na Production.
 - Decyzja: zwykłe zadania obsługuje `openai/gpt-5-nano`, start biznesu, zdjęcia,
   długie wiadomości i złożone zadania `openai/gpt-5.6-luna`, a awaryjny fallback

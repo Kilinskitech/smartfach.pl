@@ -94,7 +94,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(request.provider).toEqual({
       data_collection: "deny",
       zdr: true,
-      require_parameters: true,
+      require_parameters: false,
     });
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");

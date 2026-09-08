@@ -246,6 +246,7 @@ function logModelFallback(
   selectedModel: string,
   reason: string,
   status?: number,
+  routingFailure?: string,
 ) {
   console.warn(
     "SmartFach uruchomił awaryjny model AI " +
@@ -254,6 +255,7 @@ function logModelFallback(
         fallbackModel: fallbackAiModel,
         reason,
         ...(status ? { status } : {}),
+        ...(routingFailure ? { routingFailure } : {}),
       }),
   );
 }
@@ -386,7 +388,7 @@ export async function callAssistant(
         provider: {
           data_collection: "deny",
           zdr: process.env.OPENROUTER_REQUIRE_ZDR !== "false",
-          require_parameters: true,
+          require_parameters: false,
         },
       }),
       signal: AbortSignal.timeout(25000),
@@ -405,7 +407,21 @@ export async function callAssistant(
     response = await providerRequest(fallbackAiModel);
   }
   if (!response.ok && !usedFallback && ![401, 402].includes(response.status)) {
-    logModelFallback(selectedModel, "provider-error", response.status);
+    // Classify the upstream error without logging prompts or raw provider payloads.
+    const errorBody = await response.clone().json().catch(() => null);
+    const message = typeof errorBody?.error?.message === "string"
+      ? errorBody.error.message.toLowerCase()
+      : "";
+    const routingFailure = response.status === 404
+      ? /privacy|data policy|guardrail|zdr/.test(message)
+        ? "data-policy"
+        : /parameter/.test(message)
+          ? "unsupported-parameters"
+          : /endpoint|provider/.test(message)
+            ? "no-eligible-provider"
+            : "unclassified-404"
+      : undefined;
+    logModelFallback(selectedModel, "provider-error", response.status, routingFailure);
     usedFallback = true;
     response = await providerRequest(fallbackAiModel);
   }
