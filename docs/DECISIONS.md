@@ -1056,3 +1056,14 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Marketing: dokładny opis profilu i krótkiego kontekstu, bez obietnicy pełnej
   pamięci wszystkich czatów i bez niepopartej danymi etykiety „najczęściej wybierany”.
 - MASTER_PLAN zaktualizowany: rzeczywisty routing, granice pamięci i jednorazowa próba.
+
+## D052 — Czytelne odpowiedzi zamiast jednego bloku tekstu
+
+- Data: 2026-09-09. Odpowiedzi asystenta renderujemy przez react-markdown,
+  bez HTML i osadzanych mediów, z linkami wyłącznie HTTP(S).
+- Pole reply nadal jest walidowanym ciągiem JSON; instrukcje wymagają akapitów,
+  list i oszczędnych nagłówków. Nie zmieniamy modeli ani rozliczania kosztów.
+- Odrzucono automatyczne przepisywanie historycznych odpowiedzi: generowałoby
+  dodatkowy koszt i mogłoby zmienić znaczenie. Istniejący Markdown jest renderowany,
+  ale dawny zwykły tekst nie jest ponownie generowany.
+- MASTER_PLAN bez zmiany; doprecyzowanie UX_RULES, nie zmiana strategii.

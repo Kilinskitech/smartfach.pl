@@ -20,6 +20,7 @@ import {
   Ban,
 } from "lucide-react";
 import { BrandMark } from "./brand";
+import { AssistantMessage } from "./assistant-message";
 import type { Conversation, Workspace } from "@/domain/workspace";
 import type { AssistantAttachment, AssistantResult, GuidedStart } from "@/domain/assistant";
 import { estimateRequestCredits, remainingCredits } from "@/domain/billing";
@@ -575,7 +576,9 @@ export function ChatPanel({
                 <span className="message-author">
                   {message.role === "user" ? "Ty" : "SmartFach"}
                 </span>
-                <p>{message.content}</p>
+                {message.role === "assistant"
+                  ? <AssistantMessage content={message.content} />
+                  : <p>{message.content}</p>}
                 {message.role === "assistant" &&
                   message.sources &&
                   message.sources.length > 0 && (

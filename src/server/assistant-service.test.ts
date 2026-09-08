@@ -34,6 +34,16 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
+  it("zachowuje Markdown wewnątrz odpowiedzi JSON bez dodatkowej generacji", async () => {
+    const reply = "### Kierunki\n\n1. **Administracja** online\n2. Opisy produktów\n\n> Gotowa oferta\n\nNastępny krok.";
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(Response.json(provider(JSON.stringify({ ...payload, reply }))));
+    const result = await callAssistant(input, fixtureWorkspace(), fetcher);
+    expect(result.reply).toBe(reply);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(request.messages[0].content).toContain("Markdown");
+    expect(request.response_format.json_schema.strict).toBe(true);
+  });
   it("nie wysyła drugiego płatnego zapytania po niepewnym timeout", async () => {
     const fetcher = vi.fn<typeof fetch>().mockRejectedValue(new DOMException("Lost response", "TimeoutError"));
     await expect(callAssistant(input, fixtureWorkspace(), fetcher)).rejects.toThrow("Lost response");

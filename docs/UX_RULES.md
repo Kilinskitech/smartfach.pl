@@ -19,6 +19,10 @@ Stan: 2026-09-06.
 - Tekst i zdjęcie prowadzą do tego samego asystenta. Głos pozostaje poza obecnym MVP.
 - Odpowiedzi są krótkie, skanowalne i zorientowane na decyzję. Bez powitania typu
   „Oczywiście, chętnie pomogę” przed właściwą wartością.
+- Odpowiedzi asystenta wyświetlamy jako bezpieczny Markdown: osobne akapity,
+  listy i krótkie nagłówki, z gotową ofertą/wiadomością w cytacie. Kolumna tekstu
+  ma maksymalnie 72ch. Proste pytanie nie wymaga nagłówków. Surowy HTML i obrazy
+  wygenerowane w tekście są niedozwolone; wiadomości użytkownika pozostają tekstem.
 - Na telefonie cele dotykowe mają co najmniej 48 × 48 CSS px, widoczny fokus i
   jednoznaczne etykiety. Najważniejsza akcja jest w zasięgu kciuka.
 - Historia rozmów jest w panelu bocznym, a na telefonie otwierana z nagłówka.
