@@ -935,6 +935,8 @@ Data zapisania ustaleń: 2026-08-30. Nie sugeruje wcześniejszej daty ich podję
   kolejna nowa rozmowa pokazuje wybór aktualnego zadania: znalezienie klientów,
   dopracowanie oferty, plan działań, analiza wyniku albo własne pytanie.
 - Ustawienia są miejscem późniejszej edycji profilu, a nie drugim onboardingiem.
+  Obejmują stałe informacje: czas, doświadczenie, ograniczenia, cel i bieżący fokus.
+  Nie powtarzają preferencji zdalnie/lokalnie zbieranej przy rozpoczęciu pracy.
   Zwykłe pytanie można zadać także bez zakończenia profilu startowego.
 - Powód: ponawianie tych samych pytań w każdej rozmowie tworzyło tarcie i sugerowało,
   że SmartFach nie pamięta użytkownika. Jednorazowy profil buduje ciągłość, a wybór

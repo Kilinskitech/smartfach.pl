@@ -24,8 +24,10 @@ Stan: 2026-09-06.
 - Historia rozmów jest w panelu bocznym, a na telefonie otwierana z nagłówka.
 - Pierwszy profil wypełnia się raz. Kolejna nowa rozmowa pokazuje zadania: klienci,
   oferta, plan, analiza wyniku lub własne pytanie — bez powtarzania onboardingu.
-- Ustawienia opisujemy jako „Twój profil działania” i służą do edycji zapamiętanego
-  kontekstu. Nie pokazujemy technicznych trybów konta.
+- Ustawienia opisujemy jako „Twój profil działania” i służą do edycji stałego
+  kontekstu: czasu, doświadczenia, ograniczeń, celu i aktualnego fokusu. Nie
+  powtarzamy tam preferencji zdalnie/lokalnie zbieranej przy rozpoczęciu pracy ani
+  nie pokazujemy technicznych trybów konta.
 - Plan Lite/Pro można przełączyć w widoku rejestracji bez przeładowania.
 - Trial pokazuje 0 zł dzisiaj, datę pierwszej opłaty, cenę po próbie i anulowanie.
 - Nazwa modelu, OpenRouter, tokeny i „kredyty” nie są częścią interfejsu klienta.

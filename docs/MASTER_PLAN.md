@@ -100,7 +100,9 @@ wyboru i polem dodatkowych informacji. Zatwierdzenie zapisuje profil na koncie,
 uruchamia rekomendację i pierwsze działanie bez kopiowania promptu do pola rozmowy.
 Każda kolejna nowa rozmowa zaczyna się od wyboru aktualnego zadania: klienci, oferta,
 plan działań, analiza wyniku albo własne pytanie. Ustawienia służą do późniejszej
-edycji zapisanego profilu: stylu pracy, czasu, doświadczenia, ograniczeń, celu i fokusu.
+edycji stałych informacji profilu: czasu, doświadczenia, ograniczeń, celu i fokusu.
+Preferencja pracy zdalnej lub lokalnej jest zapisywana podczas rozpoczęcia pracy,
+ale nie jest powtarzana jako osobne pole ustawień.
 
 Historyczne schematy workflow firm terenowych pozostają czasowo w modelu workspace,
 aby nie usuwać danych. Nie mają wejścia w głównej aplikacji, rejestracji ani

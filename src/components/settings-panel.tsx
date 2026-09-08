@@ -63,7 +63,7 @@ export function SettingsPanel({
           <SlidersHorizontal size={21} />
           <div>
             <h3>Twój profil działania</h3>
-            <p>SmartFach pamięta te informacje i uwzględnia je w każdej rozmowie.</p>
+            <p>Stałe informacje, które pomagają dopasować kolejne działania.</p>
           </div>
         </div>
         <form
@@ -73,7 +73,7 @@ export function SettingsPanel({
             event.preventDefault();
             const form = new FormData(event.currentTarget);
             const parsed = journeySchema.safeParse({
-              workStyle: form.get("workStyle"),
+              workStyle: data.journey.workStyle,
               weeklyHours: form.get("weeklyHours"),
               experience: form.get("experience"),
               constraints: form.get("constraints"),
@@ -97,15 +97,6 @@ export function SettingsPanel({
             }
           }}
         >
-          <div className="field">
-            <label htmlFor="journey-work-style">Gdzie wolisz pracować?</label>
-            <select id="journey-work-style" name="workStyle" defaultValue={data.journey.workStyle}>
-              <option value="open">Jeszcze nie wiem / bez znaczenia</option>
-              <option value="remote">Zdalnie</option>
-              <option value="local">Lokalnie</option>
-              <option value="hybrid">Częściowo zdalnie i lokalnie</option>
-            </select>
-          </div>
           <div className="two-fields">
             <div className="field"><label htmlFor="journey-hours">Ile czasu masz tygodniowo?</label><input id="journey-hours" name="weeklyHours" defaultValue={data.journey.weeklyHours} maxLength={80} placeholder="np. 6 godzin" /></div>
             <div className="field"><label htmlFor="journey-goal">Jaki przychód jest Twoim celem?</label><input id="journey-goal" name="goal" defaultValue={data.journey.goal} maxLength={500} placeholder="np. pierwsze 2 000 zł miesięcznie" /></div>
@@ -197,8 +188,8 @@ export function SettingsPanel({
         <div className="next-stage">
           <Check size={19} />
           <span>
-            Preferencje możesz zmieniać w dowolnym momencie. SmartFach użyje
-            najnowszych informacji przy kolejnych odpowiedziach.
+            Profil możesz uzupełniać w dowolnym momencie. SmartFach użyje
+            najnowszych informacji w kolejnych odpowiedziach.
           </span>
         </div>
       </div>

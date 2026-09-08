@@ -324,7 +324,7 @@ export function Home() {
                   <p className="eyebrow">USTAWIENIA I PLAN</p>
                   <h2>Twoje konto</h2>
                   <p>
-                    Ustaw sposób działania, kontroluj plan i zarządzaj swoimi danymi.
+                    Uzupełnij swój profil, kontroluj plan i zarządzaj danymi.
                   </p>
                 </div>
               </div>
