@@ -4,6 +4,7 @@ import type Stripe from "stripe";
 import {
   creditPackById,
   creditPackIdSchema,
+  stripeExistingCustomerUpdate,
   type CreditPackId,
 } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -27,9 +28,11 @@ export async function createUsageTopUpCheckout(input: {
   const session = await stripe.checkout.sessions.create(
     {
       mode: "payment",
+      submit_type: "pay",
       locale: "pl",
       custom_text: { submit: { message: `${pack.credits} jednostek za ${pack.price}. Zakup jednorazowy, wymaga aktywnego abonamentu. Niewykorzystany zapas przechodzi na następne okresy.` } },
       customer: input.customerId,
+      customer_update: stripeExistingCustomerUpdate,
       client_reference_id: input.userId,
       line_items: [
         {

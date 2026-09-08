@@ -3,11 +3,10 @@
 import { useState } from "react";
 
 import {
-  ArrowUpRight,
+  Check,
   CreditCard,
   Gauge,
   LockKeyhole,
-  RefreshCw,
 } from "lucide-react";
 import {
   creditPacks,
@@ -17,7 +16,6 @@ import {
   remainingTopUpCredits,
   type CreditPackId,
 } from "@/domain/billing";
-import { useRouter } from "next/navigation";
 import type { Billing } from "@/domain/workspace";
 import { Dialog } from "./dialog";
 import { PurchaseConsent } from "./purchase-consent";
@@ -36,14 +34,15 @@ export function BillingDialog({
   billing: Billing;
   onClose: () => void;
 }) {
-  const router = useRouter();
   const [busyPack, setBusyPack] = useState<CreditPackId | null>(null);
+  const [selectedPack, setSelectedPack] = useState<CreditPackId>("plus");
   const [error, setError] = useState("");
   const [consented, setConsented] = useState(false);
   const plan = plans[billing.plan];
   const percentage = monthlyUsagePercentage(billing);
   const remaining = remainingCredits(billing);
-  const hasExtraLimit = remainingTopUpCredits(billing) > 0;
+  const extraRemaining = remainingTopUpCredits(billing);
+  const selected = creditPacks.find((pack) => pack.id === selectedPack)!;
 
   async function openCheckout(packId: CreditPackId) {
     if (busyPack || !consented) return;
@@ -71,77 +70,58 @@ export function BillingDialog({
   return (
     <Dialog
       title="Zwiększ limit"
-      description="Pracuj dalej bez czekania na odnowienie planu."
+      description="Jednorazowo dodaj zapas do obecnego planu. Nie zmieniamy ceny ani terminu abonamentu."
       onClose={onClose}
+      busy={Boolean(busyPack)}
       wide
     >
       <div className="billing-dialog">
-        <section className="billing-summary">
-          <div>
-            <span className="billing-plan">Plan {plan.name}</span>
-            <strong>{percentage}% miesięcznego limitu wykorzystane</strong>
-            <p>
-              {remaining > 0
-                ? "Możesz pracować dalej albo zwiększyć zapas już teraz."
-                : "Zwiększ limit, aby od razu kontynuować pracę."}
-            </p>
-          </div>
-          <Gauge size={34} />
+        <section className="billing-summary billing-summary-compact">
+          <div><span className="billing-plan">PLAN {plan.name}</span><strong>{remaining} jednostek pozostało</strong></div>
+          <span className="billing-percentage">{percentage}% wykorzystane</span>
           <div className="credit-progress" aria-label={`${percentage}% wykorzystanego limitu`}>
             <span style={{ width: `${percentage}%` }} />
           </div>
         </section>
-        <div className="credit-rules">
-          <span><Gauge size={16} /> Miesięczny limit odnawia się automatycznie</span>
-          <span><RefreshCw size={16} /> {hasExtraLimit ? "Masz aktywny dodatkowy zapas" : "Dodatkowy zapas nie wygasa z końcem miesiąca"}</span>
-        </div>
-        <div className="limit-renewal-note">
-          <RefreshCw size={17} />
-          <span>
-            Podstawowy limit odnowi się automatycznie z kolejnym okresem planu.
-          </span>
-          <button onClick={() => router.push("/platnosc")}>
-            Wyższy plan <ArrowUpRight size={15} />
-          </button>
-        </div>
         <div className="billing-heading">
           <div>
-            <p className="eyebrow">PRACUJ DALEJ TERAZ</p>
-            <h3>Jednorazowo zwiększ swój limit</h3>
+            <p className="eyebrow">WYBIERZ ZAPAS</p>
+            <h3>Ile dodatkowego limitu potrzebujesz?</h3>
           </div>
-          <span>Nie zmienia abonamentu</span>
+          {extraRemaining > 0 && <span>Masz jeszcze {extraRemaining} dodatkowych jednostek</span>}
         </div>
-        <p className="purchase-summary">Ceny całkowite, płatność jednorazowa. Zapas przechodzi na kolejne okresy; jego wykorzystanie wymaga aktywnego abonamentu. Jednostki rozliczają koszt pracy AI, nie stałą liczbę wiadomości.</p>
-        <PurchaseConsent onChange={setConsented} />
-        <div className="credit-pack-grid">
+        <fieldset className="credit-pack-grid" aria-label="Pakiet dodatkowego limitu">
           {creditPacks.map((pack) => (
-            <article key={pack.id} className={pack.id === "plus" ? "featured" : ""}>
+            <label key={pack.id} className={`${pack.id === "plus" ? "featured " : ""}${selectedPack === pack.id ? "selected" : ""}`}>
+              <input
+                type="radio"
+                name="creditPack"
+                value={pack.id}
+                checked={selectedPack === pack.id}
+                onChange={() => {
+                  setSelectedPack(pack.id);
+                  setError("");
+                }}
+              />
               {pack.id === "plus" && <small>NAJLEPSZY NA START</small>}
-              <Gauge size={23} />
+              <span className="credit-pack-check">{selectedPack === pack.id ? <Check size={16} /> : <Gauge size={16} />}</span>
               <strong>{packNames[pack.id][0]}</strong>
               <p>{packNames[pack.id][1]}</p>
-              <span>{pack.price}</span>
-              <p>{pack.credits} jednostek dodatkowego limitu</p>
-              <button
-                className="button button-primary"
-                disabled={Boolean(busyPack) || !consented}
-                onClick={() => void openCheckout(pack.id)}
-              >
-                <CreditCard size={17} />
-                {busyPack === pack.id ? "Otwieranie…" : "Zwiększ limit"}
-              </button>
-            </article>
+              <b>{pack.credits} jednostek</b>
+              <em>{pack.price}</em>
+            </label>
           ))}
-        </div>
-        {error && <p className="form-error" role="alert">{error}</p>}
-        <div className="billing-local-note">
-          <LockKeyhole size={18} />
-          <p>
-            <strong>Bezpieczna płatność jednorazowa przez Stripe.</strong>
-            Zwiększenie zostanie dopisane po potwierdzeniu płatności i nie zmieni
-            ceny ani terminu Twojego abonamentu.
-          </p>
-        </div>
+        </fieldset>
+        <section className="billing-checkout-box">
+          <div className="billing-order-line"><span>Wybrano <strong>{selected.credits} jednostek</strong></span><b>{selected.price}</b></div>
+          <p>Jednorazowa płatność. Zapas przechodzi na kolejne okresy i działa przy aktywnym abonamencie. Jednostki rozliczają koszt pracy AI, nie stałą liczbę wiadomości.</p>
+          <PurchaseConsent onChange={setConsented} />
+          {error && <p className="form-error" role="alert">{error}</p>}
+          <button type="button" className="button button-primary billing-checkout-button" disabled={Boolean(busyPack) || !consented} onClick={() => void openCheckout(selectedPack)}>
+            <CreditCard size={18} />{busyPack ? "Otwieranie Stripe…" : `Kup za ${selected.price}`}
+          </button>
+          <div className="billing-local-note"><LockKeyhole size={17} /><p><strong>Bezpieczna płatność przez Stripe.</strong> Limit dopiszemy po potwierdzeniu płatności.</p></div>
+        </section>
       </div>
     </Dialog>
   );

@@ -13,6 +13,7 @@ import {
   settleRequestCredits,
   trialPolicy,
   monthlyUsagePercentage,
+  stripeExistingCustomerUpdate,
 } from "./billing";
 
 const billing = {
@@ -57,6 +58,10 @@ describe("kredyty SmartFach", () => {
       credits: 1_100,
       unitAmountGrosze: 12_999,
     });
+  });
+
+  it("pozwala Stripe uzupełnić nazwę istniejącego klienta przy zbieraniu NIP", () => {
+    expect(stripeExistingCustomerUpdate).toEqual({ name: "auto" });
   });
 
   it("zużywa dodatkowy limit dopiero po miesięcznym", () => {

@@ -22,6 +22,7 @@ export function Dialog({
     const element = ref.current;
     const trigger = document.activeElement;
     element?.showModal();
+    if (element) element.scrollTop = 0;
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {

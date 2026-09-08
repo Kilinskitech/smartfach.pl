@@ -80,6 +80,10 @@ export const creditPacks = [
   },
 ] as const;
 
+// Stripe wymaga automatycznej aktualizacji nazwy, gdy Checkout zbiera NIP
+// dla klienta utworzonego wcześniej przy subskrypcji.
+export const stripeExistingCustomerUpdate = { name: "auto" } as const;
+
 export function matchesSubscriptionPrice(plan: PlanId, price: {
   active: boolean; currency: string; unit_amount: number | null;
   recurring?: { interval: string; interval_count: number } | null;
