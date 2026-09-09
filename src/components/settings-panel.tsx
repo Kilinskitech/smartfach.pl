@@ -60,8 +60,8 @@ export function SettingsPanel({
         <div className="card-heading">
           <SlidersHorizontal size={21} />
           <div>
-            <h3>Twój profil działania</h3>
-            <p>Stałe informacje, które pomagają dopasować kolejne działania.</p>
+            <h3>Kilka słów o Tobie</h3>
+            <p>Ogólne informacje dla asystenta. Pomysł i warunki każdego biznesu ustalisz w jego czacie.</p>
           </div>
         </div>
         <form
@@ -71,13 +71,8 @@ export function SettingsPanel({
             event.preventDefault();
             const form = new FormData(event.currentTarget);
             const parsed = journeySchema.safeParse({
-              workStyle: data.journey.workStyle,
-              weeklyHours: form.get("weeklyHours"),
-              experience: form.get("experience"),
-              constraints: form.get("constraints"),
-              focus: form.get("focus"),
-              goal: form.get("goal"),
-              onboardingCompleted: true,
+              ...data.journey,
+              aboutMe: form.get("aboutMe"),
             });
             if (!parsed.success) {
               setJourneyError("Sprawdź wpisane informacje.");
@@ -95,13 +90,7 @@ export function SettingsPanel({
             }
           }}
         >
-          <div className="two-fields">
-            <div className="field"><label htmlFor="journey-hours">Ile czasu masz tygodniowo?</label><input id="journey-hours" name="weeklyHours" defaultValue={data.journey.weeklyHours} maxLength={80} placeholder="np. 6 godzin" /></div>
-            <div className="field"><label htmlFor="journey-goal">Jaki przychód jest Twoim celem?</label><input id="journey-goal" name="goal" defaultValue={data.journey.goal} maxLength={500} placeholder="np. pierwsze 2 000 zł miesięcznie" /></div>
-          </div>
-          <div className="field"><label htmlFor="journey-experience">Co już umiesz lub robiłeś wcześniej?</label><textarea id="journey-experience" name="experience" defaultValue={data.journey.experience} maxLength={1200} rows={3} placeholder="Nie muszą to być zawodowe umiejętności." /></div>
-          <div className="field"><label htmlFor="journey-constraints">Czego nie chcesz robić albo co Cię ogranicza?</label><textarea id="journey-constraints" name="constraints" defaultValue={data.journey.constraints} maxLength={1200} rows={3} placeholder="np. bez rozmów telefonicznych, bez pokazywania twarzy, mały budżet" /></div>
-          <div className="field"><label htmlFor="journey-focus">Nad czym obecnie pracujesz?</label><input id="journey-focus" name="focus" defaultValue={data.journey.focus} maxLength={160} placeholder="Możesz zostawić puste, jeśli dopiero szukasz kierunku" /></div>
+          <div className="field"><label htmlFor="journey-about">Napisz coś o sobie — opcjonalnie</label><textarea id="journey-about" name="aboutMe" defaultValue={data.journey.aboutMe ?? ""} maxLength={1200} rows={5} placeholder="Co umiesz robić, jakie masz doświadczenie, co Cię interesuje? Nie muszą to być zawodowe umiejętności." /></div>
           {journeyError && <p className="form-error" role="alert">{journeyError}</p>}
           {journeySaved && <p className="success-note" role="status"><Check size={16} />SmartFach będzie korzystał z tych informacji.</p>}
           <button className="button button-primary" disabled={journeyBusy}><Target size={18} />{journeyBusy ? "Zapisywanie…" : "Zapisz profil"}</button>

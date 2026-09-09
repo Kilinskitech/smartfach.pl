@@ -24,7 +24,6 @@ import { AssistantMessage } from "./assistant-message";
 import type { Conversation, Workspace } from "@/domain/workspace";
 import type { AssistantAttachment, AssistantResult, GuidedStart } from "@/domain/assistant";
 import { estimateRequestCredits, remainingCredits } from "@/domain/billing";
-import { completeJourneyOnboarding } from "@/domain/journey";
 import { readAssistantResponse } from "@/lib/assistant-response";
 
 type PendingAttachment = AssistantAttachment & {
@@ -34,8 +33,7 @@ type PendingAttachment = AssistantAttachment & {
 };
 type StartBoundary = "phone" | "camera" | "budget";
 type StartPriority = "fast" | "low_cost" | "after_hours" | "full_income";
-type StartMode = "guided" | "tasks" | "question" | "result";
-type TaskStart = "clients" | "offer" | "plan";
+type StartMode = "guided" | "question";
 type SendOptions = {
   text?: string;
   displayText?: string;
@@ -69,7 +67,6 @@ type Props = {
     billing: Workspace["billing"],
     workspaceRevision: number,
   ) => Promise<void>;
-  onSaveJourney: (journey: Workspace["journey"]) => Promise<void>;
   onSettings: () => void;
   onBusy: (busy: boolean) => void;
   onOpenBilling: () => void;
@@ -82,7 +79,6 @@ export function ChatPanel({
   checking,
   checkConnection,
   onSaveConversation,
-  onSaveJourney,
   onSettings,
   onBusy,
   onOpenBilling,
@@ -101,28 +97,15 @@ export function ChatPanel({
   const creditsLeft = remainingCredits(data.billing);
   const requestCost = estimateRequestCredits(attachments);
   const creditExhausted = creditsLeft < requestCost;
-  const profileHasMeaningfulData = Boolean(
-    data.journey.focus.trim() ||
-      data.journey.goal.trim() ||
-      data.journey.weeklyHours.trim() ||
-      data.journey.experience.trim() ||
-      data.journey.constraints.trim() ||
-      data.journey.workStyle !== "open",
-  );
-  const onboardingCompleted =
-    data.journey.onboardingCompleted || profileHasMeaningfulData;
-  const [startStyle, setStartStyle] = useState<"remote" | "local" | "open">(
-    data.journey.workStyle === "remote" || data.journey.workStyle === "local"
-      ? data.journey.workStyle
-      : "open",
-  );
+  const [startStyle, setStartStyle] = useState<"remote" | "local" | "open">("open");
+  const [businessName, setBusinessName] = useState("");
   const [startSituation, setStartSituation] = useState<"unknown" | "idea" | "skills">("unknown");
   const [startPriorities, setStartPriorities] = useState<StartPriority[]>([]);
   const [startBoundaries, setStartBoundaries] = useState<StartBoundary[]>([]);
   const [customBoundary, setCustomBoundary] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [startMode, setStartMode] = useState<StartMode>(
-    onboardingCompleted ? "tasks" : "guided",
+    "guided",
   );
   const [profileBusy, setProfileBusy] = useState(false);
   function toggleBoundary(boundary: StartBoundary) {
@@ -178,6 +161,7 @@ export function ChatPanel({
       (priority) => priorityLabels[priority],
     );
     const details = [
+      businessName.trim() ? `Biznes lub pomysł: ${businessName.trim()}.` : "",
       `Preferencja pracy: ${workStyle}.`,
       `Punkt startu: ${situation}.`,
       selectedPriorities.length
@@ -196,54 +180,28 @@ export function ChatPanel({
     onBusy(true);
     setError("");
     try {
-      await onSaveJourney(
-        completeJourneyOnboarding(data.journey, guidedStart),
-      );
       await send({
         text: details,
-        displayText: "Zaczynamy — przygotuj mój pierwszy kierunek działania",
+        displayText: `Zaczynamy${businessName.trim() ? ` — ${businessName.trim()}` : " — nowy biznes"}\n\n${details}`,
         mode: "guided_start",
         guidedStart,
-        title: "Mój pierwszy kierunek",
+        title: businessName.trim() || "Nowy biznes",
       });
     } catch (error) {
       setError(
         error instanceof Error
           ? error.message
-          : "Nie zapisano profilu. Spróbuj ponownie.",
+          : "Nie rozpoczęto rozmowy. Spróbuj ponownie.",
       );
     } finally {
       setProfileBusy(false);
       onBusy(false);
     }
   }
-  function openQuestion(mode: "question" | "result") {
+  function openQuestion(mode: "question") {
     setStartMode(mode);
     setError("");
     requestAnimationFrame(() => textarea.current?.focus());
-  }
-  function startTask(task: TaskStart) {
-    const tasks: Record<
-      TaskStart,
-      { text: string; displayText: string; title: string }
-    > = {
-      clients: {
-        text: "Pomóż mi wybrać najlepszy sposób dotarcia do pierwszych klientów dla usługi dopasowanej do mojego profilu. Uwzględnij mój aktualny etap i zakończ jednym działaniem do wykonania dzisiaj.",
-        displayText: "Chcę znaleźć klientów",
-        title: "Jak znaleźć klientów",
-      },
-      offer: {
-        text: "Pomóż mi dopracować ofertę usługi na podstawie mojego profilu i aktualnego kierunku. Zacznij od najważniejszej decyzji, którą możemy podjąć teraz, i przygotuj konkretną propozycję.",
-        displayText: "Chcę dopracować ofertę",
-        title: "Dopracowanie oferty",
-      },
-      plan: {
-        text: "Ułóż mi konkretny plan najbliższych działań na podstawie mojego profilu, celu i dostępnego czasu. Zacznij od zadania, które mam wykonać jako pierwsze.",
-        displayText: "Chcę zaplanować działania",
-        title: "Plan najbliższych działań",
-      },
-    };
-    void send({ ...tasks[task], mode: "chat" });
   }
   async function addImage(file: File | undefined) {
     if (!file) return;
@@ -309,7 +267,7 @@ export function ChatPanel({
     }
     if (!conversation && data.conversations.length >= 30) {
       setError(
-        "Osiągnięto limit 30 rozmów. Wybierz wcześniejszą rozmowę z historii.",
+        "Osiągnięto limit 30 rozmów. Usuń niepotrzebny czat albo kontynuuj wcześniejszą rozmowę.",
       );
       return;
     }
@@ -359,6 +317,7 @@ export function ChatPanel({
       const id = attempt.conversationId;
       const updated: Conversation = {
         id,
+        businessContext: conversation?.businessContext ?? (options.mode === "guided_start" ? text : undefined),
         title: conversation?.title ?? options.title ?? text.slice(0, 70),
         updatedAt: new Date().toISOString(),
         messages: [
@@ -433,13 +392,13 @@ export function ChatPanel({
           </div>
           {startMode === "guided" ? (
             <>
-              <p className="eyebrow">SMARTFACH ZACZYNA DZIAŁAĆ</p>
-              <h2>Powiedz, jak chcesz pracować.</h2>
+              <p className="eyebrow">NOWY CZAT · NOWY KIERUNEK</p>
+              <h2>Nad jakim biznesem pracujemy?</h2>
               <p className="welcome-copy">
-                Zaznacz odpowiedzi najbliższe Twojej sytuacji. Po zatwierdzeniu
-                SmartFach wybierze kierunek i od razu przeprowadzi Cię do
-                pierwszego konkretnego działania.
+                Ten czat ma własny pomysł i ustalenia. Wypełnij krótką ankietę,
+                a SmartFach od razu przejdzie do działania — albo po prostu zadaj pytanie.
               </p>
+              <button className="start-question-button" type="button" onClick={() => openQuestion("question")}><MessageCircle size={17} /> Chcę tylko zadać pytanie</button>
               <form
                 className="start-profile"
                 aria-label="Rozpoczęcie pracy ze SmartFach"
@@ -448,6 +407,7 @@ export function ChatPanel({
                   void preparePersonalStart();
                 }}
               >
+                <label className="start-profile-custom start-profile-wide" htmlFor="business-name"><span>Nazwa biznesu lub pomysłu — opcjonalnie</span><input id="business-name" value={businessName} onChange={event => setBusinessName(event.target.value)} maxLength={80} placeholder="np. Zdjęcia produktowe dla sklepów" /></label>
                 <fieldset>
                   <legend>Gdzie chcesz pracować?</legend>
                   <div>
@@ -511,62 +471,15 @@ export function ChatPanel({
                 </div>
               </form>
             </>
-          ) : startMode === "tasks" ? (
-            <>
-              <p className="eyebrow">CO ROBIMY TERAZ?</p>
-              <h2>Nad czym chcesz teraz pracować?</h2>
-              <p className="welcome-copy">
-                SmartFach pamięta Twój profil. Wybierz aktualne zadanie, a od
-                razu przejdzie do konkretnego działania.
-              </p>
-              <div className="task-start-grid" aria-label="Wybierz zadanie">
-                <button type="button" disabled={busy || !available || creditExhausted} onClick={() => startTask("clients")}>
-                  <span><Compass size={20} /></span>
-                  <strong>Znajdź klientów</strong>
-                  <small>Wybierz kanał dotarcia i wykonaj pierwszy krok</small>
-                  <ArrowRight size={17} />
-                </button>
-                <button type="button" disabled={busy || !available || creditExhausted} onClick={() => startTask("offer")}>
-                  <span><Sparkles size={20} /></span>
-                  <strong>Dopracuj ofertę</strong>
-                  <small>Ułóż usługę, wartość, zakres i cenę testową</small>
-                  <ArrowRight size={17} />
-                </button>
-                <button type="button" disabled={busy || !available || creditExhausted} onClick={() => startTask("plan")}>
-                  <span><Clock3 size={20} /></span>
-                  <strong>Zaplanuj działania</strong>
-                  <small>Zamień cel i dostępny czas w konkretny plan</small>
-                  <ArrowRight size={17} />
-                </button>
-                <button type="button" disabled={busy || !available || creditExhausted} onClick={() => openQuestion("result")}>
-                  <span><TrendingUp size={20} /></span>
-                  <strong>Przeanalizuj wynik</strong>
-                  <small>Opisz, co się wydarzyło, i wybierz kolejny ruch</small>
-                  <ArrowRight size={17} />
-                </button>
-              </div>
-              {busy && <p className="task-start-working"><LoaderCircle size={17} /> SmartFach rozpoczyna działanie…</p>}
-              {error && <div className="chat-error task-start-error" role="alert">{error}</div>}
-              {creditExhausted && (
-                <button className="task-start-billing" type="button" onClick={onOpenBilling}>
-                  Zwiększ limit, aby kontynuować
-                </button>
-              )}
-              <button className="start-question-button task-own-question" type="button" disabled={busy} onClick={() => openQuestion("question")}>
-                <MessageCircle size={17} /> Zadaj własne pytanie
-              </button>
-            </>
           ) : (
             <>
-              <p className="eyebrow">{startMode === "result" ? "SPRAWDŹMY, CO ZADZIAŁAŁO" : "ZAPYTAJ SMARTFACH"}</p>
-              <h2>{startMode === "result" ? "Co się wydarzyło?" : "O co chcesz zapytać?"}</h2>
+              <p className="eyebrow">ZAPYTAJ SMARTFACH</p>
+              <h2>O co chcesz zapytać?</h2>
               <p className="welcome-copy">
-                {startMode === "result"
-                  ? "Opisz wykonane działanie, odpowiedź klienta albo wynik testu. SmartFach pomoże wyciągnąć wnioski i wybrać kolejny krok."
-                  : "Możesz poprosić o wyjaśnienie, analizę pomysłu, przygotowanie treści albo dodać zdjęcie."}
+                Możesz poprosić o wyjaśnienie, analizę pomysłu, przygotowanie treści albo dodać zdjęcie.
               </p>
-              <button className="start-back-button" type="button" onClick={() => setStartMode(onboardingCompleted ? "tasks" : "guided")}>
-                <ArrowLeft size={16} /> {onboardingCompleted ? "Wróć do wyboru zadania" : "Wróć do rozpoczęcia działania"}
+              <button className="start-back-button" type="button" onClick={() => setStartMode("guided")}>
+                <ArrowLeft size={16} /> Wróć do ankiety nowego biznesu
               </button>
             </>
           )}
@@ -620,7 +533,7 @@ export function ChatPanel({
           <div ref={lastMessage} />
         </div>
       )}
-      {(busy || messages.length > 0 || startMode === "question" || startMode === "result") && <div className="composer-area">
+      {(busy || messages.length > 0 || startMode === "question") && <div className="composer-area">
         {creditExhausted && (
           <div className="credit-limit-banner" role="alert">
             <Sparkles size={18} />
@@ -654,7 +567,7 @@ export function ChatPanel({
             onKeyDown={keydown}
             maxLength={6000}
             rows={3}
-            placeholder={startMode === "result" && messages.length === 0 ? "Opisz wykonane działanie i jego wynik…" : "Napisz wiadomość albo dodaj zdjęcie…"}
+            placeholder="Napisz wiadomość albo dodaj zdjęcie…"
             disabled={busy}
           />
           {attachments.length > 0 && (

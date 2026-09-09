@@ -64,7 +64,8 @@ wykonaj następny krok**.
 Docelowo SmartFach będzie pamiętał zatwierdzone informacje o ofercie, próbach
 sprzedaży i wynikach. Obecnie kontekst AI to zapisany profil oraz ostatnie 11
 wiadomości otwartej rozmowy i nowe pytanie. Historia pozostaje dostępna użytkownikowi,
-ale nie jest automatycznie przeszukiwana między czatami. Nie reklamujemy pełnej
+ale nie jest automatycznie przeszukiwana między czatami. Każdy czat ma własny zapisany
+kontekst startowy biznesu; wspólny profil to wyłącznie jawne „O mnie”. Nie reklamujemy pełnej
 pamięci postępu przed jej wdrożeniem. Asystent pomaga m.in.:
 
 - wybrać i zawęzić usługę;
@@ -98,14 +99,15 @@ typów Odkryj/Uruchom/Prowadź ani segmentu Firma. Rejestracja wymaga wyłączni
 Lite lub Pro. Nowe konta zaczynają w kontekście budowania własnego przychodu.
 
 Głównym miejscem pracy jest jeden asystent przyjmujący tekst i zdjęcia.
-Tylko pierwsze uruchomienie pokazuje krótki profil z odpowiedziami wielokrotnego
-wyboru i polem dodatkowych informacji. Zatwierdzenie zapisuje profil na koncie,
-uruchamia rekomendację i pierwsze działanie bez kopiowania promptu do pola rozmowy.
-Każda kolejna nowa rozmowa zaczyna się od wyboru aktualnego zadania: klienci, oferta,
-plan działań, analiza wyniku albo własne pytanie. Ustawienia służą do późniejszej
-edycji stałych informacji profilu: czasu, doświadczenia, ograniczeń, celu i fokusu.
-Preferencja pracy zdalnej lub lokalnej jest zapisywana podczas rozpoczęcia pracy,
-ale nie jest powtarzana jako osobne pole ustawień.
+Każda nowa rozmowa pokazuje krótką ankietę nowego biznesu z opcjonalną nazwą,
+odpowiedziami wielokrotnego wyboru i dodatkowymi informacjami. Można ją ominąć
+przez „Chcę tylko zadać pytanie”. Zatwierdzenie od razu uruchamia asystenta;
+ankieta zapisuje się przy czacie, nie w profilu osoby. Różne czaty mogą dotyczyć
+różnych biznesów, z niezależnymi celami, budżetami i ograniczeniami.
+Ustawienia zawierają jedno opcjonalne pole „Napisz coś o sobie” na ogólne umiejętności,
+doświadczenie i zainteresowania. Starsze pola pozostają w danych dla zgodności,
+ale nie są już przekazywane do AI. Usunięcie czatu wymaga potwierdzenia i nie zmienia
+profilu, innych rozmów ani rozliczonego limitu.
 
 Historyczne schematy workflow firm terenowych pozostają czasowo w modelu workspace,
 aby nie usuwać danych. Nie mają wejścia w głównej aplikacji, rejestracji ani

@@ -1209,3 +1209,20 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   jakości w złożonych zadaniach. Bez zmian cen abonamentów, limitów lub bazy danych.
 - Zaktualizowano MASTER_PLAN, AI_ARCHITECTURE oraz instrukcje konfiguracji.
 - Źródło: https://openrouter.ai/google/gemini-3.1-flash-lite.
+
+## D060 — Osobny biznes w każdym czacie i ogólny profil osoby
+
+- Data: 2026-09-09. Na prośbę foundera każdy nowy czat zaczyna ankieta lub pytanie
+  bez ankiety. Zastępuje jednorazowy onboarding i przenoszenie ustaleń do profilu.
+- Opcjonalna nazwa identyfikuje biznes na liście. Ankieta zostaje przy rozmowie
+  jako businessContext i pierwsza wiadomość; kolejne wywołania odczytują tylko kontekst
+  bieżącego czatu. Nowsze ustalenia mają pierwszeństwo. Brak pamięci innych czatów.
+- W profilu pozostaje jedno pole aboutMe. Nie kopiujemy automatycznie starych pól,
+  bo zawierają pomieszane dane osoby i pierwszego biznesu. Zachowujemy je w workspace
+  dla zgodności i eksportu, lecz nie używamy ich w nowych promptach.
+- Usuwanie na desktopie i telefonie wymaga potwierdzenia. Dopiero udany zapis usuwa
+  czat z widoku; błąd pozostawia rozmowę. Operacja zablokowana podczas generacji/zapisu.
+  Brak zwrotu zużycia i zmian innych rozmów. Nie obiecujemy natychmiastowego usunięcia
+  technicznych receipt ani backupów poza polityką retencji.
+- Pola opcjonalne w istniejącym JSONB, bez migracji SQL. MASTER_PLAN, MVP_SPEC
+  i AI_ARCHITECTURE zaktualizowane. Model i ceny bez zmian.

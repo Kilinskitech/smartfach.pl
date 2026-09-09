@@ -32,6 +32,24 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
+  it("uses only the current business and explicit general profile, never legacy business data", async () => {
+    const workspace = fixtureWorkspace();
+    workspace.journey = { ...workspace.journey, aboutMe: "OGOLNY_PROFIL", focus: "STARY_BIZNES", experience: "STARE_DANE", workStyle: "local" };
+    workspace.conversations = [
+      { id: "one", title: "one", messages: [], updatedAt: "2026-09-09T10:00:00Z", businessContext: "BIZNES_JEDEN" },
+      { id: "two", title: "two", messages: [], updatedAt: "2026-09-09T10:00:00Z", businessContext: "BIZNES_DWA" },
+    ];
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async () => Response.json(provider()));
+    await callAssistant({ ...input, conversationId: "one" }, workspace, fetcher);
+    const body = String(fetcher.mock.calls[0]?.[1]?.body);
+    expect(body).toContain("OGOLNY_PROFIL");
+    expect(body).toContain("BIZNES_JEDEN");
+    expect(body).not.toContain("BIZNES_DWA");
+    expect(body).not.toContain("STARY_BIZNES");
+    expect(body).not.toContain("STARE_DANE");
+    await callAssistant({ ...input, conversationId: null }, workspace, fetcher);
+    expect(String(fetcher.mock.calls[1]?.[1]?.body)).not.toContain("BIZNES_JEDEN");
+  });
   it("streams reply while preserving final cost, identity and server validation", async () => {
     const bytes = new TextEncoder().encode(
       'data: ' + JSON.stringify({id:"gen-stream",model:"google/gemini-3.8-flash",provider:"Google",choices:[{delta:{content:'{"reply":"Gotowe"}'},finish_reason:"stop"}]}) + '\n\n' +

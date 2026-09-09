@@ -48,14 +48,18 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 
 ## Kontekst użytkownika
 
-Prompt otrzymuje zatwierdzone preferencje: zdalnie/lokalnie, czas tygodniowo,
-doświadczenie, ograniczenia, cel i bieżący fokus. Typ konta ani tryb rozmowy nie są
-częścią kontekstu; wszystkie konta używają jednego procesu budowania przychodu.
-Jednorazowy pierwszy ekran zapisuje profil w workspace, a następnie przekazuje
-techniczny tryb `guided_start`: asystent ma od razu porównać maksymalnie trzy kierunki,
-rekomendować jeden i zacząć pierwsze działanie. Kolejne nowe rozmowy używają zapisanego
-profilu i zaczynają się od wyboru aktualnego zadania. Ścieżka zwykłego pytania omija
-workflow startowy.
+Prompt otrzymuje wyłącznie `journey.aboutMe` jako wspólną informację o osobie.
+Starsze focus, goal, workStyle, experience, constraints i weeklyHours pozostają
+w danych, lecz nie są przekazywane do modelu, bo mogły dotyczyć innego biznesu.
+Każdy nowy czat ma opcjonalną ankietę (`guided_start`) lub ścieżkę pytania bez ankiety.
+Zatwierdzenie nie zapisuje profilu konta przed generacją. Szczegóły są widoczne
+w pierwszej wiadomości i zachowane w opcjonalnym `conversation.businessContext`.
+Kolejne odpowiedzi otrzymują ten kontekst znaleziony po conversationId wyłącznie
+w autoryzowanym workspace, nawet jeśli pierwsza wiadomość wypadnie z okna historii.
+Nowsze ustalenia rozmowy mają pierwszeństwo. Inne czaty nie trafiają do promptu.
+Usunięcie rozmowy to zapis workspace bez tej pozycji (RLS i rewizja zachowane).
+Nie zmienia salda ani danych pozostałych rozmów; kopie techniczne mają istniejącą retencję.
+Pola są opcjonalne, więc starsze konta i rozmowy pozostają czytelne bez migracji SQL.
 
 Asystent ma:
 

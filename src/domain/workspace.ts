@@ -180,9 +180,11 @@ export const conversationSchema = z.object({
   title: name,
   updatedAt: z.string().datetime(),
   messages: z.array(messageSchema).max(60),
+  businessContext: z.string().max(3000).optional(),
   pendingDocument: pendingDocumentSchema.optional(),
 });
 export const journeySchema = z.object({
+  aboutMe: z.string().trim().max(1200).optional(),
   focus: z.string().max(160),
   goal: z.string().max(500),
   workStyle: workStyleSchema.default("open"),

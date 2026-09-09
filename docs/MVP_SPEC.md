@@ -11,11 +11,11 @@ ofertę i wykonać kolejne działania prowadzące do pierwszych klientów.
 
 1. Publiczny landing z jednym kierunkiem i planami Lite/Pro.
 2. Rejestracja, 3-dniowa próba z kartą, logowanie i zarządzanie abonamentem.
-3. Jednorazowy profil startowy: zdalnie/lokalnie, sytuacja, priorytety i ograniczenia.
-4. Ustawienia: czas tygodniowo, doświadczenie, ograniczenia, cel i bieżący fokus.
+3. Ankieta osobnego biznesu na początku każdego czatu albo zwykłe pytanie bez ankiety.
+4. Ustawienia: jedno ogólne pole „Napisz coś o sobie”, bez celu konkretnego biznesu.
 5. Jeden asystent z tekstem i zdjęciami.
 6. Odpowiedź ograniczona do konkretnych opcji, rekomendacji i następnego kroku.
-7. Historia rozmów oraz zapis zatwierdzonego profilu.
+7. Historia i usuwanie rozmów; odrębny kontekst biznesu przy każdym czacie.
 8. Kontrola wykorzystania, kosztu OpenRouter i limitu planu.
 9. Panel jednego administratora z metrykami klientów, płatności i kosztów.
 10. Kontakt, regulamin, polityka prywatności, SEO i wyłączenie indeksowania Preview.
@@ -30,8 +30,8 @@ Landing → wybór Lite/Pro → konto → Stripe Checkout → potwierdzenie adre
 jednorazowy profil startowy → do trzech pytań → do trzech kierunków → jedna rekomendacja →
 pierwsza oferta → jedno działanie do wykonania dzisiaj.
 
-Kolejne nowe rozmowy nie powtarzają profilu. Pokazują krótki wybór bieżącego zadania
-i uruchamiają pracę natychmiast; profil można zmienić w ustawieniach konta.
+Każda nowa rozmowa umożliwia rozpoczęcie innego biznesu przez ankietę lub zadanie
+pytania bez ankiety. Nie aktualizuje wspólnego profilu i nie dziedziczy innego biznesu.
 
 ## Kryterium jakości odpowiedzi
 

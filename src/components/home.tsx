@@ -9,7 +9,7 @@ import {
   Plus,
   Settings,
   ShieldCheck,
-  Target,
+  Trash2,
   UserRound,
 } from "lucide-react";
 import { BrandMark } from "./brand";
@@ -20,6 +20,7 @@ import { SettingsPanel } from "./settings-panel";
 import { useWorkspace } from "./use-workspace";
 import { usageLimitView, plans } from "@/domain/billing";
 import type { Conversation } from "@/domain/workspace";
+import { deleteConversation } from "@/domain/conversations";
 
 type View = "chat" | "settings";
 type Modal = "conversations" | "billing" | null;
@@ -35,6 +36,29 @@ export function Home() {
   const [available, setAvailable] = useState<boolean | null>(null);
   const [checking, setChecking] = useState(false);
   const [webSearch, setWebSearch] = useState(false);
+  const [deleting, setDeleting] = useState<Conversation | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+
+  function askDelete(conversation: Conversation) {
+    if (chatBusy || saving) return;
+    setModal(null);
+    setDeleteError("");
+    setDeleting(conversation);
+  }
+  async function confirmDelete() {
+    if (!deleting || chatBusy || saving || deleteBusy) return;
+    const id = deleting.id;
+    setDeleteBusy(true);
+    setDeleteError("");
+    try {
+      await commit(current => deleteConversation(current, id));
+      setDeleting(null);
+      if (conversationId === id) newConversation();
+    } catch (error) {
+      setDeleteError(error instanceof Error ? error.message : "Nie usunięto rozmowy.");
+    } finally { setDeleteBusy(false); }
+  }
 
   function applyAiConfiguration(configuration: AiConfiguration) {
     setAvailable(configuration.available === true);
@@ -71,6 +95,7 @@ export function Home() {
   }, []);
 
   function navigate(next: View) {
+    if (chatBusy) return;
     setView(next);
     setModal(null);
   }
@@ -141,10 +166,10 @@ export function Home() {
             className="goal-summary"
             onClick={() => navigate("settings")}
           >
-            <Target size={18} />
+            <UserRound size={18} />
             <span>
-              <small>TWÓJ CEL</small>
-              <strong>{data.journey.goal || "Zbuduj własny przychód"}</strong>
+              <small>TWÓJ PROFIL</small>
+              <strong>Kilka słów o Tobie</strong>
             </span>
             <Settings size={15} />
           </button>
@@ -175,8 +200,8 @@ export function Home() {
           <div className="recent-conversations">
             <p className="nav-label">ROZMOWY</p>
             {conversations.map((conversation) => (
+              <div className="conversation-row" key={conversation.id}>
               <button
-                key={conversation.id}
                 className={conversation.id === conversationId ? "selected" : ""}
                 aria-current={
                   conversation.id === conversationId ? "page" : undefined
@@ -188,6 +213,8 @@ export function Home() {
                 <MessageCircle size={14} />
                 <span>{conversation.title}</span>
               </button>
+              <button className="conversation-delete" disabled={chatBusy || saving} aria-label={`Usuń czat: ${conversation.title}`} title="Usuń czat" onClick={() => askDelete(conversation)}><Trash2 size={16} /></button>
+              </div>
             ))}
           </div>
         )}
@@ -309,9 +336,6 @@ export function Home() {
                 checking={checking}
                 checkConnection={checkConnection}
                 onSaveConversation={saveConversation}
-                onSaveJourney={async (journey) => {
-                  await commit((current) => ({ ...current, journey }));
-                }}
                 onSettings={() => navigate("settings")}
                 onBusy={setChatBusy}
                 onOpenBilling={() => setModal("billing")}
@@ -387,8 +411,8 @@ export function Home() {
               <ChevronRight size={17} />
             </button>
             {conversations.map((conversation) => (
+              <div className="conversation-row" key={conversation.id}>
               <button
-                key={conversation.id}
                 className={conversation.id === conversationId ? "selected" : ""}
                 onClick={() => selectConversation(conversation.id)}
               >
@@ -403,7 +427,18 @@ export function Home() {
                 </span>
                 <ChevronRight size={17} />
               </button>
+              <button className="conversation-delete" disabled={chatBusy || saving} aria-label={`Usuń czat: ${conversation.title}`} onClick={() => askDelete(conversation)}><Trash2 size={18} /></button>
+              </div>
             ))}
+          </div>
+        </Dialog>
+      )}
+      {deleting && (
+        <Dialog title="Usunąć ten czat?" description={`„${deleting.title}” zniknie z Twojej listy wraz z ankietą i historią. Nie ma przycisku cofnięcia. Pozostałe czaty, profil i limit pozostaną bez zmian.`} busy={deleteBusy} onClose={() => setDeleting(null)}>
+          <div className="conversation-delete-confirm">
+            <p className="form-hint">To usuwa rozmowę z historii konta. Techniczne kopie odpowiedzi i kopie zapasowe podlegają okresom retencji opisanym w polityce prywatności.</p>
+            {deleteError && <p className="form-error" role="alert">{deleteError}</p>}
+            <div className="dialog-actions"><button className="button" disabled={deleteBusy} onClick={() => setDeleting(null)}>Zachowaj czat</button><button className="button button-primary" disabled={deleteBusy} onClick={() => void confirmDelete()}><Trash2 size={17} />{deleteBusy ? "Usuwanie…" : "Usuń czat"}</button></div>
           </div>
         </Dialog>
       )}

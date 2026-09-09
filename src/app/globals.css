@@ -2053,7 +2053,8 @@ svg {
   gap: 7px;
   padding: 18px 24px 24px;
 }
-.conversation-dialog-list > button {
+.conversation-dialog-list > button,
+.conversation-dialog-list .conversation-row > button {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -2066,11 +2067,13 @@ svg {
   color: var(--ink);
   text-align: left;
 }
-.conversation-dialog-list > button.selected {
+.conversation-dialog-list > button.selected,
+.conversation-dialog-list .conversation-row > button.selected {
   border-color: #b9cdbd;
   background: #f0f5ec;
 }
-.conversation-dialog-list > button > span:nth-child(2) {
+.conversation-dialog-list > button > span:nth-child(2),
+.conversation-dialog-list .conversation-row > button > span:nth-child(2) {
   flex: 1;
   min-width: 0;
 }
@@ -2078,6 +2081,12 @@ svg {
 .conversation-dialog-list small {
   display: block;
 }
+.conversation-row { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.conversation-row > button:first-child { flex: 1; min-width: 0; }
+.conversation-row > button.conversation-delete { flex: 0 0 44px; width: 44px; min-height: 44px; padding: 10px; justify-content: center; }
+.conversation-delete:hover:not(:disabled) { color: #a33725; background: #fff0ec; }
+.conversation-delete-confirm { padding: 0 24px 24px; display: grid; gap: 20px; }
+.conversation-delete-confirm .dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
 .conversation-dialog-list strong {
   overflow: hidden;
   font-size: 12px;
