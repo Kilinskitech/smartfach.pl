@@ -10,7 +10,7 @@ describe("new chat and general profile", () => {
     data.journey = { ...data.journey, onboardingCompleted: true, focus: "Stary sklep", workStyle: "local" };
     const html = renderToStaticMarkup(<ChatPanel data={data} conversation={undefined} available={true} webSearch={true} checking={false} checkConnection={vi.fn()} onSaveConversation={vi.fn()} onSettings={vi.fn()} onBusy={vi.fn()} onOpenBilling={vi.fn()} />);
     expect(html).toContain("Nad jakim biznesem pracujemy?");
-    expect(html).toContain("Chcę tylko zadać pytanie");
+    expect(html.match(/Chcę tylko zadać pytanie/g)).toHaveLength(1);
     expect(html).toContain("business-name");
     expect(html).not.toContain("Stary sklep");
     expect(html).not.toContain("task-start-grid");

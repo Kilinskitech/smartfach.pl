@@ -398,7 +398,6 @@ export function ChatPanel({
                 Ten czat ma własny pomysł i ustalenia. Wypełnij krótką ankietę,
                 a SmartFach od razu przejdzie do działania — albo po prostu zadaj pytanie.
               </p>
-              <button className="start-question-button" type="button" onClick={() => openQuestion("question")}><MessageCircle size={17} /> Chcę tylko zadać pytanie</button>
               <form
                 className="start-profile"
                 aria-label="Rozpoczęcie pracy ze SmartFach"

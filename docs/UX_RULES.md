@@ -1,6 +1,6 @@
 # SmartFach — reguły UX
 
-Stan: 2026-09-06.
+Stan: 2026-09-09.
 
 - Jedna publiczna obietnica, jedna główna ścieżka i dwa plany. Bez wyboru branży,
   typu firmy ani etapu „Odkryj/Uruchom/Prowadź”.
@@ -12,8 +12,8 @@ Stan: 2026-09-06.
 - Nie używamy „łatwe pieniądze”, „dochód pasywny”, sztucznej pilności, fikcyjnych
   opinii ani nieudowodnionych twierdzeń o skuteczności.
 - Główne CTA brzmi jak rozpoczęcie pracy nad ofertą, nie zakup kursu.
-- Pierwszy ekran aplikacji ma trzy krótkie grupy wyboru i jeden przycisk. Nie jest
-  pustym czatem ani wielostronicowym formularzem.
+- Każdy nowy czat zaczyna krótka ankieta osobnego biznesu. Alternatywa „Chcę tylko
+  zadać pytanie” jest pokazana raz, obok głównej akcji pod ankietą.
 - Asystent zadaje najwyżej trzy pytania naraz, pokazuje najwyżej trzy kierunki,
   rekomenduje jeden i kończy jednym działaniem.
 - Tekst i zdjęcie prowadzą do tego samego asystenta. Głos pozostaje poza obecnym MVP.
@@ -24,14 +24,12 @@ Stan: 2026-09-06.
   ma maksymalnie 72ch. Proste pytanie nie wymaga nagłówków. Surowy HTML i obrazy
   wygenerowane w tekście są niedozwolone; wiadomości użytkownika pozostają tekstem.
 - Na telefonie cele dotykowe mają co najmniej 48 × 48 CSS px, widoczny fokus i
-  jednoznaczne etykiety. Najważniejsza akcja jest w zasięgu kciuka.
+  jednoznaczne etykiety. Najważniejsza akcja jest w zasięgu kciuka. Treść rozmowy
+  i pola tekstowe mają co najmniej 16 px, a etykiety oraz opcje ankiety nie mogą
+  wymagać przybliżania ekranu.
 - Historia rozmów jest w panelu bocznym, a na telefonie otwierana z nagłówka.
-- Pierwszy profil wypełnia się raz. Kolejna nowa rozmowa pokazuje zadania: klienci,
-  oferta, plan, analiza wyniku lub własne pytanie — bez powtarzania onboardingu.
-- Ustawienia opisujemy jako „Twój profil działania” i służą do edycji stałego
-  kontekstu: czasu, doświadczenia, ograniczeń, celu i aktualnego fokusu. Nie
-  powtarzamy tam preferencji zdalnie/lokalnie zbieranej przy rozpoczęciu pracy ani
-  nie pokazujemy technicznych trybów konta.
+- Kontekst biznesu należy wyłącznie do danego czatu. Ustawienia zawierają jedno
+  ogólne pole „Napisz coś o sobie”; nie kopiujemy do niego ankiety biznesu.
 - Plan Lite/Pro można przełączyć w widoku rejestracji bez przeładowania.
 - Trial pokazuje 0 zł dzisiaj, datę pierwszej opłaty, cenę po próbie i anulowanie.
 - Nazwa modelu, OpenRouter, tokeny i „kredyty” nie są częścią interfejsu klienta.

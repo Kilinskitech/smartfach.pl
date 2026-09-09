@@ -8497,6 +8497,66 @@ button.team-card:hover {
     grid-template-columns: 1fr;
   }
 }
+@media (max-width: 760px) {
+  .chat-panel .chat-welcome .eyebrow {
+    font-size: 11px;
+  }
+  .chat-panel .welcome-copy {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .chat-panel .start-profile legend,
+  .chat-panel .start-profile-custom span {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .chat-panel .start-profile fieldset button {
+    font-size: 14px;
+    line-height: 1.35;
+  }
+  .chat-panel .start-profile-custom input,
+  .chat-panel .start-additional-info textarea {
+    font-size: 16px;
+  }
+  .chat-panel .start-profile-submit,
+  .chat-panel .start-question-button,
+  .chat-panel .start-back-button {
+    font-size: 15px;
+  }
+  .chat-panel .message-author,
+  .chat-panel .chat-message.user .message-author {
+    font-size: 12px;
+  }
+  .chat-panel .chat-message p,
+  .chat-panel .assistant-content {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .chat-panel .message-sources > span {
+    font-size: 11px;
+  }
+  .chat-panel .message-sources a,
+  .chat-panel .composer-tools button,
+  .chat-panel .credit-limit-banner,
+  .chat-panel .credit-limit-banner button {
+    font-size: 13px;
+  }
+  .chat-panel .composer-note {
+    font-size: 12px;
+  }
+  .chat-panel .chat-error {
+    font-size: 14px;
+  }
+  .chat-panel .form-hint {
+    font-size: 13px;
+  }
+  .chat-panel .attachment-chip strong {
+    font-size: 13px;
+  }
+  .chat-panel .attachment-chip small {
+    font-size: 12px;
+  }
+}
 .withdrawal-page { max-width: 760px; margin: 0 auto; padding: 64px 24px; }
 .withdrawal-page h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.12; letter-spacing: -1px; font-weight: 650; margin: 18px 0; }
 @media (min-width: 951px) and (max-width: 1100px) {
