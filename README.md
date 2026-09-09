@@ -63,10 +63,10 @@ uruchomić w produkcyjnym projekcie Supabase w kontrolowanym oknie wdrożeniowym
 
 ## AI
 
-OpenRouter realizuje kontrolowany fallback modeli. Do uruchomienia potrzebne są
-`OPENROUTER_API_KEY` i `SMARTFACH_ENABLE_AI=true`. Kolejność jest wersjonowana
-w kodzie: `openai/gpt-5-nano`, a po błędzie dostawcy
-`~google/gemini-flash-latest`. Stara zmienna `OPENROUTER_MODEL` nie jest używana.
+OpenRouter kieruje cały czat do `~google/gemini-flash-latest`, preferując niskie
+opóźnienia standardowych tras Google, bez GPT i Azure. Do uruchomienia potrzebne są
+`OPENROUTER_API_KEY` i `SMARTFACH_ENABLE_AI=true`. Model jest zapisany w kodzie.
+Stara zmienna `OPENROUTER_MODEL` nie jest używana.
 Nazwa faktycznie użytego modelu nie jest pokazywana zwykłemu użytkownikowi. Koszt,
 tokeny i model z odpowiedzi OpenRouter są zapisywane per użytkownik w
 `usage_events` i widoczne administratorowi.
@@ -74,7 +74,7 @@ tokeny i model z odpowiedzi OpenRouter są zapisywane per użytkownik w
 Wyszukiwanie internetowe może być dostępne modelowi przez
 `OPENROUTER_WEB_SEARCH=true`. Jedna odpowiedź może wykonać najwyżej jedno
 wyszukanie. Wynik z internetu jest odpowiedzią pomocniczą, a nie automatycznym
-źródłem ceny. Łańcuch modeli nadal wymaga pomiaru Task Success Rate na polskich
+źródłem ceny. Model nadal wymaga pomiaru Task Success Rate na polskich
 rozmowach, zdjęciach i realnych scenariuszach wyboru usługi, tworzenia oferty i
 pierwszego kontaktu z rynkiem.
 

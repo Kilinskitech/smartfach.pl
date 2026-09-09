@@ -128,10 +128,11 @@ jasne przed płatnością.
 
 ## Technologia i zasady AI
 
-OpenRouter pozostaje bramką modeli. Wersjonowany routing kieruje zwykłe pytania do
-GPT-5 Nano, ważny start, zdjęcia i trudniejsze analizy do GPT-5.6 Luna, a stały
-Gemini 3.8 Flash pozostaje awaryjnym fallbackiem innego dostawcy. Użytkownik nie widzi
-tego podziału. AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
+OpenRouter pozostaje bramką modeli. Cały czat, start biznesu i zdjęcia korzystają
+z `~google/gemini-flash-latest`, zgodnie z decyzją foundera D057. Preferujemy niskie
+opóźnienia standardowych tras Google, bez Azure i powrotu do GPT. Alias może zmienić
+model i cenę bez wdrożenia — mierzymy faktyczny model i koszt odpowiedzi.
+AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
 Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje mogące
 zmienić dane.
 

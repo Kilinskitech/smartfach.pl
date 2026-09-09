@@ -1140,3 +1140,31 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   Zasoby live odpowiadały 200; dokładnej przyczyny awarii na urządzeniu nie potwierdzono.
   Końcowy test instalacji wymaga fizycznego Androida. Systemowego okna wyboru
   aplikacji nie da się stylować kodem strony. MASTER_PLAN bez zmiany strategii.
+
+## D057 — Gemini Flash Latest dla całego czatu, bez Azure
+
+- Data: 2026-09-09. Wyraźna preferencja foundera po niezadowalającej jakości GPT
+  i opóźnieniach: jeden Gemini Flash Latest. Zastępuje routing z D050.
+- Zweryfikowany identyfikator OpenRouter to `~google/gemini-flash-latest`
+  (z tyldą); obecnie kieruje do Gemini 3.8 Flash. Obsługuje tekst, zdjęcia,
+  narzędzia i JSON Schema. Standard: 0,75 USD / 1 mln wejścia, 3,75 USD / 1 mln
+  wyjścia. To drożej od Nano (0,05/0,40); wybrano jakość, nie niższą cenę tokena.
+- Rozważono: pozostawienie Nano przez bezpośrednią trasę OpenAI/Flex, Gemini Latest,
+  Gemini 3.5 Flash Lite (0,30/2,50). Flex oficjalnie dopuszcza wolniejsze przetwarzanie
+  i niedostępność; Lite nie ma tutaj potwierdzonej jakości. Nie twierdzimy, że Azure
+  zawsze kosztuje i działa dokładnie dwukrotnie gorzej. Nie wykonano płatnego benchmarku.
+- W kodzie jeden model dla startu, zdjęć i rozmowy. Brak drugiego wywołania GPT lub
+  kolejnej generacji po błędzie. OpenRouter może przełączyć dostawcę tego samego
+  Gemini. Preferencja `sort: latency`, wykluczenie Azure i znanych wariantów Google
+  Flex/Priority. ZDR i `data_collection: deny`, JSON, kontrola kosztu oraz idempotencja
+  bez osłabienia. Dostępność zależy też od polityk klucza OpenRouter.
+- Kompromis: alias może sam zmienić cenę/model. Monitorujemy rzeczywisty model i koszt;
+  po zmianie wymagany test jakości. Nie zmieniono planów ani limitów. Nie zapewniamy
+  regionu UE przez sam ZDR. Czas do pierwszego tokenu nie jest czasem kompletnej
+  odpowiedzi; streaming pozostaje oddzielnym zadaniem wymagającym zachowania rozliczeń.
+- Zaktualizowano MASTER_PLAN i AI_ARCHITECTURE. Brak migracji bazy i nowych sekretów.
+- Źródła: https://openrouter.ai/~google/gemini-flash-latest,
+  https://openrouter.ai/api/v1/models,
+  https://openrouter.ai/api/v1/models/google/gemini-3.8-flash/endpoints,
+  https://openrouter.ai/docs/guides/routing/provider-selection,
+  https://developers.openai.com/api/docs/guides/flex-processing.

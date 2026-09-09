@@ -15,14 +15,15 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
 - W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
   modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
-- Zwykłe pytania obsługuje `openai/gpt-5-nano`. Zatwierdzony start biznesu,
-  zdjęcia, długie wiadomości oraz złożone analizy trafiają do
-  `openai/gpt-5.6-luna`. To deterministyczny routing serwerowy, nie równoległe
-  wywołanie ani głosowanie modeli.
-- Stały `google/gemini-3.8-flash` jest awaryjnym fallbackiem innego dostawcy,
-  uruchamianym po jednoznacznym odrzuceniu 400/404/422/429 wybranego modelu OpenAI.
-  Utrata połączenia, timeout i 5xx nie uruchamiają kolejnej generacji: poprzednia
-  mogła już zostać wykonana i obciążyć konto OpenRouter.
+- Cały ruch używa `~google/gemini-flash-latest`: zwykłe pytania, start biznesu,
+  zdjęcia i trudniejsze analizy. Nie ma automatycznego przełączania do GPT.
+- OpenRouter może przełączyć dostawcę tego samego modelu (`allow_fallbacks: true`).
+  `sort: latency` preferuje niski czas odpowiedzi; `ignore` wyklucza Azure oraz
+  sprawdzone trasy Google Flex i Priority. Pozostają standardowe Google AI Studio
+  i Google Vertex zgodne z polityką prywatności. Nie jest to SLA ani gwarancja 1 s.
+- Serwer aplikacji nie uruchamia kolejnej generacji po błędzie. Jednoznaczne
+  odrzucenie 4xx zwalnia rezerwację; utrata połączenia, timeout i 5xx pozostają
+  niepewne: poprzednia generacja mogła już obciążyć OpenRouter.
 - Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
@@ -38,8 +39,7 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - `usage` z OpenRouter zapisuje koszt USD, tokeny, model, provider i identyfikator
   żądania, przypisane do autoryzowanego użytkownika. Zapisywany jest model faktycznie
   użyty przez OpenRouter, również gdy odpowiedź pochodzi z fallbacku.
-- Adapter wysyła `max_completion_tokens` do modeli OpenAI oraz `max_tokens` do
-  Gemini. To konieczne przy ZDR, który dla OpenAI pozostawia m.in. trasy Azure.
+- Adapter wysyła `max_tokens: 5000` do Gemini.
   `require_parameters: false` pozwala routerowi dostosować parametry do dostawcy.
   Ścisły filtr powodował podejrzenie odrzucania tras; dokładną kategorię błędu
   zapisujemy bez treści rozmów. Nadal niezależnie
@@ -111,10 +111,13 @@ rachunek dostawcy pozostaje źródłem uzgodnienia kosztów błędów.
 Timeouty sieci nadal nie są automatycznie ponawiane ani zwalniane.
 Historyczne niepewne próby nie są masowo zmieniane — wymagają przeglądu w adminie.
 
-Fallback ma stały identyfikator modelu zamiast aliasu `latest`, aby aktualizacja
-dostawcy nie zmieniła kosztu i zachowania bez wdrożenia. Każdą zmianę modelu trzeba
-sprawdzić na stałym zestawie polskich scenariuszy: jakość, JSON, zdjęcia, opóźnienie,
-koszt i wymagania prywatności.
+Na życzenie foundera używamy aliasu `latest` (D057), obecnie Gemini 3.8 Flash.
+Zmiana celu aliasu może zmienić cenę i zachowanie bez wdrożenia. Faktyczny model
+z odpowiedzi jest zapisywany; po zmianie trzeba sprawdzić polskie scenariusze:
+jakość, JSON, zdjęcia, opóźnienie, koszt i wymagania prywatności. Nie obniżamy
+ZDR ani polityki danych, żeby zwiększyć dostępność. Ustawienia te nie gwarantują
+przetwarzania wyłącznie w UE. Czat nadal zwraca całą zwalidowaną odpowiedź naraz,
+więc czas pierwszego tokenu z katalogu nie jest czasem oczekiwania użytkownika.
 
 ## Ewaluacja
 

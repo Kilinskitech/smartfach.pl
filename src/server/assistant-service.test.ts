@@ -1,15 +1,12 @@
 import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import {
   callAssistant,
-  advancedAiModel,
   aiConfigured,
-  fallbackAiModel,
   primaryAiModel,
   publicAiConfiguration,
-  selectAiModel,
 } from "./assistant-service";
 import { fixtureClient, fixtureWorkspace } from "../test/fixtures";
-import { ProviderOutputError } from "./provider-errors";
+import { ProviderOutputError, ProviderRejectedError } from "./provider-errors";
 const input = {
   clientId: null,
   messages: [{ role: "user" as const, content: "Napisz wiadomość do klienta" }],
@@ -116,8 +113,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);
-    expect(request.max_completion_tokens).toBe(5000);
-    expect(request.max_tokens).toBeUndefined();
+    expect(request.model).toBe("~google/gemini-flash-latest");
+    expect(request.max_tokens).toBe(5000);
+    expect(request.max_completion_tokens).toBeUndefined();
     expect(request.reasoning).toEqual({ effort: "low", exclude: true });
     expect(request.plugins).toEqual([{ id: "response-healing" }]);
     expect(request.tools).toEqual([
@@ -133,6 +131,9 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     ]);
     expect(request.max_tool_calls).toBe(1);
     expect(request.provider).toEqual({
+      sort: "latency",
+      allow_fallbacks: true,
+      ignore: ["azure", "google-ai-studio/flex", "google-vertex/global/flex", "google-ai-studio/priority", "google-vertex/global/priority"],
       data_collection: "deny",
       zdr: true,
       require_parameters: false,
@@ -140,48 +141,27 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
     expect(body).not.toContain("SECRET");
     expect(body).not.toContain("test-key-never-real");
   });
-  it("uruchamia model innego dostawcy dopiero po błędzie modelu głównego", async () => {
+  it.each([400, 404, 422, 429])("nie wraca do GPT i nie generuje drugi raz po odrzuceniu %s", async (status) => {
     const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockResolvedValueOnce(new Response("rate limited", { status: 429 }))
-      .mockResolvedValue(
-        Response.json(provider(JSON.stringify(payload), undefined, "google/gemini-3.8-flash")),
-      );
-    const result = await callAssistant(input, fixtureWorkspace(), fetcher);
+      .mockResolvedValue(new Response("provider rejected", { status }));
+    await expect(callAssistant(input, fixtureWorkspace(), fetcher)).rejects.toBeInstanceOf(ProviderRejectedError);
     const primaryRequest = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
-    const fallbackRequest = JSON.parse(String(fetcher.mock.calls[1]?.[1]?.body));
     expect(primaryRequest).toMatchObject({
       model: primaryAiModel,
-      max_completion_tokens: 5000,
-    });
-    expect(primaryRequest.max_tokens).toBeUndefined();
-    expect(fallbackRequest).toMatchObject({
-      model: fallbackAiModel,
       max_tokens: 5000,
     });
-    expect(fallbackRequest.max_completion_tokens).toBeUndefined();
-    expect(result.model).toBe("google/gemini-3.8-flash");
-    expect(fetcher).toHaveBeenCalledTimes(2);
-    expect(String(warning.mock.calls[0]?.[0])).toContain('"status":429');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(String(warning.mock.calls[0]?.[0])).toContain(`"status":${status}`);
     warning.mockRestore();
   });
-  it("kieruje zatwierdzony start i zdjęcia do dokładniejszego modelu", () => {
-    expect(selectAiModel({ ...input, mode: "guided_start" })).toBe(advancedAiModel);
-    expect(
-      selectAiModel({
-        ...input,
-        attachments: [
-          {
-            kind: "image",
-            name: "test.jpg",
-            mediaType: "image/jpeg",
-            data: "YWJj",
-          },
-        ],
-      }),
-    ).toBe(advancedAiModel);
-    expect(selectAiModel(input)).toBe(primaryAiModel);
+  it("zdjęcia i złożone zadania również trafiają do Gemini Latest", async () => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(Response.json(provider()));
+    await callAssistant({ ...input, messages: [{ role: "user", content: "Przeanalizuj strategię i zdjęcie. " + "x".repeat(950) }], attachments: [{ kind: "image", name: "test.jpg", mediaType: "image/jpeg", data: "YWJj" }] }, fixtureWorkspace(), fetcher);
+    const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(request.model).toBe(primaryAiModel);
+    expect(request.messages.at(-1).content[1].image_url.url).toBe("data:image/jpeg;base64,YWJj");
   });
   it("przekazuje profil startowy jako dane i od razu uruchamia działanie", async () => {
     const guidedInput = {
@@ -197,11 +177,11 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       },
     };
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
-      Response.json(provider(JSON.stringify(payload), undefined, advancedAiModel)),
+      Response.json(provider()),
     );
     await callAssistant(guidedInput, fixtureWorkspace(), fetcher);
     const request = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
-    expect(request.model).toBe(advancedAiModel);
+    expect(request.model).toBe(primaryAiModel);
     expect(request.messages[0].content).toContain(
       "Użytkownik właśnie zatwierdził ekran rozpoczęcia działania",
     );
@@ -212,7 +192,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
   it("zwraca faktyczny koszt i tokeny raportowane przez OpenRouter", async () => {
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
       Response.json({
-        ...provider(),
+        ...provider(undefined, undefined, "google/gemini-3.8-flash"),
         id: "gen-cost-123",
         provider: "Google",
         usage: {
@@ -226,6 +206,7 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       }),
     );
     const result = await callAssistant(input, fixtureWorkspace(), fetcher);
+    expect(result.model).toBe("google/gemini-3.8-flash");
     expect(result.usage).toEqual({
       providerRequestId: "gen-cost-123",
       provider: "Google",

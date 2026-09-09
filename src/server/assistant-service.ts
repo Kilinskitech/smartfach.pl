@@ -18,10 +18,7 @@ const chatJsonSchema = {
   properties: { reply: { type: "string" } },
 };
 
-export const primaryAiModel = "openai/gpt-5-nano";
-export const advancedAiModel = "openai/gpt-5.6-luna";
-export const fallbackAiModel = "google/gemini-3.8-flash";
-export const aiModels = [primaryAiModel, advancedAiModel, fallbackAiModel] as const;
+export const primaryAiModel = "~google/gemini-flash-latest";
 export const aiConfigured = () =>
   process.env.SMARTFACH_ENABLE_AI === "true" &&
   Boolean(process.env.OPENROUTER_API_KEY?.trim());
@@ -257,39 +254,21 @@ function logRejectedProviderOutput(
   );
 }
 
-function logModelFallback(
+function logProviderRejection(
   selectedModel: string,
   reason: string,
   status?: number,
   routingFailure?: string,
 ) {
   console.warn(
-    "SmartFach uruchomił awaryjny model AI " +
+    "SmartFach: dostawca odrzucił żądanie AI " +
       JSON.stringify({
-        primaryModel: selectedModel,
-        fallbackModel: fallbackAiModel,
+        model: selectedModel,
         reason,
         ...(status ? { status } : {}),
         ...(routingFailure ? { routingFailure } : {}),
       }),
   );
-}
-
-const advancedTaskPattern =
-  /\b(strategi\w*|przeanaliz\w*|porówn\w*|biznesplan\w*|model biznesow\w*|research\w*|bada\w* rynku|konkurenc\w*|plan działania|ofert\w* od podstaw|policz opłacalność)\b/iu;
-
-export function selectAiModel(
-  input: z.infer<typeof assistantRequestSchema>,
-) {
-  const latestMessage = input.messages.at(-1)?.content ?? "";
-  if (
-    input.mode === "guided_start" ||
-    Boolean(input.attachments?.length) ||
-    latestMessage.length >= 900 ||
-    advancedTaskPattern.test(latestMessage)
-  )
-    return advancedAiModel;
-  return primaryAiModel;
 }
 
 function requestModeInstruction(
@@ -307,7 +286,7 @@ export async function callAssistant(
   userId?: string,
 ) {
   if (!aiConfigured()) throw new Error("AI nie jest jeszcze podłączone.");
-  const selectedModel = selectAiModel(input);
+  const selectedModel = primaryAiModel;
   const context = {
     journey: workspace.journey,
   };
@@ -327,7 +306,7 @@ export async function callAssistant(
       ],
     };
   });
-  const providerRequest = (model: (typeof aiModels)[number]) =>
+  const providerRequest = () =>
     fetcher("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -336,11 +315,9 @@ export async function callAssistant(
         "X-OpenRouter-Title": "SmartFach",
       },
       body: JSON.stringify({
-        model,
+        model: selectedModel,
         ...(userId ? { user: userId } : {}),
-        ...(model.startsWith("openai/")
-          ? { max_completion_tokens: 5000 }
-          : { max_tokens: 5000 }),
+        max_tokens: 5000,
         reasoning: {
           effort: "low",
           exclude: true,
@@ -401,6 +378,10 @@ export async function callAssistant(
             }
           : {}),
         provider: {
+          sort: "latency",
+          allow_fallbacks: true,
+          // Keep standard Google routes; neither Azure nor Flex/paid priority.
+          ignore: ["azure", "google-ai-studio/flex", "google-vertex/global/flex", "google-ai-studio/priority", "google-vertex/global/priority"],
           data_collection: "deny",
           zdr: process.env.OPENROUTER_REQUIRE_ZDR !== "false",
           require_parameters: false,
@@ -409,11 +390,10 @@ export async function callAssistant(
       signal: AbortSignal.timeout(25000),
     });
 
-  let response: Response;
-  let usedFallback = false;
   // A timeout is ambiguous: the provider may still charge for the generation.
-  // Fallback only follows a definitive rejection, never a lost response.
-  response = await providerRequest(selectedModel);
+  // OpenRouter can route the same model across providers. Never start another
+  // application-level generation or switch back to GPT after a lost response.
+  const response = await providerRequest();
   if (!response.ok && [400, 404, 422, 429].includes(response.status)) {
     // Classify the upstream error without logging prompts or raw provider payloads.
     const errorBody = await response.clone().json().catch(() => null);
@@ -429,9 +409,7 @@ export async function callAssistant(
             ? "no-eligible-provider"
             : "unclassified-404"
       : undefined;
-    logModelFallback(selectedModel, "provider-error", response.status, routingFailure);
-    usedFallback = true;
-    response = await providerRequest(fallbackAiModel);
+    logProviderRejection(selectedModel, "provider-error", response.status, routingFailure);
   }
   if (!response.ok)
     throw new (response.status >= 400 && response.status < 500 ? ProviderRejectedError : Error)(
@@ -445,7 +423,7 @@ export async function callAssistant(
   if (!provider.success)
     throw new Error("Odpowiedź AI była niepełna. Niczego nie zapisano.");
   const responseModel =
-    provider.data.model ?? (usedFallback ? fallbackAiModel : selectedModel);
+    provider.data.model ?? selectedModel;
   const message = provider.data.choices[0]!.message;
   if (message.refusal)
     throw new ProviderOutputError("Asystent nie może pomóc w tym zadaniu. Zmień treść pytania; nie wykorzystano Twojego limitu.");
