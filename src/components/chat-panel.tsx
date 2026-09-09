@@ -25,6 +25,7 @@ import type { Conversation, Workspace } from "@/domain/workspace";
 import type { AssistantAttachment, AssistantResult, GuidedStart } from "@/domain/assistant";
 import { estimateRequestCredits, remainingCredits } from "@/domain/billing";
 import { completeJourneyOnboarding } from "@/domain/journey";
+import { readAssistantResponse } from "@/lib/assistant-response";
 
 type PendingAttachment = AssistantAttachment & {
   id: string;
@@ -88,6 +89,8 @@ export function ChatPanel({
 }: Props) {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
+  const [streamingReply, setStreamingReply] = useState("");
+  const [sentText, setSentText] = useState("");
   const [error, setError] = useState("");
   const [attachments, setAttachments] = useState<PendingAttachment[]>([]);
   const textarea = useRef<HTMLTextAreaElement>(null);
@@ -311,6 +314,8 @@ export function ChatPanel({
       return;
     }
     setBusy(true);
+    setStreamingReply("");
+    setSentText([options.displayText ?? typedText, ...attachments.map((item) => `📷 ${item.name}`)].filter(Boolean).join("\n"));
     onBusy(true);
     setError("");
     try {
@@ -338,13 +343,13 @@ export function ChatPanel({
       const attempt = pendingRequest.current;
       const response = await fetch("/api/assistant", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", Accept: "text/event-stream" },
         body: JSON.stringify({ ...JSON.parse(payload), idempotencyKey: attempt.key }),
         signal: AbortSignal.timeout(55_000),
       });
       const result: AssistantResult & { error?: string; code?: string } =
-        await response.json();
-      if (!response.ok) {
+        await readAssistantResponse(response, setStreamingReply);
+      if (!response.ok || result.error) {
         if (["failed", "expired", "conflict", "provider_failed"].includes(result.code ?? "")) pendingRequest.current = null;
         if (result.code === "credit_limit") onOpenBilling();
         throw new Error(result.error ?? "Asystent nie odpowiedział.");
@@ -397,6 +402,8 @@ export function ChatPanel({
       );
     } finally {
       setBusy(false);
+      setStreamingReply("");
+      setSentText("");
       onBusy(false);
     }
   }
@@ -415,8 +422,8 @@ export function ChatPanel({
     }
   }
   return (
-    <div className={"chat-panel" + (!messages.length ? " chat-empty" : "")}>
-      {messages.length === 0 ? (
+    <div className={"chat-panel" + (!messages.length && !busy ? " chat-empty" : "")}>
+      {messages.length === 0 && !busy ? (
         <div className="chat-welcome">
           <div className="welcome-mark">
             <BrandMark size={58} />
@@ -601,10 +608,19 @@ export function ChatPanel({
               </div>
             </article>
           ))}
+          {busy && <>
+            <article className="chat-message user"><div><span className="message-author">Ty</span><p>{sentText}</p></div></article>
+            <article className="chat-message assistant" aria-busy="true">
+              <BrandMark size={30} />
+              <div><span className="message-author">SmartFach</span>
+                {streamingReply ? <><AssistantMessage content={streamingReply} /><small className="form-hint">Odpowiedź w trakcie — jeszcze niezapisana</small></> : <p className="assistant-working" role="status"><LoaderCircle size={17} /> Przygotowuję odpowiedź…</p>}
+              </div>
+            </article>
+          </>}
           <div ref={lastMessage} />
         </div>
       )}
-      {(messages.length > 0 || startMode === "question" || startMode === "result") && <div className="composer-area">
+      {(busy || messages.length > 0 || startMode === "question" || startMode === "result") && <div className="composer-area">
         {creditExhausted && (
           <div className="credit-limit-banner" role="alert">
             <Sparkles size={18} />
@@ -619,12 +635,6 @@ export function ChatPanel({
           <div className="chat-error" role="alert">
             {error}
           </div>
-        )}
-        {busy && (
-          <p className="assistant-working" role="status">
-            <LoaderCircle size={17} />
-            SmartFach przygotowuje odpowiedź…
-          </p>
         )}
         <form
           className="composer"

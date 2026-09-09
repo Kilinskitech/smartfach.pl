@@ -32,6 +32,21 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
+  it("streams reply while preserving final cost, identity and server validation", async () => {
+    const bytes = new TextEncoder().encode(
+      'data: ' + JSON.stringify({id:"gen-stream",model:"google/gemini-3.8-flash",provider:"Google",choices:[{delta:{content:'{"reply":"Gotowe"}'},finish_reason:"stop"}]}) + '\n\n' +
+      'data: ' + JSON.stringify({choices:[],usage:{cost:0.003,prompt_tokens:10,completion_tokens:5}}) + '\n\ndata: [DONE]\n\n',
+    );
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(new ReadableStream({start(c) {c.enqueue(bytes);c.close();}}), {headers:{"content-type":"text/event-stream"}}));
+    const preview = vi.fn();
+    const result = await callAssistant(input,fixtureWorkspace(),fetcher,"user",preview);
+    expect(preview).toHaveBeenCalledWith("Gotowe");
+    expect(result).toMatchObject({reply:"Gotowe",model:"google/gemini-3.8-flash",usage:{costUsd:0.003,providerRequestId:"gen-stream"}});
+    const body = JSON.parse(String(fetcher.mock.calls[0]?.[1]?.body));
+    expect(body.stream).toBe(true); expect(body.stream_options.include_usage).toBe(true);
+    expect(body.plugins).toBeUndefined();
+    expect(body.response_format.json_schema.strict).toBe(true);
+  });
   it.each([
     { reply: "Cześć! Jak mogę pomóc?" },
     { reply: "Cześć! Jak mogę pomóc?", quote: null },

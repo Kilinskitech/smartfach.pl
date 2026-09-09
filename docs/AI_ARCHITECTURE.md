@@ -25,7 +25,8 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
   odrzucenie 4xx zwalnia rezerwację; utrata połączenia, timeout i 5xx pozostają
   niepewne: poprzednia generacja mogła już obciążyć OpenRouter.
 - Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
-  ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
+  ukryte tokeny rozumowania. Plugin naprawiający składnię jest używany tylko dla
+  starszych klientów bez streamingu. Każdy końcowy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
 - Aktywny kontrakt to wyłącznie `{reply: string}`. Dawne pola wycen/protokołów
   nie są wymagane ani wysyłane w schemacie. Dla zgodności przyjmujemy je w odpowiedzi,
@@ -116,8 +117,32 @@ Zmiana celu aliasu może zmienić cenę i zachowanie bez wdrożenia. Faktyczny m
 z odpowiedzi jest zapisywany; po zmianie trzeba sprawdzić polskie scenariusze:
 jakość, JSON, zdjęcia, opóźnienie, koszt i wymagania prywatności. Nie obniżamy
 ZDR ani polityki danych, żeby zwiększyć dostępność. Ustawienia te nie gwarantują
-przetwarzania wyłącznie w UE. Czat nadal zwraca całą zwalidowaną odpowiedź naraz,
-więc czas pierwszego tokenu z katalogu nie jest czasem oczekiwania użytkownika.
+przetwarzania wyłącznie w UE. Czas pierwszego tokenu z katalogu nie jest gwarancją
+czasu odpowiedzi w aplikacji (autoryzacja, kontekst i sieć też trwają).
+
+## Szybkość i streaming (D058)
+
+Nowy czat wysyła `Accept: text/event-stream`. Backend przekazuje do OpenRouter
+`stream: true`, odbiera SSE i odkodowuje wyłącznie pole `reply` z przyrostowego JSON.
+Klient wyświetla bezpieczny Markdown jako niezapisany podgląd; nie otrzymuje
+rozumowania, promptów ani narzędzi. Końcowy `result` pojawia się dopiero po pełnej
+walidacji i atomowym `finish_ai_request`. Błąd lub zerwanie przed zakończeniem nie
+zmienia podglądu w zapisaną odpowiedź. Zachowane są retry/replay i ochrona przed
+podwójnym naliczeniem. Serwer utrzymuje zadanie przez Next after także po wyjściu
+klienta, lecz nie obiecuje ukończenia po awarii procesu lub przekroczeniu czasu funkcji.
+Starsze klienty, replay i systemowe powitanie nadal mogą otrzymać zwykły JSON.
+
+Dokładnie rozpoznane samo powitanie (np. `hej`, `cześć!`) ma stałą odpowiedź aplikacji
+`smartfach/system-greeting`, bez generacji, rezerwacji i naliczenia. Nie zalicza się
+do pierwszej odpowiedzi modelu. Dodatkowe polecenie, obraz lub onboarding zawsze
+trafiają do Gemini. Dostęp nadal wymaga potwierdzonego konta i płatności.
+
+Odczyt subskrypcji i kontekstu tej samej zweryfikowanej organizacji jest równoległy;
+statystyki po zapisie trafiają do after i nie wydłużają oczekiwania. Log
+`assistant_timing` zawiera narastające milisekundy od wejścia do endpointu:
+authMs, contextMs, admittedMs, firstTextMs, generatedMs, totalMs, bez treści rozmowy.
+Nie są to pomiary sieci i renderowania klienta. Najpierw mierzymy live, a nie
+deklarujemy gwarantowanego czasu 1 s.
 
 ## Ewaluacja
 

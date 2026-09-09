@@ -1168,3 +1168,27 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   https://openrouter.ai/api/v1/models/google/gemini-3.8-flash/endpoints,
   https://openrouter.ai/docs/guides/routing/provider-selection,
   https://developers.openai.com/api/docs/guides/flex-processing.
+
+## D058 — Natychmiastowe pokazanie wiadomości, streaming i darmowe powitanie
+
+- Data: 2026-09-09. Founder zgłosił około 10 s oczekiwania na samo „hej”. Nie
+  mamy produkcyjnego rozkładu opóźnień; dodano bezpieczny pomiar etapów.
+- Samo powitanie obsługuje jawnie techniczna odpowiedź systemowa, bez AI i limitu.
+  Nie udaje generacji ani wykonania zadania. Polecenia, zdjęcia i start biznesu
+  pozostają w Gemini Latest. Kontrola konta i płatności nie jest omijana.
+- UI od razu pokazuje wysłaną wiadomość i status. Fragmenty reply pojawiają się
+  podczas generowania jako niezapisany podgląd. Końcowy wynik po walidacji i
+  atomowym rozliczeniu; brak automatycznego naliczenia/przyjęcia urwanego tekstu.
+- Parser obsługuje podział UTF-8, komentarze SSE, osobny usage, błędy w strumieniu
+  oraz brak zakończenia. HTML i niedozwolone linki nadal są blokowane rendererem.
+- OpenRouter stream zamiast JSON tylko dla nowego klienta. Brak response-healing
+  w streamie; końcowa walidacja/odzyskanie JSON pozostają. Zakończone receipt/replay
+  i starsze klienty zachowują zgodność. Rozłączenie użytkownika nie wywołuje modelu
+  ponownie ani nie jest utożsamiane z zakończeniem naliczania u Google.
+- Usunięto powtórne sprawdzenie tożsamości wdrożenia; równoległy odczyt kontekstu
+  i subskrypcji przed dopuszczeniem. Statystyki poza ścieżką odpowiedzi.
+- Odrzucono fałszywy tekst generowany lokalnie dla zadań, pomijanie płatności,
+  zapisywanie fragmentów jako zakończonej odpowiedzi i obietnicę <1 s bez pomiarów.
+- Brak migracji i zmian cen/limitów. MASTER_PLAN: doprecyzowanie szybkości istniejącego
+  czatu, nie zmiana strategii. Test czasu rzeczywistych odpowiedzi wymagany na live.
+- Źródło: https://openrouter.ai/docs/api_reference/streaming.

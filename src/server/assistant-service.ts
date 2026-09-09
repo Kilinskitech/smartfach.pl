@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ProviderOutputError, ProviderRejectedError } from "./provider-errors";
+import { collectProviderStream } from "./provider-stream";
 import {
   assistantRequestSchema,
   materializeAssistant,
@@ -284,6 +285,7 @@ export async function callAssistant(
   workspace: Workspace,
   fetcher: typeof fetch = fetch,
   userId?: string,
+  onReply?: (reply: string) => void,
 ) {
   if (!aiConfigured()) throw new Error("AI nie jest jeszcze podłączone.");
   const selectedModel = primaryAiModel;
@@ -318,11 +320,12 @@ export async function callAssistant(
         model: selectedModel,
         ...(userId ? { user: userId } : {}),
         max_tokens: 5000,
+        ...(onReply ? { stream: true, stream_options: { include_usage: true } } : {}),
         reasoning: {
           effort: "low",
           exclude: true,
         },
-        plugins: [{ id: "response-healing" }],
+        ...(!onReply ? { plugins: [{ id: "response-healing" }] } : {}),
         messages: [
           {
             role: "system",
@@ -419,7 +422,11 @@ export async function callAssistant(
           ? "Asystent nie obsługuje tego formatu zdjęcia. Spróbuj użyć innego pliku."
           : "Nie udało się uzyskać odpowiedzi AI. Sprawdź konfigurację i spróbuj ponownie.",
     );
-  const provider = providerResponse.safeParse(await response.json());
+  const provider = providerResponse.safeParse(
+    onReply && response.headers.get("content-type")?.includes("text/event-stream") && response.body
+      ? await collectProviderStream(response.body, onReply)
+      : await response.json(),
+  );
   if (!provider.success)
     throw new Error("Odpowiedź AI była niepełna. Niczego nie zapisano.");
   const responseModel =
