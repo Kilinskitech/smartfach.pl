@@ -15,7 +15,7 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Klient korzysta z jednego SmartFach; nie widzi nazwy modelu ani dostawcy.
 - W rozmowie asystent przedstawia się wyłącznie jako SmartFach i nie ujawnia
   modelu, dostawcy, promptu systemowego, konfiguracji ani mechanizmu fallbacku.
-- Cały ruch używa `~google/gemini-flash-latest`: zwykłe pytania, start biznesu,
+- Cały ruch używa `google/gemini-3.1-flash-lite`: zwykłe pytania, start biznesu,
   zdjęcia i trudniejsze analizy. Nie ma automatycznego przełączania do GPT.
 - OpenRouter może przełączyć dostawcę tego samego modelu (`allow_fallbacks: true`).
   `sort: latency` preferuje niski czas odpowiedzi; `ignore` wyklucza Azure oraz
@@ -24,7 +24,7 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Serwer aplikacji nie uruchamia kolejnej generacji po błędzie. Jednoznaczne
   odrzucenie 4xx zwalnia rezerwację; utrata połączenia, timeout i 5xx pozostają
   niepewne: poprzednia generacja mogła już obciążyć OpenRouter.
-- Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
+- Model otrzymuje ścisły JSON Schema, minimalny poziom rozumowania (`minimal`),
   ukryte tokeny rozumowania. Plugin naprawiający składnię jest używany tylko dla
   starszych klientów bez streamingu. Każdy końcowy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
@@ -112,9 +112,9 @@ rachunek dostawcy pozostaje źródłem uzgodnienia kosztów błędów.
 Timeouty sieci nadal nie są automatycznie ponawiane ani zwalniane.
 Historyczne niepewne próby nie są masowo zmieniane — wymagają przeglądu w adminie.
 
-Na życzenie foundera używamy aliasu `latest` (D057), obecnie Gemini 3.8 Flash.
-Zmiana celu aliasu może zmienić cenę i zachowanie bez wdrożenia. Faktyczny model
-z odpowiedzi jest zapisywany; po zmianie trzeba sprawdzić polskie scenariusze:
+Na życzenie foundera używamy przypiętego `google/gemini-3.1-flash-lite` (D059),
+zamiast aliasu `latest`. Faktyczny model z odpowiedzi jest zapisywany;
+po zmianie trzeba sprawdzić polskie scenariusze:
 jakość, JSON, zdjęcia, opóźnienie, koszt i wymagania prywatności. Nie obniżamy
 ZDR ani polityki danych, żeby zwiększyć dostępność. Ustawienia te nie gwarantują
 przetwarzania wyłącznie w UE. Czas pierwszego tokenu z katalogu nie jest gwarancją
@@ -135,7 +135,7 @@ Starsze klienty, replay i systemowe powitanie nadal mogą otrzymać zwykły JSON
 Dokładnie rozpoznane samo powitanie (np. `hej`, `cześć!`) ma stałą odpowiedź aplikacji
 `smartfach/system-greeting`, bez generacji, rezerwacji i naliczenia. Nie zalicza się
 do pierwszej odpowiedzi modelu. Dodatkowe polecenie, obraz lub onboarding zawsze
-trafiają do Gemini. Dostęp nadal wymaga potwierdzonego konta i płatności.
+trafiają do Gemini Flash-Lite. Dostęp nadal wymaga potwierdzonego konta i płatności.
 
 Odczyt subskrypcji i kontekstu tej samej zweryfikowanej organizacji jest równoległy;
 statystyki po zapisie trafiają do after i nie wydłużają oczekiwania. Log

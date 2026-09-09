@@ -19,7 +19,7 @@ const chatJsonSchema = {
   properties: { reply: { type: "string" } },
 };
 
-export const primaryAiModel = "~google/gemini-flash-latest";
+export const primaryAiModel = "google/gemini-3.1-flash-lite";
 export const aiConfigured = () =>
   process.env.SMARTFACH_ENABLE_AI === "true" &&
   Boolean(process.env.OPENROUTER_API_KEY?.trim());
@@ -322,7 +322,7 @@ export async function callAssistant(
         max_tokens: 5000,
         ...(onReply ? { stream: true, stream_options: { include_usage: true } } : {}),
         reasoning: {
-          effort: "low",
+          effort: "minimal",
           exclude: true,
         },
         ...(!onReply ? { plugins: [{ id: "response-healing" }] } : {}),

@@ -128,10 +128,10 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);
-    expect(request.model).toBe("~google/gemini-flash-latest");
+    expect(request.model).toBe("google/gemini-3.1-flash-lite");
     expect(request.max_tokens).toBe(5000);
     expect(request.max_completion_tokens).toBeUndefined();
-    expect(request.reasoning).toEqual({ effort: "low", exclude: true });
+    expect(request.reasoning).toEqual({ effort: "minimal", exclude: true });
     expect(request.plugins).toEqual([{ id: "response-healing" }]);
     expect(request.tools).toEqual([
       {

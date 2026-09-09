@@ -129,9 +129,9 @@ jasne przed płatnością.
 ## Technologia i zasady AI
 
 OpenRouter pozostaje bramką modeli. Cały czat, start biznesu i zdjęcia korzystają
-z `~google/gemini-flash-latest`, zgodnie z decyzją foundera D057. Preferujemy niskie
-opóźnienia standardowych tras Google, bez Azure i powrotu do GPT. Alias może zmienić
-model i cenę bez wdrożenia — mierzymy faktyczny model i koszt odpowiedzi.
+z `google/gemini-3.1-flash-lite`, zgodnie z decyzją foundera D059. Preferujemy niskie
+opóźnienia standardowych tras Google, bez Azure i powrotu do GPT. Wersja jest przypięta,
+rozumowanie minimalne; mierzymy faktyczny model i koszt odpowiedzi.
 AI rozumie sytuację, prowadzi rozmowę i tworzy szkice.
 Kod odpowiada za autoryzację, zapis, billing, limity, obliczenia i operacje mogące
 zmienić dane.

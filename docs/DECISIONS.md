@@ -1192,3 +1192,20 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Brak migracji i zmian cen/limitów. MASTER_PLAN: doprecyzowanie szybkości istniejącego
   czatu, nie zmiana strategii. Test czasu rzeczywistych odpowiedzi wymagany na live.
 - Źródło: https://openrouter.ai/docs/api_reference/streaming.
+
+## D059 — Przypięty Gemini 3.1 Flash-Lite zamiast Latest
+
+- Data: 2026-09-09. Founder zrezygnował z proponowanego porównania modeli i zlecił
+  natychmiastowe wdrożenie `google/gemini-3.1-flash-lite` na main/live. Zastępuje D057.
+- Jeden model dla całego czatu, onboardingu i zdjęć; minimalne rozumowanie dla
+  szybkiego startu. Standardowe trasy Google, bez Azure/Flex/Priority, bez zmiany
+  ZDR, filtrowania danych, streamingu, walidacji, zapisu i rozliczeń.
+- Katalog OpenRouter potwierdza ten identyfikator, obrazy, JSON Schema i poziom
+  minimal. Cena standardowa: 0,25 USD wejście / 1,50 USD wyjście za milion tokenów;
+  konkretna trasa może mieć inne stawki. Mierzymy faktyczny koszt, nie obiecujemy SLA.
+- Porównanie i płatne wywołania nie zostały uruchomione. Tymczasowe pliki narzędzia
+  ewaluacji usunięto przed commitem. Founder sam sprawdzi jakość na live.
+- Kompromis: niższy koszt i oczekiwane mniejsze opóźnienie kosztem niezweryfikowanej
+  jakości w złożonych zadaniach. Bez zmian cen abonamentów, limitów lub bazy danych.
+- Zaktualizowano MASTER_PLAN, AI_ARCHITECTURE oraz instrukcje konfiguracji.
+- Źródło: https://openrouter.ai/google/gemini-3.1-flash-lite.

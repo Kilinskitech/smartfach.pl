@@ -63,7 +63,7 @@ uruchomić w produkcyjnym projekcie Supabase w kontrolowanym oknie wdrożeniowym
 
 ## AI
 
-OpenRouter kieruje cały czat do `~google/gemini-flash-latest`, preferując niskie
+OpenRouter kieruje cały czat do `google/gemini-3.1-flash-lite`, preferując niskie
 opóźnienia standardowych tras Google, bez GPT i Azure. Do uruchomienia potrzebne są
 `OPENROUTER_API_KEY` i `SMARTFACH_ENABLE_AI=true`. Model jest zapisany w kodzie.
 Stara zmienna `OPENROUTER_MODEL` nie jest używana.

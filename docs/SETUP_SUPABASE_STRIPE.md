@@ -145,8 +145,8 @@ dopiero po wejściu w profil konkretnego użytkownika, a każde takie otwarcie z
 
 Uzupełnij `OPENROUTER_API_KEY`, pozostaw `OPENROUTER_REQUIRE_ZDR=true` i ustaw
 `SMARTFACH_ENABLE_AI=true` dopiero wtedy, gdy chcesz wykonać płatne wywołania.
-Modele są ustalone w kodzie: GPT-5 Nano do zwykłej rozmowy, GPT-5.6 Luna do
-startu, obrazów i trudniejszych zadań oraz Gemini 3.8 Flash jako awaryjny fallback.
+Model jest ustalony w kodzie: `google/gemini-3.1-flash-lite` do całego czatu,
+startu i obrazów, z minimalnym rozumowaniem. Nie ma fallbacku do innego modelu.
 Stara zmienna Vercela `OPENROUTER_MODEL` może zostać usunięta i nie wpływa już na
 działanie aplikacji. Pole `usage` odpowiedzi zapisuje koszt, tokeny,
 faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.

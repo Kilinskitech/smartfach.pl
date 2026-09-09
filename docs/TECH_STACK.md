@@ -13,7 +13,7 @@ testów end-to-end przed rozpoczęciem sprzedaży.
 | Dane             | Supabase/PostgreSQL, Auth, RLS                   | Projekt działa; migracje i zapis wymagają testu E2E        |
 | Region bazy      | Region UE                                       | Potwierdzić ustawienie przed danymi realnych klientów      |
 | Hosting          | Vercel                                          | Production działa pod `smartfach.pl`; Preview do procesu pracy |
-| AI               | OpenRouter; routing jakości i kontrolowany fallback | GPT-5 Nano / Luna → Gemini 3.8 Flash                    |
+| AI               | OpenRouter; standardowe trasy Google, streaming | Przypięty Gemini 3.1 Flash-Lite, minimalne rozumowanie (D059) |
 | Rozliczenia      | Stripe Checkout + Billing                       | Sandbox podłączany; checkout/trial/portal/webhook wymagają E2E |
 | Analityka        | PostHog EU                                      | Plan, brak integracji                                      |
 | Testy            | Vitest, lint, typy, testy przeglądarkowe        | Obliczenia, schematy, CSV, AI, zapis, ochrona API, PDF     |
@@ -22,10 +22,10 @@ Historyczny adapter plikowy pozostał tylko w testach. Runtime używa prywatnego
 workspace JSONB w Supabase jako pomostu do stopniowej normalizacji danych. Zod, pdf-lib
 z fontkit i osadzonym Noto Sans (OFL) do polskich PDF. Licencja fontu w
 `public/fonts/OFL.txt`. Dane dokumentu nie opuszczają przeglądarki podczas eksportu.
-Zdjęcia nadal wymagają przyszłego Storage. `openai/gpt-5-nano` obsługuje zwykłe
-rozmowy, `openai/gpt-5.6-luna` start biznesu, obrazy i trudniejsze zadania, a stały
-`google/gemini-3.8-flash` chroni usługę przed awarią jednego dostawcy. Rzeczywisty
-model oraz koszt odpowiedzi są zapisywane do analizy.
+Zdjęcia nadal wymagają przyszłego Storage. `google/gemini-3.1-flash-lite` obsługuje
+rozmowy, start biznesu i obrazy. OpenRouter może przełączyć dostawcę tego samego
+modelu; brak drugiej generacji lub fallbacku do GPT w aplikacji. Rzeczywisty model
+oraz koszt odpowiedzi są zapisywane do analizy.
 
 Node.js: 24.x. Menedżer pakietów: npm. Wersje aplikacji są zapisane w
 `package.json` i `package-lock.json`; instalacja powtarzalna przez `npm ci`.
