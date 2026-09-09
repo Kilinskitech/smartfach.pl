@@ -16,12 +16,27 @@ function createSmtpTransport() {
   });
 }
 
+async function sendWithDeadline(transport: ReturnType<typeof createSmtpTransport>, message: Parameters<ReturnType<typeof createSmtpTransport>["sendMail"]>[0]) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      transport.sendMail(message),
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error("SMTP delivery timed out")), 45_000);
+      }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+    transport.close();
+  }
+}
+
 export async function sendContractEmail(input: { recipient: string; body: string; sessionId: string; replyTo: string; subject?: string }) {
   const transport = createSmtpTransport();
   const escape = (text: string) => text.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
   const heading = input.subject ?? "Twoje zamówienie i warunki korzystania — SmartFach";
   const intro = input.body.split("Twoje oświadczenia:")[0] ?? input.body;
-  const result = await transport.sendMail({
+  const result = await sendWithDeadline(transport, {
     from: { name: "SmartFach", address: process.env.SMTP_USER!.trim() },
     to: input.recipient, replyTo: input.replyTo,
     messageId: `<contract-${input.sessionId}@smartfach.pl>`,
@@ -38,7 +53,7 @@ export async function sendSmtpTest(input: {
   replyTo?: string;
 }) {
   const transport = createSmtpTransport();
-  const result = await transport.sendMail({
+  const result = await sendWithDeadline(transport, {
     from: { name: "SmartFach", address: process.env.SMTP_USER!.trim() },
     to: input.recipient,
     replyTo: input.replyTo,

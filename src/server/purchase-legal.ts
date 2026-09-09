@@ -6,12 +6,14 @@ import { legalDocumentText, termsDocument, privacyDocument, termsAcknowledgement
 import { legalDocumentVersion } from "@/domain/operator";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getOperator } from "./operator-settings";
-import { sendContractEmail, smtpConfigured } from "./transactional-email";
-import { OperationBusy } from "./operations";
+import { smtpConfigured } from "./transactional-email";
+import { scheduleContractDelivery } from "./contract-delivery";
 
 export async function recordPurchaseAcceptance(input: { userId: string; purchaseKey: string; offer: string }) {
   if (/^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY?.trim() ?? "") && !smtpConfigured())
     throw new Error("Sprzedaż Live wymaga SMTP do potwierdzeń umowy.");
+  if (/^(sk|rk)_live_/.test(process.env.STRIPE_SECRET_KEY?.trim() ?? "") && !process.env.CRON_SECRET?.trim())
+    throw new Error("Sprzedaż Live wymaga automatycznego ponawiania potwierdzeń umowy.");
   const operator = await getOperator();
   const terms = legalDocumentText(termsDocument(operator));
   const privacy = legalDocumentText(privacyDocument(operator));
@@ -71,33 +73,7 @@ export async function confirmPurchaseContract(session: Stripe.Checkout.Session, 
     console.warn("Potwierdzenie testowe zapisane; wysyłka wymaga SMTP.", { sessionId: session.id });
     return;
   }
-  const { data: contract, error: contractError } = await admin.from("purchase_contracts")
-    .select("body,recipient,email_sent_at").eq("checkout_session_id", session.id).single();
-  if (contractError) throw new Error("Nie odczytano potwierdzenia umowy.");
-  if (contract.email_sent_at) return;
-  const { data: claimed, error: claimError } = await admin.rpc("claim_contract_delivery", { session_id: session.id });
-  if (claimError) throw new Error("Nie można zarezerwować wysyłki potwierdzenia.");
-  if (!claimed) {
-    const { data: delivery, error: deliveryError } = await admin
-      .from("purchase_contracts")
-      .select("email_sent_at,delivery_claimed_at")
-      .eq("checkout_session_id", session.id)
-      .single();
-    if (deliveryError)
-      throw new Error("Nie można sprawdzić trwającej wysyłki potwierdzenia.");
-    // Strona sukcesu i webhook mogą wejść tutaj równocześnie. Aktywna rezerwacja
-    // oznacza, że drugi proces już dostarcza tę samą, zapisaną kopię umowy.
-    if (delivery.email_sent_at) return;
-    if (delivery.delivery_claimed_at) throw new OperationBusy();
-    throw new Error("Nie udało się rozpocząć wysyłki potwierdzenia.");
-  }
-  try {
-    await sendContractEmail({ recipient: contract.recipient, body: contract.body, sessionId: session.id, replyTo: snapshot.operator.email });
-    const { error: markError } = await admin.from("purchase_contracts")
-      .update({ email_sent_at: new Date().toISOString(), delivery_claimed_at: null }).eq("checkout_session_id", session.id);
-    if (markError) throw new Error("Nie zapisano potwierdzenia dostarczenia.");
-  } catch (deliveryError) {
-    await admin.from("purchase_contracts").update({ delivery_claimed_at: null }).eq("checkout_session_id", session.id);
-    throw deliveryError;
-  }
+  // The durable row is the outbox. SMTP must never delay Stripe's acknowledgement.
+  // If the process dies before after() runs, the protected cron picks up this row.
+  scheduleContractDelivery(session.id);
 }

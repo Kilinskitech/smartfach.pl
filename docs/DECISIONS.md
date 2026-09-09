@@ -1097,3 +1097,24 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   historyczne kwoty i przyznania, pozostały zapas oraz całkowity limit okresu.
   Nie wyliczamy historycznych zakupów z obecnego salda ani z aktualnego cennika.
 - MASTER_PLAN bez zmiany; zaktualizowano PRICING. Ceny i budżety bez zmiany.
+
+## D055 — Trwała kolejka potwierdzeń bez SMTP w odpowiedzi webhooka
+
+- Data: 2026-09-09. Po zgłoszonym timeoutcie oddzielono zapis zakupu i umowy
+  od wysyłki. HTTP 200 oznacza zapisany efekt finansowy i trwały rekord umowy,
+  a nie dostarczenie e-maila. Zastępuje D051 w zakresie oczekiwania webhooka na SMTP.
+- Istniejące purchase_contracts pełni rolę outbox: zapis przed odpowiedzią,
+  pierwsza wysyłka przez Next after, odzyskiwanie przez chroniony cron co 2 minuty.
+  Brak nowych tabel lub migracji, brak zmian ceny, limitów i treści warunków.
+- Zachowano atomową 2-minutową rezerwację wysyłki; nieudana próba pozostawia
+  czas rezerwacji jako opóźnienie przed kolejną próbą. Cron pobiera do 5 rekordów,
+  zaczynając od niepodjętych, następnie najdawniej podejmowanych. SMTP ma 45 s
+  maksymalnego czasu próby. Sukces jest oznaczany warunkowo dla danej rezerwacji.
+- Panel osobno liczy umowy bez potwierdzenia wysyłki od ponad 10 minut.
+  Cron wymaga CRON_SECRET i poprawnej tożsamości środowiska bazy.
+- Kompromis: SMTP nie zapewnia exactly-once. Przy przyjęciu e-maila i awarii zapisu
+  znacznika może dotrzeć ponownie ta sama kopia (stały Message-ID). Płatność i limit
+  pozostają idempotentne niezależnie od liczby wysyłek. Nie udajemy dostarczenia
+  do skrzynki odbiorczej — znacznik potwierdza przyjęcie przez serwer SMTP.
+- Przed ruchem płatnym kontrolujemy pierwsze wywołanie cron w Production oraz
+  ponowienie rzeczywistego zdarzenia testowego. MASTER_PLAN bez zmiany strategii.

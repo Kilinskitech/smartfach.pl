@@ -11,6 +11,7 @@ import {
 } from "@/server/stripe-subscriptions";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 export const metadata: Metadata = {
   title: "Dokończ aktywację — SmartFach",
   robots: { index: false, follow: false },
@@ -72,11 +73,11 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
     });
 
     // Webhook pozostaje główną ścieżką. Powrót ze Stripe bezpiecznie ponawia
-    // zapis i dostarczenie potwierdzenia, gdy webhook jest opóźniony.
+    // zapis potwierdzenia do kolejki, gdy webhook jest opóźniony.
     try {
       await confirmPurchaseContract(checkout, protectedSubscription.trial_end);
     } catch (error) {
-      console.error("Nie dostarczono potwierdzenia umowy ze strony sukcesu", {
+      console.error("Nie zapisano potwierdzenia umowy ze strony sukcesu", {
         sessionId: checkout.id,
         message: error instanceof Error ? error.message : "unknown",
       });

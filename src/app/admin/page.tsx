@@ -10,6 +10,7 @@ import { requirePlatformAdmin } from "@/server/auth";
 import { aiConfigured } from "@/server/assistant-service";
 import { getOperator } from "@/server/operator-settings";
 import { smtpConfigured } from "@/server/transactional-email";
+import { countOverdueContractEmails } from "@/server/contract-delivery";
 import { AdminLegal } from "@/components/admin-legal";
 import { AdminOperations, type OperationalSummary } from "@/components/admin-operations";
 import { loadAdminTopUps } from "@/server/admin-top-ups";
@@ -29,6 +30,7 @@ export default async function Page({
   const admin = createAdminClient();
   const operational = await admin.rpc("admin_operational_summary");
   if (operational.error) throw new Error("Nie można wczytać stanu operacji. Sprawdź migrację bazy.");
+  const pendingEmails = await countOverdueContractEmails();
   const withdrawals = await admin.from("withdrawal_requests").select("id,user_id,email,statement,received_at,email_sent_at,checkout_session_id").is("resolved_at", null).order("received_at");
   if (withdrawals.error) throw new Error("Nie można wczytać zgłoszeń odstąpienia.");
   const { data: authData, error: authError } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
@@ -141,7 +143,7 @@ export default async function Page({
       }
       snapshot={snapshot}
       operator={operator}
-      legalPanel={<><AdminOperations summary={operational.data as OperationalSummary} /><AdminLegal contactEmail={operator.email} smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} /></>}
+      legalPanel={<><AdminOperations summary={{ ...operational.data as OperationalSummary, pendingEmails }} /><AdminLegal contactEmail={operator.email} smtpReady={smtpConfigured()} withdrawals={(withdrawals.data ?? []).map(row => ({ id: String(row.id), userId: row.user_id ? String(row.user_id) : null, email: String(row.email), statement: String(row.statement), receivedAt: String(row.received_at), emailSent: Boolean(row.email_sent_at), orderId: String(row.checkout_session_id) }))} /></>}
     />
   );
 }

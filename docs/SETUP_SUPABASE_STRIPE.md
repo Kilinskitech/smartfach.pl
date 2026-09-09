@@ -101,6 +101,26 @@ domyślna wysyłka Supabase służy wyłącznie do ograniczonych testów.
    - `customer.subscription.deleted`.
 7. Secret podpisu endpointu wklej do `STRIPE_WEBHOOK_SECRET`.
 
+### Potwierdzenia e-mail i timeout webhooka (2026-09-09)
+
+Webhook zapisuje zakup i niezmienną umowę w `purchase_contracts`, a następnie
+odpowiada Stripe bez czekania na SMTP. Pierwsza próba wysyłki działa po odpowiedzi.
+W razie przerwania procesu chronione zadanie `/api/maintenance/contract-emails`
+ponawia niewysłane potwierdzenia co 2 minuty w Production, do 5 równolegle na przebieg.
+Wymagany jest `CRON_SECRET` w Vercelu (Secret, bez NEXT_PUBLIC_); używamy istniejącego
+sekretu zadania czyszczenia. Nie trzeba zmieniać webhooka ani wykonywać migracji.
+
+Sprawdź w Vercel Cron Jobs harmonogram i HTTP 200 pierwszego przebiegu. HTTP 503
+oznacza problem konfiguracji/bazy albo co najmniej jedną nieudaną próbę SMTP;
+kolejka pozostaje do ponowienia. W adminie licznik zaległych e-maili pokazuje
+potwierdzenia niewysłane od ponad 10 minut. Wysyłka ma stały Message-ID i blokadę
+współbieżności; sporadyczne ponowne dostarczenie kopii po awarii zapisu jest możliwe,
+ale nie powoduje ponownego obciążenia lub zwiększenia limitu.
+
+Test: ukończ Checkout, sprawdź 200 webhooka, zapis umowy oraz `email_sent_at`;
+ponów ten sam event i sprawdź, że limit nie wzrasta drugi raz. Awaria SMTP nie
+powinna zmienić wyniku webhooka na błąd, jeśli zapis zakupu i umowy się udał.
+
 Checkout zbiera kartę przed startem, tworzy 3-dniową próbę i po jej zakończeniu
 przechodzi w miesięczną subskrypcję, jeżeli użytkownik wcześniej jej nie anuluje.
 SmartFach przechowuje identyfikatory klienta/subskrypcji i stan metody płatności,

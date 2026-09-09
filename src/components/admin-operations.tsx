@@ -6,6 +6,7 @@ import { releaseAiReservation } from "@/app/admin/actions";
 export type OperationalSummary = {
   milestones: Record<string, number>;
   pendingWebhooks: number;
+  pendingEmails?: number;
   uncertain: Array<{ organization_id: string; request_key: string; user_id: string; reserved_credits: number; created_at: string }>;
 };
 function Reservation({ item }: { item: OperationalSummary["uncertain"][number] }) {
@@ -24,7 +25,8 @@ function Reservation({ item }: { item: OperationalSummary["uncertain"][number] }
 }
 export function AdminOperations({ summary }: { summary: OperationalSummary }) {
   const labels: Record<string, string> = { registered: "Założone konta", checkout_opened: "Otwarcie płatności", checkout_completed: "Ukończenie zakupu", first_answer: "Pierwsza odpowiedź AI", guided_start: "Pierwszy start biznesu", paid: "Pierwszy aktywny abonament", canceled: "Pierwsze zakończenie abonamentu", top_up: "Pierwsze zwiększenie limitu" };
-  const hasIssues = summary.pendingWebhooks > 0 || summary.uncertain.length > 0;
+  const pendingEmails = summary.pendingEmails ?? 0;
+  const hasIssues = summary.pendingWebhooks > 0 || pendingEmails > 0 || summary.uncertain.length > 0;
   return <section className="admin-panel admin-operations" id="operacje" aria-labelledby="operations-title">
     <div className="admin-panel-heading"><div><Activity size={21} /><span><small>AKTYWACJA I NIEZAWODNOŚĆ</small><h2 id="operations-title">Aktywność i sprawy do sprawdzenia</h2></span></div><span className="admin-period"><Clock3 size={14} /> Ostatnie 30 dni</span></div>
     <p className="admin-section-copy">Zobacz, do którego etapu docierają użytkownicy i które operacje wymagają Twojej uwagi.</p>
@@ -36,7 +38,12 @@ export function AdminOperations({ summary }: { summary: OperationalSummary }) {
         <article className={`admin-health-card ${summary.pendingWebhooks ? "needs-attention" : ""}`}>
           <div><h4>Potwierdzenia Stripe</h4><strong>{summary.pendingWebhooks.toLocaleString("pl-PL")}</strong></div>
           <p>{summary.pendingWebhooks ? "Zdarzenia bez potwierdzenia od ponad 2 minut. Sprawdź błąd endpointu i ponów dostarczenie w Stripe." : "Nie ma zdarzeń oczekujących na potwierdzenie dłużej niż 2 minuty."}</p>
-          <span>Wszystkie nierozwiązane zdarzenia, niezależnie od daty. Dostarczenie e-maila nie potwierdza zapisu abonamentu.</span>
+          <span>Wszystkie nierozwiązane zdarzenia, niezależnie od daty. Zapis zakupu i wysyłka e-maila są sprawdzane osobno.</span>
+        </article>
+        <article className={`admin-health-card ${pendingEmails ? "needs-attention" : ""}`}>
+          <div><h4>Zaległe e-maile zamówień</h4><strong>{pendingEmails.toLocaleString("pl-PL")}</strong></div>
+          <p>{pendingEmails ? "Potwierdzenia bez zapisu wysyłki od ponad 10 minut. Sprawdź SMTP oraz zadanie contract-emails w Vercelu." : "Nie ma potwierdzeń oczekujących na wysyłkę dłużej niż 10 minut."}</p>
+          <span>Automatyczne ponowienia co 2 minuty. Opóźniona poczta nie blokuje potwierdzenia zakupu dla Stripe.</span>
         </article>
         <article className={`admin-health-card ${summary.uncertain.length ? "needs-attention" : ""}`}>
           <div><h4>Niepewne próby AI</h4><strong>{summary.uncertain.length}{summary.uncertain.length === 50 ? "+" : ""}</strong></div>

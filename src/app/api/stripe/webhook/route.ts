@@ -10,6 +10,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 export async function POST(request: Request) {
+  const startedAt = Date.now();
   const signature = request.headers.get("stripe-signature");
   const secret = process.env.STRIPE_WEBHOOK_SECRET?.trim();
   if (!signature || !secret) return Response.json({ error: "Brak podpisu webhooka." }, { status: 400 });
@@ -53,6 +54,7 @@ export async function POST(request: Request) {
       }
       const { data: finished, error } = await admin.rpc("complete_stripe_event", { event_id: event.id, lease_token: token });
       if (error || finished !== true) throw new Error("Nie potwierdzono zakończenia zdarzenia.");
+      console.info("stripe_event_processed", { eventId: event.id, durationMs: Date.now() - startedAt });
       return Response.json({ received: true });
     });
   } catch (error) {

@@ -41,7 +41,7 @@ describe("signed Stripe webhook",()=>{
   it("acknowledges an already processed event without side effects",async()=>{
     processed=true;expect((await POST(request())).status).toBe(200);expect(m.sync).not.toHaveBeenCalled();expect(m.contract).not.toHaveBeenCalled();
   });
-  it("marks completion only after subscription and contract have succeeded",async()=>{
+  it("marks completion only after subscription and durable contract persistence have succeeded",async()=>{
     expect((await POST(request())).status).toBe(200);
     expect(m.sync).toHaveBeenCalledTimes(1);expect(m.contract).toHaveBeenCalledTimes(1);
     expect(m.rpc).toHaveBeenCalledWith("complete_stripe_event",{event_id:"evt_test",lease_token:"lease"});
@@ -49,8 +49,11 @@ describe("signed Stripe webhook",()=>{
   it("does not acknowledge a failed subscription update",async()=>{
     m.sync.mockRejectedValue(new Error("DB failed"));expect((await POST(request())).status).toBe(500);expect(m.rpc).not.toHaveBeenCalled();
   });
-  it("keeps an interrupted email delivery retryable",async()=>{
-    m.contract.mockRejectedValue(new OperationBusy());expect((await POST(request())).status).toBe(503);expect(m.rpc).not.toHaveBeenCalled();
+  it("keeps failed contract persistence retryable",async()=>{
+    m.contract.mockRejectedValue(new Error("outbox unavailable"));expect((await POST(request())).status).toBe(500);expect(m.rpc).not.toHaveBeenCalled();
+  });
+  it("keeps a busy purchase operation retryable",async()=>{
+    m.operation.mockRejectedValue(new OperationBusy());expect((await POST(request())).status).toBe(503);expect(m.rpc).not.toHaveBeenCalled();
   });
   it("rejects an expired fencing token instead of falsely acknowledging",async()=>{
     m.rpc.mockResolvedValue({data:false,error:null});expect((await POST(request())).status).toBe(500);
