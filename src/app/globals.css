@@ -5695,6 +5695,14 @@ svg {
 .install-guide-tabs { display: inline-flex; gap: 6px; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: #eef2ef; }
 .install-guide-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 0; border-radius: 11px; background: transparent; color: #617269; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
 .install-guide-tabs button:hover { color: var(--ink); }
+.checkout-progress { display: flex; align-items: flex-start; gap: 14px; padding: 18px; margin-block: 16px; border: 1px solid var(--line); border-radius: 16px; background: #f0f5f1; color: var(--ink); text-align: left; }
+.checkout-progress > svg { flex-shrink: 0; }
+.checkout-progress strong { font-size: 15px; }
+.checkout-progress p { margin: 6px 0 10px; font-size: 13px; line-height: 1.6; }
+.checkout-progress small { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.checkout-progress-spinner { animation: checkout-spin 1s linear infinite; }
+@keyframes checkout-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .checkout-progress-spinner { animation: none; } }
 .install-guide-tabs button.active { background: white; color: var(--ink); box-shadow: 0 5px 16px #17342914; }
 .install-guide-panel { display: grid; gap: 22px; margin-top: 14px; padding: 28px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(145deg, white, #f8faf8); box-shadow: 0 18px 55px #15352a0d; }
 .install-guide-heading { display: flex; align-items: flex-start; gap: 16px; }

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only",()=>({}));
+vi.mock("next/server", () => ({ after: vi.fn() }));
 const mocks = vi.hoisted(()=>({from:vi.fn(), create:vi.fn(), retrieve:vi.fn(), expire:vi.fn(), price:vi.fn(), acceptance:vi.fn()}));
 vi.mock("@/lib/supabase/admin",()=>({createAdminClient:()=>({from:mocks.from})}));
 vi.mock("@/lib/stripe",()=>({applicationUrl:()=>"https://test.invalid", stripePriceId:()=>"price_test",getStripe:()=>({prices:{retrieve:mocks.price},checkout:{sessions:{create:mocks.create,retrieve:mocks.retrieve,expire:mocks.expire}}})}));
@@ -26,6 +27,11 @@ beforeEach(()=>{
   mocks.create.mockResolvedValue({id:"cs_test_one",url:"https://checkout.stripe.com/test",status:"open"});
 });
 describe("one trial and recoverable checkout creation",()=>{
+  it("rejects a wrong price without creating a purchase", async () => {
+    mocks.price.mockResolvedValue({ id: "price_wrong", active: true, currency: "pln", unit_amount: 1, recurring: { interval: "month", interval_count: 1 } });
+    await expect(createSubscriptionCheckout(input)).rejects.toThrow("Nieprawidłowa cena");
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
   it("offers a first trial and persists a stable purchase key",async()=>{
     await createSubscriptionCheckout(input);
     expect(mocks.create.mock.calls[0]![0].subscription_data.trial_period_days).toBe(3);

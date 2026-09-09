@@ -16,6 +16,7 @@ export function PaymentResultPage({
   tone = "success",
   steps,
   children,
+  trustText = "Dane karty obsługuje Stripe. SmartFach nie przechowuje numeru karty ani kodu CVC.",
 }: {
   icon: ReactNode;
   eyebrow: string;
@@ -24,6 +25,7 @@ export function PaymentResultPage({
   tone?: "success" | "pending" | "attention";
   steps: readonly PaymentResultStep[];
   children: ReactNode;
+  trustText?: string;
 }) {
   return (
     <div className="payment-result-site">
@@ -57,7 +59,7 @@ export function PaymentResultPage({
           <h1>{title}</h1>
           <p className="payment-result-description">{description}</p>
 
-          <ol className="payment-result-steps" aria-label="Postęp aktywacji">
+          {steps.length > 0 && <ol className="payment-result-steps" aria-label="Postęp aktywacji">
             {steps.map((step, index) => (
               <li className={step.state} key={step.label}>
                 <span aria-hidden="true">
@@ -66,15 +68,14 @@ export function PaymentResultPage({
                 <small>{step.label}</small>
               </li>
             ))}
-          </ol>
+          </ol>}
 
           <div className="payment-result-actions">{children}</div>
 
           <div className="payment-result-trust">
             <ShieldCheck size={18} aria-hidden="true" />
             <span>
-              Dane karty obsługuje Stripe. SmartFach nie przechowuje numeru karty
-              ani kodu CVC.
+              {trustText}
             </span>
           </div>
         </section>

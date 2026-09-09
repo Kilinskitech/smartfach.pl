@@ -26,6 +26,10 @@ zapis, billing, limity, obliczenia i operacje zewnętrzne.
 - Modele otrzymują ten sam ścisły JSON Schema, niski poziom rozumowania,
   ukryte tokeny rozumowania i plugin naprawiający składnię odpowiedzi. Każdy wynik
   dodatkowo przechodzi walidację Zod po stronie serwera.
+- Aktywny kontrakt to wyłącznie `{reply: string}`. Dawne pola wycen/protokołów
+  nie są wymagane ani wysyłane w schemacie. Dla zgodności przyjmujemy je w odpowiedzi,
+  lecz bezwarunkowo odrzucamy ich zawartość i nie wykonujemy operacji biznesowych.
+  Pusta, zbyt długa lub niepoprawnie typowana odpowiedź nadal jest odrzucana.
 - Tekst, do trzech zdjęć i ograniczona historia rozmowy mogą wejść do modelu.
 - Załączniki nie są obecnie trwałą pamięcią; wymaga to osobnego bezpiecznego storage.
 - Wyszukiwanie internetowe może być użyte do aktualnego researchu maksymalnie raz
@@ -98,6 +102,14 @@ pozostaje zarezerwowane. Administrator sprawdza logi i może zwolnić rezerwacj�
 przyjmując koszt po stronie SmartFach; decyzja trafia do audytu. Wygasły proces
 nie może ponownie naliczyć zamkniętej próby. Zapis odpowiedzi w historii rozmowy
 pozostaje osobnym optymistycznym zapisem UI; replay pozwala go ponowić po błędzie.
+
+Od 2026-09-09 odebrany, nieużyteczny wynik ma osobny błąd `ProviderOutputError`.
+Jego rezerwację zwalniamy bez obciążenia klienta i bez automatycznej drugiej generacji.
+Koszt tej odpowiedzi pokrywa operator; metadane odrzucenia zawierają dostępny koszt
+dostawcy i kody walidacji, bez tekstu rozmowy. Nie jest on zakończonym usage_event;
+rachunek dostawcy pozostaje źródłem uzgodnienia kosztów błędów.
+Timeouty sieci nadal nie są automatycznie ponawiane ani zwalniane.
+Historyczne niepewne próby nie są masowo zmieniane — wymagają przeglądu w adminie.
 
 Fallback ma stały identyfikator modelu zamiast aliasu `latest`, aby aktualizacja
 dostawcy nie zmieniła kosztu i zachowania bez wdrożenia. Każdą zmianę modelu trzeba

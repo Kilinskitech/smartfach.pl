@@ -1,6 +1,6 @@
 # E-maile transakcyjne Supabase
 
-Stan: 2026-09-05. Szablon w repozytorium nie zmienia automatycznie ustawień
+Stan: 2026-09-09. Szablon w repozytorium nie zmienia automatycznie ustawień
 hostowanego projektu Supabase. Trzeba wkleić go raz w panelu projektu.
 
 W projekcie Free utworzonym po 3 czerwca 2026 najpierw skonfiguruj własny SMTP.
@@ -14,15 +14,27 @@ domyślnej wysyłki. Po zapisaniu SMTP wróć do sekcji z szablonami.
 3. Wklej całą zawartość `docs/email-templates/confirm-signup.html`.
 4. Zapisz i wyślij test na adres należący do zespołu projektu.
 
-Szablon używa `{{ .ConfirmationURL }}`, dlatego zachowuje adres powrotu przekazany
-przy rejestracji. Aplikacja obsługuje także wariant SSR z `token_hash`, gdy w
-przyszłości zmienimy sposób budowania linku.
+Szablon używa `{{ .SiteURL }}/auth/potwierdz?token_hash={{ .TokenHash }}&type=signup`.
+Najpierw wdrażamy kod, następnie wklejamy nowy szablon w panelu. Site URL musi
+być `https://smartfach.pl` w produkcyjnym Supabase, a `https://preview.smartfach.pl`
+w osobnym testowym projekcie. Nigdy nie mieszamy baz między tymi środowiskami.
+
+GET pokazuje markową stronę i nie zużywa tokenu. Dopiero przycisk wysyła POST
+do naszej domeny, a serwer wywołuje `verifyOtp`. Nie jest potrzebny cookie PKCE
+z przeglądarki użytej do rejestracji: link można otworzyć na innym urządzeniu
+lub w PWA. Przeglądarki mogą mieć oddzielne sesje — wtedy wystarczy się zalogować.
+Domyślny link Supabase może zostać zużyty przez skaner poczty; nowy ekran ogranicza
+ten przypadek. Nie zmieniamy okien systemowych Androida/Firefoksa.
+Stare wysłane e-maile pozostają bez zmian; do testu zamów nową wiadomość.
+Źródło: https://supabase.com/docs/guides/auth/auth-email-templates
 
 ## Odzyskiwanie hasła
 
 1. Otwórz Supabase → Authentication → Email Templates → Reset password.
 2. Ustaw temat: `Ustaw nowe hasło — SmartFach`.
 3. Wklej całą zawartość `docs/email-templates/recovery.html`.
+   Nowy link również prowadzi przez `/auth/potwierdz`, z `type=recovery`,
+   a po naciśnięciu przycisku wyłącznie do `/ustaw-haslo`.
 4. Sprawdź, czy w Redirect URLs znajdują się oba adresy:
    `https://smartfach.pl/auth/callback` oraz
    `https://preview.smartfach.pl/auth/callback`.

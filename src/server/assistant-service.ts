@@ -1,12 +1,22 @@
 import { z } from "zod";
-import { ProviderRejectedError } from "./provider-errors";
+import { ProviderOutputError, ProviderRejectedError } from "./provider-errors";
 import {
-  assistantJsonSchema,
-  assistantOutputSchema,
   assistantRequestSchema,
   materializeAssistant,
 } from "../domain/assistant";
 import type { WebSource, Workspace } from "../domain/workspace";
+
+// The active product is a conversation, not the retired quote/report workflow.
+const chatOutputSchema = z.object({
+  reply: z.string().trim().min(1).max(4000),
+  // Accept legacy envelopes, but never execute or materialize their contents.
+  quote: z.unknown().optional(),
+  report: z.unknown().optional(),
+}).strict();
+const chatJsonSchema = {
+  type: "object", additionalProperties: false, required: ["reply"],
+  properties: { reply: { type: "string" } },
+};
 
 export const primaryAiModel = "openai/gpt-5-nano";
 export const advancedAiModel = "openai/gpt-5.6-luna";
@@ -37,7 +47,7 @@ Jeżeli w rozmowie jest dostępne narzędzie internetowe, używaj go przy pytani
 Internet może wspierać odpowiedź, ale stawki rynkowe zawsze oznaczaj jako orientacyjne i oddzielaj je od ceny wybranej przez użytkownika.
 Nie masz zweryfikowanej biblioteki instrukcji producentów ani RAG. Nie udawaj pewnej diagnostyki. Przy gazie, prądzie i zagrożeniu bezpieczeństwa jasno wskaż niepewność i potrzebę bezpiecznej weryfikacji przez uprawnioną osobę.
 Formatuj treść pola reply czytelnym Markdown: krótkie akapity oddzielone pustą linią, listy z każdą pozycją w osobnym wierszu i oszczędne pogrubienie kluczowych informacji. Nie upychaj kilku punktów w jednym akapicie. Przy dłuższej odpowiedzi użyj 2–3 krótkich nagłówków (###), ale do prostego pytania wystarczy jeden akapit. Gotowy tekst oferty lub wiadomości wydziel jako cytat (>). Unikaj tabel, HTML, obrazów i dekoracyjnych emoji. Zwięzłość oznacza mniej zbędnych słów, nie brak akapitów.
-Zwróć wyłącznie obiekt JSON w formacie {"reply":"odpowiedź dla użytkownika z formatowaniem Markdown","quote":null,"report":null}. Markdown stosuj wewnątrz wartości reply; nie opakowuj obiektu JSON w blok kodu i nie dodawaj tekstu przed nim ani po nim. Nowe linie poprawnie zakoduj w ciągu JSON. W obecnym produkcie quote i report są zawsze null.`;
+Zwróć wyłącznie obiekt JSON w formacie {"reply":"odpowiedź dla użytkownika z formatowaniem Markdown"}. Nie zwracaj pól quote, report ani poleceń wykonania operacji. Markdown stosuj wewnątrz wartości reply; nie opakowuj obiektu JSON w blok kodu i nie dodawaj tekstu przed nim ani po nim. Nowe linie poprawnie zakoduj w ciągu JSON. Treść reply musi być niepusta i mieć najwyżej 4000 znaków.`;
 
 const journeyInstruction = (workspace: Workspace) => {
   const context = workspace.journey;
@@ -229,6 +239,7 @@ function logRejectedProviderOutput(
   model: string,
   contentLength: number,
   expectedDocument: boolean,
+  issues?: Array<{ code: string; path: string }>,
 ) {
   console.warn(
     "SmartFach odrzucił format odpowiedzi AI " +
@@ -240,6 +251,8 @@ function logRejectedProviderOutput(
         finishReason: provider.choices[0]?.finish_reason ?? "unknown",
         contentLength,
         expectedDocument,
+        ...(issues ? { issues } : {}),
+        ...(provider.usage?.cost != null ? { costUsd: provider.usage.cost } : {}),
       }),
   );
 }
@@ -368,7 +381,7 @@ export async function callAssistant(
           json_schema: {
             name: "smartfach_result",
             strict: true,
-            schema: assistantJsonSchema,
+            schema: chatJsonSchema,
           },
         },
         ...(webSearchEnabled()
@@ -435,7 +448,7 @@ export async function callAssistant(
     provider.data.model ?? (usedFallback ? fallbackAiModel : selectedModel);
   const message = provider.data.choices[0]!.message;
   if (message.refusal)
-    throw new Error("AI odmówiło odpowiedzi. Doprecyzuj pytanie.");
+    throw new ProviderOutputError("Asystent nie może pomóc w tym zadaniu. Zmień treść pytania; nie wykorzystano Twojego limitu.");
   const raw = message.content ?? "";
   const sources = extractWebSources(message.annotations);
   const usage = normalizeUsage(
@@ -467,23 +480,24 @@ export async function callAssistant(
         sources,
         ...(usage ? { usage } : {}),
       };
-    throw new Error(
+    throw new ProviderOutputError(
       expectedDocument
         ? "AI odpowiedziało tekstem zamiast poprawnego szkicu. Niczego nie zapisano. Spróbuj ponownie."
         : "AI zwróciło nieprawidłową odpowiedź. Niczego nie zapisano.",
     );
   }
-  const output = assistantOutputSchema.safeParse(parsed);
-  if (!output.success || (output.data.quote && output.data.report)) {
+  const output = chatOutputSchema.safeParse(parsed);
+  if (!output.success) {
     logRejectedProviderOutput(
       "invalid-schema",
       provider.data,
       responseModel,
       raw.length,
       expectedDocument,
+      output.error.issues.map((issue) => ({ code: issue.code, path: issue.path.join(".") })).slice(0, 5),
     );
-    throw new Error(
-      "Szkic AI nie przeszedł sprawdzenia. Niczego nie zapisano.",
+    throw new ProviderOutputError(
+      "Odpowiedź asystenta miała nieprawidłowy format. Wyślij wiadomość ponownie; nie wykorzystano Twojego limitu.",
     );
   }
   return {

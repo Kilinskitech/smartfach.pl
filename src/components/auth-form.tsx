@@ -7,6 +7,7 @@ import { requestPasswordReset, signIn, signUp } from "@/app/auth-actions";
 import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 import { PurchaseConsent } from "./purchase-consent";
+import { CheckoutProgress } from "./checkout-progress";
 
 export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, confirmationRequired = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; confirmationRequired?: boolean; loginFirst?: boolean }) {
   const [view, setView] = useState<"register" | "login" | "reset">(
@@ -36,8 +37,8 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
 
       <section className="auth-card">
         {view !== "reset" && <div className="auth-tabs" role="tablist" aria-label="Konto SmartFach">
-          <button className={view === "register" ? "selected" : ""} onClick={() => setView("register")}>Załóż konto</button>
-          <button className={view === "login" ? "selected" : ""} onClick={() => setView("login")}>Zaloguj się</button>
+          <button disabled={registerPending || loginPending} className={view === "register" ? "selected" : ""} onClick={() => setView("register")}>Załóż konto</button>
+          <button disabled={registerPending || loginPending} className={view === "login" ? "selected" : ""} onClick={() => setView("login")}>Zaloguj się</button>
         </div>}
 
         {view !== "reset" && checkoutCanceled && (
@@ -102,6 +103,7 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
             <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p>Plan {plans[plan].name} obejmuje 100% miesięcznego limitu. Długość rozmowy, zdjęcia i używane narzędzia wpływają na tempo jego wykorzystania. Limit odnawia się bez kumulacji. Po wyczerpaniu możesz poczekać albo zwiększyć go jednorazowo. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
             <PurchaseConsent />
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
+            {registerPending && <CheckoutProgress creatingAccount />}
             <button className="button button-primary auth-submit" disabled={registerPending}>{registerPending ? "Przekierowanie do Stripe…" : "Utwórz konto i przejdź dalej"} <ArrowRight size={18} /></button>
             <p className="auth-trial-copy"><ShieldCheck size={15} /> Przejdziesz bezpośrednio do Stripe. Adres e-mail potwierdzisz po zapisaniu karty.</p>
           </form>

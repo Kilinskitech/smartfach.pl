@@ -1,6 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 import { publicPlanIdSchema } from "@/domain/billing";
 import { applicationUrl, getStripe, stripeConfigured } from "@/lib/stripe";
@@ -142,7 +143,8 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
   if (error) return { error: message(error) };
   if (!data.user?.id || data.user.identities?.length === 0)
     return { error: "Konto z tym adresem już istnieje. Zaloguj się." };
-  await recordMilestone(data.user.id, "registered");
+  // Analytics must not delay the redirect to payment.
+  after(() => recordMilestone(data.user!.id, "registered"));
 
   let checkoutUrl: string;
   try {
@@ -240,6 +242,16 @@ export async function requestPasswordReset(
     success:
       "Jeśli konto z tym adresem istnieje, wysłaliśmy link do ustawienia nowego hasła. Sprawdź też Spam.",
   };
+}
+
+export async function requestConfirmationEmail(_: AuthState, formData: FormData): Promise<AuthState> {
+  await assertDeploymentIdentity();
+  const parsed = emailSchema.safeParse({ email: formData.get("email") });
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message };
+  const supabase = await createClient();
+  await supabase.auth.resend({ type: "signup", email: parsed.data.email, options: { emailRedirectTo: confirmationCallback() } });
+  // Do not disclose account existence. Supabase applies the email send rate limit.
+  return { success: "Jeśli konto czeka na potwierdzenie, wyślemy nowy link. Sprawdź Spam. Kolejną wiadomość możesz zamówić po chwili." };
 }
 
 export async function updatePassword(

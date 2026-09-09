@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
         { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'" },
       ],
     }, {
+      source: "/auth/:path*",
+      headers: [
+        { key: "Cache-Control", value: "private, no-store" },
+        { key: "Referrer-Policy", value: "no-referrer" },
+        { key: "X-Robots-Tag", value: "noindex, nofollow" },
+      ],
+    }, {
       source: "/offline.html",
       headers: [{ key: "X-Robots-Tag", value: "noindex" }],
     }];

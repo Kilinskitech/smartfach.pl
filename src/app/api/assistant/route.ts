@@ -4,7 +4,7 @@ import { aiConfigured, publicAiConfiguration, callAssistant } from "@/server/ass
 import { readWorkspace } from "@/server/supabase-workspace-repository";
 import { assistantRequestSchema } from "@/domain/assistant";
 import { UsageLimitExceeded, UsageRequestError, beginUsage, finishUsage, failUsage, markUncertainUsage } from "@/server/usage-requests";
-import { ProviderRejectedError } from "@/server/provider-errors";
+import { ProviderOutputError, ProviderRejectedError } from "@/server/provider-errors";
 import { assertDeploymentIdentity, recordMilestone } from "@/server/operations";
 
 export const runtime = "nodejs";
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     try {
       result = await callAssistant(input, workspace, fetch, context.userId);
     } catch (error) {
-      if (error instanceof ProviderRejectedError && await failUsage(context.organizationId, context.userId, input.idempotencyKey!))
+      if ((error instanceof ProviderRejectedError || error instanceof ProviderOutputError) && await failUsage(context.organizationId, context.userId, input.idempotencyKey!))
         return Response.json({ code: "provider_failed", error: error.message }, { status: 502, headers });
       await markUncertainUsage(context.organizationId, context.userId, input.idempotencyKey!);
       console.error("ai_request_uncertain", { requestKey: input.idempotencyKey, reason: error instanceof Error ? error.name : "unknown" });

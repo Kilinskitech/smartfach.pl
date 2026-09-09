@@ -13,7 +13,7 @@ import { POST } from "./route";
 import { authenticatedContext, requireSubscription, AuthenticationRequired, SubscriptionRequired } from "@/server/auth";
 import { callAssistant } from "@/server/assistant-service";
 import { beginUsage, finishUsage, failUsage, markUncertainUsage, UsageRequestError } from "@/server/usage-requests";
-import { ProviderRejectedError } from "@/server/provider-errors";
+import { ProviderOutputError, ProviderRejectedError } from "@/server/provider-errors";
 
 const input = { clientId:null, idempotencyKey: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", messages: [{ role: "user", content: "Pomóż mi przygotować ofertę" }] };
 const request = (body:unknown=input) => new Request("https://test.invalid/api/assistant", { method:"POST", headers:{"content-type":"application/json"}, body: JSON.stringify(body) });
@@ -27,6 +27,20 @@ beforeEach(() => {
   vi.spyOn(console,"error").mockImplementation(()=>{});
 });
 describe("assistant route cost boundary", () => {
+  it("releases an invalid completed reply without charging or requiring manual review", async () => {
+    vi.mocked(callAssistant).mockRejectedValue(new ProviderOutputError("Invalid format"));
+    const response = await POST(request());
+    expect(await response.json()).toMatchObject({ code: "provider_failed" });
+    expect(failUsage).toHaveBeenCalledOnce();
+    expect(finishUsage).not.toHaveBeenCalled();
+    expect(markUncertainUsage).not.toHaveBeenCalled();
+  });
+  it("keeps an invalid reply reserved if release cannot be confirmed", async () => {
+    vi.mocked(callAssistant).mockRejectedValue(new ProviderOutputError("Invalid format"));
+    vi.mocked(failUsage).mockResolvedValue(false);
+    expect(await (await POST(request())).json()).toMatchObject({ code: "uncertain" });
+    expect(markUncertainUsage).toHaveBeenCalledOnce();
+  });
   it("requires a stable key before dispatch",async()=>{
     const r=await POST(request({messages:input.messages})); expect(r.status).toBe(400); expect(callAssistant).not.toHaveBeenCalled();
   });

@@ -28,14 +28,14 @@
                 <table role="presentation" cellspacing="0" cellpadding="0">
                   <tr>
                     <td style="border-radius:12px;background:#ef7f42;">
-                      <a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:15px 22px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Ustaw nowe hasło</a>
+                      <a href="{{ .SiteURL }}/auth/potwierdz?token_hash={{ .TokenHash }}&amp;type=recovery" style="display:inline-block;padding:15px 22px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;">Ustaw nowe hasło</a>
                     </td>
                   </tr>
                 </table>
                 <p style="margin:28px 0 8px;color:#7b8984;font-size:12px;line-height:1.55;">
                   Jeżeli przycisk nie działa, skopiuj ten adres do przeglądarki:
                 </p>
-                <p style="margin:0;word-break:break-all;color:#315f56;font-size:11px;line-height:1.5;">{{ .ConfirmationURL }}</p>
+                <p style="margin:0;word-break:break-all;color:#315f56;font-size:11px;line-height:1.5;">{{ .SiteURL }}/auth/potwierdz?token_hash={{ .TokenHash }}&amp;type=recovery</p>
               </td>
             </tr>
             <tr>

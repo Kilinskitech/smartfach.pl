@@ -55,5 +55,5 @@ export async function GET(request: Request) {
     }
     return NextResponse.redirect(new URL(next, url.origin));
   }
-  return NextResponse.redirect(new URL("/logowanie?blad=potwierdzenie", url.origin));
+  return NextResponse.redirect(new URL(`/auth/potwierdz?blad=link&type=${next === "/ustaw-haslo" ? "recovery" : "signup"}`, url.origin));
 }

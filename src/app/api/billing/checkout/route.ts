@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { publicPlanIdSchema } from "@/domain/billing";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { authenticatedContext } from "@/server/auth";
 import { limitedJson } from "@/server/request-body";
 import { createSubscriptionCheckout } from "@/server/stripe-checkout";
@@ -24,31 +23,15 @@ export async function POST(request: Request) {
         { status: 403 },
       );
 
-    const { data: userData, error: userError } = await context.supabase.auth.getUser();
-    if (userError || !userData.user?.email)
+    // authenticatedContext already verified the user against Auth. The checkout
+    // service reads the current subscription/customer again under its lease.
+    if (!context.email)
       return Response.json({ error: "Konto nie ma potwierdzonego adresu e-mail." }, { status: 401 });
-
-    const admin = createAdminClient();
-    const { data: existing } = await admin
-      .from("subscriptions")
-      .select("status, stripe_customer_id")
-      .eq("organization_id", context.organizationId)
-      .maybeSingle();
-    if (existing && ["active", "trialing"].includes(String(existing.status)))
-      return Response.json(
-        { error: "Ten abonament jest już aktywny. Zarządzaj nim w portalu płatności." },
-        { status: 409 },
-      );
-
-    const customerId = existing?.stripe_customer_id
-      ? String(existing.stripe_customer_id)
-      : null;
     const session = await createSubscriptionCheckout({
       organizationId: context.organizationId,
       userId: context.userId,
-      email: userData.user.email,
+      email: context.email,
       plan: input.plan,
-      customerId,
       cancelPath: `/platnosc?plan=${input.plan}&anulowano=1`,
       idempotencyKey: `checkout:${context.organizationId}:${input.idempotencyKey}`,
     });

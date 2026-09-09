@@ -16,11 +16,7 @@ import {
 } from "lucide-react";
 import { Dialog } from "./dialog";
 import { BrandMark } from "./brand";
-
-interface InstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-}
+import { consumeInstallPrompt, type InstallPromptEvent } from "@/lib/install-prompt";
 
 type InstallPlatform = "ios" | "android" | "desktop";
 type InstallPlatformSnapshot = InstallPlatform | "unknown";
@@ -28,7 +24,7 @@ type GuideIcon = "browser" | "menu" | "share" | "add";
 
 const InstallContext = createContext<{
   prompt: InstallPromptEvent | null;
-  clear: () => void;
+  clear: (event: InstallPromptEvent) => void;
   installed: boolean;
 }>({ prompt: null, clear: () => {}, installed: false });
 
@@ -57,13 +53,14 @@ const guides: Record<InstallPlatform, {
   },
   android: {
     label: "Android",
-    eyebrow: "CHROME · JEDNO KLIKNIĘCIE",
+    eyebrow: "CHROME · INSTALACJA Z PRZEGLĄDARKI",
     title: "Zainstaluj SmartFach na telefonie",
-    description: "Gdy Chrome udostępni instalację, pomarańczowy przycisk otworzy natywne okno jednym kliknięciem.",
+    description: "Przycisk otwiera okno instalacji, jeśli Chrome je udostępnia. Instalację trzeba jeszcze potwierdzić w tym oknie.",
     steps: [
       { icon: "browser", title: "Otwórz stronę w Chrome", description: "Wejdź na smartfach.pl bezpośrednio w Chrome, nie w przeglądarce Facebooka lub Instagrama." },
       { icon: "menu", title: "Otwórz menu Chrome", description: "Jeśli okno instalacji nie pojawiło się automatycznie, naciśnij trzy kropki (⋮) w prawym górnym rogu." },
       { icon: "add", title: "Wybierz instalację", description: "Naciśnij „Zainstaluj aplikację” lub „Dodaj do ekranu głównego” i potwierdź." },
+      { icon: "add", title: "Sprawdź ikonę na telefonie", description: "Jeśli jej nie ma, sprawdź listę aplikacji. Gdy instalacja nie kończy się, otwórz stronę w zwykłej karcie aktualnego Chrome (nie incognito), sprawdź internet i spróbuj z menu. Nadal możesz korzystać ze SmartFach w przeglądarce." },
     ],
   },
   desktop: {
@@ -172,7 +169,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  return <InstallContext.Provider value={{ prompt, clear: () => setPrompt(null), installed: inApp || installationCompleted }}>
+  return <InstallContext.Provider value={{ prompt, clear: (used) => setPrompt((current) => current === used ? null : current), installed: inApp || installationCompleted }}>
     {children}
   </InstallContext.Provider>;
 }
@@ -188,25 +185,33 @@ export function InstallAppButton({ className = "button button-secondary" }: { cl
   const platform: InstallPlatform = detectedPlatform === "unknown" ? "desktop" : detectedPlatform;
 
   async function install() {
-    if (installed) return;
+    if (installed || busy) return;
     setMessage("");
     if (!prompt) {
       setOpen(true);
       return;
     }
     setBusy(true);
+    if (!consumeInstallPrompt(prompt)) {
+      setBusy(false);
+      setOpen(true);
+      return;
+    }
+    clear(prompt);
     try {
+      // Keep this call inside the click gesture, before awaiting other work.
       await prompt.prompt();
       const result = await prompt.userChoice;
       if (result.outcome === "dismissed") {
         setMessage("Instalacja została zamknięta. Możesz uruchomić ją ponownie z menu przeglądarki.");
       } else {
-        setMessage("Instalacja rozpoczęta. Ikona SmartFach pojawi się na Twoim urządzeniu.");
+        setMessage("Wybór został potwierdzony w przeglądarce. Sprawdź, czy ikona pojawiła się na telefonie. Jeśli nie — skorzystaj z instrukcji poniżej.");
       }
+      setOpen(true);
     } catch {
+      setMessage("Przeglądarka nie otworzyła instalacji. Możesz dodać aplikację z jej menu — instrukcja poniżej.");
       setOpen(true);
     } finally {
-      clear();
       setBusy(false);
     }
   }
@@ -216,7 +221,7 @@ export function InstallAppButton({ className = "button button-secondary" }: { cl
     : busy
       ? "Otwieranie instalacji…"
       : prompt
-        ? "Dodaj aplikację jednym kliknięciem"
+        ? "Zainstaluj aplikację"
         : platform === "ios"
           ? "Dodaj na iPhone’a lub iPada"
           : platform === "android"
@@ -230,18 +235,20 @@ export function InstallAppButton({ className = "button button-secondary" }: { cl
     </button>
     {message && <p className="form-hint install-button-message" role="status">{message}</p>}
     {open && <Dialog
-      title={guides[platform].title}
-      description={guides[platform].description}
+      title={installed ? "SmartFach jest zainstalowany" : guides[platform].title}
+      description={installed ? "Otwórz SmartFach przez ikonę na swoim urządzeniu." : guides[platform].description}
       onClose={() => setOpen(false)}
     >
       <div className="install-instructions">
+        {message && !installed && <p className="checkout-notice" role="status">{message}</p>}
+        {prompt && !installed && <button type="button" className="button button-primary" onClick={() => void install()} disabled={busy}>{busy ? "Otwieranie instalacji…" : "Otwórz okno instalacji"}</button>}
         <BrowserNotice platform={platform} inSocialBrowser={inSocialBrowser} outsideSafari={outsideSafari} />
         <div className="install-dialog-platform">
           <span><PlatformIcon platform={platform} size={23} /></span>
           <div><small>{guides[platform].eyebrow}</small><strong>{guides[platform].label}</strong></div>
         </div>
         <InstallSteps platform={platform} />
-        <div className="install-complete-note"><CheckCircle2 size={19} /><span><strong>Po instalacji niczego nie konfigurujesz ponownie.</strong> To samo konto, plan i rozmowy będą od razu dostępne.</span></div>
+        <div className="install-complete-note"><CheckCircle2 size={19} /><span><strong>To samo konto, plan i rozmowy.</strong> Aplikacja może poprosić o ponowne zalogowanie. Nie zakładaj drugiego konta.</span></div>
         <button className="button button-primary" onClick={() => setOpen(false)}>Gotowe</button>
       </div>
     </Dialog>}

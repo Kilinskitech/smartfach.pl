@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { PurchaseConsent } from "./purchase-consent";
+import { CheckoutProgress } from "./checkout-progress";
 import { legalDocumentVersion } from "@/domain/operator";
 import { ArrowRight, Check, CreditCard, ExternalLink, ShieldCheck } from "lucide-react";
 import {
@@ -86,7 +87,7 @@ export function CheckoutPlans({
           <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>Buduj własny przychód</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
           <section className="checkout-plan-grid checkout-plan-grid-two">
             {publicPlanIds.map((id) => (
-              <button key={id} type="button" aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
+              <button key={id} type="button" disabled={busy} aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
                 <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
                 <strong>{plans[id].price}<small>{trialEligible ? "/ miesiąc po próbie" : "/ miesiąc"}</small></strong>
                 <p>{plans[id].description}</p>
@@ -102,6 +103,7 @@ export function CheckoutPlans({
       </section>
 
       {!hasAccess && !hasSubscription && <div className="checkout-legal"><p className="purchase-summary">{trialEligible ? "Dziś 0 zł. Po próbie " : "Od dziś "}<strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
+      {busy && <CheckoutProgress />}
       {error && <p className="form-error" role="alert">{error}</p>}
       {!configured ? (
         <p className="setup-inline">Stripe czeka na konfigurację kluczy, cen i webhooka. Przycisk pozostaje wyłączony, aby nie udawać płatności.</p>

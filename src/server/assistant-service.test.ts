@@ -9,6 +9,7 @@ import {
   selectAiModel,
 } from "./assistant-service";
 import { fixtureClient, fixtureWorkspace } from "../test/fixtures";
+import { ProviderOutputError } from "./provider-errors";
 const input = {
   clientId: null,
   messages: [{ role: "user" as const, content: "Napisz wiadomość do klienta" }],
@@ -34,6 +35,26 @@ beforeEach(() => {
 });
 afterEach(() => vi.unstubAllEnvs());
 describe("adapter AI, bez płatnych zapytań w testach", () => {
+  it.each([
+    { reply: "Cześć! Jak mogę pomóc?" },
+    { reply: "Cześć! Jak mogę pomóc?", quote: null },
+    { reply: "Cześć! Jak mogę pomóc?", quote: {}, report: "legacy" },
+  ])("accepts chat without retired document fields and never runs them", async (value) => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(Response.json({
+      ...provider(JSON.stringify(value)), usage: { cost: 0.001 },
+    }));
+    const result = await callAssistant(input, fixtureWorkspace(), fetcher);
+    expect(result).toMatchObject({ reply: value.reply, quote: null, report: null, usage: { costUsd: 0.001 } });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    const schema = JSON.parse(String(fetcher.mock.calls[0]![1]!.body)).response_format.json_schema.schema;
+    expect(schema.required).toEqual(["reply"]);
+    expect(schema.properties.quote).toBeUndefined();
+  });
+  it.each([{ reply: "" }, { reply: 12 }, { reply: ["hello"] }, { answer: "hello" }, { reply: "x".repeat(4001) }])("classifies unusable completed output separately from timeouts", async (value) => {
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(Response.json(provider(JSON.stringify(value))));
+    await expect(callAssistant(input, fixtureWorkspace(), fetcher)).rejects.toBeInstanceOf(ProviderOutputError);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
   it("zachowuje Markdown wewnątrz odpowiedzi JSON bez dodatkowej generacji", async () => {
     const reply = "### Kierunki\n\n1. **Administracja** online\n2. Opisy produktów\n\n> Gotowa oferta\n\nNastępny krok.";
     const fetcher = vi.fn<typeof fetch>().mockResolvedValue(Response.json(provider(JSON.stringify({ ...payload, reply }))));

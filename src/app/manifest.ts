@@ -11,7 +11,9 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "pl",
     categories: ["productivity", "business"],
     prefer_related_applications: false,
-    start_url: "/app",
+    // A public entry point, also reachable by Chrome's installer without cookies.
+    // Authenticated users are forwarded to their app by the login page.
+    start_url: "/logowanie?dalej=%2Fapp",
     scope: "/",
     display: "standalone",
     background_color: brandColors.background,

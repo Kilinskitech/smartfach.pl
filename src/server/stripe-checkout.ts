@@ -1,4 +1,5 @@
 import "server-only";
+import { after } from "next/server";
 import { matchesSubscriptionPrice, plans, stripeExistingCustomerUpdate, type PlanId } from "@/domain/billing";
 import { applicationUrl, getStripe, stripePriceId } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -15,10 +16,11 @@ export async function createSubscriptionCheckout(input: {
     const stripe = getStripe();
     const baseUrl = applicationUrl();
     const plan = plans[input.plan];
-    const [{ data: organization, error: orgError }, { data: subscription, error: subError }, { data: previous, error: previousError }] = await Promise.all([
+    const [{ data: organization, error: orgError }, { data: subscription, error: subError }, { data: previous, error: previousError }, price] = await Promise.all([
       admin.from("organizations").select("owner_user_id,trial_consumed_at").eq("id",input.organizationId).single(),
       admin.from("subscriptions").select("status,stripe_customer_id,stripe_subscription_id,trial_started_at").eq("organization_id",input.organizationId).maybeSingle(),
       admin.from("checkout_attempts").select("*").eq("organization_id",input.organizationId).maybeSingle(),
+      stripe.prices.retrieve(stripePriceId(input.plan)),
     ]);
     if (orgError || subError || previousError || organization?.owner_user_id !== input.userId) throw new Error("Nie można sprawdzić konta płatności.");
     if (subscription && (["active","trialing","past_due","unpaid","paused"].includes(subscription.status) || (subscription.status === "incomplete" && subscription.stripe_subscription_id)))
@@ -36,7 +38,6 @@ export async function createSubscriptionCheckout(input: {
     // Stripe may prune idempotency keys after 24h. Do not recreate an ambiguous old purchase.
     if (attempt && Date.parse(attempt.created_at) < Date.now() - 23 * 60 * 60 * 1000)
       throw new Error("Poprzednia próba płatności wymaga sprawdzenia przez obsługę. Nie utworzyliśmy kolejnego zakupu.");
-    const price = await stripe.prices.retrieve(stripePriceId(input.plan));
     if (!matchesSubscriptionPrice(input.plan,price)) throw new Error("Nieprawidłowa cena miesięczna Stripe.");
     if (!attempt) {
       attempt = {
@@ -74,7 +75,7 @@ export async function createSubscriptionCheckout(input: {
     if (!session.url) throw new Error("Stripe nie zwrócił adresu płatności.");
     const { error } = await admin.from("checkout_attempts").update({ session_id: session.id }).eq("organization_id", input.organizationId).eq("attempt_id",attempt.attempt_id);
     if (error) throw new Error("Nie zapisano sesji płatności. Spróbuj ponownie.");
-    await recordMilestone(input.userId, "checkout_opened");
+    after(() => recordMilestone(input.userId, "checkout_opened"));
     return session;
   });
 }

@@ -1118,3 +1118,25 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   do skrzynki odbiorczej — znacznik potwierdza przyjęcie przez serwer SMTP.
 - Przed ruchem płatnym kontrolujemy pierwsze wywołanie cron w Production oraz
   ponowienie rzeczywistego zdarzenia testowego. MASTER_PLAN bez zmiany strategii.
+
+## D056 — Kontrakt czatu, sprawniejszy Checkout i aktywacja na domenie marki
+
+- Data: 2026-09-09. Zgłoszenie produkcyjne: invalid-schema, powolne przejście do
+  Stripe i problem instalacji Chrome / surowy redirect Supabase w Firefoksie.
+- AI: minimalny schemat reply zamiast wycen/protokołów. Tolerujemy brak dawnych pól;
+  nie wykonujemy żadnych ich instrukcji. Odebrany błędny wynik zwalnia rezerwację
+  bez obciążenia użytkownika, w odróżnieniu od niepewnego timeoutu. Operator pokrywa
+  koszt wadliwego wyniku. Nie obiecujemy zerowej awaryjności dostawców.
+- Checkout: usunięto powtórny odczyt Auth i subskrypcji przed usługą, która już
+  sprawdza je pod blokadą; odczyt ceny równolegle z danymi konta. Statystyki
+  rejestracji/otwarcia płatności po odpowiedzi. Zachowano zgodę, kontrolę cen,
+  właściciela, blokady i trwałe klucze Stripe. UI natychmiast pokazuje pracę.
+- E-maile: markowa strona nie zużywa tokenu na GET, przycisk uruchamia POST/verifyOtp.
+  Działa bez cookie PKCE z poprzedniej przeglądarki. Wymaga ręcznej podmiany obu
+  szablonów w Supabase po wdrożeniu; stare listy pozostają bez zmian.
+- PWA: zachowano identyfikator /app, publiczny adres startowy logowania; event
+  instalacji jest jednorazowy, instrukcja pozwala otworzyć prompt udostępniony później.
+  Potwierdzenie wyboru nie jest przedstawiane jako dowód ukończenia instalacji.
+  Zasoby live odpowiadały 200; dokładnej przyczyny awarii na urządzeniu nie potwierdzono.
+  Końcowy test instalacji wymaga fizycznego Androida. Systemowego okna wyboru
+  aplikacji nie da się stylować kodem strony. MASTER_PLAN bez zmiany strategii.
