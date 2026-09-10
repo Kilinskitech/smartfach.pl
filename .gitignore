@@ -15,5 +15,5 @@ npm-debug.log*
 playwright-report/
 test-results/
 
-# Materiały marketingowe są przechowywane poza repozytorium aplikacji.
+# Marketing pozostaje lokalnie i w Google Drive; nie jest wersjonowany w Git.
 marketing/

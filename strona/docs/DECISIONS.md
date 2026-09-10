@@ -1259,3 +1259,14 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Katalog `marketing/` jest ignorowany przez Git i nie trafia do GitHuba ani do
   procesu budowania Vercela. Usunięto także ignorowane artefakty dawnych testów
   PDF. Brak zmian runtime poza redukcją martwego kodu i zależności.
+
+## D063 — Lokalny podział na stronę i marketing, tylko strona w Git
+
+- Data: 2026-09-10. Founder doprecyzował, że lokalny projekt ma dwa katalogi,
+  `strona/` i `marketing/`, ale GitHub ma wersjonować wyłącznie stronę.
+- Aplikacja, jej konfiguracja, migracje, testy i dokumentacja produktu znajdują
+  się w `strona/`. Lokalny `marketing/` jest ignorowany przez Git, a jego
+  nadrzędne materiały są przechowywane w Google Drive.
+- Vercel ma budować wyłącznie `strona/` przez ustawienie Root Directory. Zmiana
+  materiałów marketingowych nie wymaga dostępu aplikacji do ich plików.
+- Duże media, eksporty, dane osobowe i sekrety nadal nie trafiają do GitHuba.

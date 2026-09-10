@@ -1,8 +1,7 @@
 # SmartFach — mapa dokumentacji
 
-Ten katalog opisuje produkt, kod, dane i uruchomienie usługi. Strategia,
-produkcja treści oraz pozostałe materiały marketingowe są celowo przechowywane
-poza repozytorium aplikacji.
+Ten katalog opisuje produkt, kod, dane i uruchomienie usługi. Strategia i
+operacje marketingowe są celowo przechowywane poza repozytorium strony.
 
 ## Źródła prawdy
 
