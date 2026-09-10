@@ -14,6 +14,3 @@ next-env.d.ts
 npm-debug.log*
 playwright-report/
 test-results/
-
-# Marketing pozostaje lokalnie i w Google Drive; nie jest wersjonowany w Git.
-marketing/

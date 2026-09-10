@@ -1270,3 +1270,24 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Vercel ma budować wyłącznie `strona/` przez ustawienie Root Directory. Zmiana
   materiałów marketingowych nie wymaga dostępu aplikacji do ich plików.
 - Duże media, eksporty, dane osobowe i sekrety nadal nie trafiają do GitHuba.
+
+## D064 — Spłaszczenie repozytorium do korzenia, `strona/` znika
+
+- Data: 2026-09-10. Founder zlecił uporządkowanie lokalnej struktury repo: katalog
+  `strona/` w Git był mylący i niezgodny z konwencją pojedynczej aplikacji.
+- Zawartość dawnego `strona/` przeniesiono bezpośrednio do korzenia repozytorium.
+  Repozytorium Git nie zawiera już podkatalogu aplikacji — `src/`, `docs/`,
+  `supabase/`, `public/`, `package.json` i pozostałe pliki leżą teraz w korzeniu.
+- Lokalnie repozytorium mieszka w katalogu `aplikacja/`, obok którego (poza Git)
+  leży osobny, niewersjonowany folder `marketing/`. Oba są rodzeństwem w
+  nadrzędnym folderze roboczym, a nie zagnieżdżone jedno w drugim.
+- Usunięto z `.gitignore` wpis ignorujący `marketing/`, ponieważ ten folder nie
+  znajduje się już fizycznie wewnątrz repozytorium i nie może zostać do niego
+  przypadkowo dodany.
+- `.github/workflows/check.yml` nie ustawia już `working-directory: strona` —
+  krok instalacji i kontroli działa bezpośrednio w korzeniu repo.
+- Ustawienie Vercel Root Directory wymaga ręcznej zmiany z `strona` na wartość
+  pustą (korzeń repo) w panelu Vercela; nie istnieje do tego narzędzie MCP.
+- Zastępuje D063 w zakresie fizycznej struktury repozytorium; uzasadnienie
+  rozdziału strona/marketing z D063 pozostaje aktualne, zmienia się tylko
+  głębokość zagnieżdżenia w Git.
