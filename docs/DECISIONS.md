@@ -1226,3 +1226,36 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   technicznych receipt ani backupów poza polityką retencji.
 - Pola opcjonalne w istniejącym JSONB, bez migracji SQL. MASTER_PLAN, MVP_SPEC
   i AI_ARCHITECTURE zaktualizowane. Model i ceny bez zmian.
+
+## D061 — SmartFach jako asystent budowania biznesu od zera
+
+- Data: 2026-09-10. Founder doprecyzował nadrzędne pozycjonowanie produktu.
+- SmartFach jest osobistym asystentem budowania biznesu od zera, zarówno dla
+  osoby z pomysłem, jak i bez pomysłu. Wykorzystuje jej wiedzę, umiejętności,
+  doświadczenie, zainteresowania, wskazane przez nią kontakty i realne warunki.
+- Kierunek rezultatu to własne źródło przychodu i droga do większej wolności
+  finansowej. Wolność finansowa pozostaje aspiracją i kierunkiem pracy, a nie
+  gwarancją konkretnej kwoty, klienta lub terminu.
+- Nie definiujemy marki przez listę funkcji, których produkt nie posiada.
+  Oferta, cena, wiadomość i następne działanie są zastosowaniami asystenta,
+  a nie pełną definicją SmartFach.
+- Wewnętrzne granice bezpieczeństwa i uprawnień pozostają w dokumentacji
+  technicznej, ale nie stanowią głównego przekazu marketingowego.
+- Zaktualizowano README, MASTER_PLAN, MVP_SPEC i nadrzędną strategię marketingową.
+  Bez zmian kodu, cen, limitów i zakresu MVP.
+
+## D062 — Rozdzielenie marketingu i usunięcie martwych modułów
+
+- Data: 2026-09-10. Founder zlecił uporządkowanie projektu i oddzielenie pracy
+  marketingowej od kodu aplikacji.
+- Strategia, bieżące decyzje, procedury marketingowe i multimedia mają być
+  przechowywane poza repozytorium aplikacji, w Google Drive. Kod, migracje oraz
+  dokumentacja produktu pozostają w repozytorium połączonym z Vercel.
+- Usunięto niepodłączony do runtime import cennika CSV, generator PDF wycen i
+  protokołów, ich testy, font Noto Sans oraz zależności `pdf-lib` i `fontkit`.
+  Funkcje te pozostają w Parking Lot; historyczne decyzje nadal opisują ich etap.
+- `.env.example` pozostaje bez sekretów jako kontrolowana lista nazw zmiennych
+  wymaganych w Vercelu. Usunięcie go utrudniłoby konfigurację i weryfikację środowisk.
+- Katalog `marketing/` jest ignorowany przez Git i nie trafia do GitHuba ani do
+  procesu budowania Vercela. Usunięto także ignorowane artefakty dawnych testów
+  PDF. Brak zmian runtime poza redukcją martwego kodu i zależności.

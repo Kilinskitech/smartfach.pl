@@ -1,6 +1,6 @@
 # SmartFach — podstawowe przebiegi produktu
 
-Stan: 2026-09-06.
+Stan: 2026-09-10.
 
 ## Jeden publiczny produkt
 
@@ -8,22 +8,24 @@ Użytkownik nie wybiera etapu biznesu, typu konta ani branży. Wybiera Lite lub 
 a SmartFach poznaje jego sytuację w aplikacji. Techniczna kolumna zgodności w bazie
 ma jedną stałą wartość i nie wpływa na funkcje ani dostęp.
 
-## Profil startowy
+## Start każdej rozmowy
 
-Pierwszy ekran pyta o trzy rzeczy:
+Nowa rozmowa może zacząć się od krótkiej ankiety osobnego biznesu. Pyta ona o:
 
 1. Preferencja: zdalnie, lokalnie lub bez znaczenia.
 2. Sytuacja: brak pomysłu, posiadane umiejętności albo istniejący pomysł.
 3. Główne ograniczenie: np. telefon, kamera, duży wydatek albo brak pewności.
 
 Kliknięcie „Ułóż mój pierwszy krok” zamienia wybory w wiadomość do asystenta.
-Asystent może zadać najwyżej trzy dodatkowe pytania.
+Asystent może zadać najwyżej trzy dodatkowe pytania. Użytkownik może pominąć
+ankietę przez „Chcę tylko zadać pytanie”. Kontekst ankiety należy wyłącznie do
+tej rozmowy i nie przechodzi do innych biznesów.
 
-## Profil trwały
+## Profil osoby
 
-W Ustawieniach użytkownik zapisuje styl pracy, czas tygodniowo, doświadczenie,
-ograniczenia, cel przychodowy i bieżący fokus. Pola można zmienić bez zmiany planu,
-historii ani terminu odnowienia.
+W Ustawieniach użytkownik ma jedno opcjonalne pole „Napisz coś o sobie” na ogólne
+umiejętności, doświadczenie i zainteresowania. Cel, budżet, ograniczenia i fokus
+konkretnego biznesu zapisują się przy jego rozmowie, nie w profilu osoby.
 
 ## Rozmowa prowadząca do działania
 

@@ -14,3 +14,6 @@ next-env.d.ts
 npm-debug.log*
 playwright-report/
 test-results/
+
+# Materiały marketingowe są przechowywane poza repozytorium aplikacji.
+marketing/

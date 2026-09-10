@@ -1,6 +1,6 @@
 # Stos technologiczny
 
-Stan: 2026-09-08. Aplikacja jest publikowana przez Vercel pod `smartfach.pl`.
+Stan: 2026-09-10. Aplikacja jest publikowana przez Vercel pod `smartfach.pl`.
 Supabase i Stripe w trybie testowym są podłączane i wymagają jeszcze pełnych
 testów end-to-end przed rozpoczęciem sprzedaży.
 
@@ -16,16 +16,15 @@ testów end-to-end przed rozpoczęciem sprzedaży.
 | AI               | OpenRouter; standardowe trasy Google, streaming | Przypięty Gemini 3.1 Flash-Lite, minimalne rozumowanie (D059) |
 | Rozliczenia      | Stripe Checkout + Billing                       | Sandbox podłączany; checkout/trial/portal/webhook wymagają E2E |
 | Analityka        | PostHog EU                                      | Plan, brak integracji                                      |
-| Testy            | Vitest, lint, typy, testy przeglądarkowe        | Obliczenia, schematy, CSV, AI, zapis, ochrona API, PDF     |
+| Testy            | Vitest, lint, typy, testy przeglądarkowe        | Schematy, AI, rozliczenia, zapis i ochrona API             |
 
-Historyczny adapter plikowy pozostał tylko w testach. Runtime używa prywatnego
-workspace JSONB w Supabase jako pomostu do stopniowej normalizacji danych. Zod, pdf-lib
-z fontkit i osadzonym Noto Sans (OFL) do polskich PDF. Licencja fontu w
-`public/fonts/OFL.txt`. Dane dokumentu nie opuszczają przeglądarki podczas eksportu.
-Zdjęcia nadal wymagają przyszłego Storage. `google/gemini-3.1-flash-lite` obsługuje
-rozmowy, start biznesu i obrazy. OpenRouter może przełączyć dostawcę tego samego
-modelu; brak drugiej generacji lub fallbacku do GPT w aplikacji. Rzeczywisty model
-oraz koszt odpowiedzi są zapisywane do analizy.
+Runtime używa prywatnego workspace JSONB w Supabase jako pomostu do stopniowej
+normalizacji danych. Historyczne pola dawnego workflow pozostają w schemacie dla
+zgodności danych, lecz nie mają aktywnego wejścia w aplikacji. Import cennika CSV
+oraz generator PDF zostały usunięte z kodu aktywnego produktu. Zod waliduje dane.
+`google/gemini-3.1-flash-lite` obsługuje rozmowy, start biznesu i obrazy. OpenRouter
+może przełączyć dostawcę tego samego modelu; brak drugiej generacji lub fallbacku
+do GPT w aplikacji. Rzeczywisty model oraz koszt odpowiedzi są zapisywane do analizy.
 
 Node.js: 24.x. Menedżer pakietów: npm. Wersje aplikacji są zapisane w
 `package.json` i `package-lock.json`; instalacja powtarzalna przez `npm ci`.

@@ -1,11 +1,13 @@
 # SmartFach — zakres MVP
 
-Stan: 2026-09-06. Ten dokument opisuje najbliższy testowalny produkt.
+Stan: 2026-09-10. Ten dokument opisuje najbliższy testowalny produkt.
 
 ## Obietnica MVP
 
-SmartFach poznaje warunki użytkownika, pomaga wybrać prostą usługę, zbudować
-ofertę i wykonać kolejne działania prowadzące do pierwszych klientów.
+SmartFach pomaga budować biznes od zera osobie z pomysłem lub bez pomysłu.
+Wykorzystuje jej wiedzę, umiejętności, doświadczenie, wskazane przez nią kontakty
+i warunki, aby wybrać realny kierunek, zbudować pierwsze źródło przychodu i
+prowadzić przez kolejne działania w stronę większej wolności finansowej.
 
 ## W zakresie
 
@@ -27,8 +29,8 @@ ofertę i wykonać kolejne działania prowadzące do pierwszych klientów.
 ## Pierwszy przebieg
 
 Landing → wybór Lite/Pro → konto → Stripe Checkout → potwierdzenie adresu →
-jednorazowy profil startowy → do trzech pytań → do trzech kierunków → jedna rekomendacja →
-pierwsza oferta → jedno działanie do wykonania dzisiaj.
+ankieta pierwszego biznesu albo zwykłe pytanie → do trzech pytań → do trzech
+kierunków → jedna rekomendacja → pierwsza oferta → jedno działanie do wykonania dzisiaj.
 
 Każda nowa rozmowa umożliwia rozpoczęcie innego biznesu przez ankietę lub zadanie
 pytania bez ankiety. Nie aktualizuje wspólnego profilu i nie dziedziczy innego biznesu.

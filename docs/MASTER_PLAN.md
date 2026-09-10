@@ -1,22 +1,29 @@
 # SmartFach — MASTER PLAN
 
-Stan: 2026-09-09. Ten dokument jest nadrzędnym źródłem kierunku produktu.
+Stan: 2026-09-10. Ten dokument jest nadrzędnym źródłem kierunku produktu.
 
 ## Teza produktu
 
-SmartFach pomaga jednej osobie przejść od własnych warunków i ograniczeń do
-pierwszej sprzedawalnej usługi, pierwszych rozmów z klientami i regularnej pracy
-nad przychodem.
+SmartFach jest osobistym asystentem budowania biznesu od zera — niezależnie od
+tego, czy użytkownik ma już pomysł, czy dopiero go szuka. Wykorzystuje jego
+wiedzę, umiejętności, doświadczenie, zainteresowania, wskazane przez niego
+kontakty i rzeczywiste warunki, aby pomóc zbudować realne źródło przychodu i
+drogę do większej wolności finansowej.
+
+Pierwszym praktycznym etapem tej drogi jest przejście do sprzedawalnej usługi,
+pierwszych rozmów z klientami i regularnej pracy nad przychodem. Nie definiujemy
+produktu przez moduły administracyjne ani listę czynności, których nie wykonuje.
 
 Główna obietnica:
 
 > Nie potrzebujesz idealnego pomysłu. Potrzebujesz pierwszego klienta.
 
-Użytkownik nie musi wiedzieć, jaki biznes wybrać, mieć wyjątkowych umiejętności,
-pokazywać twarzy ani pracować zdalnie. SmartFach najpierw poznaje jego czas,
-budżet, doświadczenie, preferencję pracy zdalnej lub lokalnej oraz rzeczy, których
-nie chce robić. Następnie zawęża wybór, rekomenduje jedną realną usługę i prowadzi
-do kolejnego działania.
+Użytkownik nie musi wiedzieć, jaki biznes wybrać ani mieć wyjątkowych
+umiejętności. Może przyjść z pomysłem, bez pomysłu albo z zasobami, których nie
+potrafi jeszcze przełożyć na biznes. SmartFach poznaje jego czas, budżet, wiedzę,
+doświadczenie, umiejętności, zainteresowania, wskazane przez niego kontakty,
+preferencję pracy zdalnej lub lokalnej oraz rzeczy, których nie chce robić.
+Następnie pomaga wybrać realny kierunek i prowadzi do kolejnego działania.
 
 SmartFach nie sprzedaje kursu ani jednorazowego planu. Jest asystentem działania:
 użytkownik wykonuje krok, wraca z wynikiem, a system aktualizuje ofertę, wiadomości
@@ -81,8 +88,12 @@ odniesienia. Nie jest gwarancją produktu ani obietnicą terminu.
 
 ## Pozycjonowanie i komunikacja
 
-Komunikujemy rezultat i dopasowanie do realnego życia:
+Komunikujemy budowanie biznesu od zera, rosnącą sprawczość i dopasowanie do
+realnego życia:
 
+- „Zbuduj biznes od zera — z pomysłem albo bez.”
+- „Wykorzystaj to, co już masz: wiedzę, umiejętności, doświadczenie i relacje.”
+- „Zbuduj własne źródło przychodu i drogę do większej wolności finansowej.”
 - „Zbuduj usługę dopasowaną do Twoich warunków.”
 - „Zdalnie albo lokalnie. Z doświadczeniem albo od zera.”
 - „Nie chcesz dzwonić ani pokazywać twarzy? Uwzględnimy to.”

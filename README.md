@@ -1,12 +1,13 @@
 # SmartFach
 
-Osobisty asystent AI, który pomaga dopasować prostą usługę do warunków
-użytkownika, zbudować ofertę i wykonywać kolejne działania prowadzące do
-pierwszych klientów.
+Osobisty asystent budowania biznesu od zera — dla osoby, która ma już pomysł,
+oraz dla tej, która dopiero go szuka. SmartFach wykorzystuje jej wiedzę,
+umiejętności, doświadczenie i wskazane przez nią kontakty, aby pomóc zbudować
+realne źródło przychodu i drogę do większej wolności finansowej.
 
 > Nie potrzebujesz idealnego pomysłu. Potrzebujesz pierwszego klienta.
 
-## Stan projektu — 2026-09-06
+## Stan projektu — 2026-09-10
 
 Kod pierwszej alfy jest połączony z GitHubem i wdrażany na Vercelu pod
 `smartfach.pl`. Hostowany Supabase oraz Stripe w trybie testowym są w trakcie
@@ -28,15 +29,26 @@ Zaimplementowane:
 - jedna kanoniczna domena `smartfach.pl`, sitemap i indeksowanie publicznych stron
   wyłącznie na Live; przekierowanie technicznego aliasu jest zarządzane w Vercelu.
 
-Niezaimplementowane lub niegotowe do sprzedaży:
+Niegotowe do sprzedaży:
 
 - jednorazowy zakup zwiększenia limitu i transakcyjna księga zużycia;
-- bezpieczny magazyn zdjęć, XLSX, automatyczna wysyłka dokumentów i pełny offline;
 - produkcyjna konfiguracja e-maili, backupów, monitoringu oraz rozliczeń podatkowych;
-- test izolacji dwóch realnych kont w uruchomionym Supabase i testy Stripe end-to-end.
+- test izolacji dwóch realnych kont w uruchomionym Supabase i testy Stripe end-to-end;
+- analityka pełnego lejka, zgody pomiarowe oraz bramka prawna przed ruchem płatnym.
 
-Stary lokalny profil i jego rozmowy zostały usunięte. `src/server/local-repository.ts`
-pozostaje tylko po to, aby nie utracić testów regresji historycznego adaptera.
+Formalne wyceny, protokoły, import cennika i pozostałe moduły dawnego kierunku
+branżowego są w Parking Lot. Nie utrzymujemy ich jako pozornie aktywnych funkcji.
+
+## Porządek repozytorium
+
+- `src/` — działająca aplikacja i testy;
+- `supabase/` — migracje oraz test izolacji danych;
+- `docs/` — produkt, architektura, decyzje i instrukcje uruchomienia;
+- `public/` — wyłącznie zasoby używane przez aplikację.
+
+Strategia, operacje marketingowe, nagrania, projekty Canvy, generacje AI i
+eksporty platform pozostają w Google Drive. Do repozytorium nie trafiają sekrety,
+dane osobowe ani robocze materiały marketingowe.
 
 ## Preview i Live
 
@@ -91,16 +103,4 @@ rozszerzony o pełny scenariusz dwóch organizacji przed płatną alfą.
 
 ## Dokumentacja
 
-- [MASTER_PLAN](docs/MASTER_PLAN.md) — fundament strategiczny.
-- [MVP_SPEC](docs/MVP_SPEC.md) — zakres i kryteria gotowości.
-- [PRODUCT_SPEC](docs/PRODUCT_SPEC.md) — przebiegi i stan funkcji.
-- [UX_RULES](docs/UX_RULES.md) — zasady interfejsu.
-- [AI_ARCHITECTURE](docs/AI_ARCHITECTURE.md) — adapter i granice AI.
-- [TECH_STACK](docs/TECH_STACK.md) — stos i ograniczenia.
-- [DATABASE](docs/DATABASE.md) — dane, RLS i migracja.
-- [PRICING](docs/PRICING.md) — hipotezy cen i limitów.
-- [ROADMAP](docs/ROADMAP.md) — wykonane i następne etapy.
-- [DECISIONS](docs/DECISIONS.md) — rejestr decyzji.
-- [RESEARCH](docs/RESEARCH.md) — źródła i pytania.
-- [SETUP_SUPABASE_STRIPE](docs/SETUP_SUPABASE_STRIPE.md) — uruchomienie kont i płatności.
-- [SUPABASE_EMAILS](docs/SUPABASE_EMAILS.md) — polski szablon i produkcyjna wysyłka e-mail.
+- [Dokumentacja produktu i techniczna](docs/README.md) — źródła prawdy, specyfikacje i instrukcje.

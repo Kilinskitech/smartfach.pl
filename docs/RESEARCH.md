@@ -84,6 +84,10 @@ Next.js. Nie aktualizować samych głównych wersji z pominięciem testów zgodn
   płatnych zapytań AI. Osobna jednorazowa diagnostyka bez danych firmy potwierdziła
   prawdziwe wyszukiwanie, ale nie dowodzi jakości w polskim HVAC.
 
+Aktualizacja 2026-09-10: ten fragment dokumentuje historyczną integrację lokalną.
+Niepodłączone do runtime moduły CSV/PDF oraz ich zależności zostały usunięte po
+przeniesieniu wycen, protokołów i cennika do Parking Lot.
+
 ## OpenRouter i multimodalność — 2026-09-01
 
 - OpenRouter ujednolica tekst, obrazy, audio i pliki, ale kompatybilność jest zależna

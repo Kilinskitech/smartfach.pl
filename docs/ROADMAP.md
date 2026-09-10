@@ -1,15 +1,15 @@
 # SmartFach — roadmapa
 
-Stan: 2026-09-08.
+Stan: 2026-09-10.
 
 ## Teraz — Preview
 
 - Jeden landing pod pierwszą sprzedawalną usługę i klienta.
 - Plany Lite/Pro, uproszczona rejestracja i Stripe Sandbox.
-- Profil startowy uruchamiający działanie oraz osobna ścieżka zwykłego pytania.
+- Ankieta osobnego biznesu przy każdej nowej rozmowie oraz ścieżka zwykłego pytania.
 - Jeden asystent z tekstem, zdjęciami i historią.
-- GPT-5.6 Luna do zwykłej rozmowy, Terra do startu i trudnych zadań oraz
-  Gemini 3.5 Flash jako awaryjny fallback innego dostawcy.
+- Jeden przypięty `google/gemini-3.1-flash-lite` przez OpenRouter, bez drugiej
+  generacji i bez fallbacku do innego modelu.
 - Zaktualizowane instrukcje AI oraz trwałe ustawienia użytkownika.
 - Panel administratora, koszt OpenRouter, statusy kont i płatności.
 - Procent wykorzystania i zwiększenia +25%, +50% lub +100% przez Stripe.
@@ -33,7 +33,8 @@ Stan: 2026-09-08.
 - wdrożyć zdarzenia lejka od wejścia na landing do powrotu z wynikiem działania;
 - dodać jedną trwałą kartę „Usługa / oferta / następny test”, bez kolejnych modułów;
 - przygotować 15 scenariuszy jakości AI i mierzyć ukończenie zadania oraz koszt.
-- potwierdzić w logach scenariusz błędu modelu głównego i użycia fallbacku.
+- potwierdzić w logach, że błąd modelu nie nalicza błędnego wyniku i nie uruchamia
+  niejawnie drugiej generacji.
 
 ### Tydzień 2 — test ręczny
 
