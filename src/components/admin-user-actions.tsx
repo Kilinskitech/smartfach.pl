@@ -14,6 +14,7 @@ type Props = {
   cancelAtPeriodEnd: boolean;
   subscriptionEndsAt: string | null;
   stripeConnected: boolean;
+  subscriptionSyncWarning?: string;
   deleteBlockedReason?: string;
 };
 
@@ -26,6 +27,7 @@ export function AdminUserActions({
   cancelAtPeriodEnd,
   subscriptionEndsAt,
   stripeConnected,
+  subscriptionSyncWarning,
   deleteBlockedReason,
 }: Props) {
   const [subscriptionState, subscriptionAction, subscriptionPending] =
@@ -49,6 +51,12 @@ export function AdminUserActions({
           </span>
         </div>
       </div>
+
+      {subscriptionSyncWarning && (
+        <p className="admin-subscription-warning" role="status">
+          {subscriptionSyncWarning}
+        </p>
+      )}
 
       <div className="admin-action-grid">
         <article>

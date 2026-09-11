@@ -10,6 +10,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { BrandMark } from "./brand";
+import { AssistantMessage } from "./assistant-message";
 import { AdminUserActions } from "./admin-user-actions";
 import type { TopUpPurchase, TopUpSummary } from "@/domain/top-up-summary";
 
@@ -33,6 +34,7 @@ export type AdminUserDetailSnapshot = {
   cancelAtPeriodEnd: boolean;
   subscriptionEndsAt: string | null;
   stripeConnected: boolean;
+  subscriptionSyncWarning?: string;
   deleteBlockedReason?: string;
   conversations: Array<{
     id: string;
@@ -174,7 +176,11 @@ export function AdminUserDetail({
                           <strong>{message.role === "user" ? "Użytkownik · prompt" : "SmartFach · odpowiedź"}</strong>
                           {message.model && <code>{message.model}</code>}
                         </header>
-                        <p>{message.content}</p>
+                        {message.role === "assistant" ? (
+                          <AssistantMessage content={message.content} />
+                        ) : (
+                          <p>{message.content}</p>
+                        )}
                         {message.usage && (
                           <dl className="admin-message-usage">
                             <div><dt>Koszt</dt><dd>{usdLabel(message.usage.costUsd, true)}</dd></div>
@@ -206,6 +212,7 @@ export function AdminUserDetail({
           deleteBlockedReason={snapshot.deleteBlockedReason}
           email={snapshot.email}
           stripeConnected={snapshot.stripeConnected}
+          subscriptionSyncWarning={snapshot.subscriptionSyncWarning}
           subscriptionEndsAt={snapshot.subscriptionEndsAt}
           subscriptionStatus={snapshot.subscriptionStatus}
           userId={snapshot.id}

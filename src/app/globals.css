@@ -4390,13 +4390,39 @@ svg {
   font-family: inherit;
   font-size: 9px;
 }
-.admin-message > p {
+.admin-message > p,
+.admin-message > .assistant-content {
   margin: 11px 0 0;
   color: #34473c;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
   overflow-wrap: anywhere;
+}
+.admin-message > p {
   white-space: pre-wrap;
+}
+.admin-message .assistant-content p {
+  margin: 0 0 0.9em;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre-line;
+}
+.admin-message .assistant-content h3 {
+  margin: 1.25em 0 0.5em;
+  color: #263c31;
+  font-size: 1.05em;
+}
+.admin-message .assistant-content ul,
+.admin-message .assistant-content ol {
+  margin-bottom: 0.9em;
+}
+.admin-message .assistant-content blockquote {
+  margin: 0.9em 0;
+  padding: 12px 14px;
+  background: #f1f5f1;
+}
+.admin-message .assistant-content blockquote > :last-child {
+  margin-bottom: 0;
 }
 .admin-message-sources {
   display: grid;
@@ -4453,6 +4479,16 @@ svg {
 }
 .admin-account-actions {
   margin-top: 12px;
+}
+.admin-subscription-warning {
+  margin: 16px 0 0;
+  padding: 11px 13px;
+  border: 1px solid #e7d5a8;
+  border-radius: 9px;
+  background: #fff8e8;
+  color: #72551d;
+  font-size: 12px;
+  line-height: 1.55;
 }
 .admin-action-grid {
   display: grid;

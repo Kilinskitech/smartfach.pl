@@ -1291,3 +1291,18 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Zastępuje D063 w zakresie fizycznej struktury repozytorium; uzasadnienie
   rozdziału strona/marketing z D063 pozostaje aktualne, zmienia się tylko
   głębokość zagnieżdżenia w Git.
+
+## D065 — Odpowiedzi bez autoprezentacji i samonaprawiający status anulowania
+
+- Data: 2026-09-11. Zwykła odpowiedź przechodzi od razu do pytania użytkownika;
+  SmartFach przedstawia się tylko wtedy, gdy użytkownik pyta o jego tożsamość lub model.
+- Instrukcja odpowiedzi wymaga prawdziwych podziałów wierszy i nieuciekania znaków
+  Markdown. Panel administratora renderuje odpowiedzi tym samym bezpiecznym
+  komponentem co czat użytkownika, bez HTML i osadzanych obrazów.
+- Profil użytkownika w panelu administratora porównuje zapisany status i flagę
+  anulowania z bieżącym stanem Stripe. Rozbieżność uruchamia istniejącą,
+  zabezpieczoną synchronizację do Supabase; awaria zewnętrzna nie blokuje profilu,
+  ale jest jawnie oznaczona jako możliwie nieaktualny stan.
+- Webhook pozostaje podstawowym mechanizmem synchronizacji. Odczyt administratora
+  jest zabezpieczeniem na wypadek pominiętego lub opóźnionego zdarzenia, a nie jego
+  zamiennikiem. Nie zmieniono planów, cen, limitów, modelu ani landingu.

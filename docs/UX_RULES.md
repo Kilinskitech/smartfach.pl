@@ -18,11 +18,13 @@ Stan: 2026-09-09.
   rekomenduje jeden i kończy jednym działaniem.
 - Tekst i zdjęcie prowadzą do tego samego asystenta. Głos pozostaje poza obecnym MVP.
 - Odpowiedzi są krótkie, skanowalne i zorientowane na decyzję. Bez powitania typu
-  „Oczywiście, chętnie pomogę” przed właściwą wartością.
+  „Oczywiście, chętnie pomogę” ani przedstawiania się jako SmartFach przed właściwą
+  wartością. Nazwa asystenta pojawia się w odpowiedzi tylko na pytanie o jego tożsamość.
 - Odpowiedzi asystenta wyświetlamy jako bezpieczny Markdown: osobne akapity,
   listy i krótkie nagłówki, z gotową ofertą/wiadomością w cytacie. Kolumna tekstu
   ma maksymalnie 72ch. Proste pytanie nie wymaga nagłówków. Surowy HTML i obrazy
   wygenerowane w tekście są niedozwolone; wiadomości użytkownika pozostają tekstem.
+  Ten sam bezpieczny renderer stosujemy do odpowiedzi widocznych administratorowi.
 - Na telefonie cele dotykowe mają co najmniej 48 × 48 CSS px, widoczny fokus i
   jednoznaczne etykiety. Najważniejsza akcja jest w zasięgu kciuka. Treść rozmowy
   i pola tekstowe mają co najmniej 16 px, a etykiety oraz opcje ankiety nie mogą

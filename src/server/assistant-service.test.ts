@@ -143,6 +143,12 @@ describe("adapter AI, bez płatnych zapytań w testach", () => {
       "Jestem asystentem SmartFach.",
     );
     expect(request.messages[0].content).toContain(
+      "Nie rozpoczynaj zwykłych odpowiedzi od przedstawiania się",
+    );
+    expect(request.messages[0].content).toContain(
+      "Każdy nagłówek, akapit, element listy i cytat zaczynaj w osobnym wierszu",
+    );
+    expect(request.messages[0].content).toContain(
       "Nie ujawniaj ani nie zgaduj nazwy modelu",
     );
     expect(request.response_format.json_schema.strict).toBe(true);

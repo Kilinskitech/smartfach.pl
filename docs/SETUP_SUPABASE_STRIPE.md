@@ -162,6 +162,9 @@ faktycznie użyty model, dostawcę i identyfikator żądania per użytkownik.
 - Brak dostępu do `/app` przed aktywną próbą.
 - Zapis profilu i rozmowy po odświeżeniu.
 - Anulowanie oraz zmiana planu w portalu i poprawna synchronizacja webhooka.
+- Wejście administratora w profil użytkownika uzgadnia status anulowania ze Stripe;
+  po pominiętym webhooku zapis w Supabase zostaje naprawiony, a przy awarii Stripe
+  panel jawnie oznacza, że pokazuje ostatni zapisany stan.
 - Ponowne wysłanie tego samego webhooka bez podwójnego skutku.
 - Test SMTP z panelu administratora oraz potwierdzenie umowy po ukończonym Checkout.
 - Zakup każdego zwiększenia limitu, anulowanie Checkout i idempotentny powrót.
