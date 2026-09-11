@@ -1354,3 +1354,17 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Nie zmieniono aplikacji, planów, cen, trialu, Stripe, Supabase, modelu AI ani
   dokumentów prawnych. D067 pozostaje historią poprzedniej decyzji wizualnej,
   a niniejsza decyzja zastępuje ją w zakresie pierwszego ekranu.
+
+## D069 — Wspólny język wizualny landingu i aplikacji
+
+- Data: 2026-09-11. Founder zlecił przeniesienie nowej palety landingu do właściwej
+  aplikacji, bez zmiany jej funkcji, danych ani przebiegów.
+- Nawigacja i mocne powierzchnie używają głębokiej zieleni, tło ciepłej bieli,
+  powierzchnie robocze kremu, a główne działania pomarańczu. Te same zasady obejmują
+  czat, ankietę nowego biznesu, composer, wiadomości, ustawienia, dialogi i nawigację
+  mobilną.
+- Aplikacja pozostaje powierzchnią do pracy, dlatego nie kopiuje hero ani ozdobnej
+  narracji landingu. Kolor służy hierarchii: pomarańcz oznacza akcję, ciemna zieleń
+  nawigację i wiadomość użytkownika, a jasne powierzchnie treść asystenta.
+- Bez zmian Supabase, Stripe, modelu AI, cen, limitów, autoryzacji, treści rozmów
+  i dokumentów prawnych. Zmiana jest wyłącznie wizualna i zachowuje responsywność.

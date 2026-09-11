@@ -10412,3 +10412,395 @@ button.team-card:hover {
     transition: none !important;
   }
 }
+
+/* Aplikacja v2 — kolory i charakter wspólne ze sprzedażowym hero landingu. */
+.product-app {
+  --ink: #1d2926;
+  --muted: #68736d;
+  --accent: #df7c43;
+  --accent-hover: #ed915b;
+  --line: #d8d7ce;
+  --surface: #fbfaf6;
+  --background: #f3f0e8;
+  --navy: #172a25;
+  background:
+    radial-gradient(circle at 82% 8%, #d8dfd455 0, transparent 26%),
+    var(--background);
+  color: var(--ink);
+}
+.product-app .app-sidebar {
+  border-right: 1px solid #ffffff12;
+  background:
+    radial-gradient(circle at 18% 0, #36564c 0, transparent 28%),
+    linear-gradient(180deg, #172a25 0%, #10211d 100%);
+  color: #f8f6f0;
+  box-shadow: 15px 0 45px #10211d12;
+}
+.product-app .sidebar-brand > span[aria-hidden="true"] {
+  box-shadow: 0 0 0 1px #ffffff22, 0 10px 25px #07110e55;
+}
+.product-app .sidebar-brand small,
+.product-app .nav-label {
+  color: #aebdb7;
+}
+.product-app .sidebar-brand small {
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+.product-app .goal-summary {
+  border-color: #ffffff20;
+  border-radius: 13px;
+  background: #ffffff0b;
+}
+.product-app .goal-summary:hover {
+  border-color: #f0a06e66;
+  background: #ffffff10;
+}
+.product-app .goal-summary > svg:first-child,
+.product-app .goal-summary strong {
+  color: #f5ede6;
+}
+.product-app .goal-summary small,
+.product-app .goal-summary > svg:last-child {
+  color: #aabbb4;
+}
+.product-app .new-chat-button {
+  border-color: #df7c43;
+  border-radius: 12px;
+  background: #df7c43;
+  color: white;
+  box-shadow: 0 12px 28px #07110e33;
+}
+.product-app .new-chat-button:hover {
+  border-color: #ee925c;
+  background: #ee925c;
+}
+.product-app .app-sidebar nav button {
+  border-radius: 11px;
+  color: #ced9d4;
+  font-size: 14px;
+}
+.product-app .app-sidebar nav button.selected {
+  background: #f0a06e1c;
+  color: #ffb27f;
+  box-shadow: inset 3px 0 #df7c43;
+}
+.product-app .recent-conversations button {
+  min-height: 46px;
+  border-radius: 9px;
+  color: #b8c6c0;
+  font-size: 13px;
+}
+.product-app .recent-conversations button.selected {
+  background: #ffffff0d;
+  color: #ffb27f;
+}
+.product-app .company-nav {
+  border-color: #ffffff18;
+  border-radius: 13px;
+  background: #ffffff0b;
+}
+.product-app .company-nav.selected {
+  border-color: #df7c4388;
+  background: #df7c4312;
+}
+.product-app .company-avatar {
+  background: #ffffff10;
+  color: #f0a06e;
+}
+.product-app .workspace-header {
+  position: sticky;
+  top: 0;
+  z-index: 12;
+  border-color: #d8d7cecc;
+  background: #f8f6f0ed;
+  box-shadow: 0 10px 28px #172a2508;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.product-app .breadcrumb > span,
+.product-app .breadcrumb > svg {
+  color: #78847e;
+}
+.product-app .breadcrumb h1 {
+  color: var(--ink);
+  font-size: 15px;
+}
+.product-app .topbar-credits {
+  border: 1px solid #df7c4330;
+  border-radius: 999px;
+  background: #f4e4d8;
+  color: #815033;
+}
+.product-app .topbar-new-chat {
+  border-radius: 10px;
+  color: #91552f;
+}
+.product-app .topbar-new-chat:hover,
+.product-app .mobile-conversations:hover,
+.product-app .mobile-settings:hover {
+  background: #eadfd3;
+}
+.product-app .local-badge {
+  color: #5f7068;
+}
+.product-app .local-badge > span,
+.product-app .connection-dot {
+  background: #66816f;
+}
+.product-app .main-content:not(.main-chat) {
+  max-width: 1380px;
+}
+.product-app .chat-panel {
+  max-width: 920px;
+}
+.product-app .welcome-mark {
+  padding: 9px;
+  border: 1px solid #d5d7cd;
+  border-radius: 19px;
+  background: #faf8f3;
+  box-shadow: 0 18px 45px #172a2510;
+}
+.product-app .welcome-dot {
+  right: -3px;
+  bottom: -3px;
+  background: #df7c43;
+  color: white;
+  border-color: var(--background);
+}
+.product-app .chat-welcome .eyebrow {
+  color: #9b603c;
+}
+.product-app .chat-welcome h2 {
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 500;
+  letter-spacing: -1.4px;
+}
+.product-app .welcome-copy {
+  color: #68736d;
+}
+.product-app .start-profile fieldset {
+  border-color: #d5d7cd;
+  border-radius: 16px;
+  background: #faf8f3e6;
+  box-shadow: 0 12px 32px #172a2507;
+}
+.product-app .start-profile legend,
+.product-app .start-profile-custom span {
+  color: #617069;
+}
+.product-app .start-profile fieldset button,
+.product-app .start-profile-custom input,
+.product-app .start-additional-info textarea {
+  border-color: #d5d7cd;
+  border-radius: 11px;
+  background: #fffefa;
+  color: var(--ink);
+}
+.product-app .start-profile fieldset button:hover,
+.product-app .start-profile fieldset button.selected {
+  border-color: #df7c43;
+  background: #f4e4d8;
+  color: #7a482c;
+  box-shadow: inset 0 0 0 1px #df7c4314;
+}
+.product-app .start-profile-custom input:focus,
+.product-app .start-additional-info textarea:focus {
+  border-color: #df7c43;
+  box-shadow: 0 0 0 3px #df7c4320;
+}
+.product-app .start-profile-submit {
+  border-radius: 12px;
+  background: #df7c43;
+  box-shadow: 0 13px 30px #9e54272a;
+}
+.product-app .start-profile-submit:hover:not(:disabled) {
+  background: #ed915b;
+}
+.product-app .start-question-button,
+.product-app .start-back-button {
+  border-color: #cbcfc4;
+  border-radius: 12px;
+  background: #faf8f3;
+  color: #42534c;
+}
+.product-app .composer {
+  border-color: #c9cec2;
+  border-radius: 20px;
+  background: #fffefa;
+  box-shadow: 0 16px 50px #172a2511;
+}
+.product-app .composer:focus-within {
+  border-color: #df7c43;
+  box-shadow: 0 0 0 3px #df7c4318, 0 18px 55px #172a2514;
+}
+.product-app .composer-tools button {
+  border: 1px solid #e1e0d8;
+  background: #f4f1e9;
+  color: #5f7068;
+}
+.product-app .composer-tools button:hover:not(:disabled) {
+  border-color: #cfb5a2;
+  background: #f4e4d8;
+  color: #7f4b2e;
+}
+.product-app .send-button {
+  border-radius: 13px;
+  background: #df7c43;
+  box-shadow: 0 8px 20px #9e54272a;
+}
+.product-app .send-button:not(:disabled):hover {
+  background: #ed915b;
+}
+.product-app .send-button:disabled {
+  background: #e2e1d9;
+  color: #8d9892;
+  box-shadow: none;
+}
+.product-app .chat-message.user > div {
+  background: #1d352f;
+  color: #fbfaf6;
+  box-shadow: 0 10px 28px #172a2514;
+}
+.product-app .chat-message.user .message-author {
+  color: #b7c8c0;
+}
+.product-app .message-author {
+  color: #8e5635;
+}
+.product-app .assistant-content h3 {
+  color: #20312c;
+}
+.product-app .assistant-content li::marker,
+.product-app .assistant-content a {
+  color: #9a582f;
+}
+.product-app .assistant-content blockquote {
+  border-left-color: #df7c43;
+  background: #f2e7dc;
+}
+.product-app .assistant-content code,
+.product-app .assistant-content pre {
+  background: #ebe9e1;
+}
+.product-app .message-sources a {
+  border-color: #d8d7ce;
+  background: #faf8f3;
+  color: #5a6d64;
+}
+.product-app .attachment-chip,
+.product-app .credit-limit-banner {
+  border-color: #dfc4b1;
+  background: #fbf1e8;
+}
+.product-app .settings-card {
+  border-color: #d6d5cc;
+  border-radius: 20px;
+  background: #fbfaf6;
+  box-shadow: 0 16px 45px #172a2509;
+}
+.product-app .journey-profile-settings,
+.product-app .settings-usage-card,
+.product-app .settings-account-card {
+  background: linear-gradient(145deg, #fbfaf6 58%, #f4e4d8 145%);
+}
+.product-app .card-heading > svg,
+.product-app .settings-details summary {
+  color: #9a582f;
+}
+.product-app .settings-usage-progress {
+  background: #dddcd3;
+}
+.product-app .settings-usage-progress span {
+  background: #df7c43;
+}
+.product-app .panel-dialog {
+  border-color: #d6d5cc;
+  border-radius: 22px;
+  background: #fbfaf6;
+  box-shadow: 0 30px 110px #07110e55;
+}
+.product-app .panel-dialog::backdrop {
+  background: #10211da8;
+}
+.product-app .panel-header {
+  border-color: #deddd5;
+  border-radius: 22px 22px 0 0;
+  background: #fbfaf6f2;
+  backdrop-filter: blur(16px);
+}
+.product-app .close-button {
+  background: #ebe8df;
+  color: #586962;
+}
+.product-app .button-primary {
+  background: #df7c43;
+  color: white;
+}
+.product-app .button-primary:hover:not(:disabled) {
+  background: #ed915b;
+}
+.product-app .button-secondary {
+  border-color: #d1d2c8;
+  background: #fffefa;
+}
+.product-app :focus-visible {
+  outline-color: #df7c43;
+}
+
+@media (max-width: 760px) {
+  .product-app .workspace-header {
+    background: #f8f6f0f5;
+  }
+  .product-app .mobile-brand {
+    padding: 4px;
+    border-radius: 10px;
+    background: #172a25;
+  }
+  .product-app .mobile-conversations,
+  .product-app .mobile-settings,
+  .product-app .topbar-new-chat {
+    border-radius: 12px;
+    color: #344b42;
+  }
+  .product-app .mobile-navigation {
+    border-color: #d8d7ce;
+    background: #fbfaf6f5;
+    box-shadow: 0 -10px 30px #172a250b;
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  .product-app .mobile-navigation button {
+    color: #79857f;
+    font-size: 11px;
+  }
+  .product-app .mobile-navigation button.selected {
+    background: #172a25;
+    color: #fff8f2;
+  }
+  .product-app .chat-panel {
+    padding-inline: 16px;
+  }
+  .product-app .chat-welcome h2 {
+    font-size: 30px;
+    line-height: 1.12;
+  }
+  .product-app .composer {
+    border-radius: 18px;
+  }
+  .product-app .chat-message.user > div {
+    border-radius: 16px 16px 4px 16px;
+  }
+  .product-app .start-profile fieldset {
+    padding: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-app *,
+  .product-app *::before,
+  .product-app *::after {
+    transition: none !important;
+  }
+}
