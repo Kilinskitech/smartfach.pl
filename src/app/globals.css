@@ -4115,6 +4115,22 @@ svg {
   color: #7c8982;
   font-size: 10px;
 }
+.admin-trial-canceled-mobile {
+  display: none;
+  color: #95602f !important;
+  font-weight: 700;
+}
+.admin-user-status-cell {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}
+.admin-user-status-cell > small {
+  color: #95602f;
+  font-size: 9px;
+  font-weight: 650;
+  line-height: 1.45;
+}
 .admin-user-usage {
   display: inline-flex;
   align-items: center;
@@ -4490,6 +4506,36 @@ svg {
   font-size: 12px;
   line-height: 1.55;
 }
+.admin-trial-cancellation-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 12px 13px;
+  border: 1px solid #e9cda9;
+  border-radius: 10px;
+  background: #fff7eb;
+  color: #8a5727;
+}
+.admin-trial-cancellation-notice svg {
+  flex: 0 0 auto;
+  margin-top: 1px;
+}
+.admin-trial-cancellation-notice p,
+.admin-trial-cancellation-notice strong,
+.admin-trial-cancellation-notice span {
+  display: block;
+  margin: 0;
+}
+.admin-trial-cancellation-notice strong {
+  color: #68411f;
+  font-size: 12px;
+}
+.admin-trial-cancellation-notice span {
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.55;
+}
 .admin-action-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -4742,6 +4788,9 @@ svg {
   .admin-user-row > :nth-child(4),
   .admin-user-row > :nth-child(6) {
     display: none;
+  }
+  .admin-trial-canceled-mobile {
+    display: block;
   }
   .admin-user-header {
     align-items: flex-start;

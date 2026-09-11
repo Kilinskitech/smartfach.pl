@@ -32,6 +32,7 @@ export type AdminUserDetailSnapshot = {
   measuredResponses: number;
   subscriptionStatus: string;
   cancelAtPeriodEnd: boolean;
+  trialCanceledAt: string | null;
   subscriptionEndsAt: string | null;
   stripeConnected: boolean;
   subscriptionSyncWarning?: string;
@@ -209,6 +210,7 @@ export function AdminUserDetail({
 
         <AdminUserActions
           cancelAtPeriodEnd={snapshot.cancelAtPeriodEnd}
+          trialCanceledAt={snapshot.trialCanceledAt}
           deleteBlockedReason={snapshot.deleteBlockedReason}
           email={snapshot.email}
           stripeConnected={snapshot.stripeConnected}

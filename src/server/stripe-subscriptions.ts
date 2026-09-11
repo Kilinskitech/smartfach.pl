@@ -3,6 +3,7 @@ import type Stripe from "stripe";
 import {
   emailConfirmationHoldAction,
   planIdSchema,
+  trialCancellationRequestedAt,
   type PlanId,
 } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -117,6 +118,13 @@ export async function syncSubscription(
     }
     if (fresh.metadata.organization_id !== organizationId || fresh.metadata.user_id !== ownerUserId)
       throw new Error("Niezgodność właściciela abonamentu.");
+    const trialCanceledAt = trialCancellationRequestedAt({
+      canceledAt: fresh.canceled_at,
+      trialStart: fresh.trial_start,
+      trialEnd: fresh.trial_end,
+      managedEmailConfirmationHold:
+        fresh.metadata[emailConfirmationHoldMetadata] === "true",
+    });
     const reconciled = await reconcileEmailConfirmationHold(fresh, stripe);
     const plan: PlanId | undefined = planForStripePriceId(reconciled.items.data[0]?.price.id)
       ?? planIdSchema.safeParse(checkout?.plan ?? reconciled.metadata.plan).data;
@@ -133,6 +141,8 @@ export async function syncSubscription(
       },
     });
     if (error) throw new Error("Nie zsynchronizowano abonamentu i limitu w koncie.");
+    if (trialCanceledAt)
+      await recordMilestone(ownerUserId, "trial_canceled", trialCanceledAt);
     if (reconciled.status === "active") await recordMilestone(ownerUserId, "paid");
     if (reconciled.status === "canceled") await recordMilestone(ownerUserId, "canceled");
     return reconciled;

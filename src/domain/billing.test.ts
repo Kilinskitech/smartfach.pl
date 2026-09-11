@@ -17,6 +17,7 @@ import {
   monthlyUsagePercentage,
   stripeExistingCustomerUpdate,
   topUpCreditsForPlan,
+  trialCancellationRequestedAt,
   usageLimitView,
 } from "./billing";
 
@@ -204,6 +205,33 @@ describe("kredyty SmartFach", () => {
         emailConfirmed: true,
         managedHold: false,
         cancelAtPeriodEnd: true,
+      }),
+    ).toBeNull();
+  });
+
+  it("rozpoznaje moment rezygnacji złożonej w trakcie trialu", () => {
+    expect(
+      trialCancellationRequestedAt({
+        canceledAt: 1_788_912_000,
+        trialStart: 1_788_825_600,
+        trialEnd: 1_789_084_800,
+        managedEmailConfirmationHold: false,
+      }),
+    ).toBe("2026-09-09T00:00:00.000Z");
+    expect(
+      trialCancellationRequestedAt({
+        canceledAt: 1_788_912_000,
+        trialStart: 1_788_825_600,
+        trialEnd: 1_789_084_800,
+        managedEmailConfirmationHold: true,
+      }),
+    ).toBeNull();
+    expect(
+      trialCancellationRequestedAt({
+        canceledAt: 1_789_171_200,
+        trialStart: 1_788_825_600,
+        trialEnd: 1_789_084_800,
+        managedEmailConfirmationHold: false,
       }),
     ).toBeNull();
   });

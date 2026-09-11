@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { Ban, CheckCircle2, RotateCcw, ShieldAlert, Trash2 } from "lucide-react";
+import { Ban, CalendarX2, CheckCircle2, RotateCcw, ShieldAlert, Trash2 } from "lucide-react";
 import {
   deletePlatformUser,
   updateSubscriptionCancellation,
@@ -12,6 +12,7 @@ type Props = {
   email: string;
   subscriptionStatus: string;
   cancelAtPeriodEnd: boolean;
+  trialCanceledAt: string | null;
   subscriptionEndsAt: string | null;
   stripeConnected: boolean;
   subscriptionSyncWarning?: string;
@@ -25,6 +26,7 @@ export function AdminUserActions({
   email,
   subscriptionStatus,
   cancelAtPeriodEnd,
+  trialCanceledAt,
   subscriptionEndsAt,
   stripeConnected,
   subscriptionSyncWarning,
@@ -56,6 +58,20 @@ export function AdminUserActions({
         <p className="admin-subscription-warning" role="status">
           {subscriptionSyncWarning}
         </p>
+      )}
+
+      {trialCanceledAt && (
+        <div className="admin-trial-cancellation-notice">
+          <CalendarX2 size={19} />
+          <p>
+            <strong>Rezygnacja w okresie próbnym</strong>
+            <span>
+              Zarejestrowano {new Date(trialCanceledAt).toLocaleString("pl-PL", {
+                timeZone: "Europe/Warsaw",
+              })}. Ta informacja pozostaje w historii także po wznowieniu subskrypcji.
+            </span>
+          </p>
+        </div>
       )}
 
       <div className="admin-action-grid">

@@ -110,6 +110,12 @@ describe("durable AI receipts and reservations",()=>{
   });
 });
 describe("Stripe leases and atomic subscription updates",()=>{
+  it("przechowuje dokładny moment pierwszej rezygnacji podczas trialu",async()=>{
+    const occurredAt="2026-09-09T10:15:00Z";
+    await db.query("insert into product_events(user_id,event,occurred_at) values($1,'trial_canceled',$2)",[actor,occurredAt]);
+    const result=await db.query<{occurred_at:Date}>("select occurred_at from product_events where user_id=$1 and event='trial_canceled'",[actor]);
+    expect(result.rows[0]!.occurred_at.toISOString()).toBe("2026-09-09T10:15:00.000Z");
+  });
   it("summarizes all costs, not just the first API page of 1000 events",async()=>{
     await db.query("insert into usage_events(organization_id,user_id,model,cost_usd,total_tokens) select $1,$2,'test',0.01,10 from generate_series(1,1100)",[org,actor]);
     const r=await db.query<{cost_usd:string;response_count:number}>("select * from admin_usage_totals()");

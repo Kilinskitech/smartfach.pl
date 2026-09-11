@@ -24,7 +24,7 @@ function Reservation({ item }: { item: OperationalSummary["uncertain"][number] }
   </article>;
 }
 export function AdminOperations({ summary }: { summary: OperationalSummary }) {
-  const labels: Record<string, string> = { registered: "Założone konta", checkout_opened: "Otwarcie płatności", checkout_completed: "Ukończenie zakupu", first_answer: "Pierwsza odpowiedź AI", guided_start: "Pierwszy start biznesu", paid: "Pierwszy aktywny abonament", canceled: "Pierwsze zakończenie abonamentu", top_up: "Pierwsze zwiększenie limitu" };
+  const labels: Record<string, string> = { registered: "Założone konta", checkout_opened: "Otwarcie płatności", checkout_completed: "Ukończenie zakupu", first_answer: "Pierwsza odpowiedź AI", guided_start: "Pierwszy start biznesu", paid: "Pierwszy aktywny abonament", trial_canceled: "Rezygnacje podczas próby", canceled: "Pierwsze zakończenie abonamentu", top_up: "Pierwsze zwiększenie limitu" };
   const pendingEmails = summary.pendingEmails ?? 0;
   const hasIssues = summary.pendingWebhooks > 0 || pendingEmails > 0 || summary.uncertain.length > 0;
   return <section className="admin-panel admin-operations" id="operacje" aria-labelledby="operations-title">

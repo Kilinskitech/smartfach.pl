@@ -39,20 +39,22 @@ export default async function Page({
     (user) => user.id !== platformAdmin.userId,
   );
   const userIds = customerUsers.map((user) => user.id);
-  const [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult] = await Promise.all([
+  const [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult, trialCancellationsResult] = await Promise.all([
     userIds.length ? admin.from("user_profiles").select("user_id, display_name").in("user_id", userIds) : Promise.resolve({ data: [] }),
     userIds.length ? admin.from("memberships").select("user_id, organization_id, role, status").in("user_id", userIds).eq("status", "active") : Promise.resolve({ data: [] }),
     admin.from("subscriptions").select("organization_id, plan, status, payment_method_attached, current_period_started_at"),
     admin.from("workspaces").select("organization_id, revision, data"),
     admin.rpc("admin_usage_totals"),
+    userIds.length ? admin.from("product_events").select("user_id, occurred_at").eq("event", "trial_canceled").in("user_id", userIds) : Promise.resolve({ data: [] }),
   ]);
-  for (const result of [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult])
+  for (const result of [profilesResult, membershipsResult, subscriptionsResult, workspacesResult, usageResult, trialCancellationsResult])
     if ("error" in result && result.error) throw new Error("Nie można wczytać pełnych danych panelu.");
   const profiles = new Map((profilesResult.data ?? []).map((row) => [String(row.user_id), row]));
   const memberships = new Map((membershipsResult.data ?? []).map((row) => [String(row.user_id), row]));
   const topUpPurchases = await loadAdminTopUps(admin, [...memberships.values()].map(row => String(row.organization_id)));
   const subscriptions = new Map((subscriptionsResult.data ?? []).map((row) => [String(row.organization_id), row]));
   const workspaces = new Map((workspacesResult.data ?? []).map((row) => [String(row.organization_id), row]));
+  const trialCancellations = new Map((trialCancellationsResult.data ?? []).map((row) => [String(row.user_id), String(row.occurred_at)]));
   const usage = new Map<string, {
     costUsd: number;
     totalTokens: number;
@@ -105,6 +107,7 @@ export default async function Page({
       plan: plans[billing.plan].name,
       status: String(subscription?.status ?? "incomplete"),
       paymentMethodAttached: Boolean(subscription?.payment_method_attached),
+      trialCanceledAt: trialCancellations.get(authUser.id) ?? null,
       monthlyCostUsd,
       monthlyLimitUsd: topUps.totalAllowanceUsd,
       topUps,

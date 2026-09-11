@@ -46,6 +46,25 @@ export function emailConfirmationHoldAction(input: {
   return input.managedHold ? "release" : null;
 }
 
+export function trialCancellationRequestedAt(input: {
+  canceledAt: number | null | undefined;
+  trialStart: number | null | undefined;
+  trialEnd: number | null | undefined;
+  managedEmailConfirmationHold: boolean;
+}) {
+  const { canceledAt, trialStart, trialEnd } = input;
+  if (
+    input.managedEmailConfirmationHold ||
+    typeof canceledAt !== "number" ||
+    typeof trialStart !== "number" ||
+    typeof trialEnd !== "number" ||
+    canceledAt < trialStart ||
+    canceledAt >= trialEnd
+  )
+    return null;
+  return new Date(canceledAt * 1000).toISOString();
+}
+
 export const plans = {
   lite: {
     name: "Lite",

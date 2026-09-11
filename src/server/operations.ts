@@ -15,9 +15,16 @@ export async function withOperation<T>(resource: string, run: (token: string) =>
     if (releaseError) console.error("operation_lease_release_failed", { resource });
   }
 }
-export async function recordMilestone(userId: string, event: "registered" | "checkout_opened" | "checkout_completed" | "first_answer" | "guided_start" | "paid" | "canceled" | "top_up") {
+export async function recordMilestone(
+  userId: string,
+  event: "registered" | "checkout_opened" | "checkout_completed" | "first_answer" | "guided_start" | "paid" | "canceled" | "trial_canceled" | "top_up",
+  occurredAt?: string,
+) {
   try {
-    const { error } = await createAdminClient().from("product_events").upsert({ user_id: userId, event }, { onConflict: "user_id,event", ignoreDuplicates: true });
+    const { error } = await createAdminClient().from("product_events").upsert(
+      { user_id: userId, event, ...(occurredAt ? { occurred_at: occurredAt } : {}) },
+      { onConflict: "user_id,event", ignoreDuplicates: true },
+    );
     if (error) console.error("product_event_failed", { event, code: error.code });
   } catch { console.error("product_event_failed", { event }); }
 }

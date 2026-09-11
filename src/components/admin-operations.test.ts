@@ -11,7 +11,7 @@ describe("panel aktywacji i niezawodności", () => {
   it("pokazuje pusty stan bez sugerowania potwierdzonej sprawności całego systemu", () => {
     const html = render({ milestones: {}, pendingWebhooks: 0, uncertain: [] });
     expect(html).toContain("Brak zaległych spraw");
-    expect(html.match(/<dd>0<\/dd>/g)).toHaveLength(8);
+    expect(html.match(/<dd>0<\/dd>/g)).toHaveLength(9);
     expect(html).toContain("nie lejek konwersji");
     expect(html).not.toContain("Zwolnij rezerwację");
     expect(html).not.toContain("Wszystko działa");

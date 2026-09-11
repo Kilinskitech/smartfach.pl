@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { z } from "zod";
 import { AdminUserDetail, type AdminUserDetailSnapshot } from "@/components/admin-user-detail";
-import { plans } from "@/domain/billing";
+import { plans, trialCancellationRequestedAt } from "@/domain/billing";
 import { workspaceSchema } from "@/domain/workspace";
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -30,13 +30,17 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
   ]);
   const organizationId = membershipResult.data?.organization_id ? String(membershipResult.data.organization_id) : "";
   if (!organizationId) notFound();
-  const [organizationResult, workspaceResult, subscriptionResult, membershipsResult] = await Promise.all([
+  const [organizationResult, workspaceResult, subscriptionResult, membershipsResult, trialCancellationResult] = await Promise.all([
     admin.from("organizations").select("name").eq("id", organizationId).maybeSingle(),
     admin.from("workspaces").select("revision, data").eq("organization_id", organizationId).single(),
     admin.from("subscriptions").select("status, cancel_at_period_end, trial_ends_at, current_period_started_at, current_period_ends_at, stripe_subscription_id").eq("organization_id", organizationId).maybeSingle(),
     admin.from("memberships").select("user_id").eq("organization_id", organizationId).eq("status", "active"),
+    admin.from("product_events").select("occurred_at").eq("user_id", parsedId.data).eq("event", "trial_canceled").maybeSingle(),
   ]);
   let subscription = subscriptionResult.data;
+  let trialCanceledAt = trialCancellationResult.data?.occurred_at
+    ? String(trialCancellationResult.data.occurred_at)
+    : null;
   let subscriptionSyncWarning: string | undefined;
   const stripeSubscriptionId = subscription?.stripe_subscription_id
     ? String(subscription.stripe_subscription_id)
@@ -46,10 +50,18 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
       const liveSubscription = await getStripe().subscriptions.retrieve(
         stripeSubscriptionId,
       );
+      const liveTrialCanceledAt = trialCancellationRequestedAt({
+        canceledAt: liveSubscription.canceled_at,
+        trialStart: liveSubscription.trial_start,
+        trialEnd: liveSubscription.trial_end,
+        managedEmailConfirmationHold:
+          liveSubscription.metadata.smartfach_email_confirmation_hold === "true",
+      });
       const storedStateIsStale =
         liveSubscription.status !== String(subscription?.status) ||
         liveSubscription.cancel_at_period_end !==
-          Boolean(subscription?.cancel_at_period_end);
+          Boolean(subscription?.cancel_at_period_end) ||
+        Boolean(liveTrialCanceledAt && !trialCanceledAt);
       if (storedStateIsStale) {
         await syncSubscription(liveSubscription);
         const refreshed = await admin
@@ -60,6 +72,17 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
         if (refreshed.error || !refreshed.data)
           throw new Error("Nie odczytano zsynchronizowanego abonamentu.");
         subscription = refreshed.data;
+        const refreshedTrialCancellation = await admin
+          .from("product_events")
+          .select("occurred_at")
+          .eq("user_id", parsedId.data)
+          .eq("event", "trial_canceled")
+          .maybeSingle();
+        if (refreshedTrialCancellation.error)
+          throw new Error("Nie odczytano daty rezygnacji z okresu próbnego.");
+        trialCanceledAt = refreshedTrialCancellation.data?.occurred_at
+          ? String(refreshedTrialCancellation.data.occurred_at)
+          : null;
       }
     } catch (error) {
       console.error("Nie odświeżono statusu Stripe w profilu użytkownika", {
@@ -96,6 +119,7 @@ export default async function Page({ params }: { params: Promise<{ userId: strin
     measuredResponses: Number(usage?.response_count ?? 0),
     subscriptionStatus: String(subscription?.status ?? "incomplete"),
     cancelAtPeriodEnd: Boolean(subscription?.cancel_at_period_end),
+    trialCanceledAt,
     subscriptionEndsAt: subscription?.current_period_ends_at
       ? String(subscription.current_period_ends_at)
       : subscription?.trial_ends_at
