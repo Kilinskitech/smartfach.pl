@@ -11112,6 +11112,7 @@ button.team-card:hover {
 .landing-v3.path-landing .pricing-hero {
   display: block;
   min-height: 360px;
+  margin-bottom: 22px;
   padding-top: clamp(52px, 6vw, 72px);
   padding-bottom: clamp(82px, 8vw, 110px);
   padding-right: clamp(80px, 14vw, 190px);
@@ -11122,7 +11123,7 @@ button.team-card:hover {
   font-size: clamp(46px, 5vw, 68px);
 }
 .landing-v3.path-landing .marketing-section.pricing-section {
-  padding-top: clamp(58px, 6vw, 82px);
+  padding-block: clamp(82px, 8vw, 112px);
 }
 .landing-v3.path-landing .pricing-section .section-intro {
   margin-bottom: 48px;
@@ -11451,6 +11452,7 @@ body:has(.checkout-v2) {
   }
   .landing-v3.path-landing .pricing-hero {
     min-height: 0;
+    margin-bottom: 10px;
     padding-bottom: 60px;
     padding-right: 22px;
   }
