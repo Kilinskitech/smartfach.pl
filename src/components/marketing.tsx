@@ -490,16 +490,23 @@ function FAQSection() {
 
 export function MarketingHome() {
   return (
-    <div className="marketing-site builder-marketing landing-v2">
+    <div className="marketing-site builder-marketing landing-v3">
       <a className="skip-link" href="#landing-content">Przejdź do treści</a>
+      <div className="landing-announcement" aria-label="Najważniejsze informacje o SmartFach">
+        <span>SMARTFACH · OSOBISTY ASYSTENT AI</span>
+        <i aria-hidden="true" />
+        <span>OD WŁASNYCH WARUNKÓW DO PIERWSZEGO KLIENTA</span>
+        <i aria-hidden="true" />
+        <span>3 DNI BEZ OPŁAT · KARTA WYMAGANA</span>
+      </div>
       <MarketingHeader />
       <main id="landing-content">
         <section className="marketing-hero builder-hero">
           <div className="hero-orb hero-orb-one" aria-hidden="true" />
           <div className="hero-orb hero-orb-two" aria-hidden="true" />
           <div className="hero-copy">
-            <p className="marketing-kicker hero-kicker"><Sparkles size={14} /> WŁASNY BIZNES Z TEGO, CO JUŻ MASZ</p>
-            <h1>Nie potrzebujesz idealnego pomysłu. <em>Potrzebujesz pierwszego klienta.</em></h1>
+            <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> WŁASNY BIZNES Z TEGO, CO JUŻ MASZ</p>
+            <h1><span>Nie potrzebujesz idealnego pomysłu.</span> <em>Potrzebujesz pierwszego klienta.</em></h1>
             <p className="hero-lead">SmartFach pomaga wykorzystać Twoją wiedzę, umiejętności, doświadczenie, zainteresowania, kontakty i dostępny czas, żeby wybrać realny kierunek, zbudować pierwszą usługę i ruszyć z małym testem — bez rzucania etatu w ciemno.</p>
             <div className="hero-actions">
               <Link className="hero-primary" href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={18} /></Link>

@@ -1324,3 +1324,18 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   ocen, wyników oraz twierdzeń o zespole, których nie potwierdzono.
 - Nie zmieniono aplikacji, modelu, planów, cen, limitów, checkoutu ani dokumentów
   prawnych. Nowy landing wymaga kontroli wizualnej przed publikacją.
+
+## D067 — Redakcyjny kierunek wizualny landingu
+
+- Data: 2026-09-11. Founder odrzucił poprzedni, mocno „startupowy” wygląd landingu
+  i wskazał jako inspirację spokojniejszy projekt portfolio. Materiał referencyjny
+  służy wyłącznie do określenia rytmu, typografii i poziomu prostoty; nie kopiujemy
+  jego treści, kodu, kolorystyki ani elementów marki.
+- Landing otrzymuje jasne, ciepłe tło, szeryfowe nagłówki, cienkie podziały,
+  oliwkowo-miedziane akcenty i większy oddech. Ograniczamy gradienty, zaokrąglone
+  karty, cienie i dekoracje, aby komunikacja była nowoczesna, ale spokojna.
+- Zachowano treść, nagłówek, ceny, warunki trzydniowej próby, scenariusze oznaczone
+  jako fikcyjne i podgląd zgodny z działającym produktem. Nie zmieniono aplikacji,
+  modeli AI, Stripe, Supabase, planów, limitów ani dokumentów prawnych.
+- Wersję statyczną sprawdzono wizualnie na desktopie i w widoku telefonu 390 × 844;
+  pełne testy kodu i produkcyjny build pozostają bramką przed publikacją.
