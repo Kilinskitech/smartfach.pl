@@ -10898,6 +10898,26 @@ button.team-card:hover {
 .public-v2 .public-info-content {
   padding-block: clamp(72px, 9vw, 118px);
 }
+.public-v2 .contact-content {
+  grid-template-columns: minmax(330px, .82fr) minmax(0, 1.18fr);
+  gap: clamp(44px, 5vw, 72px);
+}
+.public-v2 .contact-content .section-intro {
+  display: block;
+  max-width: 410px;
+}
+.public-v2 .contact-content .section-intro .marketing-kicker {
+  margin: 0 0 18px;
+}
+.public-v2 .contact-content .section-intro h2 {
+  max-width: 8ch;
+  margin: 0;
+  font-size: clamp(42px, 4vw, 56px);
+  line-height: 1.02;
+}
+.public-v2 .contact-content .section-intro > p:last-child {
+  margin: 24px 0 0;
+}
 .public-v2 .section-intro h2 {
   color: #1d2926;
   font-size: clamp(38px, 5vw, 62px);
@@ -11091,14 +11111,24 @@ button.team-card:hover {
 }
 .landing-v3.path-landing .pricing-hero {
   display: block;
+  min-height: 360px;
+  padding-block: clamp(52px, 6vw, 72px);
   padding-right: clamp(80px, 14vw, 190px);
   text-align: left;
 }
 .landing-v3.path-landing .pricing-hero h1 {
-  max-width: 900px;
+  max-width: 800px;
+  font-size: clamp(46px, 5vw, 68px);
 }
 .landing-v3.path-landing .marketing-section.pricing-section {
-  padding-top: clamp(78px, 9vw, 120px);
+  padding-top: clamp(58px, 6vw, 82px);
+}
+.landing-v3.path-landing .pricing-section .section-intro {
+  margin-bottom: 48px;
+}
+.landing-v3.path-landing .pricing-section .section-intro h2 {
+  max-width: 760px;
+  font-size: clamp(42px, 4.4vw, 58px);
 }
 
 /* Logowanie i odzyskiwanie hasła v2. */
@@ -11356,6 +11386,16 @@ body:has(.checkout-v2) {
     grid-template-columns: 1fr;
     gap: 38px;
   }
+  .public-v2 .contact-content {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .public-v2 .contact-content .section-intro {
+    max-width: 680px;
+  }
+  .public-v2 .contact-content .section-intro h2 {
+    max-width: 11ch;
+  }
   .auth-v2 .auth-story {
     border-radius: 0 0 30px 30px;
   }
@@ -11392,6 +11432,10 @@ body:has(.checkout-v2) {
   .public-v2 .section-intro h2 {
     font-size: 38px;
   }
+  .public-v2 .contact-content .section-intro h2 {
+    max-width: 10ch;
+    font-size: 40px;
+  }
   .public-v2 .withdrawal-page {
     width: calc(100% - 20px);
     margin-top: 10px;
@@ -11402,6 +11446,7 @@ body:has(.checkout-v2) {
     font-size: 42px;
   }
   .landing-v3.path-landing .pricing-hero {
+    min-height: 0;
     padding-right: 22px;
   }
   .auth-v2 .auth-story h1 {

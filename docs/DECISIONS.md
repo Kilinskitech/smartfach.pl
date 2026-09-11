@@ -1381,3 +1381,13 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Zachowano dotychczasową treść, strukturę informacji i responsywność. Nie zmieniono
   działania formularzy, Supabase, Stripe, planów, cen, trialu, limitów ani tekstów
   prawnych.
+
+## D071 — Korekta proporcji kontaktu i cennika
+
+- Data: 2026-09-12. Po kontroli produkcji poprawiono konflikt siatki wspólnego
+  nagłówka sekcji z dwukolumnowym układem formularza kontaktowego. Nagłówek nie
+  jest już ściskany do pojedynczych sylab, a formularz przechodzi do jednej kolumny
+  na mniejszych ekranach.
+- Na cenniku zmniejszono wysokość hero, skalę głównego nagłówka oraz pusty odstęp
+  przed planami. Zmiana dotyczy wyłącznie układu i nie zmienia cen, treści ani
+  działania zakupu.
