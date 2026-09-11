@@ -1306,3 +1306,21 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Webhook pozostaje podstawowym mechanizmem synchronizacji. Odczyt administratora
   jest zabezpieczeniem na wypadek pominiętego lub opóźnionego zdarzenia, a nie jego
   zamiennikiem. Nie zmieniono planów, cen, limitów, modelu ani landingu.
+
+## D066 — Landing zaczyna od istniejących zasobów, ale zachowuje pierwszego klienta
+
+- Data: 2026-09-11. Zachowano zatwierdzony nagłówek „Nie potrzebujesz idealnego
+  pomysłu. Potrzebujesz pierwszego klienta.”. Motyw „nie zaczynasz od zera” rozwija
+  komunikację przez umiejętności, doświadczenie, zainteresowania, kontakty, czas
+  i ograniczenia użytkownika, zamiast zastępować główną obietnicę.
+- Landing jest kierowany szczególnie do osoby pracującej na etacie, która chce
+  wykonać mały test po godzinach, ale nie wyklucza osób bez pomysłu lub już
+  rozwijających własny kierunek.
+- Podgląd produktu odpowiada działającemu modelowi: osobny biznes w każdym czacie,
+  krótka ankieta, najwyżej kilka możliwości, jedna rekomendacja, ryzyko i jedno
+  działanie na dziś. Element demonstracyjny nie zawiera nieaktywnego przycisku.
+- Trzy drogi użytkowników są wyraźnie opisane jako fikcyjne scenariusze. Zaufanie
+  budują rzeczywisty proces, jawne granice, pełne zasady próby i kontakt, bez opinii,
+  ocen, wyników oraz twierdzeń o zespole, których nie potwierdzono.
+- Nie zmieniono aplikacji, modelu, planów, cen, limitów, checkoutu ani dokumentów
+  prawnych. Nowy landing wymaga kontroli wizualnej przed publikacją.

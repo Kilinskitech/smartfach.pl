@@ -6,6 +6,10 @@ Stan: 2026-09-09.
   typu firmy ani etapu „Odkryj/Uruchom/Prowadź”.
 - Landing najpierw wyjaśnia rezultat, potem sposób działania i dopiero cenę.
 - Hero ma mówić o pierwszym kliencie, nie o samym „znalezieniu pomysłu”.
+- Kolejne sekcje rozwijają motyw „nie zaczynasz od zera” przez umiejętności,
+  doświadczenie, zainteresowania, kontakty, czas i ograniczenia użytkownika.
+- Przykładowe drogi i ekrany muszą mieć widoczne oznaczenie scenariusza fikcyjnego;
+  nie stylizujemy ich na opinię, historię klienta ani wynik osiągnięty z produktem.
 - Cel 10 000 zł pokazujemy jako liczbę do przeliczenia, nie gwarancję i nie termin.
 - Wprost uwzględniamy: zdalnie/lokalnie, brak sprecyzowanych umiejętności, mało
   czasu, mały budżet oraz rzeczy, których użytkownik nie chce robić.

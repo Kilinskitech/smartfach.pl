@@ -2,14 +2,15 @@ import Link from "next/link";
 import {
   ArrowRight,
   Ban,
+  BriefcaseBusiness,
   Check,
   ChevronDown,
+  Clock3,
   Compass,
-  Image as ImageIcon,
-  Laptop,
+  HeartHandshake,
+  Lightbulb,
   ListChecks,
   LogIn,
-  MapPin,
   Menu,
   MessageCircle,
   SearchCheck,
@@ -27,22 +28,22 @@ type FaqItem = readonly [question: string, answer: string];
 
 const fitOptions = [
   {
-    icon: Laptop,
-    label: "WOLĘ PRACOWAĆ ZDALNIE",
-    title: "Znajdziemy usługę, którą możesz realizować z domu",
-    copy: "Bez wciskania Ci pracy w terenie, jeśli nie tego szukasz.",
-  },
-  {
-    icon: MapPin,
-    label: "WOLĘ DZIAŁAĆ LOKALNIE",
-    title: "Wykorzystamy popyt i klientów w Twojej okolicy",
-    copy: "Kierunek może opierać się na praktycznej usłudze, nie tylko pracy przy komputerze.",
+    icon: BriefcaseBusiness,
+    label: "MAM ETAT I DOŚWIADCZENIE",
+    title: "Nie wiem jeszcze, co z tego mogę sprzedawać",
+    copy: "Zaczniemy od problemów i zadań, które znasz lepiej niż osoba spoza Twojej branży.",
   },
   {
     icon: Compass,
-    label: "NIE WIEM, CO UMIEM SPRZEDAĆ",
-    title: "Zaczniemy od tego, co już potrafisz lub szybko opanujesz",
-    copy: "Nie musisz przychodzić z gotowym pomysłem ani imponującym CV.",
+    label: "MAM KILKA POMYSŁÓW",
+    title: "Nie wiem, który z nich ma sens",
+    copy: "Porównamy najwyżej kilka kierunków i wybierzemy jeden mały test zamiast rozbudowanego planu.",
+  },
+  {
+    icon: Clock3,
+    label: "CHCĘ ZACZĄĆ PO GODZINACH",
+    title: "Potrzebuję ograniczyć czas i ryzyko",
+    copy: "Pierwszy krok dopasujemy do realnego kalendarza i budżetu, bez rzucania pracy w ciemno.",
   },
   {
     icon: Ban,
@@ -88,23 +89,27 @@ const faqItems: readonly FaqItem[] = [
     "Nie. SmartFach zaczyna od Twoich warunków: czasu, budżetu, doświadczenia, sposobu pracy i rzeczy, których nie chcesz robić. Następnie pomaga porównać ograniczoną liczbę realnych usług i wybrać najprostszy test.",
   ],
   [
+    "Czy SmartFach jest również dla osoby pracującej na etacie?",
+    "Tak. Możesz zacząć od małego testu po godzinach, bez deklarowania odejścia z pracy. Czas, budżet i akceptowalne ryzyko są częścią Twojego kontekstu.",
+  ],
+  [
+    "Czy muszę rzucić pracę, aby zacząć?",
+    "Nie. SmartFach pomaga dobrać pierwszy krok do czasu, który naprawdę masz. Celem jest sprawdzenie kierunku w kontrolowany sposób, zanim podejmiesz większą decyzję.",
+  ],
+  [
     "Co, jeśli nie mam żadnych wyjątkowych umiejętności?",
     "Nie potrzebujesz eksperckiego poziomu na starcie. SmartFach może wskazać usługi wykorzystujące to, co już umiesz, albo kierunki z małym progiem wejścia. Zawsze powinien również pokazać, czego trzeba się nauczyć przed przyjęciem zlecenia.",
   ],
   [
-    "Czy muszę pracować zdalnie?",
-    "Nie. Możesz wybrać pracę zdalną, lokalną albo połączenie obu. To Twoje preferencje są filtrem dla propozycji, a nie gotowa lista modnych biznesów z internetu.",
+    "Czy mogę zacząć bez pokazywania twarzy?",
+    "Tak. Jeżeli nie chcesz nagrywać filmów ani budować marki osobistej, SmartFach uwzględni to jako granicę i zaproponuje inne sposoby pracy oraz docierania do klientów.",
   ],
   [
-    "Czy SmartFach zdobędzie klienta za mnie?",
-    "Nie może zagwarantować klienta ani wykonać za Ciebie wszystkich działań. Pomoże przygotować ofertę, wyszukać informacje, opracować sposób dotarcia, napisać wiadomości i wybrać następny krok. Ty decydujesz i działasz.",
+    "Czy SmartFach gwarantuje klientów lub określony przychód?",
+    "Nie. Pomaga przygotować ofertę, sposób dotarcia i kolejny test, ale nie może zagwarantować klienta, sprzedaży, kwoty ani terminu. Wynik zależy również od rynku, jakości realizacji i Twoich działań.",
   ],
   [
-    "Czy SmartFach gwarantuje 10 000 zł miesięcznie?",
-    "Nie. 10 000 zł może być Twoim celem, który rozłożymy na cenę, liczbę klientów i działania sprzedażowe. Wynik zależy od rynku, oferty, jakości realizacji i konsekwencji użytkownika.",
-  ],
-  [
-    "Czy to jest kurs albo zbiór nagrań?",
+    "Czy to jest kurs?",
     "Nie. Pracujesz na swojej aktualnej sytuacji. SmartFach pomaga przygotować konkretny rezultat, zapamiętuje rozmowy i po wykonaniu działania pomaga dostosować kolejny krok.",
   ],
   [
@@ -122,7 +127,7 @@ export function MarketingHeader() {
       </Link>
       <nav aria-label="Główna nawigacja">
         <Link href="/#jak-dziala">Jak to działa</Link>
-        <Link href="/#dla-ciebie">Dla Ciebie</Link>
+        <Link href="/#przykladowa-droga">Przykładowe drogi</Link>
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
         <Link href="/pobierz">Pobierz aplikację</Link>
@@ -142,6 +147,7 @@ export function MarketingHeader() {
             <span className="mobile-menu-title">MENU</span>
             <Link href="/#jak-dziala">Jak to działa</Link>
             <Link href="/#dla-ciebie">Dla Ciebie</Link>
+            <Link href="/#przykladowa-droga">Przykładowe drogi</Link>
             <Link href="/#co-dostajesz">Co dostajesz</Link>
             <Link href="/cennik">Cennik</Link>
             <Link href="/kontakt">Kontakt</Link>
@@ -159,30 +165,30 @@ function ProductPreview() {
   return (
     <div className="preview-stage start-preview-stage">
       <div className="preview-float preview-float-top" aria-hidden="true">
-        <SearchCheck size={14} /> Dopasowane do Ciebie
+        <SearchCheck size={14} /> Kierunek do sprawdzenia
       </div>
       <div className="preview-float preview-float-bottom" aria-hidden="true">
-        <ListChecks size={14} /> Następny krok gotowy
+        <ListChecks size={14} /> Mały test na dziś
       </div>
       <div className="product-preview" aria-label="Podgląd działania SmartFach">
         <div className="preview-top">
           <span><BrandMark size={25} /> SmartFach</span>
-          <small><i /> Asystent gotowy</small>
+          <small className="preview-scenario-label">SCENARIUSZ PRZYKŁADOWY</small>
         </div>
         <div className="preview-question">
           <span>Ty</span>
-          Chcę dorabiać zdalnie około 6 godzin tygodniowo. Nie wiem, co mogę sprzedawać i nie chcę nagrywać filmów.
+          Pracuję w administracji, dobrze znam Excel, mam kontakty w kilku małych firmach i około 5 godzin tygodniowo. Nie chcę rzucać etatu. Od czego mogę zacząć?
         </div>
         <div className="preview-card start-result-card">
-          <div><Target size={20} /><span><small>TWÓJ PIERWSZY KIERUNEK</small><strong>Usługa dopasowana do Twoich warunków</strong></span></div>
+          <div><Target size={20} /><span><small>REKOMENDACJA DO SPRAWDZENIA</small><strong>Porządkowanie arkuszy i prostych raportów dla mikrofirm</strong></span></div>
           <dl>
-            <div><dt>Sposób pracy</dt><dd>Zdalnie</dd></div>
-            <div><dt>Czas</dt><dd>6 h / tydzień</dd></div>
-            <div><dt>Bez</dt><dd>Nagrywania</dd></div>
+            <div><dt>Dlaczego</dt><dd>Excel + kontakty</dd></div>
+            <div><dt>Ryzyko</dt><dd>Nieznany popyt</dd></div>
+            <div><dt>Test</dt><dd>3 krótkie rozmowy</dd></div>
           </dl>
-          <button>Zobacz ofertę i pierwszy test <ArrowRight size={15} /></button>
+          <div className="preview-next-step"><Check size={15} /> Dziś: zapytaj trzy znane firmy o najbardziej uciążliwy arkusz.</div>
         </div>
-        <p><ShieldCheck size={14} /> Propozycje uwzględniają Twoje granice i możliwości.</p>
+        <p><ShieldCheck size={14} /> To przykład sposobu pracy, nie historia klienta ani obietnica wyniku.</p>
       </div>
     </div>
   );
@@ -192,9 +198,9 @@ function FitSection() {
   return (
     <section className="marketing-section fit-section" id="dla-ciebie">
       <div className="section-intro">
-        <p className="marketing-kicker">ZACZYNAMY OD CIEBIE, NIE OD MODNEGO POMYSŁU</p>
-        <h2>Powiedz, jak chcesz pracować. Resztę poukładamy razem.</h2>
-        <p>Nie wciskamy każdemu tego samego biznesu. Twoje możliwości, ograniczenia i rzeczy, których nie chcesz robić, pomagają wybrać właściwy kierunek.</p>
+        <p className="marketing-kicker">TO NIE MUSI BYĆ BRAK POMYSŁU</p>
+        <h2>Czasem po prostu nie widzisz biznesu w tym, co robisz codziennie.</h2>
+        <p>SmartFach zaczyna od Twojej sytuacji, zamiast podsuwać każdemu tę samą listę modnych pomysłów.</p>
       </div>
       <div className="fit-grid">
         {fitOptions.map(({ icon: Icon, label, title, copy }) => (
@@ -210,19 +216,48 @@ function FitSection() {
   );
 }
 
+function StartingCapital() {
+  const resources = [
+    [Lightbulb, "Umiejętności", "To, co robisz dobrze w pracy i poza nią."],
+    [BriefcaseBusiness, "Doświadczenie", "Problemy i branże, które znasz od środka."],
+    [Compass, "Zainteresowania", "Tematy, które chcesz rozwijać dłużej niż tydzień."],
+    [HeartHandshake, "Kontakty", "Ludzie i środowiska, do których masz naturalny dostęp."],
+    [Clock3, "Czas i ograniczenia", "Realna liczba godzin, budżet i rzeczy, których nie chcesz robić."],
+  ] as const;
+  return (
+    <section className="marketing-section capital-section" aria-labelledby="capital-title">
+      <div className="capital-heading">
+        <p className="marketing-kicker">TWÓJ KAPITAŁ STARTOWY</p>
+        <h2 id="capital-title">Nie zaczynasz od zera.</h2>
+        <p>SmartFach łączy te elementy, żeby znaleźć kierunek dopasowany do Ciebie — nie kolejną modną listę pomysłów z internetu.</p>
+      </div>
+      <div className="capital-grid">
+        {resources.map(([Icon, title, copy], index) => (
+          <article key={title}>
+            <span><Icon size={21} /></span>
+            <small>0{index + 1}</small>
+            <h3>{title}</h3>
+            <p>{copy}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function ActionSystem() {
   const steps = [
-    ["POZNAJEMY CIEBIE", "Czas, budżet, doświadczenie i granice"],
-    ["WYBIERAMY USŁUGĘ", "Realny problem, klient i sposób realizacji"],
-    ["BUDUJEMY OFERTĘ", "Zakres, cena i prosta wiadomość sprzedażowa"],
-    ["RUSZASZ DO KLIENTÓW", "Konkretne działania i poprawki po wynikach"],
+    ["POZNAJEMY TWOJĄ SYTUACJĘ", "Czas, doświadczenie, umiejętności, kontakty, budżet i granice."],
+    ["WYBIERAMY KIERUNEK", "Maksymalnie kilka realnych możliwości i jedna rekomendacja do sprawdzenia."],
+    ["BUDUJEMY PIERWSZĄ USŁUGĘ", "Odbiorca, problem, rezultat, zakres i sposób ustalenia ceny."],
+    ["PLANUJEMY MAŁY TEST", "Dopasowany sposób dotarcia i jedno działanie możliwe do wykonania dzisiaj."],
   ] as const;
   return (
     <section className="marketing-section action-system" id="jak-dziala">
       <div className="section-intro">
-        <p className="marketing-kicker">NIE KOLEJNY KURS · SYSTEM DO DZIAŁANIA</p>
-        <h2>Od „nie wiem, co robić” do oferty, którą możesz pokazać klientowi.</h2>
-        <p>SmartFach zadaje potrzebne pytania, ogranicza liczbę opcji i prowadzi do najmniejszego sensownego testu — bez tygodni planowania.</p>
+        <p className="marketing-kicker">JAK TO DZIAŁA</p>
+        <h2>Od Twojej sytuacji do pierwszego testu na rynku.</h2>
+        <p>Po wykonaniu działania wracasz z wynikiem, odpowiedzią rynku albo nową informacją. SmartFach pomaga wtedy poprawić kolejny krok.</p>
       </div>
       <div className="action-steps" aria-label="Jak działa SmartFach">
         {steps.map(([label, value], index) => (
@@ -232,6 +267,90 @@ function ActionSystem() {
             {index < steps.length - 1 && <ArrowRight size={17} />}
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function ExamplePaths() {
+  const examples = [
+    {
+      name: "Marta",
+      start: "Pracuje w administracji i ma około 5 godzin tygodniowo.",
+      resources: "Dobrze zna Excel i ma kontakty w kilku małych firmach.",
+      direction: "Porządkowanie arkuszy i prostych raportów dla mikrofirm.",
+      test: "Trzy rozmowy ze znanymi właścicielami o najbardziej uciążliwych arkuszach.",
+    },
+    {
+      name: "Kamil",
+      start: "Pracuje w branży budowlanej i chce zacząć bez dużej inwestycji.",
+      resources: "Sprawnie organizuje zakupy i zna lokalnych wykonawców.",
+      direction: "Pomoc małym ekipom w porządkowaniu zakupów oraz zapytań do dostawców.",
+      test: "Rozmowa z trzema ekipami o błędach i opóźnieniach przy zamawianiu materiałów.",
+    },
+    {
+      name: "Ola",
+      start: "Pracuje w obsłudze klienta i chce działać zdalnie po godzinach.",
+      resources: "Dobrze pisze, porządkuje informacje i nie chce pokazywać twarzy.",
+      direction: "Przygotowanie szablonów odpowiedzi i bazy wiedzy dla małych sklepów online.",
+      test: "Krótki audyt komunikacji jednego sklepu i przygotowanie próbki trzech odpowiedzi.",
+    },
+  ] as const;
+  return (
+    <section className="marketing-section example-section" id="przykladowa-droga" aria-labelledby="examples-title">
+      <div className="section-intro">
+        <p className="marketing-kicker">PRZYKŁADOWE DROGI</p>
+        <h2 id="examples-title">Ten sam proces. Zupełnie inne punkty wyjścia.</h2>
+        <p>To ilustracje sposobu myślenia SmartFach. Nie są opiniami klientów ani obietnicą rezultatu.</p>
+      </div>
+      <div className="example-grid">
+        {examples.map((example, index) => (
+          <article key={example.name}>
+            <div className="example-card-top">
+              <span>0{index + 1}</span>
+              <small>SCENARIUSZ PRZYKŁADOWY — POSTAĆ FIKCYJNA</small>
+            </div>
+            <h3>{example.name}</h3>
+            <dl>
+              <div><dt>Punkt wyjścia</dt><dd>{example.start}</dd></div>
+              <div><dt>Zasoby</dt><dd>{example.resources}</dd></div>
+              <div><dt>Możliwy kierunek</dt><dd>{example.direction}</dd></div>
+              <div><dt>Pierwszy mały test</dt><dd>{example.test}</dd></div>
+            </dl>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProductWalkthrough() {
+  return (
+    <section className="marketing-section product-section" id="produkt" aria-labelledby="product-title">
+      <div className="product-section-copy">
+        <p className="marketing-kicker">PRAWDZIWY SPOSÓB PRACY</p>
+        <h2 id="product-title">Jedna rozmowa. Jeden kierunek. Jedno działanie na dziś.</h2>
+        <p>Każdy nowy czat może dotyczyć osobnego biznesu. Krótka ankieta zapisuje kontekst tylko tej rozmowy, a Ty możesz też od razu zadać własne pytanie.</p>
+        <ul>
+          <li><Check size={16} /> najwyżej kilka możliwości zamiast niekończącej się listy</li>
+          <li><Check size={16} /> jedna rekomendacja z powodem i ryzykiem</li>
+          <li><Check size={16} /> jedno zadanie, z którym możesz ruszyć dzisiaj</li>
+        </ul>
+      </div>
+      <div className="product-workbench" aria-label="Przykład interfejsu SmartFach">
+        <div className="workbench-top"><BrandMark size={24} /><strong>Nowy biznes</strong><small>Scenariusz przykładowy</small></div>
+        <div className="workbench-survey">
+          <span>Jak chcesz pracować?</span>
+          <div><b>Zdalnie</b><b>Lokalnie</b><b>Bez znaczenia</b></div>
+          <span>Na jakim jesteś etapie?</span>
+          <div><b>Mam umiejętności</b><b>Nie mam pomysłu</b><b>Mam pomysł</b></div>
+        </div>
+        <div className="workbench-answer">
+          <small>SMARTFACH · REKOMENDACJA</small>
+          <h3>Zacznij od usługi, którą możesz sprawdzić bez rzucania etatu.</h3>
+          <p><strong>Do sprawdzenia:</strong> czy trzy znane firmy rzeczywiście tracą czas na ręczne raporty.</p>
+          <div><ListChecks size={17} /><span><small>DZIAŁANIE NA DZIŚ</small><strong>Umów trzy krótkie rozmowy i zapisz powtarzający się problem.</strong></span></div>
+        </div>
       </div>
     </section>
   );
@@ -249,10 +368,10 @@ function Outcomes() {
   return (
     <section className="marketing-section outcomes-section" id="co-dostajesz">
       <div className="outcomes-copy">
-        <p className="marketing-kicker">SMARTFACH POMAGA WYKONAĆ PRACĘ</p>
-        <h2>Nie zostajesz z dokumentem „biznesplan.pdf”.</h2>
-        <p>Każdy etap kończy się czymś, co możesz wykorzystać: decyzją, ofertą, wiadomością, listą klientów albo zadaniem do wykonania.</p>
-        <Link href="/logowanie?plan=pro">Zbuduj pierwszą ofertę <ArrowRight size={16} /></Link>
+        <p className="marketing-kicker">CO MOŻESZ WYPRACOWAĆ</p>
+        <h2>Konkretne elementy biznesu, nie obietnicę wyniku.</h2>
+        <p>Każdy etap kończy się czymś, co możesz wykorzystać: decyzją, ofertą, wiadomością, sposobem dotarcia albo zadaniem do wykonania.</p>
+        <Link href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={16} /></Link>
       </div>
       <div className="outcome-grid builder-outcome-grid">
         {outcomes.map(([Icon, title, copy]) => (
@@ -263,40 +382,13 @@ function Outcomes() {
   );
 }
 
-function GoalSection() {
-  const steps = [
-    ["CEL", "10 000 zł przychodu"],
-    ["OFERTA", "Cena za usługę"],
-    ["SPRZEDAŻ", "Potrzebna liczba klientów"],
-    ["DZISIAJ", "Jedno konkretne działanie"],
-  ] as const;
-  return (
-    <section className="marketing-section honest-goal builder-goal">
-      <div>
-        <p className="marketing-kicker">MARZENIE ZAMIENIONE W LICZBY</p>
-        <h2>Cel może wynosić 10 000 zł. Zaczynamy od pierwszej sprzedaży.</h2>
-        <p>Nie obiecujemy magicznego wyniku. Pomagamy przełożyć go na ofertę, cenę, potrzebną liczbę klientów i działania, które możesz rzeczywiście wykonać.</p>
-      </div>
-      <div className="goal-steps">
-        {steps.map(([label, value], index) => (
-          <div key={label}>
-            <span>0{index + 1}</span>
-            <p><small>{label}</small><strong>{value}</strong></p>
-            {index < steps.length - 1 && <ArrowRight size={17} />}
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 function ContinuityLoop() {
   return (
     <section className="marketing-section continuity-section builder-loop">
       <div className="section-intro">
-        <p className="marketing-kicker">DLATEGO TO ABONAMENT, A NIE JEDNORAZOWY PLAN</p>
-        <h2>Wracasz z wynikiem. SmartFach pomaga zdecydować, co dalej.</h2>
-        <p>Oferta rzadko jest idealna za pierwszym razem. Wklej odpowiedź klienta i dopracuj ofertę razem ze SmartFach. Asystent korzysta z Twojego profilu i ostatnich wiadomości w otwartej rozmowie. W nowym czacie przypomnij ważne ustalenia.</p>
+        <p className="marketing-kicker">ASYSTENT DO REGULARNEJ PRACY</p>
+        <h2>Planujesz, działasz, wracasz z wynikiem i poprawiasz.</h2>
+        <p>Oferta rzadko jest idealna za pierwszym razem. Wróć do tej samej rozmowy z odpowiedzią klienta albo nową informacją, a SmartFach pomoże dostosować następne działanie. Kontekst jednego biznesu nie miesza się z innymi czatami.</p>
       </div>
       <div className="continuity-loop">
         {[
@@ -310,6 +402,28 @@ function ContinuityLoop() {
             <p><small>{label}</small><strong>{value}</strong></p>
             {index < 3 && <ArrowRight size={17} />}
           </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function TrustSection() {
+  const points = [
+    [MessageCircle, "Prawdziwy produkt", "Pokazujemy sposób pracy zgodny z działającą aplikacją, nie wymyślony panel."],
+    [ShieldCheck, "Jasne granice", "Bez gwarancji klienta, przychodu ani terminu. Ty zatwierdzasz i wykonujesz działania."],
+    [WalletCards, "Pełne zasady próby", "Przed startem widzisz 0 zł dzisiaj, kartę, cenę planu i datę pierwszej opłaty."],
+    [HeartHandshake, "Kontakt przed zakupem", "Możesz zapytać o produkt lub rozliczenia, zanim rozpoczniesz próbę."],
+  ] as const;
+  return (
+    <section className="marketing-section trust-section" aria-labelledby="trust-title">
+      <div className="section-intro">
+        <p className="marketing-kicker">ZAUFANIE BEZ FIKCYJNYCH OPINII</p>
+        <h2 id="trust-title">Wiesz, co dostajesz i czego SmartFach nie obiecuje.</h2>
+      </div>
+      <div className="trust-grid">
+        {points.map(([Icon, title, copy]) => (
+          <article key={title}><Icon size={21} /><h3>{title}</h3><p>{copy}</p></article>
         ))}
       </div>
     </section>
@@ -376,46 +490,45 @@ function FAQSection() {
 
 export function MarketingHome() {
   return (
-    <div className="marketing-site builder-marketing">
+    <div className="marketing-site builder-marketing landing-v2">
+      <a className="skip-link" href="#landing-content">Przejdź do treści</a>
       <MarketingHeader />
-      <main>
+      <main id="landing-content">
         <section className="marketing-hero builder-hero">
           <div className="hero-orb hero-orb-one" aria-hidden="true" />
           <div className="hero-orb hero-orb-two" aria-hidden="true" />
           <div className="hero-copy">
-            <p className="marketing-kicker hero-kicker"><Sparkles size={14} /> NIE KOLEJNY KURS. ASYSTENT DO DZIAŁANIA.</p>
+            <p className="marketing-kicker hero-kicker"><Sparkles size={14} /> WŁASNY BIZNES Z TEGO, CO JUŻ MASZ</p>
             <h1>Nie potrzebujesz idealnego pomysłu. <em>Potrzebujesz pierwszego klienta.</em></h1>
-            <p className="hero-lead">Powiedz, czy wolisz działać zdalnie czy lokalnie, co już umiesz, czego nie chcesz robić i ile masz czasu. SmartFach pomoże wybrać realną usługę, zbudować ofertę i ruszyć po klientów.</p>
+            <p className="hero-lead">SmartFach pomaga wykorzystać Twoją wiedzę, umiejętności, doświadczenie, zainteresowania, kontakty i dostępny czas, żeby wybrać realny kierunek, zbudować pierwszą usługę i ruszyć z małym testem — bez rzucania etatu w ciemno.</p>
             <div className="hero-actions">
-              <Link className="hero-primary" href="/logowanie?plan=pro">Zbuduj pierwszą ofertę <ArrowRight size={18} /></Link>
-              <Link className="hero-secondary" href="/#jak-dziala">Zobacz, jak to działa</Link>
+              <Link className="hero-primary" href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={18} /></Link>
+              <Link className="hero-secondary" href="/#przykladowa-droga">Zobacz przykładową drogę</Link>
             </div>
             <div className="hero-trust">
-              <span><Check size={15} /> Zdalnie, lokalnie albo po swojemu</span>
               <span><Check size={15} /> Nie musisz mieć gotowego pomysłu</span>
-              <span><Check size={15} /> 3 dni bez opłat</span>
+              <span><Check size={15} /> Zaczynasz od realnych warunków</span>
+              <span><Check size={15} /> 3 dni bez opłat · karta wymagana</span>
             </div>
           </div>
           <ProductPreview />
         </section>
-        <section className="input-strip">
-          <p>Opisujesz swoją sytuację.</p>
-          <div><span><MessageCircle size={18} /> Tekst</span><span><ImageIcon size={18} /> Zdjęcie</span><span><SearchCheck size={18} /> Internet</span></div>
-          <strong>SmartFach układa następne działanie.</strong>
-        </section>
         <FitSection />
+        <StartingCapital />
         <ActionSystem />
+        <ExamplePaths />
+        <ProductWalkthrough />
         <Outcomes />
-        <GoalSection />
         <ContinuityLoop />
+        <TrustSection />
         <PricingSection />
         <FAQSection />
         <section className="marketing-cta builder-cta">
           <BrandMark size={50} />
           <p className="marketing-kicker">TWÓJ PIERWSZY KROK</p>
           <h2>Nie musisz dziś wiedzieć, jaki biznes zbudujesz.</h2>
-          <p>Wystarczy, że powiesz, jak chcesz pracować i czego chcesz uniknąć. SmartFach pomoże Ci wybrać pierwszy kierunek i zamienić go w działanie.</p>
-          <Link href="/logowanie?plan=pro">Zacznij 3 dni bez opłat <ArrowRight size={18} /></Link>
+          <p>Wystarczy, że opiszesz swoją sytuację. SmartFach pomoże znaleźć pierwszy kierunek i zamienić go w małe działanie, które możesz wykonać bez rzucania wszystkiego.</p>
+          <Link href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={18} /></Link>
         </section>
       </main>
       <MarketingFooter />
