@@ -28,7 +28,7 @@ export function PaymentResultPage({
   trustText?: string;
 }) {
   return (
-    <div className="payment-result-site">
+    <div className="payment-result-site payment-v2">
       <header className="payment-result-header">
         <Link
           className="marketing-brand"

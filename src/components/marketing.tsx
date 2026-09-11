@@ -548,7 +548,7 @@ export function MarketingHome() {
 
 export function PricingLanding() {
   return (
-    <div className="marketing-site path-landing builder-marketing">
+    <div className="marketing-site path-landing builder-marketing landing-v3 public-v2">
       <MarketingHeader />
       <main>
         <section className="pricing-hero">

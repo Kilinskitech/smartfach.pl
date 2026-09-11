@@ -10,7 +10,7 @@ import { getOperator } from "@/server/operator-settings";
 export async function ContactPage() {
   const smartFachOperator = await getOperator();
   return (
-    <div className="marketing-site public-info-site">
+    <div className="marketing-site public-info-site landing-v3 public-v2">
       <MarketingHeader />
       <main>
         <section className="public-info-hero contact-hero">
@@ -64,7 +64,7 @@ export async function ContactPage() {
 
 function LegalPage({ document, lead, slug }: { document: LegalDocument; lead: string; slug: string }) {
   return (
-    <div className="marketing-site public-info-site legal-site">
+    <div className="marketing-site public-info-site legal-site landing-v3 public-v2">
       <MarketingHeader />
       <main>
         <section className="public-info-hero legal-hero">

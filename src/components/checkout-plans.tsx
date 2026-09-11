@@ -73,7 +73,7 @@ export function CheckoutPlans({
   }
 
   return (
-    <main className="checkout-page">
+    <main className="checkout-page checkout-v2">
       <header>
         <p className="eyebrow">BEZPIECZNY START</p>
         <h1>{hasAccess ? "Twój abonament jest aktywny" : hasSubscription ? "Dokończ konfigurację płatności" : trialEligible ? "Wybierz plan i uruchom 3-dniową próbę" : "Wznów swój abonament"}</h1>

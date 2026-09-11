@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <div className="marketing-site public-info-site"><MarketingHeader /><main>
+  return <div className="marketing-site public-info-site landing-v3 public-v2"><MarketingHeader /><main>
     <section className="public-info-hero install-hero"><div>
       <p className="marketing-kicker"><Smartphone size={16} /> SMARTFACH NA TWOIM URZĄDZENIU</p>
       <h1>Wracaj do działania.<br />Jednym dotknięciem.</h1>

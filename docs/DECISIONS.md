@@ -1368,3 +1368,16 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   nawigację i wiadomość użytkownika, a jasne powierzchnie treść asystenta.
 - Bez zmian Supabase, Stripe, modelu AI, cen, limitów, autoryzacji, treści rozmów
   i dokumentów prawnych. Zmiana jest wyłącznie wizualna i zachowuje responsywność.
+
+## D070 — Spójny wygląd wszystkich publicznych podstron
+
+- Data: 2026-09-12. Founder zlecił przeniesienie nowego języka wizualnego landingu
+  także na pozostałe publiczne ekrany, aby produkt nie zmieniał charakteru po
+  opuszczeniu strony głównej.
+- Cennik, kontakt, instalacja aplikacji, logowanie, odzyskiwanie hasła, wybór planu,
+  wyniki płatności i potwierdzenia konta oraz dokumenty prawne korzystają odtąd z
+  tej samej palety: ciepłego tła, kremowych kart, głębokiej zieleni i pomarańczowych
+  działań, a nagłówki narracyjne z tej samej spokojnej typografii szeryfowej.
+- Zachowano dotychczasową treść, strukturę informacji i responsywność. Nie zmieniono
+  działania formularzy, Supabase, Stripe, planów, cen, trialu, limitów ani tekstów
+  prawnych.

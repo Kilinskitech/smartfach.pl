@@ -20,7 +20,7 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
   const [plan, setPlan] = useState<PublicPlanId>(initialPlan);
 
   return (
-    <main className="auth-page">
+    <main className="auth-page auth-v2">
       <section className="auth-story">
         <Link href="/" className="auth-brand"><BrandMark size={46} /><span>Smart<b>Fach</b></span></Link>
         <div>

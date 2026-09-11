@@ -17,7 +17,7 @@ export default async function Page() {
   if (error || typeof data?.claims?.sub !== "string") redirect("/logowanie");
 
   return (
-    <main className="auth-page password-update-page">
+    <main className="auth-page password-update-page auth-v2">
       <section className="auth-story">
         <Link href="/" className="auth-brand"><BrandMark size={46} /><span>Smart<b>Fach</b></span></Link>
         <div>
