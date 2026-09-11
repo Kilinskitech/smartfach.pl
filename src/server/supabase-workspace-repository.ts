@@ -36,7 +36,7 @@ export async function writeWorkspace(
     expected_revision: next.revision,
     next_data: next,
   });
-  if (error?.code === "40001")
+  if (error?.code === "PT409" || error?.code === "40001")
     throw new RevisionConflict(
       "Dane zmieniły się w innym oknie. Odśwież widok przed zapisem.",
     );

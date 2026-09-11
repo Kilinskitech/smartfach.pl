@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(9);
+select plan(10);
 
 insert into auth.users (
   instance_id,
@@ -79,6 +79,33 @@ select lives_ok(
     )
   $$,
   'workspace można zapisać z kontrolą wersji'
+);
+
+select throws_ok(
+  $$
+    select *
+    from public.save_workspace(
+      (
+        select id
+        from public.organizations
+        where owner_user_id = '10000000-0000-0000-0000-000000000001'
+      ),
+      '10000000-0000-0000-0000-000000000001',
+      0,
+      (
+        select data
+        from public.workspaces
+        where organization_id = (
+          select id
+          from public.organizations
+          where owner_user_id = '10000000-0000-0000-0000-000000000001'
+        )
+      )
+    )
+  $$,
+  'PT409',
+  'Dane zmieniły się w innym oknie.',
+  'konflikt wersji zwraca HTTP 409 bez ponawiania transakcji'
 );
 
 select lives_ok(
