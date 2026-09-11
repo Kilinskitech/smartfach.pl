@@ -9521,16 +9521,15 @@ button.team-card:hover {
   box-shadow: none;
 }
 .landing-v3 .hero-secondary {
-  min-height: 46px;
-  padding-inline: 0;
-  border: 0;
-  border-bottom: 1px solid #a8b7b1;
-  border-radius: 0;
-  background: transparent;
+  min-height: 56px;
+  padding-inline: 24px;
+  border: 1px solid #a8b7b1;
+  border-radius: 999px;
+  background: #ffffff08;
   color: #f5f3ed;
 }
 .landing-v3 .hero-secondary:hover {
-  background: transparent;
+  background: #ffffff10;
   border-color: #f0a06e;
   color: #f0a06e;
 }
