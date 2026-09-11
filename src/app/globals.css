@@ -11112,7 +11112,8 @@ button.team-card:hover {
 .landing-v3.path-landing .pricing-hero {
   display: block;
   min-height: 360px;
-  padding-block: clamp(52px, 6vw, 72px);
+  padding-top: clamp(52px, 6vw, 72px);
+  padding-bottom: clamp(82px, 8vw, 110px);
   padding-right: clamp(80px, 14vw, 190px);
   text-align: left;
 }
@@ -11382,6 +11383,9 @@ body:has(.checkout-v2) {
     min-height: 0;
     padding: 58px 42px;
   }
+  .landing-v3.path-landing .pricing-hero {
+    padding-bottom: 78px;
+  }
   .public-v2 .public-info-hero {
     grid-template-columns: 1fr;
     gap: 38px;
@@ -11447,6 +11451,7 @@ body:has(.checkout-v2) {
   }
   .landing-v3.path-landing .pricing-hero {
     min-height: 0;
+    padding-bottom: 60px;
     padding-right: 22px;
   }
   .auth-v2 .auth-story h1 {

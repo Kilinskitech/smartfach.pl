@@ -1388,6 +1388,7 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   nagłówka sekcji z dwukolumnowym układem formularza kontaktowego. Nagłówek nie
   jest już ściskany do pojedynczych sylab, a formularz przechodzi do jednej kolumny
   na mniejszych ekranach.
-- Na cenniku zmniejszono wysokość hero, skalę głównego nagłówka oraz pusty odstęp
-  przed planami. Zmiana dotyczy wyłącznie układu i nie zmienia cen, treści ani
-  działania zakupu.
+- Na cenniku zmniejszono skalę głównego nagłówka i pusty odstęp przed planami,
+  zachowując wyraźny dolny oddech wewnątrz hero na desktopie i urządzeniach
+  mobilnych. Zmiana dotyczy wyłącznie układu i nie zmienia cen, treści ani działania
+  zakupu.
