@@ -134,7 +134,7 @@ export function MarketingHeader() {
       </nav>
       <div className="marketing-header-actions">
         <Link className="marketing-login" href="/logowanie?plan=pro">
-          <span>Wypróbuj 3 dni bez opłat</span>
+          <span>Zacznij za 0 zł</span>
           <ArrowRight size={16} />
         </Link>
         <Link className="marketing-account-login" href="/logowanie" aria-label="Zaloguj się" title="Zaloguj się">
@@ -153,7 +153,7 @@ export function MarketingHeader() {
             <Link href="/kontakt">Kontakt</Link>
             <Link href="/pobierz">Pobierz aplikację</Link>
             <Link className="mobile-menu-login" href="/logowanie"><LogIn size={16} /> Mam już konto — zaloguj się</Link>
-            <Link className="mobile-menu-start" href="/logowanie?plan=pro">Zacznij 3 dni bez opłat <ArrowRight size={15} /></Link>
+            <Link className="mobile-menu-start" href="/logowanie?plan=pro">Zacznij 3 dni za 0 zł <ArrowRight size={15} /></Link>
           </nav>
         </details>
       </div>
@@ -165,10 +165,10 @@ function ProductPreview() {
   return (
     <div className="preview-stage start-preview-stage">
       <div className="preview-float preview-float-top" aria-hidden="true">
-        <SearchCheck size={14} /> Kierunek do sprawdzenia
+        <SearchCheck size={14} /> Kierunek wybrany
       </div>
       <div className="preview-float preview-float-bottom" aria-hidden="true">
-        <ListChecks size={14} /> Mały test na dziś
+        <ListChecks size={14} /> Następny krok gotowy
       </div>
       <div className="product-preview" aria-label="Podgląd działania SmartFach">
         <div className="preview-top">
@@ -177,7 +177,7 @@ function ProductPreview() {
         </div>
         <div className="preview-question">
           <span>Ty</span>
-          Pracuję w administracji, dobrze znam Excel, mam kontakty w kilku małych firmach i około 5 godzin tygodniowo. Nie chcę rzucać etatu. Od czego mogę zacząć?
+          Znam Excel, mam 5 godzin tygodniowo i chcę dorobić po pracy. Co mogę sprzedać?
         </div>
         <div className="preview-card start-result-card">
           <div><Target size={20} /><span><small>REKOMENDACJA DO SPRAWDZENIA</small><strong>Porządkowanie arkuszy i prostych raportów dla mikrofirm</strong></span></div>
@@ -371,7 +371,7 @@ function Outcomes() {
         <p className="marketing-kicker">CO MOŻESZ WYPRACOWAĆ</p>
         <h2>Konkretne elementy biznesu, nie obietnicę wyniku.</h2>
         <p>Każdy etap kończy się czymś, co możesz wykorzystać: decyzją, ofertą, wiadomością, sposobem dotarcia albo zadaniem do wykonania.</p>
-        <Link href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={16} /></Link>
+        <Link href="/logowanie?plan=pro">Zacznij 3 dni za 0 zł <ArrowRight size={16} /></Link>
       </div>
       <div className="outcome-grid builder-outcome-grid">
         {outcomes.map(([Icon, title, copy]) => (
@@ -451,7 +451,7 @@ function PricingSection() {
               <p>{details.description}</p>
               <strong>{plan.price}<span> / miesiąc</span></strong>
               <ul>{details.features.map((feature) => <li key={feature}><Check size={15} /> {feature}</li>)}</ul>
-              <Link href={`/logowanie?plan=${planId}`}>Rozpocznij 3 dni próbne <ArrowRight size={15} /></Link>
+              <Link href={`/logowanie?plan=${planId}`}>Zacznij 3 dni za 0 zł <ArrowRight size={15} /></Link>
             </article>
           );
         })}
@@ -493,11 +493,11 @@ export function MarketingHome() {
     <div className="marketing-site builder-marketing landing-v3">
       <a className="skip-link" href="#landing-content">Przejdź do treści</a>
       <div className="landing-announcement" aria-label="Najważniejsze informacje o SmartFach">
-        <span>SMARTFACH · OSOBISTY ASYSTENT AI</span>
+        <span>3 DNI ZA 0 ZŁ</span>
         <i aria-hidden="true" />
-        <span>OD WŁASNYCH WARUNKÓW DO PIERWSZEGO KLIENTA</span>
+        <span>PLAN OD 49 ZŁ / MIES.</span>
         <i aria-hidden="true" />
-        <span>3 DNI BEZ OPŁAT · KARTA WYMAGANA</span>
+        <span>ANULUJ PRZED PIERWSZĄ OPŁATĄ</span>
       </div>
       <MarketingHeader />
       <main id="landing-content">
@@ -505,17 +505,20 @@ export function MarketingHome() {
           <div className="hero-orb hero-orb-one" aria-hidden="true" />
           <div className="hero-orb hero-orb-two" aria-hidden="true" />
           <div className="hero-copy">
-            <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> WŁASNY BIZNES Z TEGO, CO JUŻ MASZ</p>
-            <h1><span>Nie potrzebujesz idealnego pomysłu.</span> <em>Potrzebujesz pierwszego klienta.</em></h1>
-            <p className="hero-lead">SmartFach pomaga wykorzystać Twoją wiedzę, umiejętności, doświadczenie, zainteresowania, kontakty i dostępny czas, żeby wybrać realny kierunek, zbudować pierwszą usługę i ruszyć z małym testem — bez rzucania etatu w ciemno.</p>
+            <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> TWÓJ BIZNES, KROK PO KROKU</p>
+            <h1><span>Zbuduj usługę.</span> <em>Zdobądź pierwszego klienta.</em></h1>
+            <p className="hero-lead">SmartFach zamienia Twoje umiejętności i dostępny czas w konkretną ofertę, sposób dotarcia do klientów i jedno działanie na dziś.</p>
             <div className="hero-actions">
-              <Link className="hero-primary" href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={18} /></Link>
-              <Link className="hero-secondary" href="/#przykladowa-droga">Zobacz przykładową drogę</Link>
+              <Link className="hero-primary" href="/logowanie?plan=pro">Zacznij 3 dni za 0 zł <ArrowRight size={18} /></Link>
+              <Link className="hero-secondary" href="/#jak-dziala">Zobacz, jak to działa</Link>
             </div>
-            <div className="hero-trust">
-              <span><Check size={15} /> Nie musisz mieć gotowego pomysłu</span>
-              <span><Check size={15} /> Zaczynasz od realnych warunków</span>
-              <span><Check size={15} /> 3 dni bez opłat · karta wymagana</span>
+            <p className="hero-purchase-note">0 zł dzisiaj · karta wymagana · potem Pro 99 zł/mies. · anulujesz przed końcem próby</p>
+            <div className="hero-path" aria-label="Droga ze SmartFach">
+              <span><b>01</b> Kierunek</span>
+              <ArrowRight size={15} aria-hidden="true" />
+              <span><b>02</b> Oferta</span>
+              <ArrowRight size={15} aria-hidden="true" />
+              <span><b>03</b> Klient</span>
             </div>
           </div>
           <ProductPreview />
@@ -535,7 +538,7 @@ export function MarketingHome() {
           <p className="marketing-kicker">TWÓJ PIERWSZY KROK</p>
           <h2>Nie musisz dziś wiedzieć, jaki biznes zbudujesz.</h2>
           <p>Wystarczy, że opiszesz swoją sytuację. SmartFach pomoże znaleźć pierwszy kierunek i zamienić go w małe działanie, które możesz wykonać bez rzucania wszystkiego.</p>
-          <Link href="/logowanie?plan=pro">Ułóż mój pierwszy krok <ArrowRight size={18} /></Link>
+          <Link href="/logowanie?plan=pro">Zacznij 3 dni za 0 zł <ArrowRight size={18} /></Link>
         </section>
       </main>
       <MarketingFooter />

@@ -1339,3 +1339,18 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   modeli AI, Stripe, Supabase, planów, limitów ani dokumentów prawnych.
 - Wersję statyczną sprawdzono wizualnie na desktopie i w widoku telefonu 390 × 844;
   pełne testy kodu i produkcyjny build pozostają bramką przed publikacją.
+
+## D068 — Krótsza obietnica i sprzedażowy pierwszy ekran landingu
+
+- Data: 2026-09-11. Founder uznał dotychczasowe H1 za zbyt długie i zlecił
+  bardziej startupowy, bezpośrednio sprzedażowy początek strony, nadal bez estetyki
+  internetowego guru i bez gwarantowania wyniku.
+- Pierwszy ekran prowadzi krótszym komunikatem „Zbuduj usługę. Zdobądź pierwszego
+  klienta.”, jednym dominującym CTA oraz jawnymi warunkami próby: 0 zł dzisiaj,
+  karta wymagana, cena planu Pro po próbie i możliwość anulowania przed opłatą.
+- Wizualnie hero staje się bardziej produktowym panelem SaaS w kolorach marki,
+  podczas gdy dalsza część landingu zachowuje spokojny rytm, scenariusze fikcyjne
+  i argumentację opartą na realnym procesie.
+- Nie zmieniono aplikacji, planów, cen, trialu, Stripe, Supabase, modelu AI ani
+  dokumentów prawnych. D067 pozostaje historią poprzedniej decyzji wizualnej,
+  a niniejsza decyzja zastępuje ją w zakresie pierwszego ekranu.

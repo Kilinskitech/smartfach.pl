@@ -6,10 +6,11 @@ import { MarketingHome } from "./marketing";
 describe("landing SmartFach", () => {
   const html = renderToStaticMarkup(createElement(MarketingHome));
 
-  it("prowadzi od istniejącego nagłówka do pierwszego kroku", () => {
-    expect(html).toContain("Nie potrzebujesz idealnego pomysłu.");
-    expect(html).toContain("Potrzebujesz pierwszego klienta.");
-    expect(html).toContain("Ułóż mój pierwszy krok");
+  it("prowadzi od krótkiej obietnicy do rozpoczęcia próby", () => {
+    expect(html).toContain("Zbuduj usługę.");
+    expect(html).toContain("Zdobądź pierwszego klienta.");
+    expect(html).toContain("Zacznij 3 dni za 0 zł");
+    expect(html).toContain("0 zł dzisiaj · karta wymagana · potem Pro 99 zł/mies.");
     expect(html).toContain('href="/logowanie?plan=pro"');
   });
 

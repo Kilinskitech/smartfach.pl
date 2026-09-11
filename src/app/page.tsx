@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { MarketingHome } from "@/components/marketing";
 
 export const metadata: Metadata = {
-  title: "SmartFach — zbuduj pierwszy biznes z tego, co już masz",
+  title: "SmartFach — zbuduj usługę i zdobądź pierwszego klienta",
   description:
-    "Wykorzystaj swoją wiedzę, doświadczenie i dostępny czas, aby z pomocą SmartFach wybrać realną usługę, przygotować ofertę i sprawdzić ją na rynku.",
+    "Osobisty asystent AI, który pomaga wybrać realną usługę, przygotować ofertę i wykonać pierwszy krok do klienta.",
   alternates: { canonical: "/" },
 };
 
