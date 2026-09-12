@@ -21,7 +21,8 @@ prowadzić przez kolejne działania w stronę większej wolności finansowej.
 8. Kontrola wykorzystania, kosztu OpenRouter i limitu planu.
 9. Panel jednego administratora z metrykami klientów, płatności i kosztów.
 10. Kontakt, regulamin, polityka prywatności, SEO i wyłączenie indeksowania Preview.
-11. Instalacja PWA na telefonie; publiczny ekran braku sieci, bez offline AI.
+11. Responsywna aplikacja internetowa na komputer, telefon i tablet; bez PWA,
+    instalowania na urządzeniu i aplikacji natywnej w MVP.
 12. Kopie warunków zakupu, e-mail potwierdzenia umowy i formularz odstąpienia.
     Dane sprzedawcy i obsługa zgłoszeń w panelu właściciela. Konfiguracja i bramki
     sprzedaży: `LAUNCH_CHECKLIST.md`.

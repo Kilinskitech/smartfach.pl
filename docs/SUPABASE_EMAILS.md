@@ -21,8 +21,8 @@ w osobnym testowym projekcie. Nigdy nie mieszamy baz między tymi środowiskami.
 
 GET pokazuje markową stronę i nie zużywa tokenu. Dopiero przycisk wysyła POST
 do naszej domeny, a serwer wywołuje `verifyOtp`. Nie jest potrzebny cookie PKCE
-z przeglądarki użytej do rejestracji: link można otworzyć na innym urządzeniu
-lub w PWA. Przeglądarki mogą mieć oddzielne sesje — wtedy wystarczy się zalogować.
+z przeglądarki użytej do rejestracji: link można otworzyć na innym urządzeniu.
+Przeglądarki mogą mieć oddzielne sesje — wtedy wystarczy się zalogować.
 Domyślny link Supabase może zostać zużyty przez skaner poczty; nowy ekran ogranicza
 ten przypadek. Nie zmieniamy okien systemowych Androida/Firefoksa.
 Stare wysłane e-maile pozostają bez zmian; do testu zamów nową wiadomość.

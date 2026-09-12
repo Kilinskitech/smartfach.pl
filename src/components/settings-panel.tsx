@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { InstallAppCard } from "./pwa";
 import {
   Bot,
   Check,
@@ -117,7 +116,6 @@ export function SettingsPanel({
             <CreditCard size={17} /> Zwiększ limit
           </button>
         </section>
-        <InstallAppCard />
         <section className="settings-card settings-assistant-card">
           <div className="card-heading">
             <Bot size={21} />

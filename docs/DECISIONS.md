@@ -1392,3 +1392,16 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   zewnętrzny pod hero i ujednolicono pionowy padding sekcji planów. Hero zachowuje
   też wyraźny dolny oddech wewnętrzny na desktopie i urządzeniach mobilnych. Zmiana
   dotyczy wyłącznie układu i nie zmienia cen, treści ani działania zakupu.
+
+## D072 — Usunięcie PWA
+
+- Data: 2026-09-12. Founder zdecydował o całkowitym usunięciu PWA, ponieważ obecny
+  przebieg dodawania aplikacji do ekranu nie zapewnia oczekiwanej jakości. Usunięto
+  stronę i interfejs instalacji, manifest, ikony instalacyjne, service workera,
+  ekran offline, obsługę promptu, testy oraz powiązane style i nagłówki HTTP.
+- SmartFach pozostaje responsywnym serwisem działającym w przeglądarce. Link znika
+  z nawigacji, stopki, Ustawień i mapy strony, a `/pobierz` trwale przekierowuje na
+  landing, żeby zachować zgodność dawnych odnośników. Zwykły favicon nie jest PWA.
+- Osobna aplikacja natywna może wrócić jako przyszły projekt, ale nie należy do MVP.
+  Decyzja zastępuje D003, D042, D048 i D056 w zakresie instalacji PWA; ich opis
+  pozostaje historią wcześniejszego kierunku i nie opisuje aktywnego produktu.

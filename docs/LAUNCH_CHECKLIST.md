@@ -25,11 +25,9 @@ Nie publikuj kodu bez tych przygotowań.
   Używa numeru zamówienia `cs_...` oraz e-maila konta; alternatywnie e-mail/posta.
   Konto zalogowane ma listę własnych nowych zamówień. Zgłoszenie nie wykonuje
   automatycznie zwrotu. Obsługa: `/admin#obsluga-umow` i Stripe.
-- `/pobierz` oraz karta w Ustawieniach: natywna instalacja jednym kliknięciem,
-  gdy pozwala na nią przeglądarka; dopasowane instrukcje iOS/Android/komputer oraz
-  ostrzeżenie dla przeglądarek Facebooka, Instagrama i TikToka; manifest, ikony
-  180/192/512 oraz maskable, publiczny ekran braku internetu.
-  Brak offline AI: service worker nie zapisuje prywatnych stron ani API.
+- Responsywna aplikacja internetowa na komputer, telefon i tablet, bez PWA,
+  service workera i trybu offline. `/pobierz` przekierowuje na landing, a instalacja
+  nie jest dostępna w nawigacji ani Ustawieniach.
 
 ## 1. Poczta — osobno od Supabase
 
@@ -126,14 +124,9 @@ potwierdzenia i nie nadają się do tego testu.
   przyznania dostępu lub zwiększenia limitu.
 - [ ] Sprawdź e-maile: przyjęcie przez SMTP nie dowodzi dotarcia do odbiorcy.
 - [ ] „Nie pamiętasz hasła?” → polski e-mail → nowe hasło → ponowne logowanie.
-- [ ] Fizyczny iPhone/Safari: `/pobierz` rozpoznaje iOS, pokazuje instrukcję Safari,
-  „Do ekranu początkowego” tworzy poprawną ikonę, a uruchomienie prowadzi do `/app`.
-- [ ] Fizyczny Android/Chrome: przycisk otwiera natywne okno instalacji jednym
-  kliknięciem; po odrzuceniu nadal działa instrukcja z menu Chrome. Sprawdź ikonę,
-  start `/app`, logowanie, zdjęcie, klawiaturę, powrót po zamknięciu, brak sieci
-  i ponowne połączenie.
-- [ ] Wejście na `/pobierz` z reklamy w Facebooku/Instagramie/TikToku pokazuje
-  najpierw przejście do Safari/Chrome, a potem pozwala dokończyć instalację.
+- [ ] Fizyczny iPhone/Safari i Android/Chrome: aplikacja działa bez instalacji;
+  sprawdź logowanie, zdjęcie, klawiaturę, powrót po zamknięciu karty, brak sieci
+  i ponowne połączenie. `/pobierz` przekierowuje na landing.
 - [ ] Włącz alerty błędów Vercel/Stripe, kosztów OpenRouter oraz sprawdzaj codziennie
   skrzynkę i `/admin#obsluga-umow`. Nie uruchamiaj Meta Pixel/GA bez wymaganej zgody.
 
@@ -147,18 +140,15 @@ potwierdzenia i nie nadają się do tego testu.
   RLS na dwóch istniejących kontach: izolacja nowych dokumentów/zgłoszeń,
   brak dostępu anon i brak uprawnień klienta do edycji danych operatora/RPC.
   Wszystkie testowe wpisy zostały wycofane przez ROLLBACK.
-- PWA: test cache potwierdza brak utrwalania prywatnego HTML/API i pozostawienie
-  cudzych cache bez zmian. Fizycznej instalacji na telefonach nie wykonano.
 - SMTP oraz rzeczywistej transakcji Live nie przetestowano w tej zmianie.
 - Nowy ekran powrotu z płatności i ponowienie dostarczenia umowy wymagają wdrożenia
   Preview oraz świeżego Checkout; bez `session_id` ekran celowo nie weryfikuje zakupu.
-- Po publikacji: HTTP 200 dla dokumentów, kontaktu, instalacji, odstąpienia,
-  manifestu, ikon i ekranu offline. Ekran wyniku płatności bez `session_id` pokazuje
+- Po publikacji: HTTP 200 dla dokumentów, kontaktu i odstąpienia oraz trwałe
+  przekierowanie `/pobierz` na landing. Ekran wyniku płatności bez `session_id` pokazuje
   bezpieczny stan bez danych zamówienia i nie przyznaje dostępu. Zweryfikowano telefon
-  w dokumentach i prawidłowy cache-control service workera.
-- W przeglądarce Codex sprawdzono otwieranie instrukcji instalacji, układ 390px,
-  regulamin mobilny i pierwszy krok odstąpienia bez wysyłania oświadczenia.
-  Poprawiono kontrast karty instalacji. To nie zastępuje testu fizycznego urządzenia.
+  w dokumentach.
+- W przeglądarce Codex sprawdzono układ 390px, regulamin mobilny i pierwszy krok
+  odstąpienia bez wysyłania oświadczenia.
 
 ## Źródła przeglądu dokumentów (7–8 września 2026)
 
@@ -168,7 +158,6 @@ potwierdzenia i nie nadają się do tego testu.
 - UOKiK, odstąpienie: https://prawakonsumenta.uokik.gov.pl/prawo-odstapienia-od-umowy/umowy-szczegolne/
 - Funkcja odstąpienia, dyrektywa 2023/2673: https://eur-lex.europa.eu/legal-content/en/ALL/?uri=oj%3AL_202302673
 - Oficjalny opis PARP: https://bip.parp.gov.pl/component/content/article/91021:one-click-return-czyli-zwroty-w-e-commerce-po-nowemu
-- Next.js PWA: https://nextjs.org/docs/app/guides/progressive-web-apps
 - Stripe Checkout: https://docs.stripe.com/api/checkout/sessions/create
 - SMTP: https://nodemailer.com/smtp
 

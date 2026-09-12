@@ -37,9 +37,9 @@ Jeden modularny projekt. UI i endpointy w Next.js, czysta logika domenowa
 niezależna od frameworka. Bez osobnego backendu, kolejki i mikroserwisów,
 dopóki konkretne wymaganie nie uzasadni ich kosztu.
 
-PWA ma działać także bez instalacji. Manifest i ikony nie oznaczają obsługi
-offline; service worker i ochrona szkiców wymagają osobnego projektu/testów.
-Nie cache'uj prywatnych odpowiedzi API bez jawnego modelu bezpieczeństwa.
+Aplikacja webowa działa responsywnie bez instalacji. Nie utrzymujemy manifestu PWA,
+service workera, ekranu offline ani interfejsu instalacji. Zwykła ikona karty
+przeglądarki pozostaje elementem identyfikacji serwisu, nie infrastruktury PWA.
 
 ## Alternatywy i zależności
 

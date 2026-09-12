@@ -130,7 +130,6 @@ export function MarketingHeader() {
         <Link href="/#przykladowa-droga">Przykładowe drogi</Link>
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
-        <Link href="/pobierz">Pobierz aplikację</Link>
       </nav>
       <div className="marketing-header-actions">
         <Link className="marketing-login" href="/logowanie?plan=pro">
@@ -151,7 +150,6 @@ export function MarketingHeader() {
             <Link href="/#co-dostajesz">Co dostajesz</Link>
             <Link href="/cennik">Cennik</Link>
             <Link href="/kontakt">Kontakt</Link>
-            <Link href="/pobierz">Pobierz aplikację</Link>
             <Link className="mobile-menu-login" href="/logowanie"><LogIn size={16} /> Mam już konto — zaloguj się</Link>
             <Link className="mobile-menu-start" href="/logowanie?plan=pro">Zacznij 3 dni za 0 zł <ArrowRight size={15} /></Link>
           </nav>
@@ -575,7 +573,6 @@ export function MarketingFooter() {
         <Link href="/#co-dostajesz">Co dostajesz</Link>
         <Link href="/cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
-        <Link href="/pobierz">Pobierz aplikację</Link>
         <Link href="/regulamin">Regulamin</Link>
         <Link href="/polityka-prywatnosci">Prywatność</Link>
         <Link href="/odstapienie">Odstąp od umowy tutaj</Link>

@@ -5739,56 +5739,6 @@ svg {
 .admin-sidebar > a[href="#obsluga-umow"]:hover { background: #ffffff0d; color: white; }
 #dane-sprzedawcy { margin-top: 28px; scroll-margin-top: 24px; }
 #obsluga-umow { margin-top: 28px; scroll-margin-top: 24px; }
-.install-app-card {
-  background:
-    radial-gradient(circle at 100% 0%, #ffb47b3d, transparent 38%),
-    linear-gradient(145deg, #fff 0%, #fff7ef 100%);
-  box-shadow: 0 24px 60px #122c3920;
-}
-.install-app-identity { display: flex; align-items: center; gap: 16px; margin: 22px 0; }
-.install-app-identity strong, .install-app-identity small { display: block; }
-.install-app-identity strong { font-size: 22px; }
-.install-app-identity small { color: var(--muted); margin-top: 7px; line-height: 1.5; }
-.install-app-card > .button { width: 100%; margin-top: 12px; }
-.install-app-points { display: flex; flex-wrap: wrap; gap: 8px 15px; margin-top: 16px; color: #4d6b60; font-size: 12px; font-weight: 650; }
-.install-app-points span { display: inline-flex; align-items: center; gap: 6px; }
-.install-app-points + .form-hint { margin-top: 10px; }
-.install-button-message { margin-top: 10px; text-align: center; }
-.install-instructions { display: grid; gap: 18px; padding: 0 24px 26px; }
-.install-instructions > .button { width: 100%; }
-.install-dialog-platform { display: flex; align-items: center; gap: 13px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 14px; background: #f6f8f6; }
-.install-dialog-platform > span,
-.install-guide-device { display: grid; place-items: center; min-width: 44px; width: 44px; height: 44px; border-radius: 13px; background: var(--navy); color: white; }
-.install-dialog-platform small,
-.install-dialog-platform strong { display: block; }
-.install-dialog-platform small,
-.install-guide-heading small { color: #6d8177; font-size: 9px; font-weight: 800; letter-spacing: 1.4px; }
-.install-dialog-platform strong { margin-top: 4px; font-size: 15px; }
-.install-browser-notice { display: flex; align-items: flex-start; gap: 12px; padding: 15px; border: 1px solid #efc39e; border-radius: 14px; background: #fff1e5; color: #765039; }
-.install-browser-notice > svg { flex: 0 0 auto; margin-top: 2px; }
-.install-browser-notice strong,
-.install-browser-notice p { display: block; margin: 0; }
-.install-browser-notice p { margin-top: 4px; color: #806654; font-size: 12px; line-height: 1.6; }
-.install-step-list { display: grid; gap: 10px; }
-.install-step { display: grid; grid-template-columns: 28px 40px minmax(0, 1fr); align-items: start; gap: 10px; padding: 14px; border: 1px solid #e0e7e3; border-radius: 14px; background: white; }
-.install-step-number { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #ffe0c7; color: #8c4c20; font-size: 11px; font-weight: 800; }
-.install-step-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: #edf3ef; color: #45695b; }
-.install-step strong { color: var(--ink); font-size: 13px; }
-.install-step p { margin: 4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
-.install-complete-note { display: flex; align-items: flex-start; gap: 10px; color: #527063; font-size: 11px; line-height: 1.65; }
-.install-complete-note svg { flex: 0 0 auto; margin-top: 1px; }
-.install-complete-note strong { color: #335348; }
-.install-hero { align-items: center; }
-.install-hero > .install-app-card { padding: 28px; max-width: 440px; border-radius: 24px; color: var(--ink); position: relative; z-index: 1; }
-.install-benefits { list-style: none; padding: 0; display: grid; gap: 14px; margin: 28px 0; }
-.install-benefits li { display: flex; align-items: center; gap: 10px; }
-.install-guide-section { display: grid; gap: 34px; }
-.install-section-intro { max-width: 760px; }
-.install-section-intro h2 { margin-bottom: 14px; }
-.install-guide { max-width: 940px; }
-.install-guide-tabs { display: inline-flex; gap: 6px; padding: 6px; border: 1px solid var(--line); border-radius: 16px; background: #eef2ef; }
-.install-guide-tabs button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 0; border-radius: 11px; background: transparent; color: #617269; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .18s ease, color .18s ease, box-shadow .18s ease; }
-.install-guide-tabs button:hover { color: var(--ink); }
 .checkout-progress { display: flex; align-items: flex-start; gap: 14px; padding: 18px; margin-block: 16px; border: 1px solid var(--line); border-radius: 16px; background: #f0f5f1; color: var(--ink); text-align: left; }
 .checkout-progress > svg { flex-shrink: 0; }
 .checkout-progress strong { font-size: 15px; }
@@ -5797,31 +5747,7 @@ svg {
 .checkout-progress-spinner { animation: checkout-spin 1s linear infinite; }
 @keyframes checkout-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .checkout-progress-spinner { animation: none; } }
-.install-guide-tabs button.active { background: white; color: var(--ink); box-shadow: 0 5px 16px #17342914; }
-.install-guide-panel { display: grid; gap: 22px; margin-top: 14px; padding: 28px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(145deg, white, #f8faf8); box-shadow: 0 18px 55px #15352a0d; }
-.install-guide-heading { display: flex; align-items: flex-start; gap: 16px; }
-.install-guide-heading h2 { margin: 5px 0 8px; font-size: clamp(22px, 3vw, 34px); letter-spacing: -1.1px; }
-.install-guide-heading p { max-width: 680px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.7; }
-.install-guide-panel .install-step-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.install-guide-panel .install-step { min-height: 118px; }
-.install-guide-finish { display: flex; align-items: center; gap: 9px; color: #426659; font-size: 12px; font-weight: 650; }
-.install-guide-finish svg { flex: 0 0 auto; }
-.install-account-note { display: flex; align-items: flex-start; gap: 15px; max-width: 940px; padding: 22px; border: 1px solid #d9e4dd; border-radius: 18px; background: #f2f6f3; color: #49675c; }
-.install-account-note > svg { flex: 0 0 auto; }
-.install-account-note strong { color: var(--ink); }
-.install-account-note p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; }
 @media (max-width: 700px) {
-  .install-hero > .install-app-card { padding: 22px; max-width: none; }
-  .install-instructions { padding-inline: 16px; }
-  .install-guide-tabs { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
-  .install-guide-tabs button:last-child { grid-column: 1 / -1; }
-  .install-guide-panel { padding: 20px 16px; border-radius: 20px; }
-  .install-guide-panel .install-step-list { grid-template-columns: 1fr; }
-  .install-guide-heading { gap: 12px; }
-  .install-guide-device { min-width: 40px; width: 40px; height: 40px; }
-  .install-step { grid-template-columns: 25px 36px minmax(0, 1fr); padding: 13px 11px; }
-  .install-step-icon { width: 34px; height: 34px; }
-  .install-app-points { display: grid; }
   .operator-settings-form input { font-size: 16px; }
   .legal-contents { padding: 20px; }
   .product-app { padding-top: env(safe-area-inset-top); }
@@ -10926,8 +10852,7 @@ button.team-card:hover {
 .public-v2 .section-intro > p:last-child {
   color: #68736d;
 }
-.public-v2 .contact-card,
-.public-v2 .install-hero > .install-app-card {
+.public-v2 .contact-card {
   border: 1px solid #ffffff24;
   border-radius: 24px;
   background: #fbfaf6f2;
@@ -10936,8 +10861,7 @@ button.team-card:hover {
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
 }
-.public-v2 .contact-card > span,
-.public-v2 .install-guide-device {
+.public-v2 .contact-card > span {
   background: #172a25;
   color: #fff;
 }
@@ -10965,8 +10889,6 @@ button.team-card:hover {
 .public-v2 .public-billing-help,
 .public-v2 .contact-form,
 .public-v2 .legal-contents,
-.public-v2 .install-guide-panel,
-.public-v2 .install-account-note,
 .public-v2 .withdrawal-email-option,
 .public-v2 .withdrawal-page .auth-form {
   border-color: #d8d7ce;
@@ -10976,8 +10898,7 @@ button.team-card:hover {
 .public-v2 .public-billing-help {
   margin-top: 36px;
 }
-.public-v2 .public-billing-help > svg,
-.public-v2 .install-account-note > svg {
+.public-v2 .public-billing-help > svg {
   color: #a85f36;
 }
 .public-v2 .public-billing-help h2,
@@ -11012,15 +10933,13 @@ button.team-card:hover {
   border-color: #df7c43;
   box-shadow: 0 0 0 3px #df7c4320;
 }
-.public-v2 .button-primary,
-.public-v2 .install-app-card .button-primary {
+.public-v2 .button-primary {
   border-color: #df7c43;
   background: #df7c43;
   color: #fff;
   box-shadow: 0 12px 28px #9e542728;
 }
-.public-v2 .button-primary:hover:not(:disabled),
-.public-v2 .install-app-card .button-primary:hover:not(:disabled) {
+.public-v2 .button-primary:hover:not(:disabled) {
   border-color: #ed915b;
   background: #ed915b;
 }
@@ -11054,36 +10973,6 @@ button.team-card:hover {
 .public-v2 .legal-document li,
 .public-v2 .withdrawal-page > p {
   color: #5f6c66;
-}
-.public-v2 .install-benefits li svg,
-.public-v2 .install-guide-finish svg {
-  color: #df7c43;
-}
-.public-v2 .install-guide-tabs {
-  border-color: #d8d7ce;
-  background: #e9e6dd;
-}
-.public-v2 .install-guide-tabs button.active {
-  background: #fbfaf6;
-  color: #1d2926;
-}
-.public-v2 .install-guide-panel {
-  background: linear-gradient(145deg, #fbfaf6 60%, #f4e4d8 150%);
-}
-.public-v2 .install-step {
-  border-color: #deddd4;
-  background: #fffefa;
-}
-.public-v2 .install-step-number {
-  background: #f4e4d8;
-  color: #8e502e;
-}
-.public-v2 .install-step-icon {
-  background: #e7ebe4;
-  color: #3d5a50;
-}
-.public-v2 .install-account-note {
-  color: #4d665c;
 }
 .public-v2 .withdrawal-page {
   width: min(820px, calc(100% - 40px));

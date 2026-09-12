@@ -6,8 +6,7 @@ przy integracji i zakupie. Nie przypisujemy benchmarków, których nie przeprowa
 
 ## Oficjalne źródła
 
-- [Instalacja PWA — MDN](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)
-- [Next.js](https://nextjs.org/docs) i [PWA](https://nextjs.org/docs/app/guides/progressive-web-apps)
+- [Next.js](https://nextjs.org/docs)
 - [Nuxt](https://nuxt.com/blog/v4) i [SvelteKit](https://svelte.dev/docs/kit/introduction)
 - [shadcn/ui](https://ui.shadcn.com/docs)
 - [Supabase RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
