@@ -10156,6 +10156,7 @@ button.team-card:hover {
     width: 100%;
   }
   .landing-v3 .hero-secondary {
+    width: 100%;
     min-height: 44px;
   }
   .landing-v3 .hero-purchase-note {
