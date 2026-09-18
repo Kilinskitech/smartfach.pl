@@ -1405,3 +1405,18 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Osobna aplikacja natywna może wrócić jako przyszły projekt, ale nie należy do MVP.
   Decyzja zastępuje D003, D042, D048 i D056 w zakresie instalacji PWA; ich opis
   pozostaje historią wcześniejszego kierunku i nie opisuje aktywnego produktu.
+
+## D073 — Indeksowanie publicznej strony przez wyszukiwarki i systemy AI
+
+- Data: 2026-09-18. Produkcja jawnie pozwala wyszukiwarkom i rozpoznanym robotom
+  AI pobierać publiczny landing, cennik, kontakt oraz dokumenty. Reguła ogólna nadal
+  obejmuje nowe roboty, a osobna grupa wymienia główne roboty OpenAI, Anthropic,
+  Google, Perplexity, Apple, Amazon, Common Crawl, DuckDuckGo, Mistral i Meta.
+- `/app`, `/admin`, `/api`, `/auth`, logowanie, płatności i ustawienie hasła pozostają
+  wyłączone z crawlowania. Ich własne metadane `noindex` nadal chronią przed
+  pojawieniem się prywatnych tras w wynikach.
+- Landing udostępnia opis produktu i planów w JSON-LD. Produkcja publikuje też
+  pomocniczy `/llms.txt` z kanonicznymi publicznymi adresami; Preview zwraca dla
+  niego 404 i nadal blokuje wszystkie roboty.
+- Sama konfiguracja nie gwarantuje pozycji ani obecności w odpowiedziach AI. Daje
+  robotom techniczną możliwość pobrania, zrozumienia i zacytowania publicznej treści.
