@@ -1420,3 +1420,12 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   niego 404 i nadal blokuje wszystkie roboty.
 - Sama konfiguracja nie gwarantuje pozycji ani obecności w odpowiedziach AI. Daje
   robotom techniczną możliwość pobrania, zrozumienia i zacytowania publicznej treści.
+
+## D074 — Bazowy kontener Google Tag Manager
+
+- Data: 2026-09-19. Produkcja ładuje globalnie kontener `GTM-PFXJK7VB`: skrypt GTM
+  w `<head>` przed kodem interaktywnym oraz wariant `noscript` bezpośrednio po
+  otwarciu `<body>`. Preview nie ładuje kontenera, aby nie zanieczyszczać danych.
+- Na życzenie foundera nie dodano na tym etapie interfejsu zgód ani Consent Mode.
+  Kod aplikacji nie konfiguruje jeszcze Google Analytics, reklam ani dodatkowych
+  tagów; ich ewentualne uruchomienie i obowiązki prawne wymagają osobnej decyzji.
