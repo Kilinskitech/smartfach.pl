@@ -1429,3 +1429,22 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Na życzenie foundera nie dodano na tym etapie interfejsu zgód ani Consent Mode.
   Kod aplikacji nie konfiguruje jeszcze Google Analytics, reklam ani dodatkowych
   tagów; ich ewentualne uruchomienie i obowiązki prawne wymagają osobnej decyzji.
+
+## D075 — Zdarzenia marketingowe w dataLayer i wiarygodna pierwsza płatność
+
+- Data: 2026-09-19. Aplikacja przekazuje do istniejącego kontenera GTM cztery
+  zdarzenia o stałych nazwach: `sf_select_plan`, `sf_sign_up`,
+  `sf_begin_checkout` i `sf_start_trial`. Zawierają wyłącznie plan, wartość i
+  walutę tam, gdzie są potrzebne; nie zawierają danych konta, karty ani rozmów.
+- Wybór planu wymaga działania użytkownika. Rejestracja jest mierzona dopiero po
+  utworzeniu konta, checkout dopiero po utworzeniu sesji Stripe, a trial dopiero
+  po serwerowym potwierdzeniu statusu `trialing` i przyszłego końca próby.
+- Zdarzenia jednorazowe są chronione trwałym kluczem w przeglądarce, a przejście
+  do Stripe czeka najwyżej 550 ms na callback GTM. Chroni to przed podwójnym
+  wykonaniem efektu React i odświeżeniem strony sukcesu bez blokowania zakupu.
+- `sf_purchase` nie jest zdarzeniem przeglądarkowym. Webhook `invoice.paid`
+  rozpoznaje pierwszą niezerową fakturę cyklu subskrypcji po próbie i posiada
+  kwotę, walutę, plan oraz wewnętrzne identyfikatory faktury, płatności i
+  subskrypcji. Na tym etapie zapisuje tylko idempotentny kamień milowy produktu;
+  wysyłka do GA4 Measurement Protocol i Meta CAPI wymaga osobnego outboxa,
+  sekretów, identyfikatorów klienta i uzgodnionej strategii deduplikacji.

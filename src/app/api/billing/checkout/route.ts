@@ -35,7 +35,10 @@ export async function POST(request: Request) {
       cancelPath: `/platnosc?plan=${input.plan}&anulowano=1`,
       idempotencyKey: `checkout:${context.organizationId}:${input.idempotencyKey}`,
     });
-    return Response.json({ url: session.url }, { headers: { "Cache-Control": "no-store" } });
+    return Response.json(
+      { url: session.url, trackingKey: session.id },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     console.error("Nie utworzono sesji Stripe Checkout", {
       message: error instanceof Error ? error.message : "unknown",

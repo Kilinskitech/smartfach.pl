@@ -1,13 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, KeyRound, ShieldCheck } from "lucide-react";
 import { requestPasswordReset, signIn, signUp } from "@/app/auth-actions";
 import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
 import { BrandMark } from "./brand";
 import { PurchaseConsent } from "./purchase-consent";
 import { CheckoutProgress } from "./checkout-progress";
+import {
+  marketingPlanParams,
+  trackMarketingEvent,
+  trackMarketingEventBeforeNavigation,
+  trackMarketingEventOnce,
+} from "@/lib/marketing-events";
 
 export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled = false, confirmationFailed = false, confirmationRequired = false, loginFirst = false }: { next?: string; initialPlan?: PublicPlanId; checkoutCanceled?: boolean; confirmationFailed?: boolean; confirmationRequired?: boolean; loginFirst?: boolean }) {
   const [view, setView] = useState<"register" | "login" | "reset">(
@@ -18,6 +24,35 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
   const [registerState, registerAction, registerPending] = useActionState(signUp, undefined);
   const [resetState, resetAction, resetPending] = useActionState(requestPasswordReset, undefined);
   const [plan, setPlan] = useState<PublicPlanId>(initialPlan);
+  const handledRegistration = useRef<string | null>(null);
+
+  useEffect(() => {
+    const registration = registerState?.registration;
+    if (!registration || handledRegistration.current === registration.trackingKey)
+      return;
+    handledRegistration.current = registration.trackingKey;
+
+    trackMarketingEventOnce(
+      `sign-up:${registration.trackingKey}`,
+      "sf_sign_up",
+      { plan: registration.plan },
+    );
+
+    if (registration.checkoutUrl && registration.checkoutTrackingKey) {
+      trackMarketingEventBeforeNavigation(
+        `begin-checkout:${registration.checkoutTrackingKey}`,
+        "sf_begin_checkout",
+        marketingPlanParams(registration.plan),
+        () => window.location.assign(registration.checkoutUrl!),
+      );
+    }
+  }, [registerState]);
+
+  function selectPlan(selectedPlan: PublicPlanId) {
+    if (selectedPlan === plan) return;
+    setPlan(selectedPlan);
+    trackMarketingEvent("sf_select_plan", marketingPlanParams(selectedPlan));
+  }
 
   return (
     <main className="auth-page auth-v2">
@@ -89,7 +124,7 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
               <legend>Wybierz plan po 3-dniowej próbie</legend>
               {publicPlanIds.map((planId) => (
                 <label key={planId}>
-                  <input type="radio" name="plan" value={planId} checked={plan === planId} onChange={() => setPlan(planId)} />
+                  <input type="radio" name="plan" value={planId} checked={plan === planId} onChange={() => selectPlan(planId)} />
                   <span className="auth-plan-copy">
                     <span className="auth-plan-heading"><strong>SmartFach {plans[planId].name}</strong>{planId === "pro" && <b>POLECANY</b>}</span>
                     <em>{plans[planId].price}<small> / miesiąc</small></em>

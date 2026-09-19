@@ -13,7 +13,16 @@ import { releaseEmailConfirmationHoldForUser } from "@/server/stripe-subscriptio
 import { legalDocumentVersion } from "@/domain/operator";
 import { assertDeploymentIdentity, recordMilestone } from "@/server/operations";
 
-export type AuthState = { error?: string; success?: string } | undefined;
+export type AuthState = {
+  error?: string;
+  success?: string;
+  registration?: {
+    trackingKey: string;
+    plan: "lite" | "pro";
+    checkoutUrl?: string;
+    checkoutTrackingKey?: string;
+  };
+} | undefined;
 
 const credentialsSchema = z.object({
   email: z.email("Podaj poprawny adres e-mail.").trim().max(254),
@@ -147,6 +156,7 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
   after(() => recordMilestone(data.user!.id, "registered"));
 
   let checkoutUrl: string;
+  let checkoutTrackingKey: string;
   try {
     const admin = createAdminClient();
     const { data: membership, error: membershipError } = await admin
@@ -171,6 +181,7 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
       idempotencyKey: `signup-checkout:${data.user.id}:${parsed.data.plan}`,
     });
     checkoutUrl = session.url!;
+    checkoutTrackingKey = session.id;
   } catch (checkoutError) {
     console.error("Nie otwarto Stripe po rejestracji", {
       userId: data.user.id,
@@ -179,9 +190,20 @@ export async function signUp(_: AuthState, formData: FormData): Promise<AuthStat
     return {
       error:
         "Konto powstało, ale nie udało się otworzyć płatności. Potwierdź e-mail, zaloguj się i spróbuj ponownie.",
+      registration: {
+        trackingKey: data.user.id,
+        plan: parsed.data.plan,
+      },
     };
   }
-  redirect(checkoutUrl);
+  return {
+    registration: {
+      trackingKey: data.user.id,
+      plan: parsed.data.plan,
+      checkoutUrl,
+      checkoutTrackingKey,
+    },
+  };
 }
 
 export async function resendConfirmation(

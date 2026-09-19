@@ -1,12 +1,13 @@
 import Stripe from "stripe";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only",()=>({}));
-const m=vi.hoisted(()=>({from:vi.fn(),rpc:vi.fn(),retrieve:vi.fn(),sync:vi.fn(),contract:vi.fn(),grant:vi.fn(),operation:vi.fn()}));
+const m=vi.hoisted(()=>({from:vi.fn(),rpc:vi.fn(),retrieve:vi.fn(),sync:vi.fn(),contract:vi.fn(),grant:vi.fn(),paid:vi.fn(),operation:vi.fn()}));
 vi.mock("@/lib/stripe",()=>({getStripe:()=>({webhooks:new Stripe("sk_test_synthetic").webhooks,subscriptions:{retrieve:m.retrieve}})}));
 vi.mock("@/lib/supabase/admin",()=>({createAdminClient:()=>({from:m.from,rpc:m.rpc})}));
 vi.mock("@/server/stripe-subscriptions",()=>({syncSubscription:m.sync}));
 vi.mock("@/server/purchase-legal",()=>({confirmPurchaseContract:m.contract}));
 vi.mock("@/server/stripe-top-ups",()=>({grantUsageTopUpFromSession:m.grant}));
+vi.mock("@/server/stripe-paid-invoice",()=>({captureFirstPaidSubscriptionInvoice:m.paid}));
 vi.mock("@/server/operations",()=>({assertDeploymentIdentity:vi.fn(),recordMilestone:vi.fn(),withOperation:m.operation,OperationBusy:class extends Error{}}));
 import { POST } from "./route";
 import { OperationBusy } from "@/server/operations";
@@ -28,6 +29,7 @@ beforeEach(()=>{
     return query;
   });
   m.rpc.mockResolvedValue({data:true,error:null});m.retrieve.mockResolvedValue({id:"sub_test"});m.sync.mockResolvedValue({trial_end:123});
+  m.paid.mockResolvedValue(null);
   vi.spyOn(console,"error").mockImplementation(()=>{});
 });
 afterEach(()=>{vi.unstubAllEnvs();vi.restoreAllMocks();});
@@ -62,5 +64,9 @@ describe("signed Stripe webhook",()=>{
     const topUp={...event,data:{object:{metadata:{purchase_type:"usage_top_up",user_id:"user"},payment_status:"unpaid"}}};
     expect((await POST(request(topUp))).status).toBe(200);expect(m.grant).not.toHaveBeenCalled();
     topUp.data.object.payment_status="paid";expect((await POST(request(topUp))).status).toBe(200);expect(m.grant).toHaveBeenCalledTimes(1);
+  });
+  it("routes invoice.paid through the idempotent first-payment detector",async()=>{
+    const paid={...event,type:"invoice.paid",data:{object:{id:"in_test",amount_paid:4900,currency:"pln"}}};
+    expect((await POST(request(paid))).status).toBe(200);expect(m.paid).toHaveBeenCalledTimes(1);
   });
 });

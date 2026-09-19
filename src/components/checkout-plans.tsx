@@ -12,6 +12,11 @@ import {
   publicPlanIds,
   type PublicPlanId,
 } from "@/domain/billing";
+import {
+  marketingPlanParams,
+  trackMarketingEvent,
+  trackMarketingEventBeforeNavigation,
+} from "@/lib/marketing-events";
 
 export function CheckoutPlans({
   initialPlan,
@@ -48,13 +53,24 @@ export function CheckoutPlans({
         body: JSON.stringify({ plan, idempotencyKey: crypto.randomUUID(), termsAccepted: true, earlyServiceRequested: true, legalVersion: legalDocumentVersion }),
       });
       const result = await response.json();
-      if (!response.ok || typeof result.url !== "string")
+      if (!response.ok || typeof result.url !== "string" || typeof result.trackingKey !== "string")
         throw new Error(result.error ?? "Nie otwarto płatności.");
-      window.location.assign(result.url);
+      trackMarketingEventBeforeNavigation(
+        `begin-checkout:${result.trackingKey}`,
+        "sf_begin_checkout",
+        marketingPlanParams(plan),
+        () => window.location.assign(result.url),
+      );
     } catch (error) {
       setError(error instanceof Error ? error.message : "Nie otwarto płatności.");
       setBusy(false);
     }
+  }
+
+  function selectPlan(selectedPlan: PublicPlanId) {
+    if (selectedPlan === plan) return;
+    setPlan(selectedPlan);
+    trackMarketingEvent("sf_select_plan", marketingPlanParams(selectedPlan));
   }
 
   async function openPortal() {
@@ -87,7 +103,7 @@ export function CheckoutPlans({
           <p className="checkout-entry"><span>TWÓJ SMARTFACH</span><strong>Buduj własny przychód</strong><small>Wybierz tempo pracy. Plan zmienisz poniżej bez przeładowania strony.</small></p>
           <section className="checkout-plan-grid checkout-plan-grid-two">
             {publicPlanIds.map((id) => (
-              <button key={id} type="button" disabled={busy} aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => setPlan(id)}>
+              <button key={id} type="button" disabled={busy} aria-pressed={plan === id} className={plan === id ? "selected" : ""} onClick={() => selectPlan(id)}>
                 <span>{plan === id && <Check size={16} />}{plans[id].name}</span>
                 <strong>{plans[id].price}<small>{trialEligible ? "/ miesiąc po próbie" : "/ miesiąc"}</small></strong>
                 <p>{plans[id].description}</p>

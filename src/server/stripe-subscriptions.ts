@@ -143,7 +143,6 @@ export async function syncSubscription(
     if (error) throw new Error("Nie zsynchronizowano abonamentu i limitu w koncie.");
     if (trialCanceledAt)
       await recordMilestone(ownerUserId, "trial_canceled", trialCanceledAt);
-    if (reconciled.status === "active") await recordMilestone(ownerUserId, "paid");
     if (reconciled.status === "canceled") await recordMilestone(ownerUserId, "canceled");
     return reconciled;
   });

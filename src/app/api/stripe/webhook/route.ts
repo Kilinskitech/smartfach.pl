@@ -4,6 +4,7 @@ import { getStripe } from "@/lib/stripe";
 import { syncSubscription } from "@/server/stripe-subscriptions";
 import { grantUsageTopUpFromSession } from "@/server/stripe-top-ups";
 import { confirmPurchaseContract } from "@/server/purchase-legal";
+import { captureFirstPaidSubscriptionInvoice } from "@/server/stripe-paid-invoice";
 import { assertDeploymentIdentity, withOperation, recordMilestone, OperationBusy } from "@/server/operations";
 
 export const runtime = "nodejs";
@@ -51,6 +52,26 @@ export async function POST(request: Request) {
       }
       if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
         if (event.data.object.metadata.smartfach_account_deleted !== "true") await syncSubscription(event.data.object);
+      }
+      if (event.type === "invoice.paid") {
+        const paidInvoice = await captureFirstPaidSubscriptionInvoice(event.data.object, stripe);
+        if (paidInvoice) {
+          // This is the future server-side Purchase hand-off point. For now it
+          // records only an internal, idempotent milestone and sends nothing to
+          // GA4 or Meta.
+          console.info("first_paid_subscription_invoice", {
+            invoiceId: paidInvoice.invoiceId,
+            paymentId: paidInvoice.paymentId,
+            paymentIntentId: paidInvoice.paymentIntentId,
+            chargeId: paidInvoice.chargeId,
+            subscriptionId: paidInvoice.subscriptionId,
+            organizationId: paidInvoice.organizationId,
+            plan: paidInvoice.plan,
+            amountGrosze: paidInvoice.amountGrosze,
+            currency: paidInvoice.currency,
+            paidAt: paidInvoice.paidAt,
+          });
+        }
       }
       const { data: finished, error } = await admin.rpc("complete_stripe_event", { event_id: event.id, lease_token: token });
       if (error || finished !== true) throw new Error("Nie potwierdzono zakończenia zdarzenia.");

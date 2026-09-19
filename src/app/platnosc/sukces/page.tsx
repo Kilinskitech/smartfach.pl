@@ -3,6 +3,8 @@ import Link from "next/link";
 import { CheckCircle2, MailCheck, RefreshCw, ShieldAlert, ShieldCheck } from "lucide-react";
 import { ConfirmationResend } from "@/components/confirmation-resend";
 import { PaymentResultPage, type PaymentResultStep } from "@/components/payment-result";
+import { StartTrialTracker } from "@/components/start-trial-tracker";
+import { publicPlanIdSchema, type PublicPlanId } from "@/domain/billing";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { confirmPurchaseContract } from "@/server/purchase-legal";
@@ -18,6 +20,10 @@ export const metadata: Metadata = {
 };
 
 type ActivationState = "confirmed" | "awaiting-email" | "processing" | "missing";
+type ActivationResult = {
+  state: ActivationState;
+  trialPlan?: PublicPlanId;
+};
 
 const stepsFor = (state: ActivationState): PaymentResultStep[] => [
   {
@@ -44,9 +50,9 @@ const stepsFor = (state: ActivationState): PaymentResultStep[] => [
   },
 ];
 
-async function activationState(sessionId: string | undefined): Promise<ActivationState> {
+async function activationState(sessionId: string | undefined): Promise<ActivationResult> {
   if (!sessionId || !/^cs_(?:test_|live_)?[A-Za-z0-9]+$/.test(sessionId))
-    return "missing";
+    return { state: "missing" };
 
   try {
     const stripe = getStripe();
@@ -63,7 +69,7 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
       !userId ||
       !organizationId
     )
-      return "processing";
+      return { state: "processing" };
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     const protectedSubscription = await syncSubscription(subscription, {
@@ -85,13 +91,25 @@ async function activationState(sessionId: string | undefined): Promise<Activatio
 
     const admin = createAdminClient();
     const { data, error } = await admin.auth.admin.getUserById(userId);
-    if (error || !data.user) return "processing";
-    return data.user.email_confirmed_at ? "confirmed" : "awaiting-email";
+    if (error || !data.user) return { state: "processing" };
+    const activeTrial =
+      protectedSubscription.status === "trialing" &&
+      typeof protectedSubscription.trial_end === "number" &&
+      protectedSubscription.trial_end * 1000 > Date.now();
+    const trialPlan = activeTrial
+      ? publicPlanIdSchema.safeParse(
+          checkout.metadata?.plan ?? protectedSubscription.metadata.plan,
+        ).data
+      : undefined;
+    return {
+      state: data.user.email_confirmed_at ? "confirmed" : "awaiting-email",
+      trialPlan,
+    };
   } catch (error) {
     console.error("Nie odczytano aktywacji Stripe", {
       message: error instanceof Error ? error.message : "unknown",
     });
-    return "processing";
+    return { state: "processing" };
   }
 }
 
@@ -101,10 +119,16 @@ export default async function Page({
   searchParams: Promise<{ session_id?: string }>;
 }) {
   const sessionId = (await searchParams).session_id;
-  const state = await activationState(sessionId);
+  const activation = await activationState(sessionId);
+  const { state } = activation;
+  const trialTracker = activation.trialPlan && sessionId
+    ? <StartTrialTracker plan={activation.trialPlan} trackingKey={sessionId} />
+    : null;
 
   if (state === "confirmed")
     return (
+      <>
+      {trialTracker}
       <PaymentResultPage
         icon={<CheckCircle2 size={34} />}
         eyebrow="GOTOWE"
@@ -121,10 +145,13 @@ export default async function Page({
           Otwórz SmartFach <span aria-hidden>→</span>
         </Link>
       </PaymentResultPage>
+      </>
     );
 
   if (state === "awaiting-email")
     return (
+      <>
+      {trialTracker}
       <PaymentResultPage
         icon={<MailCheck size={34} />}
         eyebrow="OSTATNI KROK"
@@ -145,6 +172,7 @@ export default async function Page({
           Adres już potwierdzony? Zaloguj się
         </Link>
       </PaymentResultPage>
+      </>
     );
 
   if (state === "missing")

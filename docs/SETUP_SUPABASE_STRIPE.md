@@ -98,7 +98,8 @@ domyślna wysyłka Supabase służy wyłącznie do ograniczonych testów.
    - `checkout.session.async_payment_succeeded`;
    - `customer.subscription.created`;
    - `customer.subscription.updated`;
-   - `customer.subscription.deleted`.
+   - `customer.subscription.deleted`;
+   - `invoice.paid` — wykrywanie pierwszej rzeczywistej opłaty po próbie.
 7. Secret podpisu endpointu wklej do `STRIPE_WEBHOOK_SECRET`.
 
 ### Potwierdzenia e-mail i timeout webhooka (2026-09-09)

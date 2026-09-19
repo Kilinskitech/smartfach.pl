@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { BrandMark } from "./brand";
 import { plans } from "@/domain/billing";
+import { TrackedPlanLink } from "./tracked-plan-link";
 
 type PublicPlanId = "lite" | "pro";
 type FaqItem = readonly [question: string, answer: string];
@@ -449,7 +450,7 @@ function PricingSection() {
               <p>{details.description}</p>
               <strong>{plan.price}<span> / miesiąc</span></strong>
               <ul>{details.features.map((feature) => <li key={feature}><Check size={15} /> {feature}</li>)}</ul>
-              <Link href={`/logowanie?plan=${planId}`}>Zacznij 3 dni za 0 zł <ArrowRight size={15} /></Link>
+              <TrackedPlanLink plan={planId} href={`/logowanie?plan=${planId}`}>Zacznij 3 dni za 0 zł <ArrowRight size={15} /></TrackedPlanLink>
             </article>
           );
         })}
