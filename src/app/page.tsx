@@ -3,9 +3,9 @@ import { MarketingHome } from "@/components/marketing";
 import { productionOrigin } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "SmartFach — zamień umiejętności w usługę",
+  title: "SmartFach — zbudujmy razem Twój wymarzony biznes",
   description:
-    "Asystent AI, który pomaga wybrać usługę dopasowaną do Twoich umiejętności i czasu, przygotować ofertę oraz pierwszą wiadomość do klienta.",
+    "Asystent AI, który pomaga znaleźć pomysł na własny biznes, przygotować ofertę oraz pierwszą wiadomość do klienta.",
   alternates: { canonical: "/" },
 };
 
@@ -35,7 +35,7 @@ const structuredData = {
       operatingSystem: "Przeglądarka internetowa",
       inLanguage: "pl-PL",
       description:
-        "Asystent AI, który pomaga wybrać usługę dopasowaną do umiejętności i czasu, przygotować ofertę oraz pierwszą wiadomość do klienta.",
+        "Asystent AI, który pomaga znaleźć pomysł na własny biznes, przygotować ofertę oraz pierwszą wiadomość do klienta.",
       provider: { "@id": `${productionOrigin}/#organization` },
       offers: [
         {

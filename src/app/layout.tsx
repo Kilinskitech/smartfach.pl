@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(productionOrigin),
   title: "SmartFach — asystent do budowania własnego przychodu",
   description:
-    "SmartFach pomaga dopasować usługę do Twoich warunków, przygotować ofertę i przejść do pierwszych działań sprzedażowych.",
+    "SmartFach pomaga znaleźć pomysł na własny biznes, przygotować ofertę i przejść do pierwszych działań sprzedażowych.",
   applicationName: "SmartFach",
   robots: isProductionDeployment()
     ? { index: true, follow: true }

@@ -27,9 +27,9 @@ type FaqItem = readonly [question: string, answer: string];
 const audienceOptions = [
   {
     icon: BriefcaseBusiness,
-    label: "MASZ PRAKTYCZNE UMIEJĘTNOŚCI",
-    title: "Nie wiesz, jak zrobić z nich ofertę",
-    copy: "Zaczynasz od zadań i problemów, które już znasz — z pracy, branży albo codziennej praktyki.",
+    label: "NIE MASZ JESZCZE POMYSŁU",
+    title: "Chcesz znaleźć kierunek dla siebie",
+    copy: "Zaczynasz od swojej sytuacji, czasu i ograniczeń. Nie musisz mieć gotowej umiejętności do sprzedania.",
   },
   {
     icon: Clock3,
@@ -69,7 +69,7 @@ const planDetails: Record<
 
 const sharedPlanFeatures = [
   "Ten sam asystent i pełny sposób pracy",
-  "Pomoc w wyborze usługi, ofercie i wiadomościach",
+  "Pomoc w wyborze kierunku, ofercie i wiadomościach",
   "Osobny kontekst dla każdego biznesu",
   "Tekst, zdjęcia i research w internecie",
 ] as const;
@@ -77,11 +77,11 @@ const sharedPlanFeatures = [
 const faqItems: readonly FaqItem[] = [
   [
     "Czym SmartFach różni się od ogólnego czatu AI?",
-    "SmartFach pomaga przejść od Twojej sytuacji do konkretnej usługi, oferty i pierwszej wiadomości do klienta. Zaczynasz od krótkiej ankiety, a każdy biznes możesz rozwijać w osobnym czacie. Różnica polega na sposobie pracy: wracasz z odpowiedziami klientów i dopracowujesz kolejne działania w kontekście swojego biznesu.",
+    "SmartFach pomaga przejść od Twojej sytuacji do pomysłu na biznes, konkretnej oferty i pierwszej wiadomości do klienta. Zaczynasz od krótkiej ankiety, a każdy biznes możesz rozwijać w osobnym czacie. Różnica polega na sposobie pracy: wracasz z odpowiedziami klientów i dopracowujesz kolejne działania w kontekście swojego biznesu.",
   ],
   [
     "Czy muszę mieć gotowy pomysł?",
-    "Nie. Możesz zacząć od swoich umiejętności, doświadczenia, czasu i ograniczeń. Jeżeli masz kilka pomysłów, asystent pomoże je porównać i wybrać jeden do małego testu.",
+    "Nie. Możesz zacząć bez pomysłu i bez konkretnej umiejętności do sprzedania. Asystent zapyta o Twoją sytuację, czas, preferencje i ograniczenia, a potem pomoże wybrać kierunek do małego testu.",
   ],
   [
     "Czy mogę korzystać, pracując na etacie?",
@@ -196,7 +196,7 @@ function SectionTrialCta({
       <div>
         <small>{eyebrow}</small>
         <strong>{title}</strong>
-        <span>3 dni za 0 zł · karta wymagana · potem Pro 99 zł/mies. · anuluj przed pierwszą opłatą</span>
+        <span>3 dni za 0 zł · potem Pro 99 zł/mies. · anuluj przed pierwszą opłatą</span>
       </div>
       <Link href="/logowanie?plan=pro">Wypróbuj SmartFach <ArrowRight size={17} /></Link>
     </aside>
@@ -256,7 +256,7 @@ function OfferDemoSection() {
       </div>
       <SectionTrialCta
         eyebrow="ZOBACZYŁEŚ EFEKT"
-        title="Teraz przygotuj własną wersję — zacznij od krótkiego opisu tego, co umiesz."
+        title="Teraz przygotuj własną wersję — zacznij od krótkiego opisu swojej sytuacji."
       />
     </section>
   );
@@ -268,7 +268,7 @@ function AudienceSection() {
       <div className="section-intro">
         <p className="marketing-kicker">DLA KOGO JEST SMARTFACH</p>
         <h2>Nie potrzebujesz wyjątkowego talentu ani gotowego biznesplanu.</h2>
-        <p>Potrzebujesz punktu wyjścia i warunków, do których da się dopasować pierwszą usługę.</p>
+        <p>Potrzebujesz punktu wyjścia i warunków, z których da się zbudować pierwszy kierunek.</p>
       </div>
       <div className="audience-grid">
         {audienceOptions.map(({ icon: Icon, label, title, copy }) => (
@@ -283,7 +283,7 @@ function AudienceSection() {
       <SectionTrialCta
         onDark
         eyebrow="NIE CZEKAJ NA IDEALNY POMYSŁ"
-        title="Jedna praktyczna umiejętność wystarczy, żeby zacząć szukać usługi do sprawdzenia."
+        title="Zacznij od swojej sytuacji i znajdź pierwszy kierunek do sprawdzenia."
       />
     </section>
   );
@@ -293,13 +293,13 @@ function WorkProcessSection() {
   const steps = [
     {
       title: "Opisujesz swoją sytuację",
-      user: "Podajesz umiejętności, czas, doświadczenie i ograniczenia.",
+      user: "Opisujesz swoją sytuację, czas, preferencje i ograniczenia.",
       assistant: "Asystent porządkuje informacje i dopytuje o brakujący kontekst.",
     },
     {
       title: "Wybierasz kierunek",
       user: "Oceniasz propozycje i decydujesz, którą chcesz sprawdzić.",
-      assistant: "Pomaga porównać kilka usług i wskazuje ryzyka pierwszego testu.",
+      assistant: "Pomaga porównać kilka kierunków i wskazuje ryzyka pierwszego testu.",
     },
     {
       title: "Dopracowujesz ofertę i materiały",
@@ -420,7 +420,7 @@ function FAQSection() {
       </div>
       <SectionTrialCta
         eyebrow="MASZ JUŻ NAJWAŻNIEJSZE ODPOWIEDZI"
-        title="Sprawdź na własnym przykładzie, jak szybko przejdziesz od umiejętności do oferty."
+        title="Sprawdź na własnym przykładzie, jak szybko przejdziesz od swojej sytuacji do oferty."
       />
     </section>
   );
@@ -443,22 +443,22 @@ export function MarketingHome() {
         <i aria-hidden="true" />
         <span>PRO 99 ZŁ / MIES.</span>
         <i aria-hidden="true" />
-        <span>3 DNI ZA 0 ZŁ · KARTA WYMAGANA</span>
+        <span>3 DNI ZA 0 ZŁ · ANULUJ KIEDY CHCESZ</span>
       </div>
       <MarketingHeader />
       <main id="landing-content">
         <section className="marketing-hero builder-hero">
           <div className="hero-copy">
             <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU</p>
-            <h1>Znajdź pomysł <em>na własny biznes.</em></h1>
-            <p className="hero-lead">Nie musisz mieć gotowego pomysłu ani konkretnej umiejętności. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, przygotować ofertę i napisać pierwszą wiadomość do klienta.</p>
+            <h1>Zbudujmy razem <em>Twój wymarzony biznes.</em></h1>
+            <p className="hero-lead">Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
             <div className="hero-actions">
               <Link className="hero-primary" href="/logowanie?plan=pro">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
               <Link className="hero-secondary" href="/#przykladowa-oferta">Zobacz przykładową ofertę</Link>
             </div>
             <TrialTerms />
             <div className="hero-path" aria-label="Droga ze SmartFach">
-              <span><b>01</b> Kierunek</span>
+              <span><b>01</b> Pomysł</span>
               <ArrowRight size={15} aria-hidden="true" />
               <span><b>02</b> Oferta</span>
               <ArrowRight size={15} aria-hidden="true" />
@@ -475,11 +475,10 @@ export function MarketingHome() {
         <FAQSection />
         <section className="marketing-cta builder-cta">
           <BrandMark size={48} />
-          <p className="marketing-kicker">OD UMIEJĘTNOŚCI DO KONKRETNEJ OFERTY</p>
-          <h2>Zacznij od tego, co już umiesz.</h2>
-          <p>Opisz swoją sytuację i przygotuj pierwszy kierunek do sprawdzenia.</p>
+          <p className="marketing-kicker">OD POMYSŁU DO KONKRETNEJ OFERTY</p>
+          <h2>Zacznij od swojej sytuacji.</h2>
+          <p>Odpowiedz na kilka pytań i przygotuj pierwszy kierunek do sprawdzenia.</p>
           <Link href="/logowanie?plan=pro">Wypróbuj SmartFach przez 3 dni <ArrowRight size={18} /></Link>
-          <TrialTerms compact />
         </section>
       </main>
       <MarketingFooter />
@@ -509,7 +508,7 @@ export function MarketingFooter() {
   return (
     <footer className="marketing-footer">
       <Link className="marketing-brand" href="/"><BrandMark size={31} /><span>Smart<b>Fach</b></span></Link>
-      <p>Asystent AI od Twoich umiejętności do konkretnej oferty i pierwszych działań sprzedażowych.</p>
+      <p>Asystent AI od pomysłu na biznes do konkretnej oferty i pierwszych działań sprzedażowych.</p>
       <div>
         <Link href="/#przykladowa-oferta">Przykładowa oferta</Link>
         <Link href="/#jak-dziala">Jak to działa</Link>
