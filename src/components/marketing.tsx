@@ -93,7 +93,7 @@ const faqItems: readonly FaqItem[] = [
   ],
   [
     "Czym różnią się Lite i Pro oraz jak działają limity?",
-    "Oba plany mają te same funkcje i jakość asystenta. Lite ma podstawową miesięczną pulę, a Pro około 2,4× większą. Zużycie zależy od długości rozmów, zdjęć i używanych narzędzi. Podstawowa pula odnawia się co miesiąc i nie kumuluje. Po wyczerpaniu możesz poczekać na odnowienie, ręcznie dokupić limit albo zmienić plan — nic nie dokupuje się automatycznie.",
+    "Oba plany mają te same funkcje i jakość asystenta. Lite ma podstawowy miesięczny limit, a Pro około 2,4× większy. Zużycie zależy od długości rozmów, zdjęć i używanych narzędzi. Podstawowy limit odnawia się co miesiąc i nie kumuluje. Po wyczerpaniu możesz poczekać na odnowienie, ręcznie dokupić limit albo zmienić plan — nic nie dokupuje się automatycznie.",
   ],
   [
     "Jak działa próba, pierwsza opłata i anulowanie?",
@@ -203,14 +203,6 @@ function SectionTrialCta({
 }
 
 function OfferDemoSection() {
-  const steps = [
-    ["01", "Sytuacja", "Pracowitość · dokładność · 5 godzin tygodniowo"],
-    ["02", "Usługa", "Pomoc w organizacji prostych zadań dla mikrofirm"],
-    ["03", "Oferta", "Odbiorca, problem i konkretny zakres pierwszego zlecenia"],
-    ["04", "Wiadomość", "Krótki kontakt, który można dopasować i wysłać samodzielnie"],
-    ["05", "Następny krok", "Trzy rozmowy i powrót z odpowiedziami"],
-  ] as const;
-
   return (
     <section className="marketing-section offer-demo-section" id="przykladowa-oferta" aria-labelledby="demo-title">
       <span id="przykladowa-droga" className="legacy-anchor" aria-hidden="true" />
@@ -229,11 +221,6 @@ function OfferDemoSection() {
           <small>SYTUACJA UŻYTKOWNIKA</small>
           <p>„Jestem pracowita, dokładna i można na mnie polegać. Mam 5 godzin tygodniowo. Jaki biznes mogę zacząć?”</p>
         </div>
-        <ol className="demo-flow" aria-label="Przebieg pracy nad przykładową ofertą">
-          {steps.map(([number, title, copy]) => (
-            <li key={number}><span>{number}</span><p><strong>{title}</strong><small>{copy}</small></p></li>
-          ))}
-        </ol>
         <div className="demo-output-grid">
           <article className="demo-offer-card">
             <small>PRZYKŁADOWA OFERTA DO DOPRACOWANIA</small>
@@ -364,9 +351,9 @@ function PricingSection() {
   return (
     <section className="marketing-section pricing-section" id="cennik">
       <div className="section-intro">
-        <p className="marketing-kicker">TE SAME FUNKCJE · INNA WIELKOŚĆ PULI</p>
+        <p className="marketing-kicker">TE SAME FUNKCJE · RÓŻNY MIESIĘCZNY LIMIT</p>
         <h2>Wybierz tempo pracy ze swoim biznesem.</h2>
-        <p>Lite i Pro dają ten sam sposób pracy i jakość asystenta. Pro ma około 2,4× większą miesięczną pulę niż Lite.</p>
+        <p>Lite i Pro dają ten sam sposób pracy i jakość asystenta. Pro ma około 2,4× większy miesięczny limit niż Lite.</p>
       </div>
       <div className="pricing-grid pricing-grid-two">
         {publicPlanIds.map((planId) => {
@@ -387,7 +374,7 @@ function PricingSection() {
         })}
       </div>
       <div className="pricing-limit-explainer">
-        <p><strong>Jak działa pula?</strong> Zużycie zależy od długości rozmowy, zdjęć i używanych narzędzi. Dlatego nie obiecujemy stałej liczby wiadomości.</p>
+        <p><strong>Jak działa limit?</strong> Zużycie zależy od długości rozmowy, zdjęć i używanych narzędzi. Dlatego nie obiecujemy stałej liczby wiadomości.</p>
         <p><strong>Co po wyczerpaniu?</strong> Możesz poczekać na miesięczne odnowienie, ręcznie dokupić limit albo zmienić plan. Nic nie dokupuje się automatycznie.</p>
       </div>
       <p className="trial-disclosure"><ShieldCheck size={15} /> <span><strong>3 dni za 0 zł.</strong> Jeśli nie anulujesz przed końcem próby, pobierzemy cenę wybranego planu za pierwszy miesiąc. Abonament odnawia się co miesiąc do rezygnacji.</span></p>
@@ -479,8 +466,8 @@ export function PricingLanding() {
       <main>
         <section className="pricing-hero">
           <p className="marketing-kicker">LITE LUB PRO · TEN SAM OSOBISTY ASYSTENT BIZNESOWY</p>
-          <h1>Wybierz miesięczną pulę dopasowaną do tempa pracy.</h1>
-          <p>Lite kosztuje 49 zł miesięcznie. Pro kosztuje 99 zł i ma około 2,4× większą miesięczną pulę. Oba plany mają te same funkcje.</p>
+          <h1>Wybierz miesięczny limit dopasowany do tempa pracy.</h1>
+          <p>Lite kosztuje 49 zł miesięcznie. Pro kosztuje 99 zł i ma około 2,4× większy miesięczny limit. Oba plany mają te same funkcje.</p>
         </section>
         <PricingSection />
         <FAQSection />

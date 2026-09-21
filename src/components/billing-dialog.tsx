@@ -111,7 +111,7 @@ export function BillingDialog({
         </fieldset>
         <section className="billing-checkout-box">
           <div className="billing-order-line"><span>Wybrano <strong>+{selected.percentage}% limitu</strong></span><b>{selected.price}</b></div>
-          <p><strong>Po zakupie: {afterPurchase.totalPercentage}% łącznego limitu w tym okresie.</strong> Procenty odnoszą się do podstawowej puli planu {plan.name}, nie do już powiększonego limitu.</p>
+          <p><strong>Po zakupie: {afterPurchase.totalPercentage}% łącznego limitu w tym okresie.</strong> Procenty odnoszą się do podstawowego limitu planu {plan.name}, nie do już powiększonego limitu.</p>
           <p>Jednorazowa płatność. Niewykorzystana część zakupu przechodzi na kolejne okresy; wykorzystana nie odnawia się. Korzystanie wymaga aktywnego abonamentu. Przy zmianie planu zachowujemy pozostałą wartość dodatku, a jego procent przeliczamy względem nowego planu. Procenty w widoku są zaokrąglone.</p>
           <PurchaseConsent onChange={setConsented} />
           {error && <p className="form-error" role="alert">{error}</p>}

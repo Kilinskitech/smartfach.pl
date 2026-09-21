@@ -68,11 +68,6 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
           <h1>Zbudujmy razem Twój wymarzony zyskowny biznes.</h1>
           <p>Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
         </div>
-        <ul>
-          <li><Check size={17} /> 3 pełne dni bez opłat</li>
-          <li><Check size={17} /> karta wymagana przed startem próby</li>
-          <li><Check size={17} /> anulowanie w portalu Stripe</li>
-        </ul>
       </section>
 
       <section className="auth-card">
@@ -138,9 +133,9 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
                 </label>
               ))}
             </fieldset>
-            <p className="auth-selection-note"><Check size={15} /> Oba plany mają te same funkcje i jakość asystenta. Pro ma około 2,4× większą miesięczną pulę.</p>
+            <p className="auth-selection-note"><Check size={15} /> Oba plany mają te same funkcje i jakość asystenta. Pro ma około 2,4× większy miesięczny limit.</p>
             <p className="purchase-summary">Dziś 0 zł. Po 3 pełnych dniach <strong>{plans[plan].price} miesięcznie</strong>, automatycznie do anulowania. Ceny całkowite. Karta jest wymagana. Anulujesz w Ustawieniach lub przez kontakt.</p>
-            <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p><strong>{publicPlanLimitLabel(plan)}.</strong> Długość rozmowy, zdjęcia i używane narzędzia wpływają na tempo wykorzystania. Podstawowa pula odnawia się co miesiąc i nie kumuluje. Po wyczerpaniu możesz poczekać na odnowienie, ręcznie dokupić limit albo zmienić plan — nic nie dokupuje się automatycznie. Niewykorzystana część dokupionego limitu pozostaje na kolejne miesiące. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
+            <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p><strong>{publicPlanLimitLabel(plan)}.</strong> Długość rozmowy, zdjęcia i używane narzędzia wpływają na tempo wykorzystania. Podstawowy limit odnawia się co miesiąc i nie kumuluje. Po wyczerpaniu możesz poczekać na odnowienie, ręcznie dokupić limit albo zmienić plan — nic nie dokupuje się automatycznie. Niewykorzystana część dokupionego limitu pozostaje na kolejne miesiące. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
             <PurchaseConsent />
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
             {registerPending && <CheckoutProgress creatingAccount />}

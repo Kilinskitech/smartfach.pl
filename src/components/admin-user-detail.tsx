@@ -123,8 +123,8 @@ export function AdminUserDetail({
             <div><dt>Pozostało z zakupów</dt><dd>{usdLabel(snapshot.topUps.remainingExtraUsd)}</dd></div>
             <div><dt>Łączny limit tego okresu</dt><dd>{snapshot.topUps.totalPercentage}%</dd></div>
           </dl>
-          <p className="admin-section-copy">Pula bazowa: {usdLabel(snapshot.baseLimitUsd)}. Łączny limit okresu: {usdLabel(snapshot.monthlyLimitUsd)}. Rozliczone użycie limitu: {usdLabel(snapshot.chargedLimitUsd)}. Pozostało do wykorzystania: {usdLabel(snapshot.topUps.remainingAllowanceUsd)}.</p>
-          <p className="admin-metrics-note">Koszt OpenRouter i rozliczone użycie limitu mogą się różnić przez zaokrąglanie każdej odpowiedzi. Najpierw zużywana jest pula planu, potem zakupy. Na kolejny okres przechodzi tylko niewykorzystana część zakupów.</p>
+          <p className="admin-section-copy">Limit bazowy: {usdLabel(snapshot.baseLimitUsd)}. Łączny limit okresu: {usdLabel(snapshot.monthlyLimitUsd)}. Rozliczone użycie limitu: {usdLabel(snapshot.chargedLimitUsd)}. Pozostało do wykorzystania: {usdLabel(snapshot.topUps.remainingAllowanceUsd)}.</p>
+          <p className="admin-metrics-note">Koszt OpenRouter i rozliczone użycie limitu mogą się różnić przez zaokrąglanie każdej odpowiedzi. Najpierw zużywany jest limit planu, potem zakupy. Na kolejny okres przechodzi tylko niewykorzystana część zakupów.</p>
           <h3>Historia przyznanych pakietów</h3>
           <p className="admin-metrics-note">Wartość zarejestrowanych zakupów: {(snapshot.topUps.purchasedGrosze / 100).toLocaleString("pl-PL", { style: "currency", currency: "PLN" })}. To historia przyznań, nie raport przychodu po zwrotach. Pokazujemy ostatnie 20; podsumowanie obejmuje wszystkie.</p>
           {snapshot.topUpPurchases.length ? <div className="admin-top-up-history">{snapshot.topUpPurchases.map(p => <article key={p.checkoutSessionId}>

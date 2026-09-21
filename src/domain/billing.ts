@@ -98,8 +98,8 @@ export const proMonthlyLimitMultiplier =
 
 export function publicPlanLimitLabel(plan: PublicPlanId) {
   return plan === "lite"
-    ? "Podstawowa miesięczna pula"
-    : `Około ${String(proMonthlyLimitMultiplier).replace(".", ",")}× większa miesięczna pula niż w Lite`;
+    ? "Podstawowy miesięczny limit"
+    : `Około ${String(proMonthlyLimitMultiplier).replace(".", ",")}× większy miesięczny limit niż w Lite`;
 }
 
 export const creditPacks = [

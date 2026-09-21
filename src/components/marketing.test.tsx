@@ -37,7 +37,7 @@ describe("landing SmartFach", () => {
       "DLA KOGO JEST SMARTFACH",
       "JAK WYGLĄDA PRACA Z APLIKACJĄ",
       "DLACZEGO WRACASZ DO SMARTFACH",
-      "TE SAME FUNKCJE · INNA WIELKOŚĆ PULI",
+      "TE SAME FUNKCJE · RÓŻNY MIESIĘCZNY LIMIT",
       "PYTANIA PRZED STARTEM",
     ];
     const positions = sections.map((section) => html.indexOf(section));
@@ -48,7 +48,8 @@ describe("landing SmartFach", () => {
   it("pokazuje prawdziwe ceny, limity i poprawne cele planów", () => {
     expect(html).toContain("49 zł");
     expect(html).toContain("99 zł");
-    expect(html).toContain("Około 2,4× większa miesięczna pula niż w Lite");
+    expect(html).toContain("Około 2,4× większy miesięczny limit niż w Lite");
+    expect(html).not.toContain('class="demo-flow"');
     expect(html).toContain("nic nie dokupuje się automatycznie");
     expect(html).toContain('href="/logowanie?plan=lite"');
     expect(html).toContain('href="/logowanie?plan=pro"');

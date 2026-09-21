@@ -101,7 +101,7 @@ export function SettingsPanel({
             <Gauge size={21} />
             <div>
               <h3>Plan {plan.name} i wykorzystanie</h3>
-              <p>Łączna pula w tym okresie: {limit.totalPercentage}% limitu planu</p>
+              <p>Łączny limit w tym okresie: {limit.totalPercentage}% limitu planu</p>
             </div>
           </div>
           <div className="settings-usage-value">
@@ -111,7 +111,7 @@ export function SettingsPanel({
           <div className="settings-usage-progress" aria-hidden="true">
             <span style={{ width: `${limit.progressPercentage}%` }} />
           </div>
-          <p className="form-hint">100% to pula Twojego planu. Zakupy zwiększają ten sam limit. Przy odnowieniu wraca pula planu, a niewykorzystana część zakupów przechodzi dalej.</p>
+          <p className="form-hint">100% to podstawowy limit Twojego planu. Zakupy zwiększają ten sam limit. Przy odnowieniu wraca limit planu, a niewykorzystana część zakupów przechodzi dalej.</p>
           <button className="button button-primary" onClick={onOpenBilling}>
             <CreditCard size={17} /> Zwiększ limit
           </button>

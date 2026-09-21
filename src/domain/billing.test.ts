@@ -32,7 +32,7 @@ const billing = {
 };
 
 describe("kredyty SmartFach", () => {
-  it("pokazuje jedną pulę 125% zamiast osobnego zapasu", () => {
+  it("pokazuje jeden limit 125% zamiast osobnego zapasu", () => {
     const b = { ...billing, plan: "pro" as const, usedCredits: 550, topUpCredits: topUpCreditsForPlan("mini", "pro") };
     expect(usageLimitView(b)).toMatchObject({ totalPercentage: 125, usedPercentage: 100, remainingPercentage: 25 });
     expect(usageLimitView(b).progressPercentage).toBeCloseTo(79.94, 1);
@@ -61,7 +61,7 @@ describe("kredyty SmartFach", () => {
       convertsToPaidAutomatically: true,
     });
   });
-  it("łączy pulę planu z dokupionymi kredytami", () => {
+  it("łączy limit planu z dokupionymi kredytami", () => {
     expect(creditAllowance(billing)).toBe(245);
     expect(remainingCredits(billing)).toBe(205);
     expect(monthlyUsagePercentage(billing)).toBe(18);
@@ -137,9 +137,9 @@ describe("kredyty SmartFach", () => {
       Math.round((plans.pro.monthlyCredits / plans.lite.monthlyCredits) * 10) /
         10,
     );
-    expect(publicPlanLimitLabel("lite")).toBe("Podstawowa miesięczna pula");
+    expect(publicPlanLimitLabel("lite")).toBe("Podstawowy miesięczny limit");
     expect(publicPlanLimitLabel("pro")).toBe(
-      "Około 2,4× większa miesięczna pula niż w Lite",
+      "Około 2,4× większy miesięczny limit niż w Lite",
     );
   });
 
