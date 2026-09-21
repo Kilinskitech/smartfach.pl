@@ -8,7 +8,7 @@ describe("landing SmartFach", () => {
 
   it("prowadzi od umiejętności do próby planu Pro z pełnymi warunkami", () => {
     expect(html).toContain(
-      "Zamień to, co umiesz, <em>w usługę, którą możesz sprzedawać.</em>",
+      "Zamień umiejętność <em>w ofertę gotową do sprzedaży.</em>",
     );
     expect(html).toContain("ASYSTENT AI DO PRACY NAD WŁASNĄ USŁUGĄ");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
@@ -53,7 +53,8 @@ describe("landing SmartFach", () => {
   });
 
   it("powtarza czytelne wezwanie do próby po kluczowych sekcjach", () => {
-    expect(html.match(/Wypróbuj SmartFach/g)).toHaveLength(7);
+    expect(html.match(/Wypróbuj SmartFach/g)).toHaveLength(6);
+    expect(html).toContain("Wypróbuj 3 dni za 0 zł");
     expect(html.match(/3 dni za 0 zł/g)?.length).toBeGreaterThanOrEqual(5);
     expect(html).toContain("anuluj przed pierwszą opłatą");
     expect(html).toContain("ZACZNIJ OD KROKU 1");

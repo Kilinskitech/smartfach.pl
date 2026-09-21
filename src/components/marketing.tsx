@@ -450,10 +450,10 @@ export function MarketingHome() {
         <section className="marketing-hero builder-hero">
           <div className="hero-copy">
             <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> ASYSTENT AI DO PRACY NAD WŁASNĄ USŁUGĄ</p>
-            <h1>Zamień to, co umiesz, <em>w usługę, którą możesz sprzedawać.</em></h1>
-            <p className="hero-lead">SmartFach pomoże Ci wybrać usługę dopasowaną do umiejętności i czasu, przygotować ofertę oraz pierwszą wiadomość. Potem wracasz z odpowiedziami i dopracowujesz kolejne działania.</p>
+            <h1>Zamień umiejętność <em>w ofertę gotową do sprzedaży.</em></h1>
+            <p className="hero-lead">Odpowiedz na kilka pytań. SmartFach pomoże Ci wybrać usługę, przygotować ofertę i napisać pierwszą wiadomość do klienta.</p>
             <div className="hero-actions">
-              <Link className="hero-primary" href="/logowanie?plan=pro">Wypróbuj SmartFach przez 3 dni <ArrowRight size={18} /></Link>
+              <Link className="hero-primary" href="/logowanie?plan=pro">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
               <Link className="hero-secondary" href="/#przykladowa-oferta">Zobacz przykładową ofertę</Link>
             </div>
             <TrialTerms />

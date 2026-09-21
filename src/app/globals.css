@@ -12033,39 +12033,42 @@ body:has(.checkout-v2) {
   }
   .landing-v4 .marketing-hero {
     margin-top: 12px;
-    padding: 48px 20px 24px;
+    padding: 28px 20px 22px;
+    gap: 24px;
     border-radius: 25px;
   }
+  .landing-v4 .hero-copy .hero-kicker {
+    display: none;
+  }
   .landing-v4 .hero-copy h1 {
-    font-size: clamp(42px, 12.4vw, 54px);
+    font-size: clamp(39px, 11.5vw, 50px);
     line-height: .98;
     letter-spacing: -2.5px;
   }
-  .landing-v4 .hero-copy .hero-kicker {
-    align-items: flex-start;
-    font-size: 11px;
-    line-height: 1.45;
+  .landing-v4 .hero-copy h1 em {
+    margin-top: 5px;
   }
   .landing-v4 .hero-lead {
-    margin-top: 22px;
-    font-size: 15px;
-    line-height: 1.65;
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.48;
   }
   .landing-v4 .hero-actions {
-    margin-top: 25px;
+    margin-top: 18px;
   }
   .landing-v4 .hero-actions a {
-    min-height: 58px;
+    min-height: 56px;
+  }
+  .landing-v4 .hero-secondary {
+    display: none;
   }
   .landing-v4 .cta-trial-terms {
+    margin-top: 10px;
     font-size: 12px;
+    line-height: 1.5;
   }
   .landing-v4 .hero-path {
-    gap: 8px;
-  }
-  .landing-v4 .hero-path span {
-    white-space: normal;
-    font-size: 12px;
+    display: none;
   }
   .landing-v4 .preview-stage {
     min-height: 0;
