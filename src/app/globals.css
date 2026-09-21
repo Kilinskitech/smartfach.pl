@@ -12392,3 +12392,792 @@ body:has(.checkout-v2) {
     box-shadow: 8px 10px 0 #dce5e9;
   }
 }
+
+/* Spójny system marki: checkout, podstrony publiczne i aplikacja. */
+.auth-v2,
+.checkout-v2,
+.public-v2,
+.product-app {
+  --ink: #172b3a;
+  --muted: #637381;
+  --navy: #172b3a;
+  --accent: #e8793b;
+  --accent-hover: #ff9b54;
+  --line: #d6dde1;
+  --surface: #fbfbf8;
+  --background: #f5f5f0;
+}
+
+body:has(.auth-v2),
+body:has(.checkout-v2),
+body:has(.payment-v2) {
+  background: #f5f5f0;
+}
+
+.auth-v2,
+.public-v2,
+.payment-v2 {
+  background:
+    radial-gradient(circle at 86% 8%, #dde8ed 0, transparent 28rem),
+    #f5f5f0;
+  color: #172b3a;
+}
+
+.payment-v2 {
+  --payment-navy: #172b3a;
+  --payment-green: #e8793b;
+  --payment-orange: #e8793b;
+}
+
+.auth-v2 .auth-story,
+.public-v2 .public-info-hero,
+.checkout-v2 > header {
+  background:
+    radial-gradient(circle at 88% 12%, #27475d 0, transparent 34%),
+    radial-gradient(circle at 0 100%, #ff9b5426 0, transparent 38%),
+    linear-gradient(145deg, #172b3a 0%, #102431 100%);
+}
+
+.auth-v2 .auth-story .eyebrow,
+.auth-v2 .auth-story li svg,
+.public-v2 .public-info-hero .marketing-kicker,
+.checkout-v2 > header .eyebrow {
+  color: #ffad73;
+}
+
+.auth-v2 .auth-story p,
+.public-v2 .public-info-hero > div > p:not(.marketing-kicker),
+.checkout-v2 > header > p:last-child {
+  color: #c8d4dc;
+}
+
+.auth-v2 .auth-story ul {
+  color: #e2e9ed;
+}
+
+.auth-v2 .auth-card,
+.public-v2 .contact-card,
+.public-v2 .contact-form,
+.public-v2 .legal-contents,
+.public-v2 .withdrawal-page,
+.public-v2 .withdrawal-page .auth-form,
+.checkout-v2 .checkout-plan-grid button,
+.checkout-v2 .checkout-summary > div,
+.checkout-v2 .purchase-summary,
+.checkout-v2 .checkout-progress,
+.payment-v2 .payment-result-card {
+  border-color: #d6dde1;
+  background: #fbfbf8;
+  box-shadow: 0 18px 52px #172b3a0d;
+}
+
+.auth-v2 .auth-tabs {
+  background: #e8ecee;
+}
+
+.auth-v2 .auth-tabs button.selected,
+.auth-v2 .auth-options label,
+.auth-v2 .auth-form input:not([type="radio"]):not([type="checkbox"]),
+.public-v2 .contact-form input,
+.public-v2 .contact-form select,
+.public-v2 .contact-form textarea,
+.public-v2 .withdrawal-page input,
+.public-v2 .withdrawal-page select,
+.public-v2 .withdrawal-page textarea {
+  border-color: #cfd8dd;
+  background: #ffffff;
+  color: #172b3a;
+}
+
+.auth-v2 .auth-form input:focus,
+.public-v2 .contact-form input:focus,
+.public-v2 .contact-form select:focus,
+.public-v2 .contact-form textarea:focus,
+.public-v2 .withdrawal-page input:focus,
+.public-v2 .withdrawal-page select:focus,
+.public-v2 .withdrawal-page textarea:focus {
+  border-color: #e8793b;
+  box-shadow: 0 0 0 3px #ff9b5426;
+}
+
+.auth-v2 .auth-options label:has(input:checked),
+.checkout-v2 .checkout-plan-grid button.selected {
+  border-color: #e8793b;
+  background: #fff0e5;
+  box-shadow: inset 0 0 0 1px #e8793b;
+}
+
+.auth-v2 .auth-plan-heading b,
+.product-app .mobile-navigation button.selected {
+  background: #172b3a;
+  color: #ffffff;
+}
+
+.auth-v2 .auth-consent a,
+.auth-v2 .auth-forgot-button,
+.auth-v2 .auth-back-button,
+.public-v2 .public-billing-help a,
+.public-v2 .contact-privacy a,
+.public-v2 .legal-document a,
+.public-v2 .withdrawal-page a {
+  color: #b75b27;
+}
+
+.auth-v2 .purchase-summary,
+.auth-v2 .checkout-progress,
+.payment-v2 .payment-result-detail,
+.payment-v2 .activation-safety {
+  border-color: #d6dde1;
+  background: #eef2f4;
+  color: #415665;
+}
+
+.auth-v2 .button-primary,
+.checkout-v2 .button-primary,
+.public-v2 .button-primary,
+.payment-v2 .payment-result-actions .button-primary,
+.product-app .button-primary,
+.product-app .new-chat-button,
+.product-app .start-profile-submit,
+.product-app .send-button {
+  border-color: #e8793b;
+  background: #e8793b;
+  color: #ffffff;
+}
+
+.auth-v2 .button-primary:hover:not(:disabled),
+.checkout-v2 .button-primary:hover:not(:disabled),
+.public-v2 .button-primary:hover:not(:disabled),
+.payment-v2 .payment-result-actions .button-primary:hover:not(:disabled),
+.product-app .button-primary:hover:not(:disabled),
+.product-app .new-chat-button:hover:not(:disabled),
+.product-app .start-profile-submit:hover:not(:disabled),
+.product-app .send-button:hover:not(:disabled) {
+  border-color: #ff9b54;
+  background: #ff9b54;
+  color: #172b3a;
+}
+
+/* Zakup: najpierw wybór, zgody i główna akcja; informacje pomocnicze są niżej. */
+.checkout-v2 {
+  width: min(1040px, calc(100% - 40px));
+  gap: 18px;
+  padding-block: 28px;
+}
+
+.checkout-v2 > header {
+  padding: 38px 44px;
+  border-radius: 26px;
+}
+
+.checkout-v2 h1 {
+  font-size: clamp(38px, 4.7vw, 54px);
+}
+
+.checkout-v2 .checkout-entry {
+  border-color: #d6dde1;
+  background: #eef2f4;
+}
+
+.checkout-v2 .checkout-plan-grid button {
+  min-height: 148px;
+  padding: 20px;
+}
+
+.checkout-v2 .checkout-plan-grid strong,
+.checkout-v2 .checkout-plan-grid button > span {
+  color: #172b3a;
+}
+
+.checkout-v2 .checkout-plan-grid button > span svg,
+.checkout-v2 .checkout-summary > div > svg {
+  color: #e8793b;
+}
+
+.checkout-v2 .checkout-legal {
+  max-width: none;
+  margin: 0;
+}
+
+.checkout-v2 .purchase-summary {
+  margin: 0;
+  color: #4e6170;
+}
+
+.checkout-v2 .purchase-consent {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-block: 14px;
+}
+
+.checkout-v2 .purchase-consent .auth-consent {
+  padding: 13px 14px;
+  border: 1px solid #d6dde1;
+  border-radius: 13px;
+  background: #fbfbf8;
+  color: #536674;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkout-v2 .checkout-button {
+  width: 100%;
+  min-height: 58px;
+  box-shadow: 0 14px 32px #c85e2828;
+}
+
+.checkout-v2 .checkout-summary {
+  margin-top: 4px;
+}
+
+.checkout-v2 .checkout-summary > div {
+  color: #314c60;
+}
+
+/* Kontakt i dokumenty: krótszy początek, większy tekst pomocniczy. */
+.public-v2 .contact-content {
+  padding-top: 56px;
+  padding-bottom: 44px;
+}
+
+.public-v2 .public-billing-help {
+  margin-top: 0;
+  margin-bottom: 90px;
+  border-color: #d6dde1;
+  background: #eef2f4;
+  box-shadow: none;
+}
+
+.public-v2 .contact-card > span {
+  background: #172b3a;
+}
+
+.public-v2 .contact-card > a {
+  border-color: #d6dde1;
+  background: #eef2f4;
+  color: #29475c;
+}
+
+.public-v2 .contact-card > a:hover {
+  border-color: #e8793b;
+  background: #fff0e5;
+}
+
+.public-v2 .contact-privacy,
+.public-v2 .contact-submit-row > p {
+  color: #5c6f7c;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.public-v2 .legal-hero {
+  min-height: 320px;
+}
+
+.public-v2 .legal-document {
+  width: min(900px, calc(100% - 40px));
+}
+
+.public-v2 .legal-document p,
+.public-v2 .legal-document li {
+  color: #536674;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.public-v2 .legal-contents a {
+  font-size: 15px;
+}
+
+/* Aplikacja korzysta z tych samych barw co logo i landing. */
+.product-app {
+  background:
+    radial-gradient(circle at 82% 8%, #dde8ed 0, transparent 30%),
+    #f5f5f0;
+}
+
+.product-app .app-sidebar {
+  border-right-color: #ffffff14;
+  background:
+    radial-gradient(circle at 18% 0, #294b63 0, transparent 30%),
+    linear-gradient(180deg, #172b3a 0%, #102431 100%);
+  box-shadow: 15px 0 45px #172b3a14;
+}
+
+.product-app .sidebar-brand small,
+.product-app .nav-label,
+.product-app .goal-summary small,
+.product-app .goal-summary > svg:last-child {
+  color: #afc0ca;
+}
+
+.product-app .goal-summary:hover,
+.product-app .app-sidebar nav button.selected,
+.product-app .company-nav.selected {
+  border-color: #ff9b546b;
+  background: #ff9b5415;
+}
+
+.product-app .app-sidebar nav button.selected,
+.product-app .recent-conversations button.selected,
+.product-app .company-avatar {
+  color: #ffad73;
+}
+
+.product-app .workspace-header,
+.product-app .mobile-navigation {
+  border-color: #d6dde1;
+  background: #fbfbf8ed;
+  box-shadow: 0 10px 30px #172b3a0b;
+}
+
+.product-app .mobile-brand {
+  background: #172b3a;
+}
+
+.product-app .topbar-credits {
+  border-color: #e8793b33;
+  background: #fff0e5;
+  color: #9b4c20;
+}
+
+.product-app .topbar-new-chat,
+.product-app .mobile-conversations,
+.product-app .mobile-settings {
+  color: #29475c;
+}
+
+.product-app .topbar-new-chat:hover,
+.product-app .mobile-conversations:hover,
+.product-app .mobile-settings:hover {
+  background: #e7edf0;
+}
+
+.product-app .welcome-mark,
+.product-app .start-profile fieldset,
+.product-app .composer,
+.product-app .settings-card,
+.product-app .panel-dialog {
+  border-color: #d6dde1;
+  background: #fbfbf8;
+  box-shadow: 0 16px 46px #172b3a0d;
+}
+
+.product-app .welcome-dot,
+.product-app .settings-usage-progress span {
+  background: #e8793b;
+}
+
+.product-app .chat-welcome .eyebrow,
+.product-app .message-author,
+.product-app .card-heading > svg,
+.product-app .settings-details summary,
+.product-app .assistant-content li::marker,
+.product-app .assistant-content a {
+  color: #b75b27;
+}
+
+.product-app .chat-welcome h2,
+.product-app .assistant-content h3 {
+  color: #172b3a;
+}
+
+.product-app .welcome-copy,
+.product-app .breadcrumb > span,
+.product-app .breadcrumb > svg {
+  color: #637381;
+}
+
+.product-app .start-profile fieldset button,
+.product-app .start-profile-custom input,
+.product-app .start-additional-info textarea,
+.product-app .button-secondary {
+  border-color: #d6dde1;
+  background: #ffffff;
+  color: #29475c;
+}
+
+.product-app .start-profile fieldset button:hover,
+.product-app .start-profile fieldset button.selected,
+.product-app .composer-tools button:hover:not(:disabled),
+.product-app .assistant-content blockquote {
+  border-color: #e8793b;
+  background: #fff0e5;
+  color: #8d461f;
+}
+
+.product-app .start-profile-custom input:focus,
+.product-app .start-additional-info textarea:focus,
+.product-app .composer:focus-within {
+  border-color: #e8793b;
+  box-shadow: 0 0 0 3px #ff9b5424;
+}
+
+.product-app .chat-message.user > div {
+  background: #172b3a;
+  color: #ffffff;
+  box-shadow: 0 10px 28px #172b3a1c;
+}
+
+.product-app .chat-message.user .message-author {
+  color: #c5d2da;
+}
+
+.product-app .composer-tools button,
+.product-app .assistant-content code,
+.product-app .assistant-content pre {
+  background: #eef2f4;
+}
+
+.product-app .journey-profile-settings,
+.product-app .settings-usage-card,
+.product-app .settings-account-card {
+  background: linear-gradient(145deg, #fbfbf8 58%, #fff0e5 145%);
+}
+
+.product-app .panel-dialog::backdrop {
+  background: #102431b5;
+}
+
+.product-app .billing-summary {
+  background: linear-gradient(135deg, #172b3a, #294b63);
+}
+
+.product-app .billing-plan,
+.product-app .billing-percentage {
+  color: #c3d1da;
+}
+
+.product-app .credit-pack-grid label.selected {
+  border-color: #e8793b;
+  background: #fff7f0;
+  box-shadow: 0 8px 24px #b95a251a, inset 0 0 0 1px #e8793b;
+}
+
+.product-app .credit-pack-grid label.selected .credit-pack-check {
+  background: #172b3a;
+}
+
+.product-app .billing-checkout-box,
+.product-app .credit-limit-banner,
+.product-app .attachment-chip {
+  border-color: #d6dde1;
+  background: #eef2f4;
+}
+
+.product-app :focus-visible {
+  outline-color: #e8793b;
+}
+
+@media (max-width: 900px) {
+  .auth-v2 {
+    display: block;
+  }
+
+  .auth-v2 .auth-story {
+    min-height: 76px;
+    padding: 14px 18px;
+    justify-content: center;
+    border-radius: 0 0 20px 20px;
+  }
+
+  .auth-v2 .auth-story > div,
+  .auth-v2 .auth-story > ul {
+    display: none;
+  }
+
+  .auth-v2 .auth-brand {
+    font-size: 21px;
+  }
+
+  .auth-v2 .auth-card {
+    margin-block: 12px 22px;
+  }
+}
+
+@media (max-width: 700px) {
+  .auth-v2 .auth-card {
+    width: calc(100% - 16px);
+    padding: 17px 14px 20px;
+    border-radius: 18px;
+  }
+
+  .auth-v2 .auth-tabs {
+    margin-bottom: 18px;
+  }
+
+  .auth-v2 .auth-form {
+    gap: 13px;
+  }
+
+  .auth-v2 .auth-form > div:first-child > p:last-child {
+    display: none;
+  }
+
+  .auth-v2 .auth-form h2 {
+    font-size: 27px;
+  }
+
+  .auth-v2 .auth-form input:not([type="radio"]):not([type="checkbox"]) {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .auth-v2 .auth-plan-options,
+  .checkout-v2 .checkout-plan-grid-two {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .auth-v2 .auth-plan-options label {
+    min-height: 108px;
+    padding: 12px 10px;
+    align-items: flex-start;
+  }
+
+  .auth-v2 .auth-plan-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .auth-v2 .auth-plan-copy > em {
+    font-size: 18px;
+  }
+
+  .auth-v2 .auth-plan-copy > small {
+    display: none;
+  }
+
+  .auth-v2 .auth-selection-note,
+  .auth-v2 .purchase-summary,
+  .auth-v2 .purchase-limits,
+  .auth-v2 .purchase-consent .auth-consent,
+  .auth-v2 .auth-trial-copy {
+    font-size: 13px;
+  }
+
+  .auth-v2 .purchase-summary {
+    padding: 13px;
+    line-height: 1.55;
+  }
+
+  .auth-v2 .purchase-consent {
+    gap: 10px;
+    margin-block: 8px;
+  }
+
+  .checkout-v2 {
+    width: calc(100% - 16px);
+    gap: 12px;
+    padding-block: 8px 22px;
+  }
+
+  .checkout-v2 > header {
+    padding: 20px 18px;
+    border-radius: 20px;
+  }
+
+  .checkout-v2 > header .eyebrow {
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .checkout-v2 h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+    line-height: 1.02;
+  }
+
+  .checkout-v2 > header > p:last-child {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .checkout-v2 .checkout-entry {
+    display: none;
+  }
+
+  .checkout-v2 .checkout-plan-grid button {
+    min-height: 112px;
+    gap: 7px;
+    padding: 13px 11px;
+    border-radius: 15px;
+  }
+
+  .checkout-v2 .checkout-plan-grid button > span {
+    font-size: 12px;
+  }
+
+  .checkout-v2 .checkout-plan-grid strong {
+    font-size: 20px;
+  }
+
+  .checkout-v2 .checkout-plan-grid strong small {
+    display: block;
+    margin: 2px 0 0;
+    font-size: 11px;
+  }
+
+  .checkout-v2 .checkout-plan-grid p {
+    display: none;
+  }
+
+  .checkout-v2 .purchase-summary {
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .checkout-v2 .purchase-consent {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-block: 8px;
+  }
+
+  .checkout-v2 .purchase-consent .auth-consent {
+    padding: 11px 12px;
+    font-size: 13px;
+  }
+
+  .checkout-v2 .checkout-button {
+    position: sticky;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    z-index: 4;
+    min-height: 56px;
+  }
+
+  .checkout-v2 .checkout-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .checkout-v2 .checkout-summary > div {
+    padding: 12px 10px;
+  }
+
+  .checkout-v2 .checkout-summary small {
+    display: none;
+  }
+
+  .public-v2 .public-info-hero {
+    padding: 32px 20px;
+  }
+
+  .public-v2 .contact-hero {
+    gap: 22px;
+  }
+
+  .public-v2 .contact-hero h1 {
+    margin-block: 12px;
+    font-size: 39px;
+  }
+
+  .public-v2 .contact-card {
+    gap: 9px;
+    padding: 17px;
+  }
+
+  .public-v2 .contact-card > p,
+  .public-v2 .contact-card .contact-legal-links {
+    display: none;
+  }
+
+  .public-v2 .contact-content {
+    gap: 24px;
+    padding-block: 36px;
+  }
+
+  .public-v2 .contact-content .section-intro h2 {
+    max-width: none;
+    font-size: 35px;
+  }
+
+  .public-v2 .contact-content .section-intro > p:last-child {
+    margin-top: 14px;
+  }
+
+  .public-v2 .contact-form {
+    gap: 14px;
+    padding: 17px;
+    border-radius: 18px;
+  }
+
+  .public-v2 .contact-form .two-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .public-v2 .contact-form input,
+  .public-v2 .contact-form select,
+  .public-v2 .contact-form textarea {
+    font-size: 16px;
+  }
+
+  .public-v2 .contact-form textarea {
+    min-height: 122px;
+  }
+
+  .public-v2 .contact-submit-row {
+    padding-top: 14px;
+  }
+
+  .public-v2 .public-billing-help {
+    margin-bottom: 52px;
+  }
+
+  .public-v2 .legal-hero {
+    min-height: 0;
+    padding-block: 34px;
+  }
+
+  .public-v2 .legal-hero h1 {
+    font-size: 38px;
+  }
+
+  .public-v2 .legal-document {
+    padding-block: 38px 64px;
+  }
+
+  .public-v2 .legal-document p,
+  .public-v2 .legal-document li {
+    font-size: 16px;
+    line-height: 1.68;
+  }
+
+  .payment-v2 .payment-result-main {
+    padding: 18px 10px 28px;
+  }
+
+  .payment-v2 .payment-result-card {
+    padding: 25px 17px 21px;
+  }
+
+  .payment-v2 .payment-result-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 14px;
+  }
+
+  .payment-v2 .payment-result-description {
+    font-size: 14px;
+  }
+
+  .payment-v2 .payment-result-steps,
+  .payment-v2 .payment-result-actions {
+    margin-top: 20px;
+  }
+
+  .product-app .workspace-header {
+    background: #fbfbf8f5;
+  }
+
+  .product-app .chat-welcome h2 {
+    color: #172b3a;
+  }
+
+  .product-app .welcome-copy,
+  .product-app .assistant-content,
+  .product-app .chat-message.user > div {
+    font-size: 16px;
+    line-height: 1.62;
+  }
+}

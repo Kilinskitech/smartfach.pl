@@ -113,11 +113,6 @@ export function CheckoutPlans({
         </>
       )}
 
-      <section className="checkout-summary">
-        <div><CreditCard size={22} /><span><strong>Dane karty obsługuje Stripe</strong><small>SmartFach nie otrzymuje pełnego numeru karty ani CVC.</small></span></div>
-        <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
-      </section>
-
       {!hasAccess && !hasSubscription && <div className="checkout-legal"><p className="purchase-summary">{trialEligible ? "Dziś 0 zł. Po próbie " : "Od dziś "}<strong>{plans[plan].price} miesięcznie</strong> do anulowania. Cena całkowita. Plan obejmuje 100% miesięcznego limitu; różne zadania mogą wykorzystywać go w różnym tempie. Limit odnawia się bez kumulacji. Maksymalnie 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Zasady limitów</Link>.</p><PurchaseConsent onChange={setConsented} /></div>}
       {busy && <CheckoutProgress />}
       {error && <p className="form-error" role="alert">{error}</p>}
@@ -130,6 +125,10 @@ export function CheckoutPlans({
       ) : (
         <button className="button button-primary checkout-button" onClick={openCheckout} disabled={busy || !consented}>{busy ? "Otwieranie Stripe…" : "Przejdź do bezpiecznego formularza"}<ArrowRight size={18} /></button>
       )}
+      <section className="checkout-summary">
+        <div><CreditCard size={22} /><span><strong>Dane karty obsługuje Stripe</strong><small>SmartFach nie otrzymuje pełnego numeru karty ani CVC.</small></span></div>
+        <div><ShieldCheck size={22} /><span><strong>Proste anulowanie</strong><small>Po aktywacji zarządzasz abonamentem w portalu płatności.</small></span></div>
+      </section>
       <form action="/auth/wyloguj" method="post"><button className="auth-signout">Wyloguj się</button></form>
     </main>
   );
