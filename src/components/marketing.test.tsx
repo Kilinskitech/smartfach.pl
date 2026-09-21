@@ -8,8 +8,9 @@ describe("landing SmartFach", () => {
 
   it("prowadzi od umiejętności do próby planu Pro z pełnymi warunkami", () => {
     expect(html).toContain(
-      "Zacznij własny biznes <em>od tego, co umiesz.</em>",
+      "Znajdź pomysł <em>na własny biznes.</em>",
     );
+    expect(html).toContain("Nie musisz mieć gotowego pomysłu ani konkretnej umiejętności.");
     expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
     expect(html).toContain(
