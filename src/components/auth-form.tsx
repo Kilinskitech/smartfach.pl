@@ -4,7 +4,12 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Check, Eye, EyeOff, KeyRound, ShieldCheck } from "lucide-react";
 import { requestPasswordReset, signIn, signUp } from "@/app/auth-actions";
-import { plans, publicPlanIds, type PublicPlanId } from "@/domain/billing";
+import {
+  plans,
+  publicPlanIds,
+  publicPlanLimitLabel,
+  type PublicPlanId,
+} from "@/domain/billing";
 import { BrandMark } from "./brand";
 import { PurchaseConsent } from "./purchase-consent";
 import { CheckoutProgress } from "./checkout-progress";
@@ -133,9 +138,9 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
                 </label>
               ))}
             </fieldset>
-            <p className="auth-selection-note"><Check size={15} /> Oba plany prowadzą przez ten sam proces. Pro ma większy miesięczny limit.</p>
+            <p className="auth-selection-note"><Check size={15} /> Oba plany mają te same funkcje i jakość asystenta. Pro ma około 2,4× większą miesięczną pulę.</p>
             <p className="purchase-summary">Dziś 0 zł. Po 3 pełnych dniach <strong>{plans[plan].price} miesięcznie</strong>, automatycznie do anulowania. Ceny całkowite. Karta jest wymagana. Anulujesz w Ustawieniach lub przez kontakt.</p>
-            <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p>Plan {plans[plan].name} obejmuje 100% miesięcznego limitu. Długość rozmowy, zdjęcia i używane narzędzia wpływają na tempo jego wykorzystania. Limit odnawia się bez kumulacji. Po wyczerpaniu możesz poczekać albo zwiększyć go jednorazowo. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
+            <details className="purchase-limits"><summary>Co obejmuje limit planu?</summary><p><strong>{publicPlanLimitLabel(plan)}.</strong> Długość rozmowy, zdjęcia i używane narzędzia wpływają na tempo wykorzystania. Podstawowa pula odnawia się co miesiąc i nie kumuluje. Po wyczerpaniu możesz poczekać na odnowienie, ręcznie dokupić limit albo zmienić plan — nic nie dokupuje się automatycznie. Niewykorzystana część dokupionego limitu pozostaje na kolejne miesiące. Dodatkowy limit bezpieczeństwa: 20 zapytań na godzinę. <Link href="/regulamin#punkt-6" target="_blank">Pełne zasady limitu</Link>.</p></details>
             <PurchaseConsent />
             {registerState?.error && <p className="form-error" role="alert">{registerState.error}</p>}
             {registerPending && <CheckoutProgress creatingAccount />}

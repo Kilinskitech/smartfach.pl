@@ -1448,3 +1448,23 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   subskrypcji. Na tym etapie zapisuje tylko idempotentny kamień milowy produktu;
   wysyłka do GA4 Measurement Protocol i Meta CAPI wymaga osobnego outboxa,
   sekretów, identyfikatorów klienta i uzgodnionej strategii deduplikacji.
+
+## D076 — Sprzedażowy landing od umiejętności do konkretnej oferty
+
+- Data: 2026-09-21. Landing przyjmuje jako bazową hipotezę osobę z praktycznymi
+  umiejętnościami lub doświadczeniem, która chce po godzinach zbudować usługę,
+  ale nie wie, co wybrać i jak wyjaśnić ofertę klientowi.
+- Pierwszy ekran jednoznacznie nazywa SmartFach asystentem AI. Demonstracja
+  znajduje się bezpośrednio pod hero i pokazuje ciąg: sytuacja, usługa, oferta,
+  szkic wiadomości i następny krok. Materiał rozwija istniejący scenariusz Excela,
+  jest oznaczony jako przykład i nie udaje rozmowy ani wyniku klienta.
+- Sekcje o dopasowaniu i zasobach połączono. Proces rozdziela działania użytkownika
+  od pomocy asystenta, a sens abonamentu pokazuje powrót z odpowiedzią lub obiekcją
+  klienta bez wklejania jego danych osobowych.
+- Lite i Pro mają te same funkcje i jakość asystenta. Publiczne porównanie limitów
+  wynika ze wspólnej konfiguracji: Pro ma około 2,4 razy większą miesięczną pulę
+  niż Lite. Nie publikujemy kredytów, kosztów dostawców ani stałej liczby wiadomości.
+  Po wyczerpaniu nic nie dokupuje się automatycznie.
+- Ceny, trial, wymaganie karty, logika rejestracji, płatności, potwierdzenia e-maila
+  i zdarzenia marketingowe pozostają bez zmian. Wersję bazową oraz dwie późniejsze
+  hipotezy opisuje `docs/marketing/landing-sales-baseline.md`.

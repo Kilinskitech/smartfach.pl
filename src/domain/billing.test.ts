@@ -6,6 +6,9 @@ import {
   hasSubscriptionAccess,
   estimateRequestCredits,
   normalizePublicPlan,
+  plans,
+  proMonthlyLimitMultiplier,
+  publicPlanLimitLabel,
   publicPlanIdSchema,
   publicPlanIds,
   remainingCredits,
@@ -127,6 +130,17 @@ describe("kredyty SmartFach", () => {
     expect(publicPlanIdSchema.safeParse("pro").success).toBe(true);
     expect(publicPlanIdSchema.safeParse("firma").success).toBe(false);
     expect(normalizePublicPlan(undefined)).toBe("pro");
+  });
+
+  it("wyjaśnia publicznie różnicę limitów na podstawie konfiguracji planów", () => {
+    expect(proMonthlyLimitMultiplier).toBe(
+      Math.round((plans.pro.monthlyCredits / plans.lite.monthlyCredits) * 10) /
+        10,
+    );
+    expect(publicPlanLimitLabel("lite")).toBe("Podstawowa miesięczna pula");
+    expect(publicPlanLimitLabel("pro")).toBe(
+      "Około 2,4× większa miesięczna pula niż w Lite",
+    );
   });
 
   it("zatrzymuje odnowienie trialu do potwierdzenia e-maila", () => {

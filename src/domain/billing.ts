@@ -91,6 +91,17 @@ export const plans = {
   }
 >;
 
+export const proMonthlyLimitMultiplier =
+  Math.round(
+    (plans.pro.monthlyCredits / plans.lite.monthlyCredits) * 10,
+  ) / 10;
+
+export function publicPlanLimitLabel(plan: PublicPlanId) {
+  return plan === "lite"
+    ? "Podstawowa miesięczna pula"
+    : `Około ${String(proMonthlyLimitMultiplier).replace(".", ",")}× większa miesięczna pula niż w Lite`;
+}
+
 export const creditPacks = [
   {
     id: "mini",
@@ -164,7 +175,7 @@ export function usageLimitView(billing: Billing) {
     usedPercentage,
     remainingPercentage: Math.max(0, totalPercentage - usedPercentage),
     progressPercentage: Math.min(100, Math.max(0, billing.usedCredits / total * 100)),
-  };
+};
 }
 
 export function monthlyUsagePercentage(billing: Billing) {
