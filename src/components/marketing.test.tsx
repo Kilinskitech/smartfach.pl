@@ -6,16 +6,14 @@ import { MarketingHome } from "./marketing";
 describe("landing SmartFach", () => {
   const html = renderToStaticMarkup(createElement(MarketingHome));
 
-  it("prowadzi z hero do próby planu Lite z pełnymi warunkami", () => {
+  it("prowadzi z hero do próby planu Lite bez przeładowania pierwszego ekranu", () => {
     expect(html).toContain(
       "Zbudujmy razem <em>Twój wymarzony biznes.</em>",
     );
     expect(html).toContain("Nie potrzebujesz pomysłu ani doświadczenia.");
     expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
-    expect(html).toContain(
-      "0 zł przez 3 dni. Następnie Lite 49 zł/mies.",
-    );
+    expect(html).not.toContain("0 zł przez 3 dni. Następnie Lite 49 zł/mies.");
     expect(html.toLowerCase()).not.toContain("karta wymagana");
     expect(html.toLowerCase()).not.toContain("wymaga karty");
     expect(html).toContain('class="hero-primary" href="/logowanie?plan=lite"');
@@ -56,12 +54,11 @@ describe("landing SmartFach", () => {
   });
 
   it("powtarza czytelne wezwanie do próby po kluczowych sekcjach", () => {
-    expect(html.match(/Wypróbuj SmartFach/g)).toHaveLength(6);
+    expect(html.match(/Wypróbuj SmartFach/g)).toHaveLength(5);
     expect(html).toContain("Wypróbuj 3 dni za 0 zł");
-    expect(html.match(/3 dni za 0 zł/g)?.length).toBeGreaterThanOrEqual(5);
-    expect(html).toContain("anuluj przed pierwszą opłatą");
+    expect(html).not.toContain("0 zł przez 3 dni. Następnie Lite 49 zł/mies.");
     expect(html).toContain("ZACZNIJ OD KROKU 1");
-    expect(html).toContain("MASZ JUŻ NAJWAŻNIEJSZE ODPOWIEDZI");
+    expect(html).toContain("Ważne odpowiedzi.");
   });
 
   it("nie uruchamia konwersji ani nie renderuje fałszywej interakcji przy wejściu", () => {

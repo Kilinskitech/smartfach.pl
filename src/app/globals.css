@@ -11449,13 +11449,6 @@ body:has(.checkout-v2) {
   justify-content: center;
   text-align: center;
 }
-.landing-v4 .cta-trial-terms {
-  max-width: 630px;
-  margin: 14px 0 0;
-  color: #aebcb6;
-  font-size: 13px;
-  line-height: 1.6;
-}
 .landing-v4 .hero-path {
   margin-top: 34px;
 }
@@ -11840,12 +11833,6 @@ body:has(.checkout-v2) {
   display: block;
   color: #1d2926;
 }
-.landing-v4 .marketing-cta .cta-trial-terms.compact {
-  max-width: 580px;
-  margin: 18px 0 0;
-  color: #aebcb6;
-  font-size: 13px;
-}
 .landing-v4 .marketing-kicker {
   font-size: 11px;
   line-height: 1.45;
@@ -11866,6 +11853,10 @@ body:has(.checkout-v2) {
 .landing-v4 .faq-intro > p:not(.marketing-kicker) {
   font-size: 14px;
   line-height: 1.75;
+}
+.landing-v4 .faq-intro {
+  position: static;
+  top: auto;
 }
 .landing-v4 .faq-list summary {
   font-size: 17px;
@@ -11890,8 +11881,7 @@ body:has(.checkout-v2) {
   min-width: 0;
 }
 .landing-v4 .section-trial-cta small,
-.landing-v4 .section-trial-cta strong,
-.landing-v4 .section-trial-cta span {
+.landing-v4 .section-trial-cta strong {
   display: block;
 }
 .landing-v4 .section-trial-cta small {
@@ -11908,12 +11898,6 @@ body:has(.checkout-v2) {
   font-size: clamp(20px, 2.1vw, 27px);
   font-weight: 500;
   line-height: 1.15;
-}
-.landing-v4 .section-trial-cta span {
-  margin-top: 8px;
-  color: #66736d;
-  font-size: 12px;
-  line-height: 1.55;
 }
 .landing-v4 .section-trial-cta > a {
   min-height: 52px;
@@ -11946,11 +11930,7 @@ body:has(.checkout-v2) {
 .landing-v4 .section-trial-cta.on-dark strong {
   color: #fbfaf6;
 }
-.landing-v4 .section-trial-cta.on-dark span {
-  color: #becac4;
-}
-.landing-v4 .ongoing-value-section .section-trial-cta,
-.landing-v4 .faq-section .section-trial-cta {
+.landing-v4 .ongoing-value-section .section-trial-cta {
   grid-column: 1 / -1;
 }
 .landing-v4.path-landing .pricing-hero {
@@ -12064,11 +12044,6 @@ body:has(.checkout-v2) {
   }
   .landing-v4 .hero-secondary {
     display: none;
-  }
-  .landing-v4 .cta-trial-terms {
-    margin-top: 10px;
-    font-size: 12px;
-    line-height: 1.5;
   }
   .landing-v4 .hero-path {
     display: none;
@@ -12188,9 +12163,6 @@ body:has(.checkout-v2) {
   .landing-v4 .section-trial-cta strong {
     font-size: 24px;
   }
-  .landing-v4 .section-trial-cta span {
-    font-size: 13px;
-  }
   .landing-v4 .section-trial-cta > a {
     width: 100%;
     min-height: 56px;
@@ -12202,10 +12174,6 @@ body:has(.checkout-v2) {
     width: 100%;
     justify-content: center;
     text-align: center;
-  }
-  .landing-v4 .marketing-cta .cta-trial-terms.compact {
-    margin-left: 0;
-    font-size: 12px;
   }
   .landing-v4.path-landing .pricing-hero {
     min-height: 0;

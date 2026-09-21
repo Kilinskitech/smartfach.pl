@@ -196,7 +196,6 @@ function SectionTrialCta({
       <div>
         <small>{eyebrow}</small>
         <strong>{title}</strong>
-        <span>3 dni za 0 zł · potem Pro 99 zł/mies. · anuluj przed pierwszą opłatą</span>
       </div>
       <Link href="/logowanie?plan=pro">Wypróbuj SmartFach <ArrowRight size={17} /></Link>
     </aside>
@@ -402,8 +401,8 @@ function FAQSection() {
     <section className="marketing-section faq-section" id="faq">
       <div className="faq-intro">
         <p className="marketing-kicker">PYTANIA PRZED STARTEM</p>
-        <h2>Ważne odpowiedzi w jednym miejscu.</h2>
-        <p>Sprawdź sposób pracy, limity i zasady, zanim rozpoczniesz próbę.</p>
+        <h2>Ważne odpowiedzi.</h2>
+        <p>Najczęstsze pytania przed rozpoczęciem próby.</p>
         <div className="faq-contact">
           <MessageCircle size={20} />
           <p><strong>Masz inne pytanie?</strong><span>Napisz do nas przed rozpoczęciem próby.</span></p>
@@ -418,19 +417,7 @@ function FAQSection() {
           </details>
         ))}
       </div>
-      <SectionTrialCta
-        eyebrow="MASZ JUŻ NAJWAŻNIEJSZE ODPOWIEDZI"
-        title="Sprawdź na własnym przykładzie, jak szybko przejdziesz od swojej sytuacji do oferty."
-      />
     </section>
-  );
-}
-
-function TrialTerms({ compact = false }: { compact?: boolean }) {
-  return (
-    <p className={compact ? "cta-trial-terms compact" : "cta-trial-terms"}>
-      0 zł przez 3 dni. Następnie Lite 49 zł/mies., automatycznie do anulowania. Anuluj przed końcem próby, aby uniknąć pierwszej opłaty.
-    </p>
   );
 }
 
@@ -456,7 +443,6 @@ export function MarketingHome() {
               <Link className="hero-primary" href="/logowanie?plan=lite">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
               <Link className="hero-secondary" href="/#przykladowa-oferta">Zobacz przykładową ofertę</Link>
             </div>
-            <TrialTerms />
             <div className="hero-path" aria-label="Droga ze SmartFach">
               <span><b>01</b> Pomysł</span>
               <ArrowRight size={15} aria-hidden="true" />
