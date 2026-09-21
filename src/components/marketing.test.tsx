@@ -8,7 +8,7 @@ describe("landing SmartFach", () => {
 
   it("prowadzi z hero do próby planu Lite bez przeładowania pierwszego ekranu", () => {
     expect(html).toContain(
-      "Zbudujmy razem <em>Twój wymarzony biznes.</em>",
+      "Zbudujmy razem <em>Twój wymarzony zyskowny biznes.</em>",
     );
     expect(html).toContain("Nie potrzebujesz pomysłu ani doświadczenia.");
     expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
@@ -24,7 +24,8 @@ describe("landing SmartFach", () => {
     expect(html).toContain("NIE JEST TO HISTORIA KLIENTA");
     expect(html).toContain("PRZYKŁADOWA OFERTA DO DOPRACOWANIA");
     expect(html).toContain("PRZYKŁADOWY SZKIC WIADOMOŚCI");
-    expect(html).toContain("Mikrofirmy, które ręcznie poprawiają arkusze");
+    expect(html).toContain("Jestem pracowita, dokładna i można na mnie polegać");
+    expect(html).toContain("Mikrofirmy, którym brakuje czasu na drobne");
     expect(html).toContain("Czy możemy porozmawiać przez 15 minut?");
     expect(html).toContain("nie historia klienta ani obietnica wyniku");
   });

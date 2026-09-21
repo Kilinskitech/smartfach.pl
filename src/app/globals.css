@@ -12206,3 +12206,189 @@ body:has(.checkout-v2) {
     font-size: 38px;
   }
 }
+
+/* Landing v4 — paleta oparta bezpośrednio na kolorach znaku SmartFach. */
+.landing-v4 {
+  --landing-ink: #172b3a;
+  --landing-muted: #62727d;
+  --landing-copper: #c96b34;
+  --landing-copper-soft: #ffd2b3;
+  --landing-sage: #dfe7eb;
+  --landing-paper: #f5f5f0;
+  --landing-card: #fbfbf8;
+  --landing-line: #cfd7dc;
+  background: var(--landing-paper);
+  color: var(--landing-ink);
+}
+.landing-v4 .landing-announcement,
+.landing-v4 .demo-workbench > header,
+.landing-v4 .pricing-grid article.featured,
+.landing-v4 .audience-section,
+.landing-v4 .marketing-cta {
+  background: #172b3a;
+}
+.landing-v4 .landing-announcement i,
+.landing-v4 .hero-copy .hero-kicker > span {
+  background: #ff9b54;
+}
+.landing-v4 .marketing-header {
+  border-color: #d4dadd;
+  background: #f5f5f0ed;
+}
+.landing-v4 .marketing-header > nav a {
+  color: #465966;
+}
+.landing-v4 .marketing-header > nav a:hover,
+.landing-v4 .marketing-kicker,
+.landing-v4 .work-process-list > li > span,
+.landing-v4 .work-process-list small,
+.landing-v4 .feedback-cycle small,
+.landing-v4 .demo-flow li > span,
+.landing-v4 .demo-prompt small,
+.landing-v4 .demo-offer-card > small,
+.landing-v4 .demo-message-card > small {
+  color: #b75e2f;
+}
+.landing-v4 .marketing-login,
+.landing-v4 .hero-primary,
+.landing-v4 .section-trial-cta > a {
+  border-color: #e8793b;
+  background: #e8793b;
+}
+.landing-v4 .marketing-login:hover,
+.landing-v4 .hero-primary:hover,
+.landing-v4 .section-trial-cta > a:hover {
+  border-color: #ff9b54;
+  background: #ff9b54;
+  color: #172b3a;
+}
+.landing-v4 .marketing-account-login {
+  border-color: #c9d1d6;
+  color: #172b3a;
+}
+.landing-v4 .marketing-hero {
+  background:
+    radial-gradient(circle at 8% 12%, #2b4d63 0, transparent 31%),
+    radial-gradient(circle at 87% 10%, #ff9b5435 0, transparent 28%),
+    #172b3a;
+  box-shadow: 0 24px 70px #172b3a1f;
+}
+.landing-v4 .hero-copy .hero-kicker,
+.landing-v4 .hero-lead,
+.landing-v4 .hero-path {
+  color: #d8e2e8;
+}
+.landing-v4 .hero-copy h1 em,
+.landing-v4 .hero-path b,
+.landing-v4 .audience-grid article > span {
+  color: #ff9b54;
+}
+.landing-v4 .hero-path > svg {
+  color: #8298a7;
+}
+.landing-v4 .preview-stage {
+  border-color: #ffffff29;
+  background: #ffffff0c;
+}
+.landing-v4 .preview-stage .product-preview {
+  box-shadow: 0 30px 75px #07131b66;
+}
+.landing-v4 .preview-question,
+.landing-v4 .pricing-grid article > p.plan-limit {
+  background: #e8edf0;
+}
+.landing-v4 .preview-next-step {
+  background: #fff0e5;
+}
+.landing-v4 .demo-workbench {
+  border-color: #cad4d9;
+  background: #fbfbf8;
+  box-shadow: 22px 26px 0 #dce5e9;
+}
+.landing-v4 .demo-prompt,
+.landing-v4 .ongoing-value-section {
+  background: #eee9e1;
+}
+.landing-v4 .demo-message-card {
+  background: #e2eaee;
+}
+.landing-v4 .demo-message-card blockquote {
+  border-left-color: #ff9b54;
+}
+.landing-v4 .audience-section .marketing-kicker,
+.landing-v4 .audience-grid small,
+.landing-v4 .section-trial-cta.on-dark small,
+.landing-v4 .marketing-cta .marketing-kicker {
+  color: #ffb37d;
+}
+.landing-v4 .audience-section .section-intro > p:last-child,
+.landing-v4 .audience-grid p,
+.landing-v4 .marketing-cta p:not(.marketing-kicker),
+.landing-v4 .pricing-grid article.featured > p,
+.landing-v4 .pricing-grid article.featured ul,
+.landing-v4 .pricing-grid article.featured > strong span {
+  color: #c2cfd7;
+}
+.landing-v4 .pricing-section {
+  background: #e9e7e0;
+}
+.landing-v4 .pricing-grid article.featured {
+  border-color: #172b3a;
+}
+.landing-v4 .pricing-grid article.featured > a,
+.landing-v4 .plan-ribbon,
+.landing-v4 .marketing-cta > a {
+  border-color: #ffd2b3;
+  background: #ffd2b3;
+  color: #172b3a;
+}
+.landing-v4 .section-trial-cta {
+  border-color: #cbd4d9;
+  background: #fbfbf8;
+  box-shadow: 0 16px 36px #172b3a0d;
+}
+.landing-v4 .section-trial-cta strong,
+.landing-v4 .work-process-list h3,
+.landing-v4 .ongoing-copy h2,
+.landing-v4 .feedback-cycle strong,
+.landing-v4 .pricing-limit-explainer strong,
+.landing-v4 .demo-prompt p,
+.landing-v4 .demo-output-grid h3,
+.landing-v4 .demo-message-card > p strong {
+  color: #172b3a;
+}
+
+@media (max-width: 950px) {
+  .landing-v4 .marketing-mobile-menu summary,
+  .landing-v4 .marketing-mobile-menu[open] summary {
+    border-color: #172b3a;
+    background: #172b3a;
+    color: #ffffff;
+  }
+  .landing-v4 .marketing-mobile-menu[open] summary {
+    border-color: #ff9b54;
+    color: #ff9b54;
+  }
+  .landing-v4 .marketing-mobile-menu nav {
+    border-color: #d3dce1;
+    background: #f9f9f5fa;
+    box-shadow: 0 24px 65px #172b3a2b;
+  }
+  .landing-v4 .marketing-mobile-menu nav a,
+  .landing-v4 .marketing-mobile-menu nav .mobile-menu-login {
+    color: #294253;
+  }
+  .landing-v4 .marketing-mobile-menu nav a:hover {
+    background: #e9eef1;
+  }
+  .landing-v4 .marketing-mobile-menu nav .mobile-menu-start {
+    background: #172b3a;
+    color: #ffffff;
+  }
+}
+
+@media (max-width: 760px) {
+  .landing-v4 .demo-workbench {
+    box-shadow: 8px 10px 0 #dce5e9;
+  }
+}

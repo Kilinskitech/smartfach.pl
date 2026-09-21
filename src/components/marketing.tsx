@@ -165,16 +165,16 @@ function ProductPreview() {
         </div>
         <div className="preview-question">
           <span>Ty</span>
-          Znam Excel, mam 5 godzin tygodniowo i chcę dorobić po pracy. Co mogę sprzedać?
+          Jestem pracowita, dokładna i można na mnie polegać. Mam 5 godzin tygodniowo. Jaki biznes mogę zacząć?
         </div>
         <div className="preview-card start-result-card">
-          <div><Target size={20} /><span><small>PROPOZYCJA DO SPRAWDZENIA</small><strong>Porządkowanie arkuszy i prostych raportów dla mikrofirm</strong></span></div>
+          <div><Target size={20} /><span><small>PROPOZYCJA DO SPRAWDZENIA</small><strong>Wsparcie organizacyjne dla małych firm</strong></span></div>
           <dl>
-            <div><dt>Dla kogo</dt><dd>Małe firmy</dd></div>
-            <div><dt>Problem</dt><dd>Ręczne raporty</dd></div>
+            <div><dt>Dla kogo</dt><dd>Lokalne mikrofirmy</dd></div>
+            <div><dt>Problem</dt><dd>Brak czasu na drobne zadania</dd></div>
             <div><dt>Test</dt><dd>3 rozmowy</dd></div>
           </dl>
-          <div className="preview-next-step"><Check size={15} /> Dziś: zapytaj trzy znane firmy o najbardziej uciążliwy arkusz.</div>
+          <div className="preview-next-step"><Check size={15} /> Dziś: zapytaj trzy firmy, które zadania najczęściej odkładają na później.</div>
         </div>
         <p><ShieldCheck size={14} /> Przykładowe dane, nie historia klienta ani obietnica wyniku.</p>
       </div>
@@ -204,8 +204,8 @@ function SectionTrialCta({
 
 function OfferDemoSection() {
   const steps = [
-    ["01", "Sytuacja", "Excel · 5 godzin tygodniowo · praca po godzinach"],
-    ["02", "Usługa", "Porządkowanie arkuszy i prostych raportów dla mikrofirm"],
+    ["01", "Sytuacja", "Pracowitość · dokładność · 5 godzin tygodniowo"],
+    ["02", "Usługa", "Pomoc w organizacji prostych zadań dla mikrofirm"],
     ["03", "Oferta", "Odbiorca, problem i konkretny zakres pierwszego zlecenia"],
     ["04", "Wiadomość", "Krótki kontakt, który można dopasować i wysłać samodzielnie"],
     ["05", "Następny krok", "Trzy rozmowy i powrót z odpowiedziami"],
@@ -217,7 +217,7 @@ function OfferDemoSection() {
       <span id="produkt" className="legacy-anchor" aria-hidden="true" />
       <div className="section-intro">
         <p className="marketing-kicker">ZOBACZ, CO MOŻESZ PRZYGOTOWAĆ</p>
-        <h2 id="demo-title">Od umiejętności do oferty i pierwszej wiadomości.</h2>
+        <h2 id="demo-title">Od Twoich mocnych stron do oferty i pierwszej wiadomości.</h2>
         <p>Zobacz, jak może wyglądać Twoja pierwsza oferta i wiadomość do potencjalnego klienta. Poniższy materiał jest przykładem, nie historią klienta.</p>
       </div>
       <div className="demo-workbench">
@@ -227,7 +227,7 @@ function OfferDemoSection() {
         </header>
         <div className="demo-prompt">
           <small>SYTUACJA UŻYTKOWNIKA</small>
-          <p>„Znam Excel, mam 5 godzin tygodniowo i chcę dorobić po pracy. Co mogę sprzedać?”</p>
+          <p>„Jestem pracowita, dokładna i można na mnie polegać. Mam 5 godzin tygodniowo. Jaki biznes mogę zacząć?”</p>
         </div>
         <ol className="demo-flow" aria-label="Przebieg pracy nad przykładową ofertą">
           {steps.map(([number, title, copy]) => (
@@ -237,17 +237,17 @@ function OfferDemoSection() {
         <div className="demo-output-grid">
           <article className="demo-offer-card">
             <small>PRZYKŁADOWA OFERTA DO DOPRACOWANIA</small>
-            <h3>Porządek w arkuszach i prostsze raporty</h3>
+            <h3>Sprawniejsza organizacja codziennych zadań</h3>
             <dl>
-              <div><dt>Dla kogo</dt><dd>Mikrofirmy, które ręcznie poprawiają arkusze i składają powtarzalne zestawienia.</dd></div>
-              <div><dt>Problem</dt><dd>Niespójne dane i ręczne raporty zabierają czas oraz utrudniają codzienną pracę.</dd></div>
-              <div><dt>Zakres</dt><dd>Uporządkowanie jednego arkusza, prosty szablon raportu i krótka instrukcja użycia.</dd></div>
+              <div><dt>Dla kogo</dt><dd>Mikrofirmy, którym brakuje czasu na drobne, powtarzalne obowiązki organizacyjne.</dd></div>
+              <div><dt>Problem</dt><dd>Dokumenty, terminy i listy zadań odkładają się, choć ktoś powinien regularnie nad nimi czuwać.</dd></div>
+              <div><dt>Zakres</dt><dd>Uporządkowanie listy zadań, terminów i prostych dokumentów oraz przygotowanie planu dalszej pracy.</dd></div>
             </dl>
           </article>
           <article className="demo-message-card">
             <small>PRZYKŁADOWY SZKIC WIADOMOŚCI</small>
             <blockquote>
-              Dzień dobry, pomagam małym firmom uporządkować arkusze i uprościć powtarzalne raporty. Szukam teraz kilku osób, które pokażą mi najbardziej uciążliwy plik — w zamian przygotuję krótki pomysł usprawnienia. Czy możemy porozmawiać przez 15 minut?
+              Dzień dobry, pomagam małym firmom uporządkować powtarzalne zadania organizacyjne, które zabierają właścicielom czas. Szukam teraz kilku osób, które opowiedzą mi, co najczęściej odkładają na później — w zamian przygotuję krótki pomysł uporządkowania pracy. Czy możemy porozmawiać przez 15 minut?
             </blockquote>
             <p><ListChecks size={17} /><span><strong>Następny krok</strong> Dopasuj wiadomość do trzech znanych firm, wyślij ją samodzielnie i wróć z odpowiedziami.</span></p>
           </article>
@@ -437,7 +437,7 @@ export function MarketingHome() {
         <section className="marketing-hero builder-hero">
           <div className="hero-copy">
             <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU</p>
-            <h1>Zbudujmy razem <em>Twój wymarzony biznes.</em></h1>
+            <h1>Zbudujmy razem <em>Twój wymarzony zyskowny biznes.</em></h1>
             <p className="hero-lead">Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
             <div className="hero-actions">
               <Link className="hero-primary" href="/logowanie?plan=lite">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
