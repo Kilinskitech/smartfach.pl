@@ -1468,3 +1468,20 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - Ceny, trial, wymaganie karty, logika rejestracji, płatności, potwierdzenia e-maila
   i zdarzenia marketingowe pozostają bez zmian. Wersję bazową oraz dwie późniejsze
   hipotezy opisuje `docs/marketing/landing-sales-baseline.md`.
+
+## D077 — Mobilna czytelność i powtarzalne wezwania do próby
+
+- Data: 2026-09-21. Najmniejsze teksty landingu otrzymują czytelniejszy rozmiar,
+  szczególnie na telefonach. Dotyczy to etykiet, opisów demonstracji, warunków
+  trialu, FAQ, informacji o limitach i stopki; główna hierarchia wizualna pozostaje
+  bez zmian.
+- Po demonstracji, dopasowaniu odbiorcy, procesie pracy, pętli poprawiania oferty
+  i FAQ pojawia się krótkie wezwanie do wypróbowania SmartFach. Na telefonie każde
+  z nich ma pełną szerokość i minimalną wysokość wygodną do dotknięcia.
+- Perswazja opiera się na konkretnym kolejnym kroku, pokazaniu rezultatu pracy oraz
+  jawnym obniżeniu ryzyka: 3 dni za 0 zł, wymagana karta, następnie Pro 99 zł/mies.
+  i możliwość anulowania przed pierwszą opłatą. Nie używamy sztucznej pilności,
+  fałszywego dowodu społecznego ani obietnic wyniku finansowego.
+- W końcowym CTA warunki próby są wyrównane do treści i przycisku, zamiast być
+  niezależnie wyśrodkowane. Nie zmieniono cen, płatności, rejestracji, analityki,
+  Supabase ani działania aplikacji.

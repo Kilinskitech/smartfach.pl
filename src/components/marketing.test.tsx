@@ -52,6 +52,14 @@ describe("landing SmartFach", () => {
     expect(html).toContain('href="/logowanie?plan=pro"');
   });
 
+  it("powtarza czytelne wezwanie do próby po kluczowych sekcjach", () => {
+    expect(html.match(/Wypróbuj SmartFach/g)).toHaveLength(7);
+    expect(html.match(/3 dni za 0 zł/g)?.length).toBeGreaterThanOrEqual(5);
+    expect(html).toContain("anuluj przed pierwszą opłatą");
+    expect(html).toContain("ZACZNIJ OD KROKU 1");
+    expect(html).toContain("MASZ JUŻ NAJWAŻNIEJSZE ODPOWIEDZI");
+  });
+
   it("nie uruchamia konwersji ani nie renderuje fałszywej interakcji przy wejściu", () => {
     expect(html).not.toContain("sf_select_plan");
     expect(html).not.toContain("sf_sign_up");

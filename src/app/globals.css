@@ -11450,7 +11450,7 @@ body:has(.checkout-v2) {
   max-width: 630px;
   margin: 14px 0 0;
   color: #aebcb6;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .landing-v4 .hero-path {
@@ -11487,7 +11487,7 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .demo-workbench > header small {
   color: #c1cec8;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 760;
   letter-spacing: 1.2px;
 }
@@ -11503,7 +11503,7 @@ body:has(.checkout-v2) {
 .landing-v4 .demo-offer-card > small,
 .landing-v4 .demo-message-card > small {
   color: #925b3a;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 780;
   letter-spacing: 1.25px;
 }
@@ -11539,7 +11539,7 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .demo-flow li > span {
   color: #a86239;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 780;
 }
 .landing-v4 .demo-flow p,
@@ -11556,7 +11556,7 @@ body:has(.checkout-v2) {
 .landing-v4 .demo-flow small {
   margin-top: 7px;
   color: #68736d;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.55;
 }
 .landing-v4 .demo-output-grid {
@@ -11595,14 +11595,14 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .demo-offer-card dt {
   color: #925b3a;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 760;
   text-transform: uppercase;
 }
 .landing-v4 .demo-offer-card dd {
   margin: 0;
   color: #56635d;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.65;
 }
 .landing-v4 .demo-message-card {
@@ -11628,7 +11628,7 @@ body:has(.checkout-v2) {
   align-items: flex-start;
   gap: 11px;
   color: #46564f;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .landing-v4 .demo-message-card > p svg {
@@ -11681,7 +11681,7 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .audience-grid small {
   color: #d19a75;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 760;
   letter-spacing: 1px;
 }
@@ -11697,7 +11697,7 @@ body:has(.checkout-v2) {
 .landing-v4 .audience-grid p {
   margin: 0;
   color: #b9c5bf;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
 }
 .landing-v4 .work-process-list {
@@ -11718,7 +11718,7 @@ body:has(.checkout-v2) {
 .landing-v4 .work-process-list > li > span,
 .landing-v4 .work-process-list small {
   color: #9a5d39;
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 780;
   letter-spacing: 1px;
 }
@@ -11733,7 +11733,7 @@ body:has(.checkout-v2) {
 .landing-v4 .work-process-list p {
   margin: 8px 0 0;
   color: #64706a;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.65;
 }
 .landing-v4 .ongoing-value-section {
@@ -11770,13 +11770,13 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .feedback-cycle small {
   color: #925b3a;
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 780;
   letter-spacing: 1px;
 }
 .landing-v4 .feedback-cycle strong {
   color: #28332f;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.55;
 }
 .landing-v4 .privacy-note {
@@ -11787,7 +11787,7 @@ body:has(.checkout-v2) {
   align-items: flex-start;
   gap: 10px;
   color: #68736d;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .landing-v4 .privacy-note svg {
@@ -11810,7 +11810,7 @@ body:has(.checkout-v2) {
   border-radius: 12px;
   background: #f1eee6;
   color: #3b4d45;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 720;
 }
 .landing-v4 .pricing-grid article.featured > p.plan-limit {
@@ -11830,7 +11830,7 @@ body:has(.checkout-v2) {
 .landing-v4 .pricing-limit-explainer p {
   margin: 0;
   color: #65716b;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.7;
 }
 .landing-v4 .pricing-limit-explainer strong {
@@ -11839,9 +11839,116 @@ body:has(.checkout-v2) {
 }
 .landing-v4 .marketing-cta .cta-trial-terms.compact {
   max-width: 580px;
-  margin: 18px auto 0;
+  margin: 18px 0 0;
   color: #aebcb6;
-  font-size: 10px;
+  font-size: 13px;
+}
+.landing-v4 .marketing-kicker {
+  font-size: 11px;
+  line-height: 1.45;
+}
+.landing-v4 .marketing-login {
+  font-size: 12px;
+}
+.landing-v4 .hero-path b {
+  font-size: 11px;
+}
+.landing-v4 .landing-announcement,
+.landing-v4 .marketing-footer,
+.landing-v4 .marketing-footer p,
+.landing-v4 .marketing-footer > div {
+  font-size: 12px;
+}
+.landing-v4 .faq-list details > p,
+.landing-v4 .faq-intro > p:not(.marketing-kicker) {
+  font-size: 14px;
+  line-height: 1.75;
+}
+.landing-v4 .faq-list summary {
+  font-size: 17px;
+}
+.landing-v4 .pricing-disclaimer {
+  font-size: 12px;
+}
+.landing-v4 .section-trial-cta {
+  width: 100%;
+  margin-top: 42px;
+  padding: 24px 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  border: 1px solid #cbcfc5;
+  border-radius: 18px;
+  background: #fbfaf6;
+  box-shadow: 0 16px 36px #172a250b;
+}
+.landing-v4 .section-trial-cta > div {
+  min-width: 0;
+}
+.landing-v4 .section-trial-cta small,
+.landing-v4 .section-trial-cta strong,
+.landing-v4 .section-trial-cta span {
+  display: block;
+}
+.landing-v4 .section-trial-cta small {
+  color: #965b37;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.landing-v4 .section-trial-cta strong {
+  max-width: 720px;
+  margin-top: 8px;
+  color: #1d2926;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(20px, 2.1vw, 27px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+.landing-v4 .section-trial-cta span {
+  margin-top: 8px;
+  color: #66736d;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.landing-v4 .section-trial-cta > a {
+  min-height: 52px;
+  padding: 0 21px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: #df7c43;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 750;
+  white-space: nowrap;
+  transition: background-color 180ms ease, transform 180ms ease;
+}
+.landing-v4 .section-trial-cta > a:hover {
+  transform: translateY(-1px);
+  background: #ed915b;
+}
+.landing-v4 .section-trial-cta.on-dark {
+  border-color: #ffffff2d;
+  background: #ffffff0a;
+  box-shadow: none;
+}
+.landing-v4 .section-trial-cta.on-dark small {
+  color: #efa477;
+}
+.landing-v4 .section-trial-cta.on-dark strong {
+  color: #fbfaf6;
+}
+.landing-v4 .section-trial-cta.on-dark span {
+  color: #becac4;
+}
+.landing-v4 .ongoing-value-section .section-trial-cta,
+.landing-v4 .faq-section .section-trial-cta {
+  grid-column: 1 / -1;
 }
 .landing-v4.path-landing .pricing-hero {
   min-height: 390px;
@@ -11936,7 +12043,7 @@ body:has(.checkout-v2) {
   }
   .landing-v4 .hero-copy .hero-kicker {
     align-items: flex-start;
-    font-size: 7.5px;
+    font-size: 11px;
     line-height: 1.45;
   }
   .landing-v4 .hero-lead {
@@ -11951,14 +12058,14 @@ body:has(.checkout-v2) {
     min-height: 58px;
   }
   .landing-v4 .cta-trial-terms {
-    font-size: 10px;
+    font-size: 12px;
   }
   .landing-v4 .hero-path {
     gap: 8px;
   }
   .landing-v4 .hero-path span {
     white-space: normal;
-    font-size: 11px;
+    font-size: 12px;
   }
   .landing-v4 .preview-stage {
     min-height: 0;
@@ -12018,7 +12125,7 @@ body:has(.checkout-v2) {
   }
   .landing-v4 .demo-message-card blockquote {
     padding: 20px;
-    font-size: 14px;
+    font-size: 16px;
   }
   .landing-v4 .audience-section,
   .landing-v4 .ongoing-value-section {
@@ -12062,10 +12169,37 @@ body:has(.checkout-v2) {
     grid-template-columns: 1fr;
     gap: 20px;
   }
+  .landing-v4 .section-trial-cta {
+    margin-top: 32px;
+    padding: 22px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .landing-v4 .section-trial-cta small {
+    font-size: 11px;
+  }
+  .landing-v4 .section-trial-cta strong {
+    font-size: 24px;
+  }
+  .landing-v4 .section-trial-cta span {
+    font-size: 13px;
+  }
+  .landing-v4 .section-trial-cta > a {
+    width: 100%;
+    min-height: 56px;
+    font-size: 16px;
+    white-space: normal;
+    text-align: center;
+  }
   .landing-v4 .marketing-cta > a {
     width: 100%;
     justify-content: center;
     text-align: center;
+  }
+  .landing-v4 .marketing-cta .cta-trial-terms.compact {
+    margin-left: 0;
+    font-size: 12px;
   }
   .landing-v4.path-landing .pricing-hero {
     min-height: 0;
@@ -12088,10 +12222,10 @@ body:has(.checkout-v2) {
     font-size: clamp(39px, 11.6vw, 48px);
   }
   .landing-v4 .preview-question {
-    font-size: 11px;
+    font-size: 13px;
   }
   .landing-v4 .preview-card strong {
-    font-size: 13px;
+    font-size: 14px;
   }
   .landing-v4 .section-intro h2,
   .landing-v4 .ongoing-copy h2 {

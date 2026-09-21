@@ -182,6 +182,27 @@ function ProductPreview() {
   );
 }
 
+function SectionTrialCta({
+  eyebrow,
+  title,
+  onDark = false,
+}: {
+  eyebrow: string;
+  title: string;
+  onDark?: boolean;
+}) {
+  return (
+    <aside className={onDark ? "section-trial-cta on-dark" : "section-trial-cta"} aria-label="Rozpocznij próbę SmartFach">
+      <div>
+        <small>{eyebrow}</small>
+        <strong>{title}</strong>
+        <span>3 dni za 0 zł · karta wymagana · potem Pro 99 zł/mies. · anuluj przed pierwszą opłatą</span>
+      </div>
+      <Link href="/logowanie?plan=pro">Wypróbuj SmartFach <ArrowRight size={17} /></Link>
+    </aside>
+  );
+}
+
 function OfferDemoSection() {
   const steps = [
     ["01", "Sytuacja", "Excel · 5 godzin tygodniowo · praca po godzinach"],
@@ -233,6 +254,10 @@ function OfferDemoSection() {
           </article>
         </div>
       </div>
+      <SectionTrialCta
+        eyebrow="ZOBACZYŁEŚ EFEKT"
+        title="Teraz przygotuj własną wersję — zacznij od krótkiego opisu tego, co umiesz."
+      />
     </section>
   );
 }
@@ -255,6 +280,11 @@ function AudienceSection() {
           </article>
         ))}
       </div>
+      <SectionTrialCta
+        onDark
+        eyebrow="NIE CZEKAJ NA IDEALNY POMYSŁ"
+        title="Jedna praktyczna umiejętność wystarczy, żeby zacząć szukać usługi do sprawdzenia."
+      />
     </section>
   );
 }
@@ -300,6 +330,10 @@ function WorkProcessSection() {
           </li>
         ))}
       </ol>
+      <SectionTrialCta
+        eyebrow="ZACZNIJ OD KROKU 1"
+        title="Opisz swoją sytuację. Pierwszy kierunek nie musi być idealny — ma być możliwy do sprawdzenia."
+      />
     </section>
   );
 }
@@ -319,6 +353,10 @@ function OngoingValueSection() {
         <article><small>04 · POPRAWKA</small><strong>Dopracowujesz zakres, komunikat i kolejny krok.</strong></article>
       </div>
       <p className="privacy-note"><ShieldCheck size={16} /> Nie wklejaj danych osobowych klienta. Do pracy nad odpowiedzią wystarczy sama treść problemu lub obiekcji.</p>
+      <SectionTrialCta
+        eyebrow="OFERTA NIE MUSI BYĆ GOTOWA RAZ NA ZAWSZE"
+        title="Zacznij od pierwszej wersji, a potem poprawiaj ją na podstawie realnych odpowiedzi."
+      />
     </section>
   );
 }
@@ -380,6 +418,10 @@ function FAQSection() {
           </details>
         ))}
       </div>
+      <SectionTrialCta
+        eyebrow="MASZ JUŻ NAJWAŻNIEJSZE ODPOWIEDZI"
+        title="Sprawdź na własnym przykładzie, jak szybko przejdziesz od umiejętności do oferty."
+      />
     </section>
   );
 }
