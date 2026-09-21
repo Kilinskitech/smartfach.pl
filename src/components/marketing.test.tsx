@@ -8,9 +8,9 @@ describe("landing SmartFach", () => {
 
   it("prowadzi od umiejętności do próby planu Pro z pełnymi warunkami", () => {
     expect(html).toContain(
-      "Zamień umiejętność <em>w ofertę gotową do sprzedaży.</em>",
+      "Zacznij własny biznes <em>od tego, co umiesz.</em>",
     );
-    expect(html).toContain("ASYSTENT AI DO PRACY NAD WŁASNĄ USŁUGĄ");
+    expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
     expect(html).toContain(
       "0 zł przez 3 dni. Karta wymagana. Następnie Pro 99 zł/mies.",
@@ -30,7 +30,7 @@ describe("landing SmartFach", () => {
 
   it("zachowuje sprzedażową kolejność sekcji", () => {
     const sections = [
-      "ASYSTENT AI DO PRACY NAD WŁASNĄ USŁUGĄ",
+      "ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU",
       "ZOBACZ, CO MOŻESZ PRZYGOTOWAĆ",
       "DLA KOGO JEST SMARTFACH",
       "JAK WYGLĄDA PRACA Z APLIKACJĄ",
