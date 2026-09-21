@@ -77,7 +77,7 @@ const sharedPlanFeatures = [
 const faqItems: readonly FaqItem[] = [
   [
     "Czym SmartFach różni się od ogólnego czatu AI?",
-    "SmartFach prowadzi rozmowę wokół budowania własnej usługi: zaczyna od krótkiej ankiety, pozwala trzymać każdy biznes w osobnym czacie i pomaga przejść od sytuacji użytkownika do oferty, wiadomości oraz kolejnego działania. Nie twierdzimy, że model jest „lepszy” od innych czatów AI.",
+    "SmartFach pomaga przejść od Twojej sytuacji do konkretnej usługi, oferty i pierwszej wiadomości do klienta. Zaczynasz od krótkiej ankiety, a każdy biznes możesz rozwijać w osobnym czacie. Różnica polega na sposobie pracy: wracasz z odpowiedziami klientów i dopracowujesz kolejne działania w kontekście swojego biznesu.",
   ],
   [
     "Czy muszę mieć gotowy pomysł?",
@@ -219,7 +219,7 @@ function OfferDemoSection() {
       <div className="section-intro">
         <p className="marketing-kicker">ZOBACZ, CO MOŻESZ PRZYGOTOWAĆ</p>
         <h2 id="demo-title">Od umiejętności do oferty i pierwszej wiadomości.</h2>
-        <p>To rozwinięcie istniejącego scenariusza demonstracyjnego na przykładowych danych. Nie jest zapisem rozmowy klienta ani obietnicą zarobku.</p>
+        <p>Zobacz, jak może wyglądać Twoja pierwsza oferta i wiadomość do potencjalnego klienta. Poniższy materiał jest przykładem, nie historią klienta.</p>
       </div>
       <div className="demo-workbench">
         <header>
