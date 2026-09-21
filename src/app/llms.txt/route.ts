@@ -2,7 +2,7 @@ import { isProductionDeployment, productionOrigin } from "@/lib/seo";
 
 const content = `# SmartFach
 
-> SmartFach to polski asystent AI, który pomaga osobom budować własne źródło przychodu: wybrać realną usługę, przygotować ofertę, znaleźć sposób dotarcia do klientów i ustalić następne działanie.
+> SmartFach to osobisty asystent biznesowy, który pomaga budować własne źródło przychodu: wybrać realny kierunek, przygotować ofertę, znaleźć sposób dotarcia do klientów i ustalić następne działanie.
 
 ## Najważniejsze strony
 

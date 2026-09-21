@@ -76,7 +76,7 @@ const sharedPlanFeatures = [
 
 const faqItems: readonly FaqItem[] = [
   [
-    "Czym SmartFach różni się od ogólnego czatu AI?",
+    "Czym SmartFach różni się od zwykłego czatu?",
     "SmartFach pomaga przejść od Twojej sytuacji do pomysłu na biznes, konkretnej oferty i pierwszej wiadomości do klienta. Zaczynasz od krótkiej ankiety, a każdy biznes możesz rozwijać w osobnym czacie. Różnica polega na sposobie pracy: wracasz z odpowiedziami klientów i dopracowujesz kolejne działania w kontekście swojego biznesu.",
   ],
   [
@@ -423,7 +423,7 @@ function FAQSection() {
 
 export function MarketingHome() {
   return (
-    <div className="marketing-site builder-marketing landing-v3 landing-v4">
+    <div className="marketing-site builder-marketing landing-v3 landing-v4 landing-v5">
       <a className="skip-link" href="#landing-content">Przejdź do treści</a>
       <div className="landing-announcement" aria-label="Najważniejsze informacje o SmartFach">
         <span>LITE 49 ZŁ / MIES.</span>
@@ -436,7 +436,7 @@ export function MarketingHome() {
       <main id="landing-content">
         <section className="marketing-hero builder-hero">
           <div className="hero-copy">
-            <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU</p>
+            <p className="marketing-kicker hero-kicker"><span aria-hidden="true" /> TWÓJ OSOBISTY ASYSTENT BIZNESOWY</p>
             <h1>Zbudujmy razem <em>Twój wymarzony zyskowny biznes.</em></h1>
             <p className="hero-lead">Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
             <div className="hero-actions">
@@ -474,11 +474,11 @@ export function MarketingHome() {
 
 export function PricingLanding() {
   return (
-    <div className="marketing-site path-landing builder-marketing landing-v3 landing-v4 public-v2">
+    <div className="marketing-site path-landing builder-marketing landing-v3 landing-v4 landing-v5 public-v2">
       <MarketingHeader />
       <main>
         <section className="pricing-hero">
-          <p className="marketing-kicker">LITE LUB PRO · TEN SAM ASYSTENT AI</p>
+          <p className="marketing-kicker">LITE LUB PRO · TEN SAM OSOBISTY ASYSTENT BIZNESOWY</p>
           <h1>Wybierz miesięczną pulę dopasowaną do tempa pracy.</h1>
           <p>Lite kosztuje 49 zł miesięcznie. Pro kosztuje 99 zł i ma około 2,4× większą miesięczną pulę. Oba plany mają te same funkcje.</p>
         </section>
@@ -494,7 +494,7 @@ export function MarketingFooter() {
   return (
     <footer className="marketing-footer">
       <Link className="marketing-brand" href="/"><BrandMark size={31} /><span>Smart<b>Fach</b></span></Link>
-      <p>Asystent AI od pomysłu na biznes do konkretnej oferty i pierwszych działań sprzedażowych.</p>
+      <p>Twój osobisty asystent biznesowy — od pomysłu do konkretnej oferty i pierwszych działań sprzedażowych.</p>
       <div>
         <Link href="/#przykladowa-oferta">Przykładowa oferta</Link>
         <Link href="/#jak-dziala">Jak to działa</Link>

@@ -64,9 +64,9 @@ export function AuthForm({ next = "/app", initialPlan = "pro", checkoutCanceled 
       <section className="auth-story">
         <Link href="/" className="auth-brand"><BrandMark size={46} /><span>Smart<b>Fach</b></span></Link>
         <div>
-          <p className="eyebrow">NIE KOLEJNY KURS · ASYSTENT DO DZIAŁANIA</p>
-          <h1>Od Twoich warunków do pierwszej sprzedawalnej usługi.</h1>
-          <p>Wolisz pracować zdalnie albo lokalnie? Nie wiesz, co możesz sprzedawać? SmartFach dopasuje kierunek, pomoże zbudować ofertę i wskaże następne działanie.</p>
+          <p className="eyebrow">TWÓJ OSOBISTY ASYSTENT BIZNESOWY</p>
+          <h1>Zbudujmy razem Twój wymarzony zyskowny biznes.</h1>
+          <p>Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
         </div>
         <ul>
           <li><Check size={17} /> 3 pełne dni bez opłat</li>
