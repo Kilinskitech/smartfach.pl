@@ -14,8 +14,10 @@ describe("landing SmartFach", () => {
     expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
     expect(html).toContain(
-      "0 zł przez 3 dni. Karta wymagana. Następnie Lite 49 zł/mies.",
+      "0 zł przez 3 dni. Następnie Lite 49 zł/mies.",
     );
+    expect(html.toLowerCase()).not.toContain("karta wymagana");
+    expect(html.toLowerCase()).not.toContain("wymaga karty");
     expect(html).toContain('class="hero-primary" href="/logowanie?plan=lite"');
   });
 

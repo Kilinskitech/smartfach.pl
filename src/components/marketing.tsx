@@ -97,7 +97,7 @@ const faqItems: readonly FaqItem[] = [
   ],
   [
     "Jak działa próba, pierwsza opłata i anulowanie?",
-    "Próba trwa 3 pełne dni i wymaga karty. Dzisiaj płacisz 0 zł. Jeśli nie anulujesz przed jej końcem, rozpocznie się płatny miesiąc wybranego planu: Lite 49 zł albo Pro 99 zł. Po zapisaniu karty potwierdzasz adres e-mail, aby korzystać z asystenta. Gdy adres nie zostanie potwierdzony przed końcem próby, subskrypcja kończy się bez płatnego odnowienia.",
+    "Próba trwa 3 pełne dni. Dzisiaj płacisz 0 zł. Jeśli nie anulujesz przed jej końcem, rozpocznie się płatny miesiąc wybranego planu: Lite 49 zł albo Pro 99 zł. Po rozpoczęciu próby potwierdzasz adres e-mail, aby korzystać z asystenta. Gdy adres nie zostanie potwierdzony przed końcem próby, subskrypcja kończy się bez płatnego odnowienia.",
   ],
   [
     "Czy SmartFach gwarantuje klientów lub zarobki?",
@@ -391,8 +391,8 @@ function PricingSection() {
         <p><strong>Jak działa pula?</strong> Zużycie zależy od długości rozmowy, zdjęć i używanych narzędzi. Dlatego nie obiecujemy stałej liczby wiadomości.</p>
         <p><strong>Co po wyczerpaniu?</strong> Możesz poczekać na miesięczne odnowienie, ręcznie dokupić limit albo zmienić plan. Nic nie dokupuje się automatycznie.</p>
       </div>
-      <p className="trial-disclosure"><ShieldCheck size={15} /> <span><strong>3 dni za 0 zł · karta wymagana.</strong> Jeśli nie anulujesz przed końcem próby, pobierzemy cenę wybranego planu za pierwszy miesiąc. Abonament odnawia się co miesiąc do rezygnacji.</span></p>
-      <p className="pricing-disclaimer">Przed podpięciem karty zobaczysz 0 zł dzisiaj, wybrany plan i dokładny termin pierwszej opłaty.</p>
+      <p className="trial-disclosure"><ShieldCheck size={15} /> <span><strong>3 dni za 0 zł.</strong> Jeśli nie anulujesz przed końcem próby, pobierzemy cenę wybranego planu za pierwszy miesiąc. Abonament odnawia się co miesiąc do rezygnacji.</span></p>
+      <p className="pricing-disclaimer">Przed rozpoczęciem próby zobaczysz 0 zł dzisiaj, wybrany plan i dokładny termin pierwszej opłaty.</p>
     </section>
   );
 }
@@ -403,7 +403,7 @@ function FAQSection() {
       <div className="faq-intro">
         <p className="marketing-kicker">PYTANIA PRZED STARTEM</p>
         <h2>Ważne odpowiedzi w jednym miejscu.</h2>
-        <p>Sprawdź sposób pracy, limity i zasady próby, zanim podepniesz kartę.</p>
+        <p>Sprawdź sposób pracy, limity i zasady, zanim rozpoczniesz próbę.</p>
         <div className="faq-contact">
           <MessageCircle size={20} />
           <p><strong>Masz inne pytanie?</strong><span>Napisz do nas przed rozpoczęciem próby.</span></p>
@@ -429,7 +429,7 @@ function FAQSection() {
 function TrialTerms({ compact = false }: { compact?: boolean }) {
   return (
     <p className={compact ? "cta-trial-terms compact" : "cta-trial-terms"}>
-      0 zł przez 3 dni. Karta wymagana. Następnie Lite 49 zł/mies., automatycznie do anulowania. Anuluj przed końcem próby, aby uniknąć pierwszej opłaty.
+      0 zł przez 3 dni. Następnie Lite 49 zł/mies., automatycznie do anulowania. Anuluj przed końcem próby, aby uniknąć pierwszej opłaty.
     </p>
   );
 }
