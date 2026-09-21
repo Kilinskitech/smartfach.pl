@@ -119,7 +119,7 @@ export function MarketingHeader() {
         <Link href="/kontakt">Kontakt</Link>
       </nav>
       <div className="marketing-header-actions">
-        <Link className="marketing-login" href="/logowanie?plan=pro">
+        <Link className="marketing-login" href="/logowanie?plan=lite">
           <span>Zacznij za 0 zł</span>
           <ArrowRight size={16} />
         </Link>
@@ -137,7 +137,7 @@ export function MarketingHeader() {
             <Link href="/cennik">Cennik</Link>
             <Link href="/kontakt">Kontakt</Link>
             <Link className="mobile-menu-login" href="/logowanie"><LogIn size={16} /> Mam już konto — zaloguj się</Link>
-            <Link className="mobile-menu-start" href="/logowanie?plan=pro">Wypróbuj przez 3 dni <ArrowRight size={15} /></Link>
+            <Link className="mobile-menu-start" href="/logowanie?plan=lite">Wypróbuj przez 3 dni <ArrowRight size={15} /></Link>
           </nav>
         </details>
       </div>
@@ -429,7 +429,7 @@ function FAQSection() {
 function TrialTerms({ compact = false }: { compact?: boolean }) {
   return (
     <p className={compact ? "cta-trial-terms compact" : "cta-trial-terms"}>
-      0 zł przez 3 dni. Karta wymagana. Następnie Pro 99 zł/mies., automatycznie do anulowania. Anuluj przed końcem próby, aby uniknąć pierwszej opłaty.
+      0 zł przez 3 dni. Karta wymagana. Następnie Lite 49 zł/mies., automatycznie do anulowania. Anuluj przed końcem próby, aby uniknąć pierwszej opłaty.
     </p>
   );
 }
@@ -453,7 +453,7 @@ export function MarketingHome() {
             <h1>Zbudujmy razem <em>Twój wymarzony biznes.</em></h1>
             <p className="hero-lead">Nie potrzebujesz pomysłu ani doświadczenia. Odpowiedz na kilka pytań, a SmartFach pomoże Ci wybrać kierunek, stworzyć ofertę i napisać do klienta.</p>
             <div className="hero-actions">
-              <Link className="hero-primary" href="/logowanie?plan=pro">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
+              <Link className="hero-primary" href="/logowanie?plan=lite">Wypróbuj 3 dni za 0 zł <ArrowRight size={18} /></Link>
               <Link className="hero-secondary" href="/#przykladowa-oferta">Zobacz przykładową ofertę</Link>
             </div>
             <TrialTerms />

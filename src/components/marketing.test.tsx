@@ -6,7 +6,7 @@ import { MarketingHome } from "./marketing";
 describe("landing SmartFach", () => {
   const html = renderToStaticMarkup(createElement(MarketingHome));
 
-  it("prowadzi od umiejętności do próby planu Pro z pełnymi warunkami", () => {
+  it("prowadzi z hero do próby planu Lite z pełnymi warunkami", () => {
     expect(html).toContain(
       "Zbudujmy razem <em>Twój wymarzony biznes.</em>",
     );
@@ -14,9 +14,9 @@ describe("landing SmartFach", () => {
     expect(html).toContain("ASYSTENT AI DO BUDOWANIA WŁASNEGO BIZNESU");
     expect(html).toContain("Wypróbuj SmartFach przez 3 dni");
     expect(html).toContain(
-      "0 zł przez 3 dni. Karta wymagana. Następnie Pro 99 zł/mies.",
+      "0 zł przez 3 dni. Karta wymagana. Następnie Lite 49 zł/mies.",
     );
-    expect(html).toContain('href="/logowanie?plan=pro"');
+    expect(html).toContain('class="hero-primary" href="/logowanie?plan=lite"');
   });
 
   it("pokazuje konkretny, jawnie oznaczony materiał demonstracyjny", () => {
