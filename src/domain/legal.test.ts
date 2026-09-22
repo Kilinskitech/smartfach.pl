@@ -17,9 +17,18 @@ describe("warunki zakupu", () => {
       const text = legalDocumentText(document);
       expect(text).toContain(changed.name);
       expect(text).toContain(changed.email);
+      expect(text).not.toContain(changed.phone);
       expect(text).not.toContain(smartFachOperator.name);
     }
     expect(old).toContain(smartFachOperator.name);
+  });
+  it("nie publikuje telefonu w dokumentach ani ich wersjach do pobrania", () => {
+    for (const document of [termsDocument(smartFachOperator), privacyDocument(smartFachOperator)]) {
+      const text = legalDocumentText(document);
+      expect(text).not.toContain(smartFachOperator.phone);
+      expect(text).not.toMatch(/telefon:|telefonem|Koszt połączenia/);
+      expect(text).toContain(smartFachOperator.email);
+    }
   });
   it("dokumentuje aktualne ceny, limity i uprawnienia", () => {
     const text = legalDocumentText(termsDocument(smartFachOperator));

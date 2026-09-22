@@ -20,7 +20,9 @@ Nie publikuj kodu bez tych przygotowań.
   ze zamówieniem Stripe. Potwierdzenie umowy e-mailem z załącznikiem tekstowym.
   Bieżące dokumenty publiczne nie zastępują kopii warunków konkretnego zakupu.
 - `/admin#dane-sprzedawcy`: edycja nazwy, adresu, NIP, REGON, e-maila i telefonu.
-  Domyślny telefon: +48 662 410 479. Zmiany nie edytują dawnych potwierdzeń.
+  Od 2026-09-22 telefon jest wyłącznie polem wewnętrznym — nie występuje na stronie
+  kontaktowej, w aktualnych dokumentach ani nowych kopiach ich treści.
+  Zmiany nie edytują dawnych potwierdzeń.
 - `/odstapienie`: formularz bez wymogu logowania, dwa kroki, zapis daty i potwierdzenie.
   Używa numeru zamówienia `cs_...` oraz e-maila konta; alternatywnie e-mail/posta.
   Konto zalogowane ma listę własnych nowych zamówień. Zgłoszenie nie wykonuje

@@ -1512,3 +1512,12 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   płatniczych nie są przedstawiane jako rezygnacja użytkownika. Brak zmian cen,
   długości próby, rozliczeń i zasad dostępu. Uruchomienie wymaga migracji opisanej
   w `SETUP_SUPABASE_STRIPE.md`; kod nie wysyła historycznych maili hurtowo.
+
+## D080 — Kontakt publiczny bez telefonu
+
+- Data: 2026-09-22. Na prośbę właściciela telefon usunięto ze strony Kontakt,
+  bieżącego Regulaminu i Polityki prywatności, także z ich wersji do pobrania.
+  Publicznym kanałem kontaktu pozostaje e-mail. Pozostałe dane i warunki bez zmian.
+- Pole telefonu pozostaje w wewnętrznych ustawieniach administratora dla zgodności
+  istniejących danych. Historyczne kopie zawartych umów nie są modyfikowane.
+- Wersja aktualnych dokumentów: 2026-09-22.

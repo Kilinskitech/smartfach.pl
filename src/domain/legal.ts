@@ -20,7 +20,7 @@ export function termsDocument(operator: Operator): LegalDocument {
     sections: [
       { title: "1. Sprzedawca i kontakt", paragraphs: [
         `Usługodawcą i sprzedawcą SmartFach dostępnego pod adresem https://smartfach.pl jest ${operator.name}, przedsiębiorca wpisany do Centralnej Ewidencji i Informacji o Działalności Gospodarczej. Adres prowadzenia działalności i do korespondencji: ${operator.address}. NIP: ${operator.taxId}. REGON: ${operator.regon}.`,
-        `Kontakt, reklamacje, odstąpienia i sprawy prywatności: ${operator.email}; telefon: ${operator.phone}. Koszt połączenia jest zgodny z taryfą operatora użytkownika. Regulamin jest udostępniany bezpłatnie przed zakupem; można go pobrać, zapisać i wydrukować. Umowę zawieramy w języku polskim.`,
+        `Kontakt, reklamacje, odstąpienia i sprawy prywatności: ${operator.email}. Regulamin jest udostępniany bezpłatnie przed zakupem; można go pobrać, zapisać i wydrukować. Umowę zawieramy w języku polskim.`,
       ] },
       { title: "2. Czym jest SmartFach", paragraphs: [
         "SmartFach jest usługą cyfrową świadczoną przez internet. Asystent AI pomaga dopasować kierunek usługowy do warunków użytkownika, przygotować ofertę, treści i wiadomości, planować działania oraz analizować przekazane wyniki. Udostępniamy rozmowy tekstowe, analizę zdjęć, zapis preferencji i historii oraz wyszukiwanie informacji, gdy wymaga tego zadanie i funkcja jest dostępna.",
@@ -114,7 +114,7 @@ export function termsDocument(operator: Operator): LegalDocument {
 export function privacyDocument(operator: Operator): LegalDocument {
   return { title: "Polityka prywatności SmartFach", version: legalDocumentVersion, sections: [
     { title: "1. Administrator i kontakt", paragraphs: [
-      `Administratorem danych w związku z prowadzeniem serwisu SmartFach jest ${operator.name}, ${operator.address}, NIP ${operator.taxId}, REGON ${operator.regon}. W sprawach danych osobowych skontaktuj się pod adresem ${operator.email} lub telefonem ${operator.phone}.`,
+      `Administratorem danych w związku z prowadzeniem serwisu SmartFach jest ${operator.name}, ${operator.address}, NIP ${operator.taxId}, REGON ${operator.regon}. W sprawach danych osobowych skontaktuj się pod adresem ${operator.email}.`,
       "Dokument wyjaśnia zasady przetwarzania danych odwiedzających, osób kontaktujących się oraz użytkowników kont. Pojęcia administratora, danych osobowych i przetwarzania mają znaczenie określone w RODO. Nie żądamy zgody na tę politykę jako ogólnego zezwolenia na przetwarzanie; dla każdego celu wskazujemy własną podstawę.",
     ] },
     { title: "2. Dane i ich źródła", paragraphs: [

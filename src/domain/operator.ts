@@ -19,5 +19,5 @@ export const smartFachOperator = {
   phone: "+48 662 410 479",
 } as const satisfies Operator;
 
-export const legalDocumentVersion = "2026-09-12" as const;
-export const legalDocumentUpdatedAt = "12 września 2026 r." as const;
+export const legalDocumentVersion = "2026-09-22" as const;
+export const legalDocumentUpdatedAt = "22 września 2026 r." as const;

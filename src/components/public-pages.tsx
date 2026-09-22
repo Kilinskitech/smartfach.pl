@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Download, Mail, Phone, ShieldCheck } from "lucide-react";
+import { Download, Mail, ShieldCheck } from "lucide-react";
 import { MarketingFooter, MarketingHeader } from "./marketing";
 import { ContactForm } from "./contact-form";
 import { BrandMark } from "./brand";
@@ -30,7 +30,6 @@ export async function ContactPage() {
             <a href={`mailto:${smartFachOperator.email}`}>
               <Mail size={16} /> {smartFachOperator.email}
             </a>
-            <a href={`tel:${smartFachOperator.phone.replace(/[^+\d]/g, "")}`}><Phone size={16} /> {smartFachOperator.phone}</a>
             <div className="contact-legal-links">
               Pełne dane operatora znajdziesz w <Link href="/regulamin">Regulaminie</Link>
               {" "}i <Link href="/polityka-prywatnosci">Polityce prywatności</Link>.

@@ -9,7 +9,7 @@ export function OperatorSettingsForm({ operator }: { operator: Operator }) {
   const [state, action, pending] = useActionState(saveOperatorSettings, undefined);
   return <section className="admin-panel" id="dane-sprzedawcy">
     <div className="admin-panel-heading"><div><Building2 size={20} /><span><small>USTAWIENIA SERWISU</small><h2>Dane sprzedawcy</h2></span></div></div>
-    <p>Te dane są publiczne. Zmiana trafi do Kontaktów, Regulaminu, Polityki prywatności i nowych potwierdzeń zamówień. Starsze potwierdzenia zachowają własną kopię.</p>
+    <p>Dane poza telefonem są publiczne. Zmiana trafi do Kontaktów, Regulaminu, Polityki prywatności i nowych potwierdzeń zamówień. Telefon pozostaje wyłącznie w ustawieniach wewnętrznych. Starsze potwierdzenia zachowają własną kopię.</p>
     <form action={action} className="settings-form operator-settings-form">
       <label>Pełna nazwa działalności<input name="name" defaultValue={operator.name} maxLength={200} required /></label>
       <label>Pełny adres, kod pocztowy i miejscowość<input name="address" defaultValue={operator.address} maxLength={300} required /></label>
