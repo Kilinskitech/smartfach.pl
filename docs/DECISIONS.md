@@ -1485,3 +1485,17 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
 - W końcowym CTA warunki próby są wyrównane do treści i przycisku, zamiast być
   niezależnie wyśrodkowane. Nie zmieniono cen, płatności, rejestracji, analityki,
   Supabase ani działania aplikacji.
+
+## D078 — Jeden cennik i stabilny panel konta
+
+- Data: 2026-09-22. Na prośbę foundera usunięto osobną stronę cennika.
+  Plany pozostają w sekcji `/#cennik`; `/cennik` otrzymuje trwałe przekierowanie.
+  Nawigacja, link po płatności, dane strukturalne i opis dla robotów prowadzą
+  bezpośrednio do sekcji, a mapa strony nie zawiera usuniętej podstrony.
+- Sekcja planów nie dziedziczy już bocznego paddingu liczonego od szerokości
+  ekranu, który ściskał jej ograniczony szerokością kontener. Karty zachowują
+  dwie kolumny na desktopie i jedną na telefonie; etykieta Pro jest zwykłą plakietką.
+- Na desktopie lewy panel logowania i rejestracji ma wysokość ekranu i własne
+  pozycjonowanie treści. Długość formularza nie zmienia rozmiaru gradientu ani
+  położenia nagłówka. Na telefonie pozostaje kompaktowy nagłówek z logo.
+- Ceny, próba i mechanika płatności pozostają bez zmian.

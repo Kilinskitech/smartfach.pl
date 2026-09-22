@@ -185,7 +185,7 @@ export default async function Page({
         tone="attention"
         steps={stepsFor(state)}
       >
-        <Link className="button button-primary" href="/cennik">
+        <Link className="button button-primary" href="/#cennik">
           Wróć do wyboru planu
         </Link>
         <Link className="text-link" href="/kontakt">

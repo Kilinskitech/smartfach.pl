@@ -40,7 +40,7 @@ describe("SEO environments", () => {
     });
     const response = await llmsTxt();
     expect(response.status).toBe(200);
-    expect(await response.text()).toContain("https://smartfach.pl/cennik");
+    expect(await response.text()).toContain("https://smartfach.pl/#cennik");
   });
 
   it("wpuszcza roboty AI tylko do publicznej części serwisu", () => {

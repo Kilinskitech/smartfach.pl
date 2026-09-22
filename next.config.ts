@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   devIndicators: false,
   poweredByHeader: false,
+  async redirects() {
+    return [{ source: "/cennik", destination: "/#cennik", permanent: true }];
+  },
   async headers() {
     return [{
       source: "/:path*",

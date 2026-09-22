@@ -33,7 +33,6 @@ export const aiCrawlerUserAgents = [
 
 export const publicPaths = [
   "/",
-  "/cennik",
   "/kontakt",
   "/regulamin",
   "/polityka-prywatnosci",

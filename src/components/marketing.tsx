@@ -115,7 +115,7 @@ export function MarketingHeader() {
       <nav aria-label="Główna nawigacja">
         <Link href="/#przykladowa-oferta">Przykładowa oferta</Link>
         <Link href="/#jak-dziala">Jak to działa</Link>
-        <Link href="/cennik">Cennik</Link>
+        <Link href="/#cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
       </nav>
       <div className="marketing-header-actions">
@@ -134,7 +134,7 @@ export function MarketingHeader() {
             <Link href="/#przykladowa-oferta">Przykładowa oferta</Link>
             <Link href="/#jak-dziala">Jak to działa</Link>
             <Link href="/#dla-ciebie">Dla Ciebie</Link>
-            <Link href="/cennik">Cennik</Link>
+            <Link href="/#cennik">Cennik</Link>
             <Link href="/kontakt">Kontakt</Link>
             <Link className="mobile-menu-login" href="/logowanie"><LogIn size={16} /> Mam już konto — zaloguj się</Link>
             <Link className="mobile-menu-start" href="/logowanie?plan=lite">Wypróbuj przez 3 dni <ArrowRight size={15} /></Link>
@@ -361,8 +361,10 @@ function PricingSection() {
           const details = planDetails[planId];
           return (
             <article key={planId} className={planId === "pro" ? "featured" : ""}>
-              {planId === "pro" && <span className="plan-ribbon">REKOMENDOWANY</span>}
-              <small>{details.audience}</small>
+              <div className="plan-heading">
+                <small>{details.audience}</small>
+                {planId === "pro" && <span className="plan-ribbon">POLECANY</span>}
+              </div>
               <h3>SmartFach {plan.name}</h3>
               <p>{details.description}</p>
               <strong>{plan.price}<span> / miesiąc</span></strong>
@@ -459,24 +461,6 @@ export function MarketingHome() {
   );
 }
 
-export function PricingLanding() {
-  return (
-    <div className="marketing-site path-landing builder-marketing landing-v3 landing-v4 landing-v5 public-v2">
-      <MarketingHeader />
-      <main>
-        <section className="pricing-hero">
-          <p className="marketing-kicker">LITE LUB PRO · TEN SAM OSOBISTY ASYSTENT BIZNESOWY</p>
-          <h1>Wybierz miesięczny limit dopasowany do tempa pracy.</h1>
-          <p>Lite kosztuje 49 zł miesięcznie. Pro kosztuje 99 zł i ma około 2,4× większy miesięczny limit. Oba plany mają te same funkcje.</p>
-        </section>
-        <PricingSection />
-        <FAQSection />
-      </main>
-      <MarketingFooter />
-    </div>
-  );
-}
-
 export function MarketingFooter() {
   return (
     <footer className="marketing-footer">
@@ -486,7 +470,7 @@ export function MarketingFooter() {
         <Link href="/#przykladowa-oferta">Przykładowa oferta</Link>
         <Link href="/#jak-dziala">Jak to działa</Link>
         <Link href="/#dla-ciebie">Dla Ciebie</Link>
-        <Link href="/cennik">Cennik</Link>
+        <Link href="/#cennik">Cennik</Link>
         <Link href="/kontakt">Kontakt</Link>
         <Link href="/regulamin">Regulamin</Link>
         <Link href="/polityka-prywatnosci">Prywatność</Link>

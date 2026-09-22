@@ -43,7 +43,7 @@ const structuredData = {
           name: "SmartFach Lite",
           price: "49.00",
           priceCurrency: "PLN",
-          url: `${productionOrigin}/cennik`,
+          url: `${productionOrigin}/#cennik`,
           availability: "https://schema.org/InStock",
         },
         {
@@ -51,7 +51,7 @@ const structuredData = {
           name: "SmartFach Pro",
           price: "99.00",
           priceCurrency: "PLN",
-          url: `${productionOrigin}/cennik`,
+          url: `${productionOrigin}/#cennik`,
           availability: "https://schema.org/InStock",
         },
       ],

@@ -7,7 +7,7 @@ const content = `# SmartFach
 ## Najważniejsze strony
 
 - [Strona główna](${productionOrigin}/): czym jest SmartFach, dla kogo powstał i jak działa.
-- [Cennik](${productionOrigin}/cennik): plany Lite i Pro oraz warunki 3-dniowego okresu próbnego.
+- [Cennik](${productionOrigin}/#cennik): plany Lite i Pro oraz warunki 3-dniowego okresu próbnego.
 - [Kontakt](${productionOrigin}/kontakt): kontakt w sprawie produktu, planu i pomocy technicznej.
 
 ## Dokumenty
