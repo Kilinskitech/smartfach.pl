@@ -1,6 +1,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { assertDeploymentIdentity } from "@/server/operations";
 import { retryPendingContracts } from "@/server/contract-delivery";
+import { retryPendingCancellationEmails } from "@/server/cancellation-delivery";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,8 +15,14 @@ export async function GET(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await assertDeploymentIdentity();
-    const result = await retryPendingContracts();
-    return Response.json(result, { status: result.failed ? 503 : 200, headers: { "Cache-Control": "no-store" } });
+    // Independent queues run concurrently within the existing 60-second budget.
+    const [contracts, cancellations] = await Promise.allSettled([
+      retryPendingContracts(), retryPendingCancellationEmails(),
+    ]);
+    if (contracts.status === "rejected" || cancellations.status === "rejected")
+      throw new Error("Email queue unavailable");
+    const result = { ...contracts.value, cancellations: cancellations.value };
+    return Response.json(result, { status: result.failed || result.cancellations.failed ? 503 : 200, headers: { "Cache-Control": "no-store" } });
   } catch {
     console.error("contract_email_maintenance_failed");
     return Response.json({ error: "Email maintenance failed" }, { status: 503 });

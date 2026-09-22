@@ -6,7 +6,7 @@ export function smtpConfigured() {
 }
 
 function createSmtpTransport() {
-  if (!smtpConfigured()) throw new Error("Brak SMTP do wysyłki potwierdzenia umowy.");
+  if (!smtpConfigured()) throw new Error("Brak SMTP do wysyłki wiadomości transakcyjnych.");
   const port = Number(process.env.SMTP_PORT || 465);
   return nodemailer.createTransport({
     host: process.env.SMTP_HOST!.trim(), port, secure: port === 465, requireTLS: true,
@@ -46,6 +46,20 @@ export async function sendContractEmail(input: { recipient: string; body: string
     attachments: [{ filename: `smartfach-potwierdzenie-${input.sessionId.slice(-12)}.txt`, content: input.body, contentType: "text/plain; charset=utf-8" }],
   });
   if (!result.accepted.length) throw new Error("Serwer poczty nie przyjął potwierdzenia umowy.");
+}
+
+export async function sendCancellationEmail(input: {
+  recipient: string; replyTo: string; messageId: string; subject: string; body: string;
+}) {
+  const escape = (text: string) => text.replace(/[&<>"']/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]!);
+  const result = await sendWithDeadline(createSmtpTransport(), {
+    from: { name: "SmartFach", address: process.env.SMTP_USER!.trim() },
+    to: input.recipient, replyTo: input.replyTo,
+    messageId: `<cancellation-${input.messageId}@smartfach.pl>`,
+    subject: input.subject, text: input.body,
+    html: `<html lang="pl"><body style="margin:0;background:#f5f5f0;font-family:Arial,sans-serif;color:#172b3a"><table role="presentation" width="100%" cellspacing="0" cellpadding="20"><tr><td align="center"><table role="presentation" width="100%" style="max-width:620px;background:white;border-radius:20px" cellspacing="0" cellpadding="24"><tr><td style="background:#172b3a;color:white;font-size:24px;font-weight:bold">Smart<span style="color:#ffab70">Fach</span></td></tr><tr><td><h1 style="font-size:24px;line-height:1.3">${escape(input.subject)}</h1><div style="font-size:16px;line-height:1.7">${escape(input.body).replace(/\n/g, "<br>")}</div></td></tr></table></td></tr></table></body></html>`,
+  });
+  if (!result.accepted.length) throw new Error("Serwer poczty nie przyjął potwierdzenia anulowania.");
 }
 
 export async function sendSmtpTest(input: {

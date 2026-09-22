@@ -127,6 +127,39 @@ przechodzi w miesięczną subskrypcję, jeżeli użytkownik wcześniej jej nie a
 SmartFach przechowuje identyfikatory klienta/subskrypcji i stan metody płatności,
 ale nie numer karty ani CVC.
 
+### Potwierdzenie anulowania abonamentu (2026-09-22)
+
+Przed wdrożeniem kodu zastosuj migrację
+`20260922010525_subscription_cancellation_emails.sql` w odpowiedniej bazie.
+Migracja tworzy prywatną kolejkę dostępną tylko serwerowi, indeks oczekujących
+wiadomości i atomową, dwuminutową blokadę wysyłki. Nie wysyła maili ani nie
+modyfikuje istniejących abonamentów; nie wykonujemy masowej wysyłki wstecz.
+
+Zweryfikowane webhooki `customer.subscription.updated` i `.deleted` zapisują
+potwierdzenie rezygnacji po synchronizacji ze Stripe. Klucz abonament + `canceled_at`
+zapobiega powielaniu przy ponowieniach oraz przy zakończeniu już anulowanego okresu.
+Nie traktujemy blokady niepotwierdzonego e-maila, usunięcia konta, nieudanej
+płatności i sporu jako rezygnacji użytkownika. Cofnięte lub nieaktualne anulowanie
+jest pomijane; przed SMTP ponownie sprawdzamy bieżący stan i właściciela w Stripe.
+
+Wysyłka używa istniejącego SMTP i danych kontaktowych operatora. Mail zawiera
+nazwę planu, datę końca dostępu w strefie Europe/Warsaw oraz odpowiedni komunikat
+dla próby lub płatnego abonamentu. Nie obiecuje zwrotu ani umorzenia zaległości.
+Nie zmienia płatności ani terminu anulowania.
+
+Pierwsza wysyłka odbywa się po odpowiedzi webhooka. Ten sam chroniony cron
+`/api/maintenance/contract-emails` ponawia do 5 potwierdzeń zakupów i do 5
+potwierdzeń anulowania równolegle, bez nowego harmonogramu. Odpowiedź zawiera
+dodatkowe pole `cancellations: { attempted, sent, failed }`; błąd którejkolwiek
+kolejki oznacza HTTP 503. Licznik zaległych umów w adminie nadal dotyczy zakupów.
+Stały Message-ID i blokada chronią zwykłe ponowienia; SMTP nie zapewnia exactly-once:
+po przyjęciu maila i awarii zapisu `email_sent_at` możliwa jest ponowna kopia.
+Usunięcie konta usuwa też jego wpisy kolejki.
+
+Test akceptacyjny na Preview/Stripe test: anuluj próbę, płatny plan na koniec
+okresu i plan natychmiast; sprawdź datę i jedną wiadomość. Ponów webhook, zasymuluj
+awarię SMTP i wznowienie przed ponowieniem. Nie wysyłaj testów do realnych klientów.
+
 ## 3. Pierwsze konto i panel właściciela
 
 1. Wdróż ponownie gałąź `preview` po ustawieniu zmiennych.

@@ -1,10 +1,11 @@
 import Stripe from "stripe";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only",()=>({}));
-const m=vi.hoisted(()=>({from:vi.fn(),rpc:vi.fn(),retrieve:vi.fn(),sync:vi.fn(),contract:vi.fn(),grant:vi.fn(),paid:vi.fn(),operation:vi.fn()}));
+const m=vi.hoisted(()=>({from:vi.fn(),rpc:vi.fn(),retrieve:vi.fn(),sync:vi.fn(),contract:vi.fn(),grant:vi.fn(),paid:vi.fn(),operation:vi.fn(),cancellation:vi.fn()}));
 vi.mock("@/lib/stripe",()=>({getStripe:()=>({webhooks:new Stripe("sk_test_synthetic").webhooks,subscriptions:{retrieve:m.retrieve}})}));
 vi.mock("@/lib/supabase/admin",()=>({createAdminClient:()=>({from:m.from,rpc:m.rpc})}));
 vi.mock("@/server/stripe-subscriptions",()=>({syncSubscription:m.sync}));
+vi.mock("@/server/cancellation-delivery",()=>({queueCancellationEmail:m.cancellation}));
 vi.mock("@/server/purchase-legal",()=>({confirmPurchaseContract:m.contract}));
 vi.mock("@/server/stripe-top-ups",()=>({grantUsageTopUpFromSession:m.grant}));
 vi.mock("@/server/stripe-paid-invoice",()=>({captureFirstPaidSubscriptionInvoice:m.paid}));
@@ -34,6 +35,21 @@ beforeEach(()=>{
 });
 afterEach(()=>{vi.unstubAllEnvs();vi.restoreAllMocks();});
 describe("signed Stripe webhook",()=>{
+  it("persists cancellation mail before acknowledging and retries persistence errors",async()=>{
+    const subscriptionEvent={...event,type:"customer.subscription.updated",data:{object:{id:"sub_test",metadata:{user_id:"user"}}}};
+    expect((await POST(request(subscriptionEvent))).status).toBe(200);
+    expect(m.cancellation).toHaveBeenCalledWith({trial_end:123},subscriptionEvent.data.object);
+    m.rpc.mockClear(); m.cancellation.mockRejectedValue(new Error("outbox down"));
+    expect((await POST(request(subscriptionEvent))).status).toBe(500);
+    expect(m.rpc).not.toHaveBeenCalled();
+  });
+  it("does not enqueue mail for account deletion or subscription creation",async()=>{
+    for (const value of [
+      {...event,type:"customer.subscription.deleted",data:{object:{metadata:{smartfach_account_deleted:"true"}}}},
+      {...event,type:"customer.subscription.created",data:{object:{metadata:{}}}},
+    ]) expect((await POST(request(value))).status).toBe(200);
+    expect(m.cancellation).not.toHaveBeenCalled();
+  });
   it("rejects invalid signatures before touching data",async()=>{
     expect((await POST(request(event,false))).status).toBe(400);expect(m.from).not.toHaveBeenCalled();
   });

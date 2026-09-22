@@ -36,6 +36,50 @@ beforeEach(async () => {
   org=rows.rows.find(x=>x.owner_user_id===actor)!.id;
   otherOrg=rows.rows.find(x=>x.owner_user_id===other)!.id;
 });
+describe("cancellation email persistence", () => {
+  async function insert() {
+    await db.query(`insert into public.subscription_cancellation_emails
+      (id,user_id,organization_id,subscription_id,requested_at) values ('sub_test-123',$1,$2,'sub_test',123)
+      on conflict (id) do nothing`, [actor, org]);
+  }
+  it("deduplicates requests, serializes claims and retries after backoff using actual SQL", async () => {
+    await db.exec("set role service_role");
+    try {
+      await insert(); await insert();
+      expect((await db.query("select id from public.subscription_cancellation_emails")).rows).toHaveLength(1);
+      expect(await rpc("claim_cancellation_email", ["sub_test-123"])).toBe(true);
+      expect(await rpc("claim_cancellation_email", ["sub_test-123"])).toBe(false);
+      await db.exec("update public.subscription_cancellation_emails set delivery_claimed_at = now() - interval '3 minutes'");
+      expect(await rpc("claim_cancellation_email", ["sub_test-123"])).toBe(true);
+      await db.exec("update public.subscription_cancellation_emails set email_sent_at = now(), delivery_claimed_at = null");
+      expect(await rpc("claim_cancellation_email", ["sub_test-123"])).toBe(false);
+    } finally { await db.exec("reset role"); }
+  });
+  it("does not claim suppressed messages and deletes the outbox with its account", async () => {
+    await insert();
+    await db.exec("update public.subscription_cancellation_emails set suppressed_at = now()");
+    expect(await rpc("claim_cancellation_email", ["sub_test-123"])).toBe(false);
+    await db.query("delete from auth.users where id=$1", [actor]);
+    expect((await db.query("select id from public.subscription_cancellation_emails")).rows).toHaveLength(0);
+  });
+  it("denies anonymous users and both account owners access to queue contents and RPC", async () => {
+    await insert();
+    for (const user of [actor, other]) {
+      await db.query("select set_config('request.jwt.claim.sub',$1,false)", [user]);
+      for (const role of ["anon", "authenticated"]) {
+        await db.exec(`set role ${role}`);
+        try {
+          await expect(db.query("select * from public.subscription_cancellation_emails")).rejects.toThrow(/permission denied/);
+          await expect(db.query("update public.subscription_cancellation_emails set email_sent_at=now()")).rejects.toThrow(/permission denied/);
+          await expect(rpc("claim_cancellation_email", ["sub_test-123"])).rejects.toThrow(/permission denied/);
+        } finally { await db.exec("reset role"); }
+      }
+    }
+    const security = await db.query<{ relrowsecurity: boolean }>("select relrowsecurity from pg_class where oid='public.subscription_cancellation_emails'::regclass");
+    expect(security.rows[0]!.relrowsecurity).toBe(true);
+  });
+});
+
 describe("durable AI receipts and reservations",()=>{
   it("can admit and settle through the actual service role grants",async()=>{
     await db.exec("set role service_role");

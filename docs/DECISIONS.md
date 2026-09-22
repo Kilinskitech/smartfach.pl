@@ -1499,3 +1499,16 @@ Skuteczność wymaga rzeczywistego wywołania z produkcyjnym kluczem.
   pozycjonowanie treści. Długość formularza nie zmienia rozmiaru gradientu ani
   położenia nagłówka. Na telefonie pozostaje kompaktowy nagłówek z logo.
 - Ceny, próba i mechanika płatności pozostają bez zmian.
+
+## D079 — E-mail po anulowaniu planu
+
+- Data: 2026-09-22. Rezygnacja z próby lub abonamentu otrzymuje potwierdzenie
+  e-mail z nazwą planu i terminem zakończenia dostępu. Źródłem jest zweryfikowany
+  webhook i aktualny stan Stripe, nie kliknięcie przycisku ani odczyt strony.
+- Wykorzystujemy istniejący SMTP i cron. Prywatna kolejka zapisuje rezygnację
+  przed potwierdzeniem webhooka, ponawia błędy i deduplikuje po abonamencie oraz
+  czasie zgłoszenia. Wznowiony plan nie dostaje zaległego potwierdzenia rezygnacji.
+- Automatyczna blokada niepotwierdzonego e-maila i anulowania z powodu problemów
+  płatniczych nie są przedstawiane jako rezygnacja użytkownika. Brak zmian cen,
+  długości próby, rozliczeń i zasad dostępu. Uruchomienie wymaga migracji opisanej
+  w `SETUP_SUPABASE_STRIPE.md`; kod nie wysyła historycznych maili hurtowo.

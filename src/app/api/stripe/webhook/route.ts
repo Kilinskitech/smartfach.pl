@@ -5,6 +5,7 @@ import { syncSubscription } from "@/server/stripe-subscriptions";
 import { grantUsageTopUpFromSession } from "@/server/stripe-top-ups";
 import { confirmPurchaseContract } from "@/server/purchase-legal";
 import { captureFirstPaidSubscriptionInvoice } from "@/server/stripe-paid-invoice";
+import { queueCancellationEmail } from "@/server/cancellation-delivery";
 import { assertDeploymentIdentity, withOperation, recordMilestone, OperationBusy } from "@/server/operations";
 
 export const runtime = "nodejs";
@@ -51,7 +52,11 @@ export async function POST(request: Request) {
         }
       }
       if (event.type === "customer.subscription.created" || event.type === "customer.subscription.updated" || event.type === "customer.subscription.deleted") {
-        if (event.data.object.metadata.smartfach_account_deleted !== "true") await syncSubscription(event.data.object);
+        if (event.data.object.metadata.smartfach_account_deleted !== "true") {
+          const latest = await syncSubscription(event.data.object);
+          if (event.type !== "customer.subscription.created")
+            await queueCancellationEmail(latest, event.data.object);
+        }
       }
       if (event.type === "invoice.paid") {
         const paidInvoice = await captureFirstPaidSubscriptionInvoice(event.data.object, stripe);
